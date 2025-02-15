@@ -4,6 +4,7 @@ import memojiImage from "@/assets/images/memoji-computer.png";
 import ArrowDown from "@/assets/icons/arrow-down.svg";
 import grainiImage from "@/assets/images/grain.jpg";
 import StarIcon from "@/assets/icons/star.svg";
+import { HeroOrbit } from "@/components/HeroOrbit";
 
 console.log(StarIcon);
 
@@ -23,9 +24,9 @@ export const Hero = () => {
       <div className="size-[1220px] hero-ring"></div>
       {/* <div className="size-[1420px] hero-ring"></div>
       <div className="size-[1620px] hero-ring"></div> */}
-      <div className="absolute ">
-        <StarIcon className="size-28"/>        
-      </div>
+      <HeroOrbit size={800} rotation={-72}>
+        <StarIcon className="size-28 text-emerald-300 " />
+        </HeroOrbit>
       <div className="container">
         <div className="flex flex-col items-center">
           <Image
@@ -56,7 +57,7 @@ export const Hero = () => {
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <button className="inline-flex items-center gap-2 border border-whte/15 px-6 h-12 rounded-xl">
             <span className="font-semibold">Explore Projects</span>
-            <ArrowDown className="size-5"/>           
+            <ArrowDown className="size-5" />
           </button>
           <button className="inline-flex items-center gap-2 border border-white bg-white text-gray-900 h-12 px-6 rounded-xl">
             <span className="">🚀</span>
