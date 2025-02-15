@@ -24,14 +24,7 @@ export const Hero = () => {
       {/* <div className="size-[1420px] hero-ring"></div>
       <div className="size-[1620px] hero-ring"></div> */}
       <div className="absolute ">
-        {/* <StarIcon/> */}
-        {/* <Image
-              src={StarIcon}
-              alt="Star Icon"
-              className="size-28 text-emerald-300"
-              width={24}
-              height={24}
-            />{" "} */}
+        <StarIcon className="size-28"/>        
       </div>
       <div className="container">
         <div className="flex flex-col items-center">
@@ -63,13 +56,7 @@ export const Hero = () => {
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <button className="inline-flex items-center gap-2 border border-whte/15 px-6 h-12 rounded-xl">
             <span className="font-semibold">Explore Projects</span>
-            <Image
-              src={ArrowDown}
-              alt="Arrow Down"
-              className="size-4 "
-              width={24}
-              height={24}
-            />{" "}
+            <ArrowDown className="size-5"/>           
           </button>
           <button className="inline-flex items-center gap-2 border border-white bg-white text-gray-900 h-12 px-6 rounded-xl">
             <span className="">🚀</span>

@@ -1,13 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // turbo: false, // Disables Turbopack and forces Webpack
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"],
+      issuer: /\.[jt]sx?$/,
+      use: ["@svgr/webpack"], // Enables SVG as a React component
     });
-
     return config;
   },
 };
