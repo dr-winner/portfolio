@@ -3,14 +3,17 @@ import Image from "next/image";
 import memojiImage from "@/assets/images/memoji-computer.png";
 import ArrowDown from "@/assets/icons/arrow-down.svg";
 import grainiImage from "@/assets/images/grain.jpg";
+import StarIcon from "@/assets/icons/star.svg";
+
+console.log(StarIcon);
 
 export const Hero = () => {
   return (
-    <div className="py-32 md:py-48 lg:py-60 relative z-0">
+    <div className="py-32 md:py-48 lg:py-60 relative z-0 overflow-x-clip">
       <div
         className="absolute inset-0 -z-30 opacity-5"
         style={{
-          backgroundImage: `url(${grainiImage.src})`
+          backgroundImage: `url(${grainiImage.src})`,
         }}
       ></div>
       {/* <div className="size-[420px] hero-ring"></div> */}
@@ -20,6 +23,16 @@ export const Hero = () => {
       <div className="size-[1220px] hero-ring"></div>
       {/* <div className="size-[1420px] hero-ring"></div>
       <div className="size-[1620px] hero-ring"></div> */}
+      <div className="absolute ">
+        {/* <StarIcon/> */}
+        {/* <Image
+              src={StarIcon}
+              alt="Star Icon"
+              className="size-28 text-emerald-300"
+              width={24}
+              height={24}
+            />{" "} */}
+      </div>
       <div className="container">
         <div className="flex flex-col items-center">
           <Image
