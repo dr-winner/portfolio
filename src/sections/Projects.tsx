@@ -1,12 +1,13 @@
 import darkSaasLandingPage from "@/assets/images/dark-saas-landing-page.png";
 import lightSaasLandingPage from "@/assets/images/light-saas-landing-page.png";
 import aiStartupLandingPage from "@/assets/images/ai-startup-landing-page.png";
+import Image from "next/image";
 
 const portfolioProjects = [
   {
-    company: "Acme Corp",
-    year: "2022",
-    title: "Dark Saas Landing Page",
+    company: "RepChain",
+    year: "2024",
+    title: "Front-end Developer",
     results: [
       { title: "Enhanced user experience by 40%" },
       { title: "Improved site speed by 50%" },
@@ -16,9 +17,9 @@ const portfolioProjects = [
     image: darkSaasLandingPage,
   },
   {
-    company: "Innovative Co",
-    year: "2021",
-    title: "Light Saas Landing Page",
+    company: "PeerRamp",
+    year: "2024",
+    title: "Smart Contract Developer",
     results: [
       { title: "Boosted sales by 20%" },
       { title: "Expanded customer reach by 35%" },
@@ -28,9 +29,9 @@ const portfolioProjects = [
     image: lightSaasLandingPage,
   },
   {
-    company: "Quantum Dynamics",
-    year: "2023",
-    title: "AI Startup Landing Page",
+    company: "ABVS - Mowblox",
+    year: "2025",
+    title: "Front-end Engineer/Technical Writer",
     results: [
       { title: "Enhanced user experience by 40%" },
       { title: "Improved site speed by 50%" },
@@ -42,5 +43,34 @@ const portfolioProjects = [
 ];
 
 export const ProjectsSection = () => {
-  return <div>Projects Section</div>;
+  return (
+    <div>
+      <div className="container">
+        <p>Real World Results</p>
+        <h2>Featured Projects</h2>
+        <p>I tarnsform concepts into engaging digital innovatons.</p>
+        <div>
+          {portfolioProjects.map((project) => (
+            <div key={project.title}>
+              <div>
+                <span>{project.company}</span>
+                <span>{project.year}</span>
+              </div>
+              <h3>{project.title}</h3>
+              <hr />
+              <ul>
+                {project.results.map((result) => (
+                  <li>{result.title}</li>
+                ))}
+              </ul>
+              <a href={project.link}>
+                <button>View Project</button>
+              </a>
+              <Image src={project.image} alt={project.title} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
