@@ -3,6 +3,7 @@ import memojiAvatar2 from "@/assets/images/memoji-avatar-2.png";
 import memojiAvatar3 from "@/assets/images/memoji-avatar-3.png";
 import memojiAvatar4 from "@/assets/images/memoji-avatar-4.png";
 import memojiAvatar5 from "@/assets/images/memoji-avatar-5.png";
+import { SectionHeader } from "@/components/SectionHeader";
 import Image from "next/image";
 
 const testimonials = [
@@ -41,12 +42,12 @@ const testimonials = [
 export const Testimonials = () => {
   return (
     <div>
-      <p>Happy Clients</p>
-      <h2>Explore what my happy clients testify bout me</h2>
-      <p>
-        But, wait! Dont just take my words for it. This is a few testimonies
-        about me from all around the world
-      </p>
+      <SectionHeader
+        eyebrow="Happy Clients"
+        title="Explore what my happy clients testify bout me"
+        description="But, wait! Dont just take my words for it. This is just a few testimonies
+        about me from all around the world"
+      />
       <div>
         {testimonials.map((testimonial) => (
           <div key={testimonial.name}>
