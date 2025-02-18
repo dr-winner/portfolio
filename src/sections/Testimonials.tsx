@@ -5,7 +5,7 @@ import memojiAvatar4 from "@/assets/images/memoji-avatar-4.png";
 import memojiAvatar5 from "@/assets/images/memoji-avatar-5.png";
 import { SectionHeader } from "@/components/SectionHeader";
 import Image from "next/image";
-import grainImage from "@/assets/images/grain.jpg";
+import { Card } from "@/components/Card";
 
 const testimonials = [
   {
@@ -50,23 +50,24 @@ export const Testimonials = () => {
           description="But, wait! Dont just take my words for it. This is just a few testimonies
         about me from all around the world"
         />
-        <div>
+        <div className="mt-12">
           {testimonials.map((testimonial) => (
-            <div
-              key={testimonial.name}
-              className="bg-gray-800 rounded-3xl p-6 relative overflow-hidden z-0"
-            >
-              <div
-                className="absolute inset-0 opacity-5 -z-10"
-                style={{
-                  backgroundImage: `url(${grainImage.src})`,
-                }}
-              ></div>
-              <Image src={testimonial.avatar} alt={testimonial.name} />
-              <div>{testimonial.name}</div>
-              <div>{testimonial.position}</div>
-              <p>{testimonial.text}</p>
-            </div>
+            <Card key={testimonial.name}>
+              <div className="flex gap-4 items-center">
+                <div className="size-14 bg-gray-700 items-center justify-center inloine-flex rounded-full">
+                  <Image
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="max-h-full"
+                  />
+                </div>
+                <div className="">
+                  <div className="font-semibold">{testimonial.name}</div>
+                  <div className="text-sm text-white/40">{testimonial.position}</div>
+                </div>
+              </div>
+              <p className="mt-4 text-sm">{testimonial.text}</p>
+            </Card>
           ))}
         </div>
       </div>
