@@ -4,7 +4,7 @@ import aiStartupLandingPage from "@/assets/images/ai-startup-landing-page.png";
 import Image from "next/image";
 import CheckIcon from "@/assets/icons/check-circle.svg";
 import ArrowUpRightIcon from "@/assets/icons/arrow-up-right.svg";
-import grainiImage from "@/assets/images/grain.jpg";
+import grainImage from "@/assets/images/grain.jpg";
 import { SectionHeader } from "@/components/SectionHeader";
 
 const portfolioProjects = [
@@ -65,7 +65,7 @@ export const ProjectsSection = () => {
               <div
                 className="absolute inset-0 -z-10 opacity-5"
                 style={{
-                  backgroundImage: `url(${grainiImage.src})`,
+                  backgroundImage: `url(${grainImage.src})`,
                 }}
               ></div>
               <div className="lg:grid lg:grid-cols-2 lg:gap-16">

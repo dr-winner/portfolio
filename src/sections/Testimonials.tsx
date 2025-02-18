@@ -5,6 +5,7 @@ import memojiAvatar4 from "@/assets/images/memoji-avatar-4.png";
 import memojiAvatar5 from "@/assets/images/memoji-avatar-5.png";
 import { SectionHeader } from "@/components/SectionHeader";
 import Image from "next/image";
+import grainImage from "@/assets/images/grain.jpg";
 
 const testimonials = [
   {
@@ -41,22 +42,33 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <div>
-      <SectionHeader
-        eyebrow="Happy Clients"
-        title="Explore what my happy clients testify bout me"
-        description="But, wait! Dont just take my words for it. This is just a few testimonies
+    <div className="py-16">
+      <div className="container">
+        <SectionHeader
+          eyebrow="Happy Clients"
+          title="Explore what my happy clients testify bout me"
+          description="But, wait! Dont just take my words for it. This is just a few testimonies
         about me from all around the world"
-      />
-      <div>
-        {testimonials.map((testimonial) => (
-          <div key={testimonial.name}>
-            <Image src={testimonial.avatar} alt={testimonial.name} />
-            <div>{testimonial.name}</div>
-            <div>{testimonial.position}</div>
-            <p>{testimonial.text}</p>
-          </div>
-        ))}
+        />
+        <div>
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.name}
+              className="bg-gray-800 rounded-3xl p-6 relative overflow-hidden z-0"
+            >
+              <div
+                className="absolute inset-0 opacity-5 -z-10"
+                style={{
+                  backgroundImage: `url(${grainImage.src})`,
+                }}
+              ></div>
+              <Image src={testimonial.avatar} alt={testimonial.name} />
+              <div>{testimonial.name}</div>
+              <div>{testimonial.position}</div>
+              <p>{testimonial.text}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import memojiImage from "@/assets/images/memoji-computer.png";
 import ArrowDown from "@/assets/icons/arrow-down.svg";
-import grainiImage from "@/assets/images/grain.jpg";
+import grainImage from "@/assets/images/grain.jpg";
 import StarIcon from "@/assets/icons/star.svg";
 import { HeroOrbit } from "@/components/HeroOrbit";
 import SparkleIcon from "@/assets/icons/sparkle.svg";
@@ -14,7 +14,7 @@ export const Hero = () => {
         <div
           className="absolute inset-0 -z-30 opacity-5"
           style={{
-            backgroundImage: `url(${grainiImage.src})`,
+            backgroundImage: `url(${grainImage.src})`,
           }}
         ></div>
         {/* <div className="size-[420px] hero-ring"></div> */}
