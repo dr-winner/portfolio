@@ -111,61 +111,66 @@ const hobbies = [
 
 export const About = () => {
   return (
-    <div className="pb-96">
-      <SectionHeader
-        eyebrow="About Me"
-        title="A Glimpse Into My World"
-        description="Learn more about who I am, what I do, and inspires me."
-      />
-      <div>
-        <Card>
-          <div>
-            <StarIcon />
-            <h3>Explore My Reads</h3>
-            <p>These are the books shaping my perspective</p>
-          </div>
-          <Image
-            src={bookImage}
-            alt="A good general book by Dag Heward Mills"
-          />
-        </Card>
-        <Card>
-          <div>
-            <StarIcon />
-            <h3>Technologies And Tools</h3>
-            <p>
-              Explore the technologies and tools I use to innovate exceptional
-              digital experiences
-            </p>
-          </div>
-          <div>
-            {toolItems.map((item) => (
-              <div key={item.title}>
-                <span>{item.title}</span>
-                <TechIcon component={item.iconType} />
+    <div className="py-20">
+      <div className="container">
+        <SectionHeader
+          eyebrow="About Me"
+          title="A Glimpse Into My World"
+          description="Learn more about who I am, what I do, and inspires me."
+        />
+        <div className="mt-20">
+          <Card>
+            <div className="flex flex-col">
+              <div className="inline-flex items-center gap-2">
+                <StarIcon className="size-9 text-emerald-300"/>
+                <h3 className="font-serif text-3xl">My Reads</h3>
               </div>
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <div>
-            <StarIcon />
-            <h3>Beyond Coding</h3>
-            <p>Explore my hobbies and interests beyond the digital realm</p>
+              <p className="text-sm text-white/60 mt-2">Explore the books shaping my perspective on leadership</p>
+            </div>
+            <div className="w-40 mx-auto mt-8">
+            <Image
+              src={bookImage}
+              alt="A good general book by Dag Heward Mills"
+            /></div>
+          </Card>
+          <Card>
             <div>
-              {hobbies.map((hobby) => (
-                <div key={hobby.title}>
-                  <span>{hobby.title}</span>
-                  <span>{hobby.emoji}</span>
+              <StarIcon />
+              <h3>Technologies And Tools</h3>
+              <p>
+                Explore the technologies and tools I use to innovate exceptional
+                digital experiences
+              </p>
+            </div>
+            <div>
+              {toolItems.map((item) => (
+                <div key={item.title}>
+                  <span>{item.title}</span>
+                  <TechIcon component={item.iconType} />
                 </div>
               ))}
             </div>
-          </div>
-        </Card>
-        <Card>
-          <Image src={mapImage} alt="map" />
-          <Image src={smileMemoji} alt="smiling face" />
-        </Card>
+          </Card>
+          <Card>
+            <div>
+              <StarIcon />
+              <h3>Beyond Coding</h3>
+              <p>Explore my hobbies and interests beyond the digital realm</p>
+              <div>
+                {hobbies.map((hobby) => (
+                  <div key={hobby.title}>
+                    <span>{hobby.title}</span>
+                    <span>{hobby.emoji}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <Image src={mapImage} alt="map" />
+            <Image src={smileMemoji} alt="smiling face" />
+          </Card>
+        </div>
       </div>
     </div>
   );
