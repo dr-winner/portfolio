@@ -14,8 +14,10 @@ import Image from "next/image";
 import { TechIcon } from "@/components/TechIcon";
 import mapImage from "@/assets/images/accra-map.jpg";
 import smileMemoji from "@/assets/images/memoji-smile.png";
+import { CardHeader } from "@/components/CardHeader";
+import { ToolboxItems } from "@/components/ToolboxItems";
 
-const toolItems = [
+const toolboxItems = [
   {
     title: "JavaScript",
     iconType: JavaScriptIcon,
@@ -118,52 +120,48 @@ export const About = () => {
           title="A Glimpse Into My World"
           description="Learn more about who I am, what I do, and inspires me."
         />
-        <div className="mt-20">
-          <Card>
-            <div className="flex flex-col">
-              <div className="inline-flex items-center gap-2">
-                <StarIcon className="size-9 text-emerald-300"/>
-                <h3 className="font-serif text-3xl">My Reads</h3>
-              </div>
-              <p className="text-sm text-white/60 mt-2">Explore the books shaping my perspective on leadership</p>
-            </div>
+        <div className="mt-20 flex flex-col gap-8">
+          <Card className="h-[320px]">
+            <CardHeader
+              title="My Reads"
+              description="Explore the books shaping my perspective on leadership"
+            />
+
             <div className="w-40 mx-auto mt-8">
-            <Image
-              src={bookImage}
-              alt="A good general book by Dag Heward Mills"
-            /></div>
+              <Image
+                src={bookImage}
+                alt="A good general book by Dag Heward Mills"
+              />
+            </div>
+          </Card>
+          <Card className="h-[320px] p-0">
+            <CardHeader
+              title="Technologies And Tools"
+              description="Explore the technologies and tools I use to innovate exceptional
+                digital experiences"
+              className="px-6 pt-6"
+            />
+
+            <ToolboxItems items={toolboxItems} className="mt-6" />
+            <ToolboxItems
+              items={toolboxItems}
+              className="mt-6 "
+              itemsWrapperClassName="-translate-x-1/2"
+            />
           </Card>
           <Card>
+            <CardHeader
+              title="Beyond Coding"
+              description="Explore my hobbies and interests beyond the digital realm"
+            />
+
             <div>
-              <StarIcon />
-              <h3>Technologies And Tools</h3>
-              <p>
-                Explore the technologies and tools I use to innovate exceptional
-                digital experiences
-              </p>
-            </div>
-            <div>
-              {toolItems.map((item) => (
-                <div key={item.title}>
-                  <span>{item.title}</span>
-                  <TechIcon component={item.iconType} />
+              {hobbies.map((hobby) => (
+                <div key={hobby.title} className="inline-flex gap-2 px-6 bg-gradient-to-r from-emerald-300 to-sky-400 rounded-full">
+                  <span>{hobby.title}</span>
+                  <span>{hobby.emoji}</span>
                 </div>
               ))}
-            </div>
-          </Card>
-          <Card>
-            <div>
-              <StarIcon />
-              <h3>Beyond Coding</h3>
-              <p>Explore my hobbies and interests beyond the digital realm</p>
-              <div>
-                {hobbies.map((hobby) => (
-                  <div key={hobby.title}>
-                    <span>{hobby.title}</span>
-                    <span>{hobby.emoji}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </Card>
           <Card>
