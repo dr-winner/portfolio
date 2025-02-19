@@ -1,6 +1,5 @@
 import { Card } from "@/components/Card";
 import { SectionHeader } from "@/components/SectionHeader";
-import StarIcon from "@/assets/icons/star.svg";
 import JavaScriptIcon from "@/assets/icons/square-js.svg";
 import PythonIcon from "@/assets/icons/python-svgrepo-com.svg";
 import HardHatIcon from "@/assets/icons/Hardhat.svg";
@@ -11,7 +10,6 @@ import NextjsIcon from "@/assets/icons/nextjs-svgrepo-com.svg";
 import bookImage from "@/assets/images/A-Good-General-Dag-Heward-Mills.jpg";
 import React from "react";
 import Image from "next/image";
-import { TechIcon } from "@/components/TechIcon";
 import mapImage from "@/assets/images/accra-map.jpg";
 import smileMemoji from "@/assets/images/memoji-smile.png";
 import { CardHeader } from "@/components/CardHeader";
@@ -52,62 +50,92 @@ const hobbies = [
   {
     title: "Cycling",
     emoji: "🚴",
+    left: '5%',
+    top: '5%',
   },
   {
     title: "Hackathons",
     emoji: "🏆",
+    left: '50%',
+    top: '5%',
   },
   {
     title: "Gaming",
     emoji: "🎮",
+    left: '10%',
+    top: '35%',
   },
   {
     title: "Technical Analysis",
     emoji: "📈",
+    left: '35%',
+    top: '40%',
   },
   {
     title: "Traveling",
     emoji: "✈️",
+    left: '70%',
+    top: '45%',
   },
   {
     title: "Reading Blogs",
     emoji: "📖",
+    left: '5%',
+    top: '655',
   },
   {
     title: "Camping",
     emoji: "🏕️",
+    left: '',
+    top: '',
   },
   {
     title: "Fitness & Gym",
     emoji: "🏋️",
+    left: '',
+    top: '',
   },
   {
     title: "Photography",
     emoji: "📸",
+    left: '',
+    top: '',
   },
   {
     title: "Chess",
     emoji: "♟️",
+    left: '',
+    top: '',
   },
   {
     title: "Meditation",
     emoji: "🧘",
+    left: '',
+    top: '',
   },
   {
     title: "Cooking",
     emoji: "🍳",
+    left: '',
+    top: '',
   },
   {
     title: "NFT minting",
     emoji: "🖼️",
+    left: '',
+    top: '',
   },
   {
     title: "Music",
     emoji: "🎵",
+    left: '',
+    top: '',
   },
   {
     title: "Exploration",
     emoji: "🌐",
+    left: '',
+    top: '',
   },
 ];
 
@@ -149,16 +177,26 @@ export const About = () => {
               itemsWrapperClassName="-translate-x-1/2"
             />
           </Card>
-          <Card>
+          <Card className="h-[320px] p-0 flex flex-col">
             <CardHeader
               title="Beyond Coding"
               description="Explore my hobbies and interests beyond the digital realm"
+              className="px-6 py-6"
             />
 
-            <div>
+            <div className="relative flex-1">
               {hobbies.map((hobby) => (
-                <div key={hobby.title} className="inline-flex gap-2 px-6 bg-gradient-to-r from-emerald-300 to-sky-400 rounded-full">
-                  <span>{hobby.title}</span>
+                <div
+                  key={hobby.title}
+                  className="inline-flex items-center gap-2 px-6 bg-gradient-to-r from-emerald-300 to-sky-400 rounded-full py-1.5 absolute"
+                  style={{
+                    left: hobby.left,
+                    top: hobby.top,
+                  }}
+                >
+                  <span className="font-medium text-gray-950">
+                    {hobby.title}
+                  </span>
                   <span>{hobby.emoji}</span>
                 </div>
               ))}
