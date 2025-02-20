@@ -17,7 +17,7 @@ export const Hero = () => {
             backgroundImage: `url(${grainImage.src})`,
           }}
         ></div>
-        {/* <div className="size-[420px] hero-ring"></div> */}
+        <div className="size-[420px] hero-ring"></div>
         <div className="size-[620px] hero-ring"></div>
         <div className="size-[820px] hero-ring"></div>
         <div className="size-[1020px] hero-ring"></div>
@@ -123,7 +123,7 @@ export const Hero = () => {
             engineering 🎨. I build secure smart contracts 🔒, brilliant AI
             agents 🧠, and code magic 🪄 into user interfaces 💻. When I&apos;m
             not coding, I&apos;m debugging life with a cup of coffee ☕. Ready
-            to create the future? Let&apos;s do this! 🚀✨🔥🌟📈🤓👨‍💻
+            to create the future? Let&apos;s do this! 🚀👨‍💻
           </p>
         </div>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">

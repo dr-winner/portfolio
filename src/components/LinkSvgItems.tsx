@@ -26,7 +26,7 @@ export const LinkSvgItems = ({
           <a
             href=""
             key={item.title}
-            className="inline-flex items-center md:gap-1 gap-1.5"
+            className="inline-flex items-center md:gap-1 gap-1.5 cursor-pointer hover:cursor-wait"
           >
             <span className="font-semibold lg:text-base md:text-xs">{item.title}</span>
 

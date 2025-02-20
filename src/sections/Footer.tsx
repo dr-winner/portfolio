@@ -4,7 +4,6 @@ import InstagramIcon from "@/assets/icons/icons8-instagram.svg";
 import DiscordIcon from "@/assets/icons/icons8-discord.svg";
 import LinkedInIcon from "@/assets/icons/icons8-linkedin.svg";
 import GitHubIcon from "@/assets/icons/github.svg";
-// import TelegramIcon from "@/assets/icons/icons8-telegram.svg";
 import MediumIcon from "@/assets/icons/icons8-telegram.svg";
 import { LinkSvgItems } from "@/components/LinkSvgItems";
 
@@ -36,14 +35,9 @@ const footerLinks = [
   },
   {
     title: "GitHub",
-    href: "",
+    href: "https://github.com/dr-winner/",
     iconType: GitHubIcon,
   },
-  // {
-  //   title: "Telegram",
-  //   href: "",
-  //   iconType: TelegramIcon,
-  // },
 ];
 
 export const Footer = () => {
