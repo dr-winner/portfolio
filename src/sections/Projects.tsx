@@ -57,10 +57,12 @@ export const Projects = () => {
           innovatons."
         />
         <div className="flex md:mt-20 flex-col mt-10 gap-20">
-          {portfolioProjects.map((project) => (
+          {portfolioProjects.map((project, index) => (
             <Card
               key={project.title}
-              className=" px-8 md:px-10 pt-8 pb-0 md:pt-12 lg:pt-16 lg:px-20 "
+              className=" px-8 md:px-10 pt-8 pb-0 md:pt-12 lg:pt-16 lg:px-20 sticky top-16 " style={{
+                top: `calc(64px + ${index * 60}px)`
+              }}
             >              
               <div className="lg:grid lg:grid-cols-2 lg:gap-16">
                 <div className="lg:pb-16">
