@@ -1,8 +1,10 @@
 "use client";
 
-import darkSaasLandingPage from "@/assets/images/dark-saas-landing-page.png";
-import lightSaasLandingPage from "@/assets/images/light-saas-landing-page.png";
-import aiStartupLandingPage from "@/assets/images/ai-startup-landing-page.png";
+import repChainLandingPage from "@/assets/images/repchain-landing-page.png";
+import peeRampLandingPage from "@/assets/images/peeRamp.png";
+import AIXMarketAnalyzer from "@/assets/images/AIXMarketAnalyzer.png";
+import motiFiAi from "@/assets/images/motiFiAi.png";
+import landRegOnIcp from "@/assets/images/landOnIcp.png";
 import Image from "next/image";
 import CheckIcon from "@/assets/icons/check-circle.svg";
 import ArrowUpRightIcon from "@/assets/icons/arrow-up-right.svg";
@@ -12,44 +14,69 @@ import { Card } from "@/components/Card";
 const portfolioProjects = [
   {
     company: "RepChain",
-    year: "2024",
-    title: "Front-end Developer",
+    year: "2025",
+    title: "Front-end Development",
     results: [
-      { title: "Enhanced user experience by 40%" },
-      { title: "Improved site speed by 50%" },
-      { title: "Increased mobile traffic by 35%" },
+      { title: "Create a Transparent and Immutable Reputation System" },
+      { title: "Enhance Trust in Digital Transactions" },
+      { title: "Empower Users with Portable Reputation" },
+      { title: "Ensure Privacy and Security" },
     ],
-    link: "",
-    image: darkSaasLandingPage,
+    link: "https://github.com/dr-winner/repChain",
+    image: repChainLandingPage,
   },
   {
     company: "PeerRamp",
-    year: "2024",
-    title: "Smart Contract Developer",
+    year: "2025",
+    title: "Smart Contract Engineering",
     results: [
-      { title: "Boosted sales by 20%" },
-      { title: "Expanded customer reach by 35%" },
-      { title: "Increased brand awareness by 15%" },
+      { title: "Facilitate Seamless Peer-to-Peer Lending" },
+      { title: "Ensure Trust and Security in Transactions" },
+      { title: "Encourage Responsible Borrowing and Lending" },
+      { title: "Scale to Multiple Universities and Beyond" },
     ],
-    link: "",
-    image: lightSaasLandingPage,
+    link: "https://peer-ramp.vercel.app/",
+    image: peeRampLandingPage,
   },
   {
-    company: "ABVS - Mowblox",
-    year: "2025",
-    title: "Front-end Engineer/Technical Writer",
+    company: "AIX-Market-Analyzer",
+    year: "2024",
+    title: "Technical Writing",
     results: [
-      { title: "Enhanced user experience by 40%" },
-      { title: "Improved site speed by 50%" },
-      { title: "Increased mobile traffic by 35%" },
+      { title: "Provide data-driven insights for better decision-making in AI token investments." },
+      { title: "Analyze AI Tokens for Robustness, Accuracy and Decisiveness" },
+      { title: "Leverage advanced algorithms for token comparison" },
     ],
-    link: "",
-    image: aiStartupLandingPage,
+    link: "https://aix-market-analyzer.vercel.app/",
+    image: AIXMarketAnalyzer,
+  },{
+    company: "motiFiAi",
+    year: "2025",
+    title: "Front-end Development",
+    results: [
+      { title: "Keeping track of multiple investments across protocols" },
+      { title: "Analyzes top coins and provides market insights using advanced AI" },
+      { title: "Understanding  market sentiment and trends to help react quickly to market opportunities" },
+    ],
+    link: "https://motifi-ai.vercel.app/",
+    image: motiFiAi,
+  },{
+    company: "Decentralized Property Registry on ICP",
+    year: "2024",
+    title: "Front-End Development",
+    results: [
+      { title: "Access your property registry from anywhere in the world" },
+      { title: "Blockchain-powered security for your property records" },
+      { title: "Identity verification using ICP's authentication" },
+      { title: "Records stored across nodes for maximum reliability" },
+      { title: "Secure transactions with user-controlled data" },
+    ],
+    link: "https://github.com/dr-winner/Decentralized-Land-Registry-on-ICP",
+    image: landRegOnIcp,
   },
 ];
 
 export const Projects = () => {
-  // const router = useRouter();
   return (
 
     <section id="projects" className="pb-16 lg:py-24">
