@@ -55,6 +55,11 @@ const config: Config = {
         },
       },
     },
+    variants: {
+      extend: {
+        textDecoration: ['hover'],
+      },
+    },
   },
   plugins: [],
 };

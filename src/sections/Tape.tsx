@@ -2,13 +2,15 @@ import React, { Fragment } from "react";
 import StarIcon from "@/assets/icons/star.svg";
 
 const words = [
-  "Security",
+  "Secure",
   "User Friendly",
   // "Motoko",
+  "Ai Agent",
   // "scaffoldEth",
   "Search Optimization",
   "Usable",
   "Reliable",
+  "Gamification",
   // "JavaScript",
   "Scalable",
   // "Solidity",
@@ -19,6 +21,7 @@ const words = [
   "Smart Contracts",
   "Figma",
   "Blockchain",
+  "NFT",
   "Web3",
   "On-chain",
 ];

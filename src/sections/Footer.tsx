@@ -47,10 +47,10 @@ export const Footer = () => {
       <div className="container">
         <div className="border-t border-white/15 py-6 text-sm flex flex-col md:flex-row md:justify-between items-center md:gap-2 gap-8">
           <div className="text-white/40">
-            &copy; {new Date().getFullYear()}. All rights reserved.
+            &copy;{new Date().getFullYear()} All rights reserved <span className="font-serif text-sm text-center mt-8 tracking-wide font-sm bg-gradient-to-r from-emerald-300 to-sky-400 text-transparent bg-clip-text">drWinner</span>
           </div>
-          <nav  id="footer" className="">
-            <LinkSvgItems items={footerLinks} className="" />
+          <nav id="footer" className="p- text-white">
+            <LinkSvgItems items={footerLinks} className="mt-4" />
           </nav>
         </div>
       </div>
