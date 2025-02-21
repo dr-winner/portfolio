@@ -9,7 +9,7 @@ export const LinkSvgItems = ({
 }: {
   items: {
     title: string;
-    href: string;
+    link: string;
     iconType: React.ElementType;
   }[];
   className?: string;
@@ -25,7 +25,7 @@ export const LinkSvgItems = ({
       >
         {items.map((item) => (
           <a
-            href={item.href}
+            href={item.link}
             target="_blank"
             rel="noopener noreferrer"
             key={item.title}

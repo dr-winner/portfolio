@@ -10,32 +10,32 @@ import { LinkSvgItems } from "@/components/LinkSvgItems";
 const footerLinks = [
   {
     title: "Twitter/X",
-    href: "",
+    link: "",
     iconType: XIcon,
   },
   {
     title: "Instagram",
-    href: "",
+    link: "",
     iconType: InstagramIcon,
   },
   {
     title: "Medium",
-    href: "",
+    link: "",
     iconType: MediumIcon,
   },
   {
     title: "LinkedIn",
-    href: "",
+    link: "",
     iconType: LinkedInIcon,
   },
   {
     title: "Discord",
-    href: "",
+    link: "",
     iconType: DiscordIcon,
   },
   {
     title: "GitHub",
-    href: "https://github.com/dr-winner/",
+    link: "https://github.com/dr-winner/",
     iconType: GitHubIcon,
   },
 ];

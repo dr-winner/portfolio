@@ -15,7 +15,7 @@ const portfolioProjects = [
   {
     company: "RepChain",
     year: "2025",
-    title: "Front-end Development",
+    title: "Front-End Developer",
     results: [
       { title: "Create a Transparent and Immutable Reputation System" },
       { title: "Enhance Trust in Digital Transactions" },
@@ -28,7 +28,7 @@ const portfolioProjects = [
   {
     company: "PeerRamp",
     year: "2025",
-    title: "Smart Contract Engineering",
+    title: "Smart Contract Engineer",
     results: [
       { title: "Facilitate Seamless Peer-to-Peer Lending" },
       { title: "Ensure Trust and Security in Transactions" },
@@ -41,7 +41,7 @@ const portfolioProjects = [
   {
     company: "AIX-Market-Analyzer",
     year: "2024",
-    title: "Technical Writing",
+    title: "Technical Writer",
     results: [
       { title: "Provide data-driven insights for better decision-making in AI token investments." },
       { title: "Analyze AI Tokens for Robustness, Accuracy and Decisiveness" },
@@ -52,7 +52,7 @@ const portfolioProjects = [
   },{
     company: "motiFiAi",
     year: "2025",
-    title: "Front-end Development",
+    title: "Back-End Development",
     results: [
       { title: "Keeping track of multiple investments across protocols" },
       { title: "Analyzes top coins and provides market insights using advanced AI" },
@@ -61,7 +61,7 @@ const portfolioProjects = [
     link: "https://motifi-ai.vercel.app/",
     image: motiFiAi,
   },{
-    company: "Decentralized Property Registry on ICP",
+    company: "Property Registry dApp on ICP",
     year: "2024",
     title: "Front-End Development",
     results: [
@@ -92,7 +92,7 @@ export const Projects = () => {
             <Card
               key={project.title}
               className=" px-8 md:px-10 pt-8 pb-0 md:pt-12 lg:pt-16 lg:px-20 sticky top-16 " style={{
-                top: `calc(64px + ${index * 60}px)`
+                top: `calc(64px + ${index * 30}px)`
               }}
             >              
               <div className="lg:grid lg:grid-cols-2 lg:gap-16">

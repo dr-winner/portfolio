@@ -29,7 +29,10 @@ export const Contact = () => {
               </p>
             </div>
             <div>
-              <button className="text-white bg-gray-900 inline-flex items-center px-6 h-12 rounded-xl gap-2 w-max border border-gray-900">
+              <button
+                className="text-white bg-gray-900 inline-flex items-center px-6 h-12 rounded-xl gap-2 w-max border border-gray-900"
+                onClick={() => (window.location.href = "mailto:drwinner03@gmail.com?subject=Inquiry&body=Hello, I would like to get in touch with you.")}
+              >
                 <span className="font-semibold">Reach out now</span>
                 <ArrowUpRightIcon className="size-4" />
               </button>
