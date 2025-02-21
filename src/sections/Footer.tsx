@@ -49,7 +49,7 @@ export const Footer = () => {
           <div className="text-white/40">
             &copy; {new Date().getFullYear()}. All rights reserved.
           </div>
-          <nav className="">
+          <nav  id="footer" className="">
             <LinkSvgItems items={footerLinks} className="" />
           </nav>
         </div>
