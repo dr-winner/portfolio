@@ -11,7 +11,7 @@ const calistoga = Calistoga({
 });
 
 export const metadata: Metadata = {
-  title: "Richard Winne Duvor",
+  title: "Richard Winner Duvor",
   description: "Fullstack Web Developer, Smart Contract Engineer & AI/MLOps Enthusiast",
 };
 
