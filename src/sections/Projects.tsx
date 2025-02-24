@@ -65,11 +65,9 @@ const portfolioProjects = [
     year: "2024",
     title: "Front-End Development",
     results: [
-      { title: "Access your property registry from anywhere in the world" },
       { title: "Blockchain-powered security for your property records" },
       { title: "Identity verification using ICP's authentication" },
       { title: "Records stored across nodes for maximum reliability" },
-      { title: "Secure transactions with user-controlled data" },
     ],
     link: "https://github.com/dr-winner/Decentralized-Land-Registry-on-ICP",
     image: landRegOnIcp,
