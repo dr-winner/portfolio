@@ -3,12 +3,19 @@ import memojiAvatar2 from "@/assets/images/memoji-avatar-2.png";
 import memojiAvatar3 from "@/assets/images/memoji-avatar-3.png";
 import memojiAvatar4 from "@/assets/images/memoji-avatar-4.png";
 import memojiAvatar5 from "@/assets/images/memoji-avatar-5.png";
+import suadMemoji from "@/assets/images/suadmemoji.png";
 import { SectionHeader } from "@/components/SectionHeader";
 import Image from "next/image";
 import { Card } from "@/components/Card";
 import { Fragment } from "react";
 
 const testimonials = [
+  {
+    name: "Suad Macauley",
+    position: "Front-End Developer @ AIT",
+    text: "Winner is an exceptionally dedicated and driven individual who consistently delivers high-quality results. His expertise and guidance have been invaluable to me, both academically and professionally. Winner's profound insights and work ethic make him an outstanding asset, and I have no hesitation in recommending him for any endeavor.",
+    avatar: suadMemoji,
+  },
   {
     name: "Nicholas Kwasi",
     position: "Chief Executive Officer @ Tanic Tchnologies",
