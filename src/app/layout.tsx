@@ -11,8 +11,8 @@ const calistoga = Calistoga({
 });
 
 export const metadata: Metadata = {
-  title: "Richard Winne Duvor",
-  description: "My latest portfolio website",
+  title: "Richard Winner Duvor",
+  description: "Fullstack Web Developer, Smart Contract Engineer & AI/MLOps Enthusiast",
 };
 
 export default function RootLayout({
