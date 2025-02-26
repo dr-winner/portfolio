@@ -11,12 +11,6 @@ import { Fragment } from "react";
 
 const testimonials = [
   {
-    name: "Suad Macauley",
-    position: "Front-End Developer @ AIT",
-    text: "Winner is an exceptionally dedicated and driven individual who consistently delivers high-quality results. His expertise and guidance have been invaluable to me, both academically and professionally. Winner's profound insights and work ethic make him an outstanding asset, and I have no hesitation in recommending him for any endeavor.",
-    avatar: suadMemoji,
-  },
-  {
     name: "Nicholas Kwasi",
     position: "Chief Executive Officer @ Tanic Tchnologies",
     text: "Richard Winner was instrumental in transforming our website into a powerful digital experience. His attention to detail and ability to understand our brand is exceptional. We're thrilled with his good works!",
@@ -35,14 +29,20 @@ const testimonials = [
     avatar: memojiAvatar2,
   },
   {
+    name: "Suad Macaulay",
+    position: "Front-End Developer @ AIT",
+    text: "Winner is an exceptionally dedicated and driven individual who consistently delivers high-quality results. His expertise and guidance have been invaluable to me, both academically and professionally. Winner's profound insights and work ethic make him an outstanding asset, and I have no hesitation in recommending him for any endeavor.",
+    avatar: suadMemoji,
+  },
+  {
     name: "Ewoenam Bridget",
-    position: "Product Manager @ AdanfoCash",
+    position: "Product Designer @ AdanfoCash",
     text: "He is a true frontend wizard for real!. He developed our complex product and transformed it into an intuitive and engaging user interface and solid user experience. We're already seeing positive feedback from our founders, kudus!.",
     avatar: memojiAvatar4,
   },
   {
     name: "Michael Brown",
-    position: "Human Resource Manager @ ChainCheck",
+    position: "Human Resource Manager @ ChainCheque",
     text: "He is a solid engineer who worked on our smart contract security implementation and he has been nothing short of exceptional. He's a talented developer Africa could ever be blessed with and he is also a great communicator. We highly recommend him.",
     avatar: memojiAvatar5,
   },
