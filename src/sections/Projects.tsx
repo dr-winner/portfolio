@@ -1,6 +1,6 @@
 "use client";
 
-import mintedinLandingPage from "@/assets/images/repchain-landing-page.png";
+import mintedinLandingPage from "@/assets/images/mintedinLandingPage";
 import peeRampLandingPage from "@/assets/images/peeRamp.png";
 import AIXMarketAnalyzer from "@/assets/images/AIXMarketAnalyzer.png";
 import motiFiAi from "@/assets/images/motiFiAi.png";
