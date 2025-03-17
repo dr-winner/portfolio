@@ -61,9 +61,9 @@ const portfolioProjects = [
     link: "https://motifi-ai.vercel.app/",
     image: motiFiAi,
   },{
-    company: "Property Registry dApp on ICP",
+    company: "Property dApp on ICP",
     year: "2024",
-    title: "Front-End Development",
+    title: "Front-End ReactJS",
     results: [
       { title: "Blockchain-powered security for your property records" },
       { title: "Identity verification using ICP's authentication" },
