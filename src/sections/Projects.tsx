@@ -1,6 +1,6 @@
 "use client";
 
-import repChainLandingPage from "@/assets/images/repchain-landing-page.png";
+import mintedinLandingPage from "@/assets/images/repchain-landing-page.png";
 import peeRampLandingPage from "@/assets/images/peeRamp.png";
 import AIXMarketAnalyzer from "@/assets/images/AIXMarketAnalyzer.png";
 import motiFiAi from "@/assets/images/motiFiAi.png";
@@ -13,22 +13,22 @@ import { Card } from "@/components/Card";
 
 const portfolioProjects = [
   {
-    company: "RepChain",
+    company: "mintedIn",
     year: "2025",
-    title: "Front-End Developer",
+    title: "NextJS",
     results: [
       { title: "Create a Transparent and Immutable Reputation System" },
       { title: "Enhance Trust in Digital Transactions" },
       { title: "Empower Users with Portable Reputation" },
       { title: "Ensure Privacy and Security" },
     ],
-    link: "https://github.com/dr-winner/repChain",
-    image: repChainLandingPage,
+    link: "https://mintedin.vercel.app/",
+    image: mintedinLandingPage,
   },
   {
     company: "PeerRamp",
     year: "2025",
-    title: "Smart Contract Engineer",
+    title: "Solidity Smart Contract",
     results: [
       { title: "Facilitate Seamless Peer-to-Peer Lending" },
       { title: "Ensure Trust and Security in Transactions" },
@@ -41,7 +41,7 @@ const portfolioProjects = [
   {
     company: "AIX-Market-Analyzer",
     year: "2024",
-    title: "Technical Writer",
+    title: "LSTM - SingularityNet",
     results: [
       { title: "Provide data-driven insights for better decision-making in AI token investments." },
       { title: "Analyze AI Tokens for Robustness, Accuracy and Decisiveness" },
@@ -52,7 +52,7 @@ const portfolioProjects = [
   },{
     company: "motiFiAi",
     year: "2025",
-    title: "Back-End Development",
+    title: "Frontend - NextJS",
     results: [
       { title: "Keeping track of multiple investments across protocols" },
       { title: "Analyzes top coins and provides market insights using advanced AI" },
