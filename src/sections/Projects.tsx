@@ -15,7 +15,7 @@ const portfolioProjects = [
   {
     company: "mintedIn",
     year: "2025",
-    title: "NextJS",
+    title: "Frontend NextJS",
     results: [
       { title: "Create a Transparent and Immutable Reputation System" },
       { title: "Enhance Trust in Digital Transactions" },
