@@ -1,6 +1,6 @@
 "use client";
 
-import mintedinLandingPage from "@/assets/images/mintedinLandingPage";
+import mintedinLandingPage from "@/assets/images/mintedinLanding-Page.png";
 import peeRampLandingPage from "@/assets/images/peeRamp.png";
 import AIXMarketAnalyzer from "@/assets/images/AIXMarketAnalyzer.png";
 import motiFiAi from "@/assets/images/motiFiAi.png";
@@ -13,7 +13,7 @@ import { Card } from "@/components/Card";
 
 const portfolioProjects = [
   {
-    company: "mintedIn",
+    company: "mintedIn - Scroll",
     year: "2025",
     title: "Frontend NextJS",
     results: [
