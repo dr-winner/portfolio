@@ -1,6 +1,7 @@
 "use client";
 
 import mintedinLandingPage from "@/assets/images/mintedinLanding-Page.png";
+import proof9LandingPage from "@/assets/images/proof9.png";
 import peeRampLandingPage from "@/assets/images/peeRamp.png";
 import AIXMarketAnalyzer from "@/assets/images/AIXMarketAnalyzer.png";
 import motiFiAi from "@/assets/images/motiFiAi.png";
@@ -12,6 +13,19 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Card } from "@/components/Card";
 
 const portfolioProjects = [
+  {
+    company: "Proof9",
+    year: "2025",
+    title: "Sound Rights Platform",
+    results: [
+      { title: "Protect, verify, license, and monetize sound IP on-chain" },
+      { title: "AI-powered originality verification for creators" },
+      { title: "Enable real connection with fans" },
+      { title: "Powered by Story Protocol, Yakoa, and Tomo" },
+    ],
+    link: "https://proof9.xyz/",
+    image: proof9LandingPage,
+  },
   {
     company: "mintedIn - Scroll",
     year: "2025",
