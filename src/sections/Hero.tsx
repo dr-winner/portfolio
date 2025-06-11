@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { outfit900 } from "@/app/outfitFont";
 import Image from "next/image";
 import memojiImage from "@/assets/images/memoji-computer.png";
 import ArrowDown from "@/assets/icons/arrow-down.svg";
@@ -158,8 +159,18 @@ export const Hero = () => {
           </div>
         </div>
         <div className="mx-auto relative z-20">
-          <h1 className="font-serif text-3xl uppercase md:text-5xl text-center mt-8 tracking-wide font-bold bg-gradient-to-r from-emerald-300 to-sky-400 text-transparent bg-clip-text">
-            Richard Winner Duvor
+          <h1
+            className="text-4xl md:text-6xl text-center mt-8 tracking-wide font-black"
+            style={{
+              fontFamily: outfit900.fontFamily,
+              fontWeight: outfit900.fontWeight,
+              WebkitTextStroke: '2.5px #4adecb',
+              color: 'transparent',
+              background: 'none',
+              textShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            }}
+          >
+            RICHARD WINNER DUVOR
           </h1>
           <h2 className="text-2xl md:text-4xl text-center mt-8 tracking-wide font-bold max-w-lg mx-auto">
             {" "}
