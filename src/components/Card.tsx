@@ -1,27 +1,27 @@
 import React, { ComponentPropsWithoutRef } from "react";
-import grainImage from "@/assets/images/grain.jpg";
-import { twMerge } from "tailwind-merge";
+import clsx from "clsx";
+import { NoiseLayer } from "./NoiseLayer";
 
-export const Card = ({
-  className,
-  children,
-  ...other
-}: ComponentPropsWithoutRef<"div">) => {
+type CardProps = ComponentPropsWithoutRef<"div"> & {
+  glow?: boolean;
+  interactive?: boolean;
+};
+
+export function Card({ className, glow = false, interactive = false, children, ...rest }: CardProps) {
   return (
     <div
-      className={twMerge(
-        "bg-gray-800 rounded-3xl relative z-0 overflow-hidden after:z-10   after:content-[''] after:absolute after:inset-0 after:outline-2 after:outline after:-outline-offset-2 after:rounded-3xl after:outline-white/20  after:pointer-events-none",
+      className={clsx(
+        "relative overflow-hidden rounded-2xl border border-white/10 bg-ink-100/70 backdrop-blur-sm",
+        "before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl",
+        "before:bg-[radial-gradient(ellipse_at_top_left,rgba(60,207,255,0.10),transparent_45%)]",
+        interactive && "transition-colors duration-300 hover:border-cyber-300/30",
+        glow && "shadow-glow-sm",
         className
       )}
-      {...other}
+      {...rest}
     >
-      <div
-        className="absolute inset-0 -z-10 opacity-5"
-        style={{
-          backgroundImage: `url(${grainImage.src})`,
-        }}
-      ></div>
-      {children}
+      <NoiseLayer className="-z-0" />
+      <div className="relative z-10 h-full">{children}</div>
     </div>
   );
-};
+}

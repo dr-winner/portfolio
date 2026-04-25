@@ -1,45 +1,80 @@
-'use client';
+"use client";
 
-import React from "react";
-import ArrowUpRightIcon from "@/assets/icons/arrow-up-right.svg";
-import grainImage from "@/assets/images/grain.jpg";
+import { ArrowUpRight, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { profile } from "@/content/profile";
+import { Card } from "@/components/Card";
+import { track } from "@/lib/telemetry.client";
 
-export const Contact = () => {
+export function Contact() {
+  function mailto() {
+    track("contact_button", { path: "/#contact" });
+    window.location.href = `mailto:${profile.email}?subject=Let%27s%20build%20something&body=Hi%20Richard%2C%20`;
+  }
+
   return (
-    <div id="contact" className="py-16 pt-12 lg:py-24 lg:pt-20">
+    <section id="contact" className="relative py-20 md:py-28 lg:py-32">
       <div className="container">
-        <div className="bg-gradient-to-r from-emerald-300 to-sky-400 text-gray-900 py-8 px-10 rounded-3xl text-center md:text-left relative overflow-hidden ">
-          <div
-            className="absolute inset-0 opacity-10 -z-10"
-            style={{
-              backgroundImage: `url(${grainImage.src})`,
-            }}
-          ></div>
-          <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center z-10">
+        <Card className="relative overflow-hidden p-6 sm:p-8 md:p-12">
+          <div className="absolute inset-0 bg-grid-soft opacity-30" aria-hidden />
+          <div className="absolute -top-24 -right-20 size-[360px] rounded-full bg-cyber-300/10 blur-3xl" aria-hidden />
+          <div className="absolute -bottom-24 -left-20 size-[340px] rounded-full bg-signal-300/10 blur-3xl" aria-hidden />
+
+          <div className="relative grid items-center gap-10 md:grid-cols-[1.3fr_1fr]">
             <div>
-              <h2 className="font-serif text-2xl md:text-3xl">
-                Let&apos;s Build Something the World Can&apos;t Ignore!
+              <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
+                /contact
+              </span>
+              <h2 className="mt-4 font-display text-3xl md:text-5xl tracking-tight text-white">
+                Have a system that needs building — <span className="text-gradient-cyber">or defending?</span>
               </h2>
-              <p className="text-sm mt-2">
-                I bring ideas to life through cutting-edge technology and
-                creative solutions. Whether it&apos;s web development, AI, or
-                blockchain, I&apos;m ready to build something impactful.
-                Let&apos;s collaborate and create something the world can&apos;t
-                wait to explore!{" "}
+              <p className="mt-4 max-w-xl text-white/70 md:text-lg">
+                I&apos;m open to SOC, detection-engineering, and AI-agent roles, and to select contract
+                work. The fastest way in is email.
               </p>
+
+              <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                <button
+                  type="button"
+                  onClick={mailto}
+                  className="group inline-flex min-w-0 w-full max-w-full items-center justify-start gap-2 rounded-xl bg-gradient-to-r from-cyber-300 to-signal-300 px-4 py-3 text-left text-sm font-semibold text-ink shadow-glow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 sm:w-auto sm:max-w-none sm:px-5"
+                  title={`Email ${profile.name}`}
+                  aria-label="Send email (opens your mail app)"
+                >
+                  <Mail className="size-4 shrink-0" />
+                  <span className="min-w-0 flex-1 break-words sm:break-normal">{profile.emailObfuscated}</span>
+                  <ArrowUpRight className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+                <a
+                  href={profile.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-white/90 transition-colors hover:border-cyber-300/40 hover:text-white sm:w-auto sm:justify-start"
+                >
+                  LinkedIn
+                  <ArrowUpRight className="size-4" />
+                </a>
+              </div>
             </div>
-            <div>
-              <button
-                className="text-white relative hover:scale-105 transition-transform duration-300 bg-gray-900 inline-flex items-center px-6 h-12 rounded-xl gap-2 w-max border border-gray-900 cursor-pointer z-510"
-                onClick={() => (window.location.href = "mailto:drwinner03@gmail.com?subject=Inquiry&body=Hi Winner, I would like to get in touch with you.")}
-              >
-                <span className="font-semibold">Reach out now</span>
-                <ArrowUpRightIcon className="size-4" />
-              </button>
+
+            <div className="rounded-xl border border-white/10 bg-ink/60 p-5 font-mono text-[13px] backdrop-blur">
+              <div className="flex items-center gap-2 text-white/50">
+                <Sparkles className="size-3.5 text-cyber-300" />
+                <span>what to include</span>
+              </div>
+              <ul className="mt-3 space-y-2 text-white/75">
+                <li>▸ <span className="text-cyber-300">role</span> or brief</li>
+                <li>▸ <span className="text-cyber-300">timeline</span> and urgency</li>
+                <li>▸ <span className="text-cyber-300">stack</span> / environment</li>
+                <li>▸ <span className="text-cyber-300">risk model</span> (if any)</li>
+              </ul>
+              <div className="mt-5 flex items-center gap-2 border-t border-white/10 pt-4 text-[11px] text-white/50">
+                <ShieldCheck className="size-3.5 text-ok-400" />
+                <span>I respond within 24h — PGP on request.</span>
+              </div>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
-    </div>
+    </section>
   );
-};
+}

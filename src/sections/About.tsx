@@ -1,244 +1,84 @@
 "use client";
 
+import { motion } from "framer-motion";
+import Balancer from "react-wrap-balancer";
+import { Brain, Coffee, Mountain, Music, Terminal } from "lucide-react";
+import { profile } from "@/content/profile";
 import { Card } from "@/components/Card";
 import { SectionHeader } from "@/components/SectionHeader";
-import JavaScriptIcon from "@/assets/icons/square-js.svg";
-import ChrometIcon from "@/assets/icons/chrome.svg";
-import Web3jstIcon from "@/assets/icons/Web3js--Streamline-Svg-Logos.svg";
-import ReactjsIcon from "@/assets/icons/react.svg";
-import Css3Icon from "@/assets/icons/css3.svg";
-import Html5Icon from "@/assets/icons/html5.svg";
-import DiscordIcon from "@/assets/icons/icons8-discord.svg";
-import HardHatIcon from "@/assets/icons/Hardhat.svg";
-import SolidityIcon from "@/assets/icons/Solidity.svg";
-import PythonIcon from "@/assets/icons/python-svgrepo-com.svg";
-import EthersjsIcon from "@/assets/icons/ethers.svg";
-import TypeScriptIcon from "@/assets/icons/Typescript-Icon--Streamline-Svg-Logos.svg";
-import GitHubIcon from "@/assets/icons/github.svg";
-import VscodeIcon from "@/assets/icons/visual-studio-code-svgrepo-com.svg";
-import NextjsIcon from "@/assets/icons/nextjs-svgrepo-com.svg";
-import bookImage from "@/assets/images/A-Good-General-Dag-Heward-Mills.jpg";
-import React from "react";
-import Image from "next/image";
-import mapImage from "@/assets/images/accra-map.jpg";
-import smileMemoji from "@/assets/images/memoji-smile.png";
-import { CardHeader } from "@/components/CardHeader";
-import { ToolboxItems } from "@/components/ToolboxItems";
-import { motion } from "framer-motion";
-import { useRef } from "react";
 
-const toolboxItems = [
-  {
-    title: "JavaScript",
-    iconType: JavaScriptIcon,
-  },
-  {
-    title: "Python",
-    iconType: PythonIcon,
-  },
-  {
-    title: "HardHat",
-    iconType: HardHatIcon,
-  },
-  {
-    title: "Solidity",
-    iconType: SolidityIcon,
-  },
-  {
-    title: "TypeScript",
-    iconType: TypeScriptIcon,
-  },
-  {
-    title: "GitHub",
-    iconType: GitHubIcon,
-  },
-  {
-    title: "Nextjs",
-    iconType: NextjsIcon,
-  },
-  {
-    title: "Chrome",
-    iconType: ChrometIcon,
-  },
-  {
-    title: "Web3js",
-    iconType: Web3jstIcon,
-  },
-  {
-    title: "Reactjs",
-    iconType: ReactjsIcon,
-  },
-  {
-    title: "CSS3",
-    iconType: Css3Icon,
-  },
-  {
-    title: "HTML5",
-    iconType: Html5Icon,
-  },
-  {
-    title: "Discord",
-    iconType: DiscordIcon,
-  },
-  {
-    title: "Ethersjs",
-    iconType: EthersjsIcon,
-  }, {
-    title: "VS Code",
-    iconType: VscodeIcon,
-  },
+const signals = [
+  { icon: Terminal, label: "Run CLI over GUI whenever possible" },
+  { icon: Brain, label: "Curious about how adversaries really think" },
+  { icon: Mountain, label: "Long walks when a problem refuses to solve" },
+  { icon: Music, label: "Deep-focus music while hunting logs" },
+  { icon: Coffee, label: "Coffee-driven development, lightly caffeinated" },
 ];
 
-const hobbies = [
-  {
-    title: "Cycling",
-    emoji: "🚴",
-    left: "2%",
-    top: "2%",
-  },
-  {
-    title: "Hackathons",
-    emoji: "🏆",
-    left: "40%",
-    top: "5%",
-  },
-  {
-    title: "Gaming",
-    emoji: "🎮",
-    left: "10%",
-    top: "25%",
-  },
-  {
-    title: "Reading Blogs",
-    emoji: "📖",
-    left: "15%",
-    top: "65%",
-  },
-  {
-    title: "Camping",
-    emoji: "🏕️",
-    left: "40%",
-    top: "48%",
-  },
-  {
-    title: "Fitness",
-    emoji: "🏋️",
-    left: "2%",
-    top: "45%",
-  },
-  {
-    title: "Photography",
-    emoji: "📸",
-    left: "50%",
-    top: "27%",
-  },
-  {
-    title: "Cooking",
-    emoji: "🍳",
-    left: "45%",
-    top: "75%",
-  },
-  {
-    title: "Music",
-    emoji: "🎵",
-    left: "5%",
-    top: "75%",
-  },
-];
-
-export const About = () => {
-  const constraintRef = useRef(null);
-
+export function About() {
   return (
-    <div id="about" className="py-20 lg:py-28">
+    <section id="about" className="relative py-20 md:py-28 lg:py-32">
       <div className="container">
         <SectionHeader
-          eyebrow="About Me"
-          title="A Glimpse Into My World"
-          description="Learn more about who I am, what I do, and what inspires me."
+          eyebrow="About"
+          title="A quick read on who I am"
+          description="Short on fluff, long on why I do the work."
         />
-        <div className="mt-20 flex flex-col gap-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-5 lg:grid-cols-3">
-            <Card className="h-[320px] md:col-span-2 lg:col-span-1">
-              <CardHeader
-                title="My Reads"
-                description="Explore the books shaping my perspective"
-              />
 
-              <div className="w-40 mx-auto mt-2 md:mt-0">
-                <Image
-                  src={bookImage}
-                  alt="A good general book by Dag Heward Mills"
-                />
+        <div className="mt-14 grid gap-6 md:grid-cols-5">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+            className="md:col-span-3"
+          >
+            <Card className="h-full p-6 md:p-8">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
+                  bio.md
+                </span>
               </div>
-            </Card>
-            <Card className="h-[320px] md:col-span-3 lg:col-span-2">
-              <CardHeader
-                title="Technology & Tools"
-                description="Explore the technologies and tools I use to innovate exceptional
-                digital experiences"
-                className=""
-              />
-
-              <ToolboxItems
-                items={toolboxItems}
-                className=" "
-                itemsWrapperClassName="animate-move-left [animation-duration:30s]"
-              />
-              <ToolboxItems
-                items={toolboxItems}
-                className="mt-6"
-                itemsWrapperClassName="animate-move-right  [animation-duration:15s]"
-              />
-            </Card>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-3 gap-8">
-            <Card className="h-[320px] p-0 flex flex-col md:col-span-3 lg:col-span-2">
-              <CardHeader
-                title="Beyond Coding"
-                description="Explore my hobbies and interests beyond the digital realm"
-                className="px-6 py-6"
-              />
-
-              <div className="relative flex-1 " ref={constraintRef}>
-                {hobbies.map((hobby) => (
-                  <motion.div
-                    key={hobby.title}
-                    className="inline-flex items-center gap-2 px-6 bg-gradient-to-r from-emerald-300 to-sky-400 rounded-full py-1.5 absolute"
-                    style={{
-                      left: hobby.left,
-                      top: hobby.top,
-                    }}
-                    drag
-                    dragConstraints={constraintRef}
-                  >
-                    <span className="font-medium text-gray-950">
-                      {hobby.title}
-                    </span>
-                    <span>{hobby.emoji}</span>
-                  </motion.div>
+              <div className="mt-5 space-y-4 text-white/75 md:text-[15px] leading-relaxed">
+                {profile.bio.map((p, i) => (
+                  <p key={i}>
+                    <Balancer>{p}</Balancer>
+                  </p>
                 ))}
+                <p className="text-white/60">
+                  If you&apos;re building something ambitious that needs to be fast, well-instrumented,
+                  and hard to compromise — we should talk.
+                </p>
               </div>
             </Card>
-            <Card className="h-[320px] p-0 relative md:col-span-2 lg:col-span-1">
-              <Image
-                src={mapImage}
-                alt="map"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-12 rounded-full  after:content-[''] after:absolute after:inset-0 after:outline after:outline-2 after:-outline-offset-2 after:rounded-full after:outline-white-950/3">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-300 to-sky-400 -z-20 animate-ping-large [animation-duration:1.2s] "></div>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-300 to-sky-400 -z-10"></div>
-                <Image
-                  src={smileMemoji}
-                  alt="smiling face"
-                  className="size-12"
-                />
-              </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, delay: 0.06 }}
+            className="md:col-span-2"
+          >
+            <Card className="h-full p-6 md:p-8">
+              <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
+                signals.txt
+              </span>
+              <h3 className="mt-5 font-display text-xl tracking-tight text-white">
+                Small things about how I work
+              </h3>
+              <ul className="mt-5 space-y-3">
+                {signals.map(({ icon: Icon, label }) => (
+                  <li key={label} className="flex items-start gap-3 text-sm text-white/75">
+                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-cyber-300" />
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
             </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   );
-};
+}

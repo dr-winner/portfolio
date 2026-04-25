@@ -1,66 +1,68 @@
 "use client";
-import React from "react";
-import XIcon from "@/assets/icons/icons8-x.svg";
-import InstagramIcon from "@/assets/icons/icons8-instagram.svg";
-import DiscordIcon from "@/assets/icons/icons8-discord.svg";
-import LinkedInIcon from "@/assets/icons/icons8-linkedin.svg";
-import GitHubIcon from "@/assets/icons/github.svg";
-import MediumIcon from "@/assets/icons/icons8-telegram.svg";
-import { LinkSvgItems } from "@/components/LinkSvgItems";
-
-const footerLinks = [
-  {
-    title: "Twitter/X",
-    link: "https://x.com/dr_winner6",
-    iconType: XIcon,
-  },
-  {
-    title: "Instagram",
-    link: "https://www.instagram.com/winner.richard",
-    iconType: InstagramIcon,
-  },
-  {
-    title: "Medium",
-    link: "https://medium.com/@duvorr60",
-    iconType: MediumIcon,
-  },
-  {
-    title: "LinkedIn",
-    link: "https://www.linkedin.com/in/richard-winner-duvor/",
-    iconType: LinkedInIcon,
-  },
-  {
-    title: "Discord",
-    link: "https://discordapp.com/users/dr_winner",
-    iconType: DiscordIcon,
-  },
-  {
-    title: "GitHub",
-    link: "https://github.com/dr-winner/",
-    iconType: GitHubIcon,
-  },
-];
 
 import { useEffect, useState } from "react";
+import {
+  DiscordIcon,
+  GithubIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  MediumIcon,
+  TikTokIcon,
+  XIcon,
+} from "@/components/BrandIcons";
+import { profile } from "@/content/profile";
 
-export const Footer = () => {
+const socials = [
+  { label: "GitHub", href: profile.socials.github, icon: GithubIcon },
+  { label: "LinkedIn", href: profile.socials.linkedin, icon: LinkedInIcon },
+  { label: "X", href: profile.socials.x, icon: XIcon },
+  { label: "Medium", href: profile.socials.medium, icon: MediumIcon },
+  { label: "Instagram", href: profile.socials.instagram, icon: InstagramIcon },
+  { label: "Discord", href: profile.socials.discord, icon: DiscordIcon },
+  { label: "TikTok", href: profile.socials.tiktok, icon: TikTokIcon },
+] as const;
+
+export function Footer() {
   const [year, setYear] = useState<number | null>(null);
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
+
   return (
-    <footer className="relative overflow-x-clip">
-      <div className="absolute h-[400px] w-[1600px] bottom-0 left-1/2 -translate-x-1/2 bg-emerald-300/30 [mask-image:radial-gradient(50%_50%_at_bottom_center,black,transparent)] -z-10"></div>
-      <div className="container">
-        <div className="border-t border-white/15 py-6 text-sm flex flex-col md:flex-row md:justify-between items-center md:gap-2 gap-8 justify-center">
-          <div className="text-white/40">
-            &copy;{year ?? ""} All rights reserved <span className="font-serif text-sm text-center mt-8 tracking-wide font-sm bg-gradient-to-r from-emerald-300 to-sky-400 text-transparent ml-0.5 bg-clip-text">Richard Winner</span>
-          </div>
-          <nav id="footer" className="p-4 text-white">
-            <LinkSvgItems items={footerLinks} className="" />
+    <footer className="font-sans relative mt-6 overflow-hidden border-t border-white/[0.06] py-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-16 left-1/2 h-[120px] w-[900px] -translate-x-1/2 bg-gradient-to-b from-white/[0.03] via-transparent to-transparent blur-2xl"
+      />
+      <div className="container flex flex-col">
+        <div className="flex flex-col items-stretch justify-between gap-6 border-t border-white/5 pt-6 md:flex-row md:items-center">
+          <p className="text-center text-sm text-white/60 md:text-left">
+            &copy; {year ?? ""}{" "}
+            <span className="text-gradient-cyber font-semibold">{profile.name}</span>
+            {". "}
+            All rights reserved.
+          </p>
+
+          <nav
+            aria-label="Social"
+            className="flex flex-wrap items-center justify-center gap-1.5 md:justify-end"
+          >
+            {socials.map(({ label, href, icon: Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="inline-flex size-9 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.02] text-white/50 transition-colors hover:border-white/15 hover:bg-white/[0.04] hover:text-white/80"
+              >
+                <Icon className="size-4" />
+              </a>
+            ))}
           </nav>
         </div>
       </div>
     </footer>
   );
-};
+}

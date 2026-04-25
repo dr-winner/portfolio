@@ -1,0 +1,326 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { ExternalLink, GitBranch, GitPullRequest, Zap } from "lucide-react";
+import clsx from "clsx";
+import { GithubIcon } from "@/components/BrandIcons";
+import { profile } from "@/content/profile";
+import { levelForCount } from "@/lib/github/insights-helpers";
+
+const GH = {
+  empty: "bg-[#161b22]",
+  l1: "bg-[#0e4429]",
+  l2: "bg-[#006d32]",
+  l3: "bg-[#26a641]",
+  l4: "bg-[#39d353]",
+} as const;
+
+type Day = { date: string; count: number };
+type Week = { days: Day[] };
+
+export type GitHubInsights = {
+  error: string | null;
+  message?: string;
+  login: string;
+  range: { from: string; to: string };
+  stats: {
+    totalCommitContributions: number;
+    totalPullRequestContributions: number;
+    totalContributions: number;
+  };
+  streak: { current: number; longest: number };
+  weeks: Week[];
+};
+
+function fmtCompact(n: number): string {
+  if (n >= 1000) {
+    return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k`;
+  }
+  return n.toLocaleString();
+}
+
+const statConfig = [
+  { key: "totalCommitContributions" as const, label: "Commits", icon: GitBranch },
+  { key: "totalPullRequestContributions" as const, label: "PRs", icon: GitPullRequest },
+] as const;
+
+function isInsightsReady(
+  d: GitHubInsights | null
+): d is GitHubInsights & { weeks: Week[]; stats: NonNullable<GitHubInsights["stats"]> } {
+  if (d == null) return false;
+  if (d.error) return false;
+  return Array.isArray(d.weeks) && d.weeks.length > 0;
+}
+
+export function GitHubLivePanel() {
+  const [data, setData] = useState<GitHubInsights | null>(null);
+  const [err, setErr] = useState(false);
+
+  const flatDays = useMemo(() => {
+    if (!isInsightsReady(data)) return [] as Day[];
+    const o: Day[] = [];
+    for (const w of data.weeks) for (const d of w.days) o.push(d);
+    return o;
+  }, [data]);
+
+  const maxC = useMemo(
+    () => (flatDays.length < 1 ? 1 : Math.max(1, ...flatDays.map((d) => d.count))),
+    [flatDays]
+  );
+
+  const nWeeks = isInsightsReady(data) ? data.weeks.length : 0;
+
+  const monthLabelCells = useMemo(() => {
+    if (!isInsightsReady(data)) return [] as (string | null)[];
+    return data.weeks.map((w, i) => {
+      const d0 = w.days[0].date;
+      if (i === 0) {
+        return new Date(d0 + "T12:00:00Z").toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
+      }
+      const prev = data.weeks[i - 1]!.days[0].date;
+      if (d0.slice(0, 7) !== prev.slice(0, 7)) {
+        return new Date(d0 + "T12:00:00Z").toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
+      }
+      return null;
+    });
+  }, [data]);
+
+  useEffect(() => {
+    let c = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/github/insights", { cache: "no-store" });
+        const j = (await r.json()) as GitHubInsights;
+        if (!c) setData(j);
+      } catch {
+        if (!c) setErr(true);
+      }
+    })();
+    return () => {
+      c = true;
+    };
+  }, []);
+
+  const gh = profile.socials.github;
+
+  if (err) {
+    return (
+      <p className="text-sm text-white/50">
+        Could not load GitHub insights. Check your network and try again.
+      </p>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04] md:col-span-2 lg:col-span-2" />
+        <div className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04] lg:col-span-1" />
+      </div>
+    );
+  }
+
+  if (data.error === "missing_token") {
+    return (
+      <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-5 text-left text-sm text-white/80">
+        <p className="font-medium text-amber-200/90">Contribution data unavailable</p>
+        <p className="mt-2 text-white/60">This section is not configured for this deployment.</p>
+      </div>
+    );
+  }
+
+  if (data.error) {
+    return (
+      <p className="text-sm text-rose-300/90">
+        Could not load contribution data. Try again later.
+      </p>
+    );
+  }
+
+  const s = data.stats;
+
+  return (
+    <div className="w-full text-left">
+      {/* Top summary — one horizontal band */}
+      <div className="mb-6 flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/40">Last 12 months</p>
+          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-cyber-200 sm:text-4xl">
+            {s.totalContributions.toLocaleString()}
+            <span className="ml-2 font-sans text-base font-medium text-white/50">contributions</span>
+          </p>
+        </div>
+        <a
+          href={gh}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex w-fit items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/85 transition-all hover:border-cyber-300/35 hover:bg-white/[0.06]"
+        >
+          <GithubIcon className="size-4 text-cyber-200/80" />
+          @{data.login}
+          <ExternalLink className="size-3.5 text-white/35 group-hover:text-white/55" />
+        </a>
+      </div>
+
+      {/* Bento: graph + sidebar — items-start so the graph column doesn’t stretch to sidebar height */}
+      <div className="grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
+        {/* Primary: heatmap (fluid width, no horizontal scroll) */}
+        {nWeeks > 0 && (
+          <div className="order-1 min-w-0 self-start lg:col-span-7 xl:col-span-8">
+            <div
+              className="relative overflow-hidden rounded-2xl border border-white/10 p-3 sm:p-4"
+              style={{
+                background:
+                  "radial-gradient(120% 80% at 10% 0%, rgba(60, 207, 255, 0.06) 0%, transparent 50%), #06080d",
+              }}
+            >
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-xs font-medium uppercase tracking-wider text-white/50">
+                  Contribution graph
+                </h3>
+                <p className="text-[10px] text-cyber-200/50 md:hidden">Swipe graph →</p>
+                <div className="ml-auto flex items-center gap-1.5 text-[10px] text-white/35">
+                  <span>Less</span>
+                  <span className="inline-flex gap-0.5">
+                    <span className={clsx("h-2 w-2 rounded-sm", GH.empty)} />
+                    <span className={clsx("h-2 w-2 rounded-sm", GH.l2)} />
+                    <span className={clsx("h-2 w-2 rounded-sm", GH.l4)} />
+                  </span>
+                  <span>More</span>
+                </div>
+              </div>
+              {/** On narrow screens the grid is hard to read — allow horizontal pan. Desktop stays fluid. */}
+              <div className="overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] md:overflow-x-visible">
+                <div className="min-w-[560px] md:w-full md:min-w-0">
+                <div className="mb-1.5 flex w-full min-w-0 gap-1.5 sm:gap-2">
+                  <div className="w-5 shrink-0 sm:w-6" aria-hidden />
+                  <div
+                    className="grid min-h-[12px] min-w-0 flex-1 gap-0.5 text-left text-[9px] text-white/30 sm:text-[10px]"
+                    style={{ gridTemplateColumns: `repeat(${nWeeks}, minmax(0, 1fr))` }}
+                    aria-hidden
+                  >
+                    {monthLabelCells.map((lab, i) => (
+                      <span key={`h-${i}`} className="truncate pl-0.5">
+                        {lab ?? ""}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex w-full min-w-0 items-stretch gap-1.5 sm:gap-2">
+                  <div
+                    className="grid w-5 shrink-0 text-[8px] leading-none text-white/30 sm:w-6 sm:text-[9px]"
+                    style={{ gridTemplateRows: "repeat(7, minmax(0, 1fr))" }}
+                    aria-hidden
+                  >
+                    {["", "M", "", "W", "", "F", ""].map((lab, i) => (
+                      <div key={i} className="flex items-center justify-end">
+                        {lab}
+                      </div>
+                    ))}
+                  </div>
+                  <div
+                    className="min-w-0 flex-1"
+                    style={{
+                      aspectRatio: `${nWeeks} / 7`,
+                      maxWidth: "100%",
+                    }}
+                  >
+                    <div
+                      className="grid h-full w-full gap-0.5"
+                      style={{
+                        display: "grid",
+                        gridAutoFlow: "column",
+                        gridTemplateColumns: `repeat(${nWeeks}, minmax(0, 1fr))`,
+                        gridTemplateRows: "repeat(7, minmax(0, 1fr))",
+                      }}
+                      role="img"
+                      aria-label="Contribution calendar from GitHub"
+                    >
+                      {data.weeks.map((w) =>
+                        w.days.map((d) => {
+                          const c = d.count;
+                          const level = levelForCount(c, maxC);
+                          const cl =
+                            c < 1
+                              ? GH.empty
+                              : level === 0
+                                ? GH.empty
+                                : level === 1
+                                  ? GH.l1
+                                  : level === 2
+                                    ? GH.l2
+                                    : level === 3
+                                      ? GH.l3
+                                      : GH.l4;
+                          const label =
+                            c === 0 ? `No contributions on ${d.date}` : `${c} on ${d.date}`;
+                          return (
+                            <div
+                              key={d.date}
+                              title={label}
+                              className={clsx(
+                                "min-h-0 min-w-0 rounded-[1px] outline outline-1 outline-black/30 transition-[filter] hover:brightness-110 sm:rounded-[2px]",
+                                cl
+                              )}
+                            />
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Sidebar: metrics + streaks */}
+        <aside className="order-2 flex min-w-0 flex-col gap-4 self-start lg:col-span-5 xl:col-span-4">
+          <div>
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-white/40">
+              Activity
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {statConfig.map(({ key, label, icon: Icon }) => {
+                const v = s[key];
+                return (
+                  <div
+                    key={key}
+                    className="rounded-xl border border-white/8 bg-white/[0.02] px-2.5 py-2.5 transition-colors hover:border-white/12"
+                  >
+                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-white/40">
+                      <Icon className="size-3 shrink-0 text-cyber-200/45" />
+                      {label}
+                    </div>
+                    <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-white sm:text-xl">
+                      {typeof v === "number" ? fmtCompact(v) : "—"}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-white/8 bg-gradient-to-b from-cyber-300/[0.04] to-transparent p-3">
+            <div className="text-center">
+              <p className="text-[9px] text-white/40">Current streak</p>
+              <p className="mt-1 flex items-center justify-center gap-1 font-mono text-xl font-semibold text-white">
+                <Zap className="size-4 text-amber-300/80" />
+                {data.streak.current}
+                <span className="text-xs font-sans font-normal text-white/45">d</span>
+              </p>
+            </div>
+            <div className="text-center sm:border-l sm:border-white/10 sm:pl-2">
+              <p className="text-[9px] text-white/40">Longest streak</p>
+              <p className="mt-1 font-mono text-xl font-semibold text-white/90">
+                {data.streak.longest}
+                <span className="ml-0.5 text-xs font-sans font-normal text-white/45">d</span>
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+}

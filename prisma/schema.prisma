@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  company    String
+  year       String
+  title      String
+  summary    String
+  tags       String   // JSON array
+  results    String   // JSON array
+  techStack  String   // JSON array
+  link       String?
+  repo       String?
+  imagePath  String?
+  status     String   @default("live") // live | in-progress | upcoming
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model StackCategory {
+  id          String      @id @default(cuid())
+  key         String      @unique
+  label       String
+  description String
+  accent      String      // cyber | signal | ok | threat
+  iconKey     String
+  order       Int         @default(0)
+  items       StackItem[]
+}
+
+model StackItem {
+  id         String        @id @default(cuid())
+  name       String
+  iconKey    String
+  level      String        @default("working") // core | working | learning
+  order      Int           @default(0)
+  category   StackCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+}
+
+model Experience {
+  id          String   @id @default(cuid())
+  period      String
+  title       String
+  org         String
+  description String
+  tags        String   // JSON array
+  current     Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Certification {
+  id          String   @id @default(cuid())
+  name        String
+  issuer      String
+  status      String   @default("pursuing") // earned | pursuing | in-progress
+  examCode    String?
+  year        String?
+  targetDate  String?
+  progress    Int?
+  description String
+  skills      String   // JSON array
+  modules     String   // JSON array
+  link        String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  position  String
+  text      String
+  initials  String
+  accent    String   @default("cyber")
+  order     Int      @default(0)
+  hidden    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// First-party, privacy-tilted event log (IP stored as daily hash + salt only).
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  name      String
+  path      String   @default("/")
+  sessionId String
+  /// sha256-based daily visitor bucket (not reversible without server secret + IP)
+  visitKey  String?
+  device    String   @default("unknown")
+  browser   String   @default("")
+  country   String   @default("")
+  referer   String   @default("")
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([name, createdAt])
+}
