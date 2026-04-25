@@ -356,9 +356,9 @@ export function TerminalDock({
 
       <div
         className={clsx(
-          "pointer-events-auto fixed z-[101] pb-[env(safe-area-inset-bottom,0px)]",
+          "pointer-events-auto fixed bottom-0 z-[101] pb-[env(safe-area-inset-bottom,0px)]",
           expanded
-            ? "left-1/2 w-[min(calc(100vw-1.5rem),26rem)] max-w-full -translate-x-1/2 sm:w-3/5 sm:max-w-2xl"
+            ? "inset-x-0 w-full max-w-none translate-x-0 md:left-1/2 md:right-auto md:w-3/5 md:max-w-2xl md:-translate-x-1/2"
             : "left-4 right-4 w-auto sm:left-1/2 sm:right-auto sm:w-3/5 sm:max-w-none sm:-translate-x-1/2"
         )}
         onClick={(e) => e.stopPropagation()}
@@ -399,12 +399,20 @@ export function TerminalDock({
             aria-modal="true"
             aria-label="Site console"
             className={clsx(
-              "flex min-h-0 flex-col overflow-hidden rounded-t-2xl border border-[#1a3d1a] border-b-0 bg-[#1a1a1a] shadow-[0_-12px_48px_rgba(0,255,80,0.06),inset_0_1px_0_rgba(0,40,0,0.4)]",
-              zoomed ? "h-[min(78vh,880px)]" : "h-[min(50dvh,400px)] sm:h-[min(44vh,440px)]"
+              "flex min-h-0 max-h-[100dvh] flex-col overflow-hidden border border-[#1a3d1a] border-b-0 bg-[#1a1a1a] shadow-[0_-12px_48px_rgba(0,255,80,0.06),inset_0_1px_0_rgba(0,40,0,0.4)]",
+              "rounded-t-[1.25rem] md:rounded-t-2xl",
+              /* < md: full-width sheet, ~88% viewport; md+: floating window */
+              zoomed
+                ? "h-[min(92dvh,calc(100dvh-0.5rem))] md:h-[min(78vh,880px)]"
+                : "h-[min(88dvh,calc(100dvh-0.5rem))] md:h-[min(44vh,440px)]"
             )}
           >
+            {/* Mobile sheet handle */}
+            <div className="flex justify-center bg-[#1a1a1a] pb-1 pt-2.5 md:hidden" aria-hidden>
+              <div className="h-1 w-12 rounded-full bg-white/20" />
+            </div>
             {/* Title bar — dark chrome */}
-            <div className="relative flex min-h-11 shrink-0 items-center justify-between gap-1 border-b border-[#0d280d] bg-gradient-to-b from-[#1f1f1f] to-[#121212] px-2.5 sm:min-h-8">
+            <div className="relative flex min-h-[3rem] shrink-0 items-center justify-between gap-2 border-b border-[#0d280d] bg-gradient-to-b from-[#1f1f1f] to-[#121212] px-3 md:min-h-8 md:gap-1 md:px-2.5">
               <div
                 className="flex items-center gap-2 pl-0.5"
                 onClick={(e) => e.stopPropagation()}
@@ -412,56 +420,56 @@ export function TerminalDock({
               >
                 <button
                   type="button"
-                  className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#ff5f57] transition hover:brightness-110 sm:h-3 sm:w-3"
+                  className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#ff5f57] transition hover:brightness-110 md:h-3 md:w-3"
                   title="Close"
                   aria-label="Close"
                   onClick={() => onExpandedChange(false)}
                 />
                 <button
                   type="button"
-                  className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#febc2e] transition hover:brightness-110 sm:h-3 sm:w-3"
+                  className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#febc2e] transition hover:brightness-110 md:h-3 md:w-3"
                   title="Minimize"
                   aria-label="Minimize"
                   onClick={() => onExpandedChange(false)}
                 />
                 <button
                   type="button"
-                  className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#28c840] transition hover:brightness-110 sm:h-3 sm:w-3"
+                  className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#28c840] transition hover:brightness-110 md:h-3 md:w-3"
                   title="Zoom"
                   aria-label="Zoom"
                   onClick={() => setZoomed((z) => !z)}
                 />
               </div>
-              <span className="pointer-events-none max-w-[45%] truncate text-center text-[9px] text-[#6ee7a8]/50 sm:max-w-none sm:text-[10px]">
+              <span className="pointer-events-none max-w-[min(50%,12rem)] truncate text-center text-[10px] text-[#6ee7a8]/50 md:max-w-none md:text-[11px]">
                 {profile.handle}@portfolio — tty
               </span>
-              <div className="ml-auto flex min-w-0 items-center justify-end gap-1 sm:gap-1.5 sm:pl-6">
+              <div className="ml-auto flex min-w-0 items-center justify-end gap-1.5 md:gap-1.5 md:pl-6">
                 <a
                   href={mailtoHref}
-                  className="inline-flex min-h-9 min-w-9 items-center justify-center gap-1 rounded-lg border border-[#2a5c2a] bg-[#0f1f12] px-2.5 text-[10px] font-medium text-[#86efac] transition hover:border-[#3d7a3d] hover:bg-[#0f2812] sm:min-h-0 sm:min-w-0 sm:rounded sm:px-2"
+                  className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg border border-[#2a5c2a] bg-[#0f1f12] px-3 text-xs font-medium text-[#86efac] transition hover:border-[#3d7a3d] hover:bg-[#0f2812] md:min-h-0 md:min-w-0 md:rounded md:px-2 md:text-[10px]"
                   onClick={(e) => {
                     track("shell_email");
                     e.stopPropagation();
                   }}
                 >
-                  <Mail className="size-3.5 sm:size-3" />
-                  <span className="hidden sm:inline">Email</span>
+                  <Mail className="size-4 md:size-3" />
+                  <span className="hidden md:inline">Email</span>
                 </a>
                 <button
                   type="button"
                   onClick={() => onExpandedChange(false)}
-                  className="inline-flex min-h-9 min-w-9 items-center justify-center gap-0.5 rounded-lg px-2 text-xs text-white/60 hover:bg-white/10 hover:text-white sm:min-h-0 sm:min-w-0 sm:rounded sm:px-1.5 sm:text-[10px]"
+                  className="inline-flex min-h-10 min-w-10 items-center justify-center gap-0.5 rounded-lg px-2.5 text-sm text-white/60 hover:bg-white/10 hover:text-white md:min-h-0 md:min-w-0 md:rounded md:px-1.5 md:text-[10px]"
                   aria-label="Close console"
                 >
-                  <span className="hidden sm:inline">close</span>
-                  <ChevronDown className="size-4 sm:size-3" />
+                  <span className="hidden md:inline">close</span>
+                  <ChevronDown className="size-5 md:size-3" />
                 </button>
               </div>
             </div>
 
             {/* Phosphor-style scrollback */}
             <div
-              className="min-h-0 flex-1 overflow-y-auto border-x border-[#0d280d] bg-[#050a06] px-3 py-3 text-[12px] leading-relaxed [text-shadow:0_0_6px_rgba(0,255,80,0.12)]"
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain border-x border-[#0d280d] bg-[#050a06] px-4 py-4 text-sm leading-relaxed [text-shadow:0_0_6px_rgba(0,255,80,0.12)] [-webkit-overflow-scrolling:touch] md:px-3 md:py-3 md:text-[12px]"
               role="log"
             >
               {lines.map((line, i) => (
@@ -502,21 +510,23 @@ export function TerminalDock({
             {/* Input line */}
             <form
               onSubmit={onSubmit}
-              className="shrink-0 border border-t-0 border-[#14532d] bg-[#080c09] px-2 py-1.5"
+              className="shrink-0 border border-t-0 border-[#14532d] bg-[#080c09] px-3 py-3 md:px-2 md:py-1.5"
             >
-              <p className="mb-1 font-sans text-[9px] leading-tight text-[#4ade80]/50 md:text-[10px]">
+              <p className="mb-1.5 font-sans text-xs leading-snug text-[#4ade80]/50 md:mb-1 md:text-[9px] md:leading-tight lg:text-[10px]">
                 Plain English is fine — or try{" "}
                 <span className="font-mono text-[#86efac]/80">help</span> ·{" "}
                 <span className="text-white/35">Enter sends</span>
               </p>
-              <div className="flex items-baseline gap-1">
-                <span className={`shrink-0 font-medium ${shellCol}`}>{shellPrompt}</span>
+              <div className="flex items-baseline gap-1.5 md:gap-1">
+                <span className={`shrink-0 text-sm font-medium md:text-inherit ${shellCol}`}>
+                  {shellPrompt}
+                </span>
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   disabled={busy}
-                  className="min-w-0 flex-1 bg-transparent text-[13px] text-[#ecfccb] outline-none placeholder:text-[#14532d] caret-[#4ade80]"
+                  className="min-w-0 flex-1 bg-transparent text-base text-[#ecfccb] outline-none placeholder:text-[#14532d] caret-[#4ade80] md:text-[13px]"
                   placeholder="Ask a question, or: help  |  go contact  |  date"
                   autoComplete="off"
                   spellCheck={false}
