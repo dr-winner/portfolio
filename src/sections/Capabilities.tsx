@@ -29,10 +29,13 @@ const accentIconSurface: Record<Capability["accent"], string> = {
 };
 
 const accentRing: Record<Capability["accent"], string> = {
-  cyber: "shadow-[inset_0_0_0_1px_rgba(60,207,255,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.45)]",
-  signal: "shadow-[inset_0_0_0_1px_rgba(255,174,0,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.45)]",
-  ok: "shadow-[inset_0_0_0_1px_rgba(71,240,167,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(71,240,167,0.45)]",
-  threat: "shadow-[inset_0_0_0_1px_rgba(255,82,119,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.45)]",
+  cyber:
+    "shadow-[inset_0_0_0_1px_rgba(60,207,255,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.12)]",
+  signal:
+    "shadow-[inset_0_0_0_1px_rgba(255,174,0,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.14)]",
+  ok: "shadow-[inset_0_0_0_1px_rgba(71,240,167,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(71,240,167,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(71,240,167,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(71,240,167,0.14)]",
+  threat:
+    "shadow-[inset_0_0_0_1px_rgba(255,82,119,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.14)]",
 };
 
 export function Capabilities() {
@@ -47,9 +50,9 @@ export function Capabilities() {
           />
         </ScrollReveal>
 
-        <div className="mt-12 space-y-6 text-[15px] leading-[1.75] text-slate-700 md:mt-20 md:space-y-0 md:grid md:gap-10 md:text-[16px] lg:mt-24 lg:gap-14 lg:grid-cols-2 dark:text-white/72">
+        <div className="mt-12 space-y-6 text-[15px] leading-[1.75] text-slate-700 md:mt-20 md:space-y-0 md:grid md:gap-10 md:text-[16px] lg:mt-24 lg:gap-14 lg:grid-cols-2 dark:text-slate-200">
           <p className="prose-measure md:max-w-none">{capabilityPreamble[0]}</p>
-          <p className="prose-measure border-t border-slate-200/90 pt-6 text-slate-700 md:max-w-none md:border-t-0 md:border-l md:border-slate-200/90 md:pl-8 md:pt-0 dark:border-white/10 dark:text-white/72">
+          <p className="prose-measure border-t border-slate-200/90 pt-6 text-slate-700 md:max-w-none md:border-t-0 md:border-l md:border-slate-200/90 md:pl-8 md:pt-0 dark:border-white/12 dark:text-slate-200">
             {capabilityPreamble[1]}
           </p>
         </div>
@@ -70,7 +73,7 @@ export function Capabilities() {
                   className={clsx(
                     "group relative h-full p-6 sm:p-8 md:p-10 lg:p-11 transition-shadow duration-300",
                     accentRing[cap.accent],
-                    "hover:shadow-glow-sm"
+                    "hover:shadow-glow-sm dark:hover:shadow-none"
                   )}
                 >
                   <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -82,7 +85,7 @@ export function Capabilities() {
                     >
                       <Icon className="size-5" />
                     </div>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-slate-500 sm:text-right dark:text-white/38">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 sm:text-right dark:text-slate-400">
                       {cap.label}
                     </span>
                   </div>
@@ -90,13 +93,13 @@ export function Capabilities() {
                   <h3 className="mt-5 font-display text-2xl leading-tight tracking-tight text-slate-900 md:text-[1.75rem] dark:text-white">
                     {cap.title}
                   </h3>
-                  <p className="mt-4 leading-relaxed text-slate-600 dark:text-white/70">{cap.description}</p>
+                  <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-300">{cap.description}</p>
 
                   <div className="my-8 divider-hair" />
 
                   <ul className="space-y-3.5 text-[14px] md:text-[15px]">
                     {cap.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-3 text-slate-700 dark:text-white/78">
+                      <li key={b} className="flex items-start gap-3 text-slate-700 dark:text-slate-100">
                         <span className={clsx("mt-2 size-1 shrink-0 rounded-full", accentText[cap.accent])}>
                           <span className="block size-1 rounded-full bg-current shadow-glow-sm" />
                         </span>

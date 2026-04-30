@@ -30,7 +30,7 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
           />
         </ScrollReveal>
 
-        <div ref={ref} className="relative mt-20 md:mt-28 w-full max-w-5xl mx-auto">
+        <div ref={ref} className="relative mt-20 w-full md:mt-28">
           {/* Center spine — desktop */}
           <div
             aria-hidden

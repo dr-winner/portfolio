@@ -176,6 +176,21 @@
     mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
   }
 
+  /*
+   * Narrow fades for horizontally scrolling rails (keywords, testimonials): keeps text readable
+   * near the rails’ edges instead of washing out a large fraction of each card.
+   */
+  .mask-fade-x-rail {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 6%,
+      black 94%,
+      transparent
+    );
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  }
+
   .mask-fade-y {
     -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
     mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
