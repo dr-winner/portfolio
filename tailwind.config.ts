@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/sections/**/*.{js,ts,jsx,tsx,mdx}",
@@ -69,7 +70,11 @@ const config: Config = {
         ui: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       fontSize: {
-        "display-xl": ["clamp(2.5rem, 6vw, 5.25rem)", { lineHeight: "1.02", letterSpacing: "-0.03em" }],
+        /** vw-based display; min keeps sub-375 devices readable without forcing overflow */
+        "display-xl": [
+          "clamp(2rem, 5vw + 1rem, 5.25rem)",
+          { lineHeight: "1.05", letterSpacing: "-0.03em" },
+        ],
         "display-lg": ["clamp(2rem, 4.5vw, 3.75rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
       },
       boxShadow: {

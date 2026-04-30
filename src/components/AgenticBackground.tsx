@@ -154,7 +154,7 @@ export function AgenticBackground() {
     const slots = Array.from({ length: 6 }, () => {
       const el = document.createElement("span");
       el.className =
-        "absolute font-mono text-[10px] tracking-tight text-white/[0.045] whitespace-nowrap select-none transition-opacity duration-[2400ms] ease-in-out";
+        "absolute font-mono text-[10px] tracking-tight whitespace-nowrap text-slate-800/[0.06] transition-opacity duration-[2400ms] ease-in-out select-none dark:text-white/[0.045]";
       el.style.opacity = "0";
       layer.appendChild(el);
       return el;
@@ -192,11 +192,11 @@ export function AgenticBackground() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden opacity-[0.38] transition-opacity duration-500 dark:opacity-100">
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       <div ref={tokenLayerRef} className="absolute inset-0" aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-transparent to-ink/80" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(5,7,13,0.55)_100%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-100/85 via-transparent to-slate-200/95 dark:from-ink/30 dark:via-transparent dark:to-ink/80" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(234,243,252,0.72)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(5,7,13,0.55)_100%)]" />
     </div>
   );
 }

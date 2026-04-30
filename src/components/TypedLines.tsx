@@ -58,7 +58,7 @@ export function TypedLines({
         return (
           <div key={i} className={line.className}>
             {shown}
-            {isActive && <span className="ml-0.5 inline-block w-[0.55ch] animate-cursor-blink text-cyber-300">▮</span>}
+            {isActive && <span className="ml-0.5 inline-block w-[0.55ch] animate-cursor-blink text-cyber-600 dark:text-cyber-300">▮</span>}
           </div>
         );
       })}

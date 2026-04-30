@@ -5,6 +5,7 @@ import "./globals.css";
 import { AgenticBackground } from "@/components/AgenticBackground";
 import { Analytics } from "@vercel/analytics/next";
 import { ClientChrome } from "@/components/ClientChrome";
+import { Providers } from "@/components/Providers";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { profile } from "@/content/profile";
 
@@ -79,8 +80,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05070d",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eaf0f9" },
+    { media: "(prefers-color-scheme: dark)", color: "#05070d" },
+  ],
+  colorScheme: "dark light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -88,13 +92,19 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={clsx(sans.variable, display.variable, mono.variable)}>
-      <body className="font-sans antialiased overflow-x-clip">
-        <ClientChrome>
-          <AgenticBackground />
-          <ScrollProgress />
-          {children}
-        </ClientChrome>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={clsx(sans.variable, display.variable, mono.variable, "dark")}
+    >
+      <body className="font-sans antialiased overflow-x-hidden touch-pan-y [overscroll-behavior-x:none]">
+        <Providers>
+          <ClientChrome>
+            <AgenticBackground />
+            <ScrollProgress />
+            {children}
+          </ClientChrome>
+        </Providers>
         <Analytics />
       </body>
     </html>

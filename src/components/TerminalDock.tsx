@@ -358,8 +358,8 @@ export function TerminalDock({
         className={clsx(
           "pointer-events-auto fixed bottom-0 z-[101] pb-[env(safe-area-inset-bottom,0px)]",
           expanded
-            ? "inset-x-0 w-full max-w-none translate-x-0 md:left-1/2 md:right-auto md:w-3/5 md:max-w-2xl md:-translate-x-1/2"
-            : "left-4 right-4 w-auto sm:left-1/2 sm:right-auto sm:w-3/5 sm:max-w-none sm:-translate-x-1/2"
+            ? "inset-x-0 w-full max-w-none translate-x-0 md:left-1/2 md:right-auto md:w-full md:max-w-2xl md:-translate-x-1/2 md:px-4"
+            : "left-4 right-4 w-auto sm:left-1/2 sm:right-auto sm:w-[90%] sm:max-w-2xl sm:-translate-x-1/2"
         )}
         onClick={(e) => e.stopPropagation()}
         style={{ fontFamily: "var(--font-mono), ui-monospace, Consolas, monospace" }}

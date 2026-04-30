@@ -25,8 +25,9 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/richard-winner-duvor/",
     x: "https://x.com/dr_winner6",
     medium: "https://medium.com/@duvorr60",
-    /** Set to your server invite or profile URL when you have it */
+    /** Public handle; link opens Discord (add in-app). */
     discord: "https://discord.com/channels/@me",
+    discordHandle: "w3brr",
     instagram: "https://www.instagram.com/winner.richard",
     /** Pro Coder (public handle) */
     tiktok: "https://www.tiktok.com/@procoder",

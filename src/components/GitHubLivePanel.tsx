@@ -8,11 +8,11 @@ import { profile } from "@/content/profile";
 import { levelForCount } from "@/lib/github/insights-helpers";
 
 const GH = {
-  empty: "bg-[#161b22]",
-  l1: "bg-[#0e4429]",
-  l2: "bg-[#006d32]",
-  l3: "bg-[#26a641]",
-  l4: "bg-[#39d353]",
+  empty: "bg-[#ebedf0] dark:bg-[#161b22]",
+  l1: "bg-[#9be9a8] dark:bg-[#0e4429]",
+  l2: "bg-[#40c463] dark:bg-[#006d32]",
+  l3: "bg-[#30a14e] dark:bg-[#26a641]",
+  l4: "bg-[#216e39] dark:bg-[#39d353]",
 } as const;
 
 type Day = { date: string; count: number };
@@ -105,7 +105,7 @@ export function GitHubLivePanel() {
 
   if (err) {
     return (
-      <p className="text-sm text-white/50">
+      <p className="text-sm text-slate-600 dark:text-white/50">
         Could not load GitHub insights. Check your network and try again.
       </p>
     );
@@ -114,24 +114,24 @@ export function GitHubLivePanel() {
   if (!data) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04] md:col-span-2 lg:col-span-2" />
-        <div className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04] lg:col-span-1" />
+        <div className="h-64 animate-pulse rounded-2xl border border-slate-200/90 bg-slate-100/80 md:col-span-2 lg:col-span-2 dark:border-white/10 dark:bg-white/[0.04]" />
+        <div className="h-64 animate-pulse rounded-2xl border border-slate-200/90 bg-slate-100/80 lg:col-span-1 dark:border-white/10 dark:bg-white/[0.04]" />
       </div>
     );
   }
 
   if (data.error === "missing_token") {
     return (
-      <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-5 text-left text-sm text-white/80">
-        <p className="font-medium text-amber-200/90">Contribution data unavailable</p>
-        <p className="mt-2 text-white/60">This section is not configured for this deployment.</p>
+      <div className="rounded-xl border border-amber-500/30 bg-amber-50/80 p-5 text-left text-sm text-slate-800 dark:border-amber-500/25 dark:bg-amber-500/5 dark:text-white/80">
+        <p className="font-medium text-amber-900 dark:text-amber-200/90">Contribution data unavailable</p>
+        <p className="mt-2 text-slate-700 dark:text-white/60">This section is not configured for this deployment.</p>
       </div>
     );
   }
 
   if (data.error) {
     return (
-      <p className="text-sm text-rose-300/90">
+      <p className="text-sm text-rose-700 dark:text-rose-300/90">
         Could not load contribution data. Try again later.
       </p>
     );
@@ -142,23 +142,23 @@ export function GitHubLivePanel() {
   return (
     <div className="w-full text-left">
       {/* Top summary — one horizontal band */}
-      <div className="mb-6 flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-6 flex flex-col gap-4 border-b border-slate-200/90 pb-5 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/40">Last 12 months</p>
-          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-cyber-200 sm:text-4xl">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">Last 12 months</p>
+          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-cyber-700 sm:text-4xl dark:text-cyber-200">
             {s.totalContributions.toLocaleString()}
-            <span className="ml-2 font-sans text-base font-medium text-white/50">contributions</span>
+            <span className="ml-2 font-sans text-base font-medium text-slate-500 dark:text-white/50">contributions</span>
           </p>
         </div>
         <a
           href={gh}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex w-fit items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/85 transition-all hover:border-cyber-300/35 hover:bg-white/[0.06]"
+          className="group inline-flex w-fit items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-sm text-slate-800 transition-all hover:border-cyber-500/35 hover:bg-slate-50 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/85 dark:hover:border-cyber-300/35 dark:hover:bg-white/[0.06]"
         >
-          <GithubIcon className="size-4 text-cyber-200/80" />
+          <GithubIcon className="size-4 text-cyber-600/90 dark:text-cyber-200/80" />
           @{data.login}
-          <ExternalLink className="size-3.5 text-white/35 group-hover:text-white/55" />
+          <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/35 dark:group-hover:text-white/55" />
         </a>
       </div>
 
@@ -167,19 +167,13 @@ export function GitHubLivePanel() {
         {/* Primary: heatmap (fluid width, no horizontal scroll) */}
         {nWeeks > 0 && (
           <div className="order-1 min-w-0 self-start lg:col-span-7 xl:col-span-8">
-            <div
-              className="relative overflow-hidden rounded-2xl border border-white/10 p-3 sm:p-4"
-              style={{
-                background:
-                  "radial-gradient(120% 80% at 10% 0%, rgba(60, 207, 255, 0.06) 0%, transparent 50%), #06080d",
-              }}
-            >
+            <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100 p-3 shadow-[inset_0_0_0_1px_rgba(15,23,42,0.04)] [background-image:radial-gradient(120%_80%_at_10%_0%,rgba(60,207,255,0.1)_0%,transparent_50%)] dark:border-white/10 dark:bg-[#06080d] dark:shadow-none dark:[background-image:radial-gradient(120%_80%_at_10%_0%,rgba(60,207,255,0.06)_0%,transparent_50%)] sm:p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-xs font-medium uppercase tracking-wider text-white/50">
+                <h3 className="text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-white/50">
                   Contribution graph
                 </h3>
-                <p className="text-[10px] text-cyber-200/50 md:hidden">Swipe graph →</p>
-                <div className="ml-auto flex items-center gap-1.5 text-[10px] text-white/35">
+                <p className="text-[10px] text-cyber-600/70 md:hidden dark:text-cyber-200/50">Swipe graph →</p>
+                <div className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-white/35">
                   <span>Less</span>
                   <span className="inline-flex gap-0.5">
                     <span className={clsx("h-2 w-2 rounded-sm", GH.empty)} />
@@ -195,7 +189,7 @@ export function GitHubLivePanel() {
                 <div className="mb-1.5 flex w-full min-w-0 gap-1.5 sm:gap-2">
                   <div className="w-5 shrink-0 sm:w-6" aria-hidden />
                   <div
-                    className="grid min-h-[12px] min-w-0 flex-1 gap-0.5 text-left text-[9px] text-white/30 sm:text-[10px]"
+                    className="grid min-h-[12px] min-w-0 flex-1 gap-0.5 text-left text-[9px] text-slate-400 sm:text-[10px] dark:text-white/30"
                     style={{ gridTemplateColumns: `repeat(${nWeeks}, minmax(0, 1fr))` }}
                     aria-hidden
                   >
@@ -208,7 +202,7 @@ export function GitHubLivePanel() {
                 </div>
                 <div className="flex w-full min-w-0 items-stretch gap-1.5 sm:gap-2">
                   <div
-                    className="grid w-5 shrink-0 text-[8px] leading-none text-white/30 sm:w-6 sm:text-[9px]"
+                    className="grid w-5 shrink-0 text-[8px] leading-none text-slate-400 sm:w-6 sm:text-[9px] dark:text-white/30"
                     style={{ gridTemplateRows: "repeat(7, minmax(0, 1fr))" }}
                     aria-hidden
                   >
@@ -259,7 +253,7 @@ export function GitHubLivePanel() {
                               key={d.date}
                               title={label}
                               className={clsx(
-                                "min-h-0 min-w-0 rounded-[1px] outline outline-1 outline-black/30 transition-[filter] hover:brightness-110 sm:rounded-[2px]",
+                                "min-h-0 min-w-0 rounded-[1px] outline outline-1 outline-slate-300/70 transition-[filter] hover:brightness-110 sm:rounded-[2px] dark:outline-black/30",
                                 cl
                               )}
                             />
@@ -278,7 +272,7 @@ export function GitHubLivePanel() {
         {/* Sidebar: metrics + streaks */}
         <aside className="order-2 flex min-w-0 flex-col gap-4 self-start lg:col-span-5 xl:col-span-4">
           <div>
-            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-white/40">
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 dark:text-white/40">
               Activity
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -287,13 +281,13 @@ export function GitHubLivePanel() {
                 return (
                   <div
                     key={key}
-                    className="rounded-xl border border-white/8 bg-white/[0.02] px-2.5 py-2.5 transition-colors hover:border-white/12"
+                    className="rounded-xl border border-slate-200/90 bg-white/90 px-2.5 py-2.5 transition-colors hover:border-slate-300 dark:border-white/8 dark:bg-white/[0.02] dark:hover:border-white/12"
                   >
-                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-white/40">
-                      <Icon className="size-3 shrink-0 text-cyber-200/45" />
+                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-500 dark:text-white/40">
+                      <Icon className="size-3 shrink-0 text-cyber-600/70 dark:text-cyber-200/45" />
                       {label}
                     </div>
-                    <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-white sm:text-xl">
+                    <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
                       {typeof v === "number" ? fmtCompact(v) : "—"}
                     </p>
                   </div>
@@ -302,20 +296,20 @@ export function GitHubLivePanel() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 rounded-xl border border-white/8 bg-gradient-to-b from-cyber-300/[0.04] to-transparent p-3">
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-gradient-to-b from-cyber-500/[0.06] to-transparent p-3 dark:border-white/8 dark:from-cyber-300/[0.04]">
             <div className="text-center">
-              <p className="text-[9px] text-white/40">Current streak</p>
-              <p className="mt-1 flex items-center justify-center gap-1 font-mono text-xl font-semibold text-white">
-                <Zap className="size-4 text-amber-300/80" />
+              <p className="text-[9px] text-slate-500 dark:text-white/40">Current streak</p>
+              <p className="mt-1 flex items-center justify-center gap-1 font-mono text-xl font-semibold text-slate-900 dark:text-white">
+                <Zap className="size-4 text-amber-600/90 dark:text-amber-300/80" />
                 {data.streak.current}
-                <span className="text-xs font-sans font-normal text-white/45">d</span>
+                <span className="text-xs font-sans font-normal text-slate-500 dark:text-white/45">d</span>
               </p>
             </div>
-            <div className="text-center sm:border-l sm:border-white/10 sm:pl-2">
-              <p className="text-[9px] text-white/40">Longest streak</p>
-              <p className="mt-1 font-mono text-xl font-semibold text-white/90">
+            <div className="text-center sm:border-l sm:border-slate-200/90 sm:pl-2 dark:sm:border-white/10">
+              <p className="text-[9px] text-slate-500 dark:text-white/40">Longest streak</p>
+              <p className="mt-1 font-mono text-xl font-semibold text-slate-900 dark:text-white/90">
                 {data.streak.longest}
-                <span className="ml-0.5 text-xs font-sans font-normal text-white/45">d</span>
+                <span className="ml-0.5 text-xs font-sans font-normal text-slate-500 dark:text-white/45">d</span>
               </p>
             </div>
           </div>

@@ -13,16 +13,19 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { iconFromKey } from "@/lib/icons";
 
 const accent: Record<StackCategory["accent"], string> = {
-  cyber: "text-cyber-300 border-cyber-300/30 bg-cyber-300/[0.06]",
-  signal: "text-signal-300 border-signal-300/30 bg-signal-300/[0.06]",
-  ok: "text-ok-400 border-ok-400/30 bg-ok-400/[0.06]",
-  threat: "text-threat-400 border-threat-400/30 bg-threat-400/[0.06]",
+  cyber:
+    "border-cyber-400/40 bg-cyan-50 text-cyber-700 dark:border-cyber-300/30 dark:bg-cyber-300/[0.06] dark:text-cyber-300",
+  signal:
+    "border-amber-400/40 bg-amber-50 text-amber-800 dark:border-signal-300/30 dark:bg-signal-300/[0.06] dark:text-signal-300",
+  ok: "border-emerald-400/40 bg-emerald-50 text-emerald-800 dark:border-ok-400/30 dark:bg-ok-400/[0.06] dark:text-ok-400",
+  threat:
+    "border-rose-400/40 bg-rose-50 text-rose-800 dark:border-threat-400/30 dark:bg-threat-400/[0.06] dark:text-threat-400",
 };
 
 const levelDot: Record<StackLevel, string> = {
-  core: "bg-ok-400",
-  working: "bg-cyber-300",
-  learning: "bg-signal-300",
+  core: "bg-emerald-600 dark:bg-ok-400",
+  working: "bg-cyber-600 dark:bg-cyber-300",
+  learning: "bg-amber-600 dark:bg-signal-300",
 };
 
 export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
@@ -40,10 +43,16 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
         </ScrollReveal>
 
         <ScrollReveal>
-          <div className="mt-12 flex flex-wrap justify-center gap-5 text-[11px] font-mono uppercase tracking-[0.22em] text-white/45">
-            <span className="inline-flex items-center gap-2"><span className="size-1.5 rounded-full bg-ok-400 shadow-glow-sm" /> core</span>
-            <span className="inline-flex items-center gap-2"><span className="size-1.5 rounded-full bg-cyber-300 shadow-glow-sm" /> working</span>
-            <span className="inline-flex items-center gap-2"><span className="size-1.5 rounded-full bg-signal-300 shadow-glow-sm" /> learning</span>
+          <div className="mt-12 flex flex-wrap justify-center gap-5 text-[11px] font-mono uppercase tracking-[0.22em] text-slate-500 dark:text-white/45">
+            <span className="inline-flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-emerald-600 shadow-glow-sm dark:bg-ok-400" /> core
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-cyber-600 shadow-glow-sm dark:bg-cyber-300" /> working
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-amber-600 shadow-glow-sm dark:bg-signal-300" /> learning
+            </span>
           </div>
         </ScrollReveal>
 
@@ -57,7 +66,7 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
                 amount={50}
                 className={clsx(i === list.length - 1 && list.length % 2 === 1 && "md:col-span-2")}
               >
-                <Card className="h-full !bg-ink-100/50 p-7 md:p-8">
+                <Card className="h-full border-slate-200/80 !bg-white/95 p-7 shadow-sm dark:border-transparent dark:!bg-ink-100/50 md:p-8">
                   <div className="flex items-center gap-3">
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 4 }}
@@ -68,8 +77,8 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
                       <CatIcon className="size-5" />
                     </motion.div>
                     <div>
-                      <h3 className="font-display text-xl tracking-tight text-white">{cat.label}</h3>
-                      <p className="text-xs text-white/50">{cat.description}</p>
+                      <h3 className="font-display text-xl tracking-tight text-slate-900 dark:text-white">{cat.label}</h3>
+                      <p className="text-xs text-slate-500 dark:text-white/50">{cat.description}</p>
                     </div>
                   </div>
 
@@ -79,9 +88,9 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
                       return (
                         <div
                           key={item.name}
-                          className="group inline-flex items-center gap-2 rounded-lg border border-white/10 bg-ink-50/80 px-3.5 py-2.5 text-sm text-white/80 transition-all hover:-translate-y-0.5 hover:border-cyber-300/35 hover:shadow-glow-sm hover:text-white"
+                          className="group inline-flex items-center gap-2 rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-800 transition-all hover:-translate-y-0.5 hover:border-cyber-400/50 hover:shadow-glow-sm hover:text-slate-900 dark:border-white/10 dark:bg-ink-50/80 dark:text-white/80 dark:hover:border-cyber-300/35 dark:hover:text-white"
                         >
-                          <ItemIcon className="size-4 text-cyber-300/90" />
+                          <ItemIcon className="size-4 text-cyber-600 dark:text-cyber-300/90" />
                           <span className="font-medium">{item.name}</span>
                           {item.level && (
                             <span

@@ -17,7 +17,7 @@ export function ClientChrome({ children }: { children: ReactNode }) {
   return (
     <OpenTerminalContext.Provider value={openTerminal}>
       <TelemetryClient />
-      {children}
+      <div className="min-w-0 max-w-full overflow-x-clip">{children}</div>
       <TerminalDock expanded={terminalOpen} onExpandedChange={setTerminalOpen} />
     </OpenTerminalContext.Provider>
   );

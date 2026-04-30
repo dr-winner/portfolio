@@ -34,7 +34,7 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
           {/* Center spine — desktop */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-white/[0.06] md:block"
+            className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-slate-300/55 dark:bg-white/[0.06] md:block"
           />
           <motion.div
             aria-hidden
@@ -42,15 +42,15 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
             className="pointer-events-none absolute left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-cyber-300/80 via-cyber-300/40 to-signal-300/40 shadow-glow-sm md:block"
           />
 
-          {/* Mobile spine */}
+          {/* Mobile spine — centered with dot at left-[calc(15px+0.5px)] (half of 1px line) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-[15px] top-0 h-full w-px bg-white/[0.06] md:hidden"
+            className="pointer-events-none absolute left-[calc(15px+0.5px)] top-0 hidden h-full w-px -translate-x-1/2 bg-slate-300/50 dark:bg-white/[0.06] md:hidden"
           />
           <motion.div
             aria-hidden
             style={{ height: lineHeight }}
-            className="pointer-events-none absolute left-[15px] top-0 w-px bg-gradient-to-b from-cyber-300/80 via-cyber-300/40 to-signal-300/40 shadow-glow-sm md:hidden"
+            className="pointer-events-none absolute left-[calc(15px+0.5px)] top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-cyber-300/80 via-cyber-300/40 to-signal-300/40 shadow-glow-sm dark:shadow-glow-sm md:hidden"
           />
 
           <ol className="relative m-0 flex list-none flex-col gap-16 md:gap-24 p-0">
@@ -84,14 +84,18 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
 
   return (
     <li ref={ref} className="relative">
-      {/* Dot — desktop: outer keeps center; inner motion only scales */}
+      {/*
+        Positioning lives on a static wrapper so Framer Motion’s scale doesn’t wipe out translate centering.
+        Mobile: unchanged — dot on spine at top-7.
+        Desktop: dot centered on the spine (50%) and vertically centered with the timeline row (= card middle).
+      */}
       <div
-        className="absolute left-1/2 top-7 z-10 hidden -translate-x-1/2 md:block"
+        className="pointer-events-none absolute left-[calc(15px+0.5px)] top-7 z-10 flex size-4 -translate-x-1/2 md:left-1/2 md:top-1/2 md:-translate-y-1/2"
         aria-hidden
       >
         <motion.span
           style={{ scale: dotScale, opacity }}
-          className="flex size-4 items-center justify-center rounded-full border border-white/15 bg-ink-100"
+          className="flex size-4 items-center justify-center rounded-full border border-slate-300/80 bg-white dark:border-white/15 dark:bg-ink-100"
         >
           <span
             className={clsx(
@@ -101,20 +105,6 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
           />
         </motion.span>
       </div>
-
-      {/* Dot — mobile left */}
-      <span
-        className={clsx(
-          "absolute left-[7px] top-2 flex size-4 -translate-x-1/2 items-center justify-center rounded-full border border-white/15 bg-ink-100 md:hidden"
-        )}
-      >
-        <span
-          className={clsx(
-            "size-1.5 rounded-full shadow-glow-sm",
-            entry.current ? "bg-ok-400" : "bg-cyber-300"
-          )}
-        />
-      </span>
 
       <div
         className={clsx(
@@ -142,18 +132,18 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
                 side === "left" && "md:justify-end"
               )}
             >
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
+              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/45">
                 {entry.period}
               </span>
               {entry.current && (
                 <span className="chip-cyber font-mono text-[10px] uppercase">current</span>
               )}
             </div>
-            <h3 className="mt-3 font-display text-xl md:text-2xl tracking-tight text-white">
+            <h3 className="mt-3 font-display text-xl tracking-tight text-slate-900 md:text-2xl dark:text-white">
               {entry.title}
             </h3>
-            <p className="mt-1 text-sm font-mono text-white/45">@ {entry.org}</p>
-            <p className="mt-4 text-[14px] md:text-[15px] leading-relaxed text-white/70">
+            <p className="mt-1 text-sm font-mono text-slate-500 dark:text-white/45">@ {entry.org}</p>
+            <p className="mt-4 text-[14px] leading-relaxed text-slate-700 md:text-[15px] dark:text-white/70">
               {entry.description}
             </p>
             <div
@@ -165,7 +155,7 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
               {entry.tags.map((t) => (
                 <span
                   key={t}
-                  className="rounded-md border border-white/10 bg-white/[0.02] px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white/55"
+                  className="rounded-md border border-slate-200/90 bg-white/80 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-slate-600 dark:border-white/10 dark:bg-white/[0.02] dark:text-white/55"
                 >
                   {t}
                 </span>

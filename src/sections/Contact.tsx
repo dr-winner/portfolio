@@ -24,10 +24,10 @@ export function Contact() {
               <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
                 /contact
               </span>
-              <h2 className="mt-4 font-display text-3xl md:text-5xl tracking-tight text-white">
+              <h2 className="mt-4 font-display text-3xl tracking-tight text-slate-900 md:text-5xl dark:text-white">
                 Have a system that needs building — <span className="text-gradient-cyber">or defending?</span>
               </h2>
-              <p className="mt-4 max-w-xl text-white/70 md:text-lg">
+              <p className="mt-4 max-w-xl text-slate-600 md:text-lg dark:text-white/70">
                 I&apos;m open to SOC, detection-engineering, and AI-agent roles, and to select contract
                 work. The fastest way in is email.
               </p>
@@ -48,7 +48,7 @@ export function Contact() {
                   href={profile.socials.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-white/90 transition-colors hover:border-cyber-300/40 hover:text-white sm:w-auto sm:justify-start"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition-colors hover:border-cyber-400/40 hover:text-slate-950 sm:w-auto sm:justify-start dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:hover:border-cyber-300/40 dark:hover:text-white"
                 >
                   LinkedIn
                   <ArrowUpRight className="size-4" />
@@ -56,18 +56,26 @@ export function Contact() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-ink/60 p-5 font-mono text-[13px] backdrop-blur">
-              <div className="flex items-center gap-2 text-white/50">
+            <div className="rounded-xl border border-slate-200/90 bg-white/90 p-5 font-mono text-[13px] text-slate-800 backdrop-blur dark:border-white/10 dark:bg-ink/60 dark:text-[#e6ecf7]">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-white/50">
                 <Sparkles className="size-3.5 text-cyber-300" />
                 <span>what to include</span>
               </div>
-              <ul className="mt-3 space-y-2 text-white/75">
-                <li>▸ <span className="text-cyber-300">role</span> or brief</li>
-                <li>▸ <span className="text-cyber-300">timeline</span> and urgency</li>
-                <li>▸ <span className="text-cyber-300">stack</span> / environment</li>
-                <li>▸ <span className="text-cyber-300">risk model</span> (if any)</li>
+              <ul className="mt-3 space-y-2 text-slate-700 dark:text-white/75">
+                <li>
+                  ▸ <span className="text-cyber-700 dark:text-cyber-300">role</span> or brief
+                </li>
+                <li>
+                  ▸ <span className="text-cyber-700 dark:text-cyber-300">timeline</span> and urgency
+                </li>
+                <li>
+                  ▸ <span className="text-cyber-700 dark:text-cyber-300">stack</span> / environment
+                </li>
+                <li>
+                  ▸ <span className="text-cyber-700 dark:text-cyber-300">risk model</span> (if any)
+                </li>
               </ul>
-              <div className="mt-5 flex items-center gap-2 border-t border-white/10 pt-4 text-[11px] text-white/50">
+              <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4 text-[11px] text-slate-500 dark:border-white/10 dark:text-white/50">
                 <ShieldCheck className="size-3.5 text-ok-400" />
                 <span>I respond within 24h — PGP on request.</span>
               </div>

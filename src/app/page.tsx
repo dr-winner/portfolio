@@ -35,7 +35,7 @@ export default async function Home() {
       <Header />
       <main
         id="main"
-        className="relative pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(6.75rem+env(safe-area-inset-bottom,0px))] md:pb-32"
+        className="relative min-w-0 pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(6.75rem+env(safe-area-inset-bottom,0px))] md:pb-32"
       >
         <Hero />
         <SignalStrip />

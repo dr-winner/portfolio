@@ -21,7 +21,7 @@ export function SectionHeader({
     <header
       id={id}
       className={clsx(
-        "flex flex-col gap-3",
+        "flex min-w-0 w-full flex-col gap-3",
         isCenter
           ? "items-start text-left md:items-center md:text-center"
           : "items-start text-left"
@@ -33,13 +33,13 @@ export function SectionHeader({
           isCenter && "md:mx-auto"
         )}
       >
-        <span className="size-1.5 rounded-full bg-cyber-300 shadow-glow-sm" />
+        <span className="size-1.5 shrink-0 rounded-full bg-cyber-400 shadow-glow-sm dark:bg-cyber-300" />
         {eyebrow}
       </span>
       <h2
         className={clsx(
           "text-display-etched font-display text-3xl md:text-4xl lg:text-5xl tracking-tight",
-          isCenter && "max-w-2xl md:mx-auto"
+          isCenter ? "max-w-2xl md:mx-auto" : "max-w-full"
         )}
       >
         <Balancer>{title}</Balancer>
@@ -47,7 +47,7 @@ export function SectionHeader({
       {description && (
         <p
           className={clsx(
-            "text-white/60 md:text-lg",
+            "min-w-0 text-slate-600 dark:text-white/60 md:text-lg",
             isCenter ? "max-w-xl md:mx-auto" : "max-w-2xl"
           )}
         >

@@ -11,17 +11,21 @@ export function Card({ className, glow = false, interactive = false, children, .
   return (
     <div
       className={clsx(
-        "relative overflow-hidden rounded-2xl border border-white/10 bg-ink-100/70 backdrop-blur-sm",
+        "relative overflow-hidden rounded-2xl border backdrop-blur-sm",
+        "border-slate-200/90 bg-white/[0.88]",
+        "dark:border-white/10 dark:bg-ink-100/70",
         "before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl",
-        "before:bg-[radial-gradient(ellipse_at_top_left,rgba(60,207,255,0.10),transparent_45%)]",
-        interactive && "transition-colors duration-300 hover:border-cyber-300/30",
-        glow && "shadow-glow-sm",
+        "before:bg-[radial-gradient(ellipse_at_top_left,rgba(60,207,255,0.14),transparent_45%)]",
+        "dark:before:bg-[radial-gradient(ellipse_at_top_left,rgba(60,207,255,0.10),transparent_45%)]",
+        interactive && "transition-colors duration-300 hover:border-cyber-400/40 dark:hover:border-cyber-300/30",
+        glow &&
+          "shadow-[0_0_24px_-6px_rgba(60,207,255,0.22)] dark:shadow-glow-sm",
         className
       )}
       {...rest}
     >
       <NoiseLayer className="-z-0" />
-      <div className="relative z-10 h-full">{children}</div>
+      <div className="relative z-10 h-full min-w-0">{children}</div>
     </div>
   );
 }

@@ -12,10 +12,20 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 const accentText: Record<Capability["accent"], string> = {
-  cyber: "text-cyber-300",
-  signal: "text-signal-300",
-  ok: "text-ok-400",
-  threat: "text-threat-400",
+  cyber: "text-cyber-600 dark:text-cyber-300",
+  signal: "text-amber-700 dark:text-signal-300",
+  ok: "text-emerald-700 dark:text-ok-400",
+  threat: "text-rose-700 dark:text-threat-400",
+};
+
+const accentIconSurface: Record<Capability["accent"], string> = {
+  cyber:
+    "border-cyber-400/35 bg-cyan-50 text-cyber-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-cyber-300",
+  signal:
+    "border-amber-400/40 bg-amber-50 text-amber-700 dark:border-white/10 dark:bg-white/[0.03] dark:text-signal-300",
+  ok: "border-emerald-400/40 bg-emerald-50 text-emerald-800 dark:border-white/10 dark:bg-white/[0.03] dark:text-ok-400",
+  threat:
+    "border-rose-400/40 bg-rose-50 text-rose-800 dark:border-white/10 dark:bg-white/[0.03] dark:text-threat-400",
 };
 
 const accentRing: Record<Capability["accent"], string> = {
@@ -37,9 +47,9 @@ export function Capabilities() {
           />
         </ScrollReveal>
 
-        <div className="mt-12 space-y-6 text-[15px] leading-[1.75] text-white/72 md:mt-20 md:space-y-0 md:grid md:gap-10 md:text-[16px] lg:mt-24 lg:gap-14 lg:grid-cols-2">
+        <div className="mt-12 space-y-6 text-[15px] leading-[1.75] text-slate-700 md:mt-20 md:space-y-0 md:grid md:gap-10 md:text-[16px] lg:mt-24 lg:gap-14 lg:grid-cols-2 dark:text-white/72">
           <p className="prose-measure md:max-w-none">{capabilityPreamble[0]}</p>
-          <p className="prose-measure border-t border-white/10 pt-6 md:max-w-none md:border-t-0 md:border-l md:border-white/10 md:pl-8 md:pt-0">
+          <p className="prose-measure border-t border-slate-200/90 pt-6 text-slate-700 md:max-w-none md:border-t-0 md:border-l md:border-slate-200/90 md:pl-8 md:pt-0 dark:border-white/10 dark:text-white/72">
             {capabilityPreamble[1]}
           </p>
         </div>
@@ -66,27 +76,27 @@ export function Capabilities() {
                   <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                     <div
                       className={clsx(
-                        "inline-flex size-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]",
-                        accentText[cap.accent]
+                        "inline-flex size-12 shrink-0 items-center justify-center rounded-xl border",
+                        accentIconSurface[cap.accent]
                       )}
                     >
                       <Icon className="size-5" />
                     </div>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/38 sm:text-right">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-slate-500 sm:text-right dark:text-white/38">
                       {cap.label}
                     </span>
                   </div>
 
-                  <h3 className="mt-5 font-display text-2xl md:text-[1.75rem] leading-tight tracking-tight text-white">
+                  <h3 className="mt-5 font-display text-2xl leading-tight tracking-tight text-slate-900 md:text-[1.75rem] dark:text-white">
                     {cap.title}
                   </h3>
-                  <p className="mt-4 text-white/70 leading-relaxed">{cap.description}</p>
+                  <p className="mt-4 leading-relaxed text-slate-600 dark:text-white/70">{cap.description}</p>
 
                   <div className="my-8 divider-hair" />
 
                   <ul className="space-y-3.5 text-[14px] md:text-[15px]">
                     {cap.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-3 text-white/78">
+                      <li key={b} className="flex items-start gap-3 text-slate-700 dark:text-white/78">
                         <span className={clsx("mt-2 size-1 shrink-0 rounded-full", accentText[cap.accent])}>
                           <span className="block size-1 rounded-full bg-current shadow-glow-sm" />
                         </span>

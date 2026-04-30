@@ -15,12 +15,13 @@ export function StatusBadge({
       ? "bg-ok-400"
       : status === "idle"
       ? "bg-signal-300"
-      : "bg-white/40";
+      : "bg-slate-400/80 dark:bg-white/40";
 
   return (
     <div
       className={clsx(
-        "font-sans inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-ink-100/80 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur",
+        "font-sans inline-flex max-w-full min-w-0 items-center gap-2.5 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur",
+        "border-slate-300/80 bg-white/90 text-slate-800 dark:border-white/10 dark:bg-ink-100/80 dark:text-white/80",
         className
       )}
     >
@@ -28,7 +29,7 @@ export function StatusBadge({
         <span className={clsx("absolute inset-0 rounded-full opacity-60 animate-ping-large", dot)} />
         <span className={clsx("relative inline-flex size-2 rounded-full", dot)} />
       </span>
-      <span className="tracking-tight">{label}</span>
+      <span className="min-w-0 break-words tracking-tight">{label}</span>
     </div>
   );
 }

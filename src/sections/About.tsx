@@ -39,13 +39,13 @@ export function About() {
                   bio.md
                 </span>
               </div>
-              <div className="mt-5 space-y-4 text-white/75 md:text-[15px] leading-relaxed">
+              <div className="mt-5 space-y-4 leading-relaxed text-slate-700 md:text-[15px] dark:text-white/75">
                 {profile.bio.map((p, i) => (
                   <p key={i}>
                     <Balancer>{p}</Balancer>
                   </p>
                 ))}
-                <p className="text-white/60">
+                <p className="text-slate-600 dark:text-white/60">
                   If you&apos;re building something ambitious that needs to be fast, well-instrumented,
                   and hard to compromise — we should talk.
                 </p>
@@ -64,13 +64,13 @@ export function About() {
               <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
                 signals.txt
               </span>
-              <h3 className="mt-5 font-display text-xl tracking-tight text-white">
+              <h3 className="mt-5 font-display text-xl tracking-tight text-slate-900 dark:text-white">
                 Small things about how I work
               </h3>
               <ul className="mt-5 space-y-3">
                 {signals.map(({ icon: Icon, label }) => (
-                  <li key={label} className="flex items-start gap-3 text-sm text-white/75">
-                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-cyber-300" />
+                  <li key={label} className="flex items-start gap-3 text-sm text-slate-700 dark:text-white/75">
+                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-cyber-600 dark:text-cyber-300" />
                     <span>{label}</span>
                   </li>
                 ))}
