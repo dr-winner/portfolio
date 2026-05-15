@@ -30,6 +30,6 @@ export const profile = {
     discordHandle: "w3brr",
     instagram: "https://www.instagram.com/winner.richard",
     /** Pro Coder (public handle) */
-    tiktok: "https://www.tiktok.com/@procoder",
+    tiktok: "https://www.tiktok.com/@procoder_",
   },
 } as const;
