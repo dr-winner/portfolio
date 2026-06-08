@@ -96,8 +96,33 @@ export async function GET(req: Request) {
         },
       }),
     });
+
+    // Detect REST-style auth failure (Bad credentials / rate limit) — these
+    // come back as { message: "...", documentation_url: "..." } with no
+    // GraphQL `data` envelope, so the user-null check would otherwise
+    // mis-classify them as "not_found".
+    if (gRes.status === 401 || gRes.status === 403) {
+      const tokenScopes = gRes.headers.get("x-oauth-scopes") ?? "(none)";
+      const acceptedScopes = gRes.headers.get("x-accepted-oauth-scopes") ?? "(unknown)";
+      console.error(
+        `[github/insights] auth failure status=${gRes.status} scopes=${tokenScopes} accepted=${acceptedScopes}`
+      );
+      return NextResponse.json(
+        {
+          error: "bad_credentials",
+          message:
+            "GitHub token rejected. Check that GITHUB_TOKEN is set, not expired, and has read:user scope.",
+          login,
+        },
+        { status: 200 }
+      );
+    }
+
     const gJson = (await gRes.json()) as GQLContrib;
     if (gJson.errors?.length) {
+      console.error(
+        `[github/insights] graphql errors: ${gJson.errors.map((e) => e.message).join("; ")}`
+      );
       return NextResponse.json(
         { error: "graphql", message: "Could not load contribution data.", login },
         { status: 200 }
@@ -105,6 +130,9 @@ export async function GET(req: Request) {
     }
     const user = gJson.data?.user;
     if (!user) {
+      console.error(
+        `[github/insights] unexpected null user (status=${gRes.status}, body preview="${JSON.stringify(gJson).slice(0, 200)}")`
+      );
       return NextResponse.json(
         { error: "not_found", message: "Could not load contribution data.", login },
         { status: 200 }
