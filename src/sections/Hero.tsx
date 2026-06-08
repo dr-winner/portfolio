@@ -6,6 +6,7 @@ import { ArrowDown, ArrowUpRight, Shield, Sparkles } from "lucide-react";
 import { TypedLines } from "@/components/TypedLines";
 import { StatusBadge } from "@/components/StatusBadge";
 import { HeroAnimation, CharSplit } from "@/components/HeroAnimation";
+import { MagneticButton } from "@/components/MagneticButton";
 import { profile } from "@/content/profile";
 
 export function Hero() {
@@ -42,10 +43,12 @@ export function Hero() {
         <div className="grid items-center gap-10 lg:gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Left: identity */}
           <div className="flex min-w-0 flex-col items-start gap-7 text-left">
-            <StatusBadge
-              className="max-w-full sm:max-w-lg"
-              label={profile.availability.label}
-            />
+            <div data-hero-status className="w-full">
+              <StatusBadge
+                className="max-w-full sm:max-w-lg"
+                label={profile.availability.label}
+              />
+            </div>
 
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
@@ -70,13 +73,15 @@ export function Hero() {
                 Explore my work
                 <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
               </button>
-              <button
-                onClick={() => go("contact")}
-                className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white/90 px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-300 hover:border-cyber-400/45 hover:bg-white dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:shadow-none dark:hover:border-cyber-300/40 dark:hover:bg-white/[0.05] dark:hover:text-white sm:min-h-0 sm:w-auto sm:py-3"
-              >
-                Let&apos;s talk
-                <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </button>
+              <MagneticButton strength={0.4} className="w-full sm:w-auto">
+                <button
+                  onClick={() => go("contact")}
+                  className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white/90 px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-300 hover:border-cyber-400/45 hover:bg-white dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:shadow-none dark:hover:border-cyber-300/40 dark:hover:bg-white/[0.05] dark:hover:text-white sm:min-h-0 sm:w-auto sm:py-3"
+                >
+                  Let&apos;s talk
+                  <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+              </MagneticButton>
             </div>
 
             {/* Specialty chips */}
@@ -141,6 +146,7 @@ export function Hero() {
               of the page.
             </p>
             <div
+              data-hero-terminal
               className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white/[0.92] shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-ink-100/80 dark:shadow-none"
               aria-label="Decorative terminal-style preview, not an input"
             >

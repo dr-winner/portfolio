@@ -36,7 +36,8 @@ const mono = IBM_Plex_Mono({
   adjustFontFallback: true,
 });
 
-const url = "https://richardwinner.dev";
+const url = "https://www.duvorrichardwinner.me";
+const canonicalUrl = `${url}/`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -59,9 +60,12 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: profile.name }],
   creator: profile.name,
+  alternates: {
+    canonical: canonicalUrl,
+  },
   openGraph: {
     type: "website",
-    url,
+    url: canonicalUrl,
     title: `${profile.name} — ${profile.role}`,
     description: profile.tagline,
     siteName: profile.name,
@@ -77,6 +81,19 @@ export const metadata: Metadata = {
     icon: "/icon.png",
     apple: "/apple-icon.png",
   },
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.name,
+  url: canonicalUrl,
+  jobTitle: profile.role,
+  sameAs: [
+    profile.socials.github,
+    profile.socials.linkedin,
+    profile.socials.x,
+  ],
 };
 
 export const viewport: Viewport = {
@@ -98,6 +115,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={clsx(sans.variable, display.variable, mono.variable, "dark")}
     >
       <body className="font-sans antialiased overflow-x-hidden touch-pan-y [overscroll-behavior-x:none]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <Providers>
           <ClientChrome>
             <AgenticBackground />

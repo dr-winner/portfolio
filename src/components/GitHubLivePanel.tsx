@@ -103,12 +103,8 @@ export function GitHubLivePanel() {
 
   const gh = profile.socials.github;
 
-  if (err) {
-    return (
-      <p className="text-sm text-slate-600 dark:text-white/50">
-        Could not load GitHub insights. Check your network and try again.
-      </p>
-    );
+  if (err || (data && data.error)) {
+    return <GitHubFallback gh={gh} login={data?.login} />;
   }
 
   if (!data) {
@@ -117,23 +113,6 @@ export function GitHubLivePanel() {
         <div className="h-64 animate-pulse rounded-2xl border border-slate-200/90 bg-slate-100/80 md:col-span-2 lg:col-span-2 dark:border-white/10 dark:bg-white/[0.04]" />
         <div className="h-64 animate-pulse rounded-2xl border border-slate-200/90 bg-slate-100/80 lg:col-span-1 dark:border-white/10 dark:bg-white/[0.04]" />
       </div>
-    );
-  }
-
-  if (data.error === "missing_token") {
-    return (
-      <div className="rounded-xl border border-amber-500/30 bg-amber-50/80 p-5 text-left text-sm text-slate-800 dark:border-amber-500/25 dark:bg-amber-500/5 dark:text-white/80">
-        <p className="font-medium text-amber-900 dark:text-amber-200/90">Contribution data unavailable</p>
-        <p className="mt-2 text-slate-700 dark:text-white/60">This section is not configured for this deployment.</p>
-      </div>
-    );
-  }
-
-  if (data.error) {
-    return (
-      <p className="text-sm text-rose-700 dark:text-rose-300/90">
-        Could not load contribution data. Try again later.
-      </p>
     );
   }
 
@@ -314,6 +293,57 @@ export function GitHubLivePanel() {
             </div>
           </div>
         </aside>
+      </div>
+    </div>
+  );
+}
+
+function GitHubFallback({ gh, login }: { gh: string; login?: string }) {
+  return (
+    <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="min-w-0">
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">
+          Open source
+        </p>
+        <p className="mt-2 max-w-xl text-base text-slate-700 dark:text-white/75">
+          Live contribution data isn&apos;t available right now. The full history,
+          pinned repos, and recent commits are on the GitHub profile.
+        </p>
+        <div className="mt-5">
+          <a
+            href={gh}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 rounded-full border border-cyber-500/35 bg-cyber-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-cyber-500/55 hover:bg-cyber-500/[0.12] dark:border-cyber-300/35 dark:bg-cyber-300/[0.05] dark:text-white dark:hover:border-cyber-300/55"
+          >
+            <GithubIcon className="size-4 text-cyber-600 dark:text-cyber-300" />
+            View profile on GitHub{login ? ` (@${login})` : ""}
+            <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/45 dark:group-hover:text-white/70" />
+          </a>
+        </div>
+      </div>
+
+      {/* Skeleton heatmap — gives the section visual presence even without data */}
+      <div
+        aria-hidden
+        className="grid w-full max-w-[260px] gap-0.5 rounded-xl border border-slate-200/90 bg-slate-100/70 p-3 dark:border-white/10 dark:bg-[#06080d]"
+        style={{ gridTemplateColumns: "repeat(13, 1fr)", gridAutoRows: "8px" }}
+      >
+        {Array.from({ length: 13 * 7 }).map((_, i) => {
+          // Pseudo-random fill weight so it doesn't look mechanical
+          const seed = (i * 7919) % 100;
+          const tone =
+            seed < 55
+              ? GH.empty
+              : seed < 75
+                ? GH.l1
+                : seed < 90
+                  ? GH.l2
+                  : seed < 97
+                    ? GH.l3
+                    : GH.l4;
+          return <span key={i} className={clsx("rounded-[1px]", tone)} />;
+        })}
       </div>
     </div>
   );

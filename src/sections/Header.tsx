@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Command as CommandIcon, Mail, SquareTerminal, TerminalSquare } from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { MagneticButton } from "@/components/MagneticButton";
 import { useOpenShell } from "@/components/ClientChrome";
 import { profile } from "@/content/profile";
 
@@ -135,14 +136,16 @@ export function Header() {
               <span className="hidden md:inline">Menu</span>
               <span className="hidden lg:inline kbd">⌘K</span>
             </button>
-            <button
-              onClick={() => jump("contact")}
-              className="inline-flex h-9 min-w-9 shrink-0 items-center justify-center gap-1 rounded-full bg-gradient-to-r from-cyber-300 to-signal-300 px-2.5 text-[11px] font-semibold leading-none text-ink shadow-glow-sm transition-shadow hover:shadow-glow md:h-10 md:min-w-10 md:gap-1.5 md:px-4 md:text-xs"
-              aria-label="Go to contact section"
-            >
-              <Mail className="size-3.5 md:hidden" aria-hidden />
-              <span className="hidden md:inline">Contact</span>
-            </button>
+            <MagneticButton strength={0.4}>
+              <button
+                onClick={() => jump("contact")}
+                className="inline-flex h-9 min-w-9 shrink-0 items-center justify-center gap-1 rounded-full bg-gradient-to-r from-cyber-300 to-signal-300 px-2.5 text-[11px] font-semibold leading-none text-ink shadow-glow-sm transition-shadow hover:shadow-glow md:h-10 md:min-w-10 md:gap-1.5 md:px-4 md:text-xs"
+                aria-label="Go to contact section"
+              >
+                <Mail className="size-3.5 md:hidden" aria-hidden />
+                <span className="hidden md:inline">Contact</span>
+              </button>
+            </MagneticButton>
           </div>
         </div>
       </header>

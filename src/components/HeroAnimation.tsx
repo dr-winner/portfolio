@@ -6,38 +6,100 @@ interface HeroAnimationProps {
   children: React.ReactNode;
 }
 
-/**
- * Wraps hero heading content and triggers GSAP char-stagger on mount.
- * Targets every .hero-char inside the wrapper div.
- */
+const SESSION_KEY = "hero:played";
+const CHAR_BEZIER = "M0,0 C0.22,1 0.36,1 1,1";
+
 export function HeroAnimation({ children }: HeroAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const el = ref.current;
     if (!el) return;
 
+    const root = el.closest("section") ?? document;
+    const terminal = root.querySelector<HTMLElement>("[data-hero-terminal]");
+    const status = root.querySelector<HTMLElement>("[data-hero-status]");
+    const chars = el.querySelectorAll<HTMLElement>(".hero-char");
+
+    // Reduced motion OR already played: show everything instantly, fire ready event for downstream
+    const alreadyPlayed =
+      typeof sessionStorage !== "undefined" &&
+      sessionStorage.getItem(SESSION_KEY) === "true";
+
+    if (reduced || alreadyPlayed) {
+      window.dispatchEvent(new CustomEvent("hero:reveal-complete"));
+      return;
+    }
+
+    if (!chars.length) return;
+
     let ctx: { revert: () => void } | undefined;
 
     (async () => {
-      const { gsap } = await import("gsap");
+      const [{ gsap }, customEaseMod] = await Promise.all([
+        import("gsap"),
+        import("gsap/CustomEase").catch(() => null),
+      ]);
 
-      const chars = el.querySelectorAll<HTMLElement>(".hero-char");
-      if (!chars.length) return;
+      // Try to register a custom cubic-bezier matching [0.22, 1, 0.36, 1]; fall back to power3.out
+      let charEase = "power3.out";
+      if (customEaseMod) {
+        const CustomEase = (customEaseMod as { CustomEase?: unknown; default?: unknown }).CustomEase ??
+          (customEaseMod as { default?: unknown }).default;
+        if (CustomEase) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          gsap.registerPlugin(CustomEase as any);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (CustomEase as any).create("heroCharEase", CHAR_BEZIER);
+          charEase = "heroCharEase";
+        }
+      }
 
-      gsap.set(chars, { y: 24, opacity: 0 });
+      gsap.set(chars, { y: 20, opacity: 0 });
+      if (status) gsap.set(status, { y: 12, opacity: 0 });
+      if (terminal) gsap.set(terminal, { scaleY: 0, transformOrigin: "bottom" });
 
       ctx = gsap.context(() => {
-        gsap.to(chars, {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "expo.out",
-          stagger: 0.04,
-          delay: 0.15,
+        const tl = gsap.timeline({
+          onComplete: () => {
+            try {
+              sessionStorage.setItem(SESSION_KEY, "true");
+            } catch {
+              /* private mode etc — non-fatal */
+            }
+            window.dispatchEvent(new CustomEvent("hero:reveal-complete"));
+          },
         });
+
+        tl.to(
+          chars,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: charEase,
+            stagger: 0.04,
+          },
+          0
+        );
+
+        if (terminal) {
+          tl.to(
+            terminal,
+            { scaleY: 1, duration: 0.6, ease: "power3.out" },
+            0.2
+          );
+        }
+
+        if (status) {
+          tl.to(
+            status,
+            { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+            0.6
+          );
+        }
       });
     })();
 
@@ -47,17 +109,6 @@ export function HeroAnimation({ children }: HeroAnimationProps) {
   return <div ref={ref}>{children}</div>;
 }
 
-/**
- * Splits text into per-character spans for GSAP stagger.
- *
- * Each WORD is wrapped in an `inline-block whitespace-nowrap` span so the
- * browser breaks only between words, never mid-character. Each CHAR inside
- * a word uses `inline-block` so GSAP y-transforms work.
- *
- * Pass `charClassName` when each char needs its own gradient context
- * (e.g. text-gradient-cyber — background-clip:text requires direct text
- * content on the element that carries the class).
- */
 export function CharSplit({
   text,
   className,
@@ -73,7 +124,6 @@ export function CharSplit({
     <span className={className} aria-label={text}>
       {words.map((word, wi) => (
         <Fragment key={wi}>
-          {/* word wrapper — inline-block + nowrap keeps word intact at line breaks */}
           <span className="inline-block whitespace-nowrap">
             {word.split("").map((ch, ci) => (
               <span
@@ -85,7 +135,6 @@ export function CharSplit({
               </span>
             ))}
           </span>
-          {/* inter-word space — animatable like any other char */}
           {wi < words.length - 1 && (
             <span className="hero-char inline-block" aria-hidden>
               &nbsp;

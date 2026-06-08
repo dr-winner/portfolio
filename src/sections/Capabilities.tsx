@@ -53,13 +53,19 @@ const levelLabel: Record<Capability["level"], string> = {
 };
 
 export function Capabilities() {
+  const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  // GSAP ScrollTrigger.batch for staggered card entrance
+  // Pinned sticky stack reveal — cards slide in from the left as scroll progresses.
+  // Skipped on mobile (<768px) and under reduced motion.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (!mq.matches) return;
+
+    const section = sectionRef.current;
     const grid = gridRef.current;
-    if (!grid) return;
+    if (!section || !grid) return;
 
     let ctx: { revert: () => void } | undefined;
 
@@ -70,29 +76,37 @@ export function Capabilities() {
 
       ctx = gsap.context(() => {
         const cards = grid.querySelectorAll<HTMLElement>(".cap-card");
-        gsap.set(cards, { opacity: 0, y: 32 });
+        if (!cards.length) return;
 
-        ScrollTrigger.batch(cards, {
-          onEnter: (batch) => {
-            gsap.to(batch, {
-              opacity: 1,
-              y: 0,
-              stagger: 0.06,
-              duration: 0.7,
-              ease: "power3.out",
-            });
-          },
-          once: true,
-          start: "top 88%",
-        });
-      }, grid);
+        gsap.set(cards, { opacity: 0, x: -40 });
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: () => `+=${window.innerHeight * 1.2}`,
+              pin: true,
+              scrub: 1,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          })
+          .to(cards, {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+            ease: "power2.out",
+            stagger: 0.08,
+          });
+      }, section);
     })();
 
     return () => ctx?.revert();
   }, []);
 
   return (
-    <section id="capabilities" className="relative py-20 md:py-28 lg:py-32">
+    <section ref={sectionRef} id="capabilities" className="relative py-20 md:py-28 lg:py-32">
       <div className="container">
         <ScrollReveal>
           <SectionHeader

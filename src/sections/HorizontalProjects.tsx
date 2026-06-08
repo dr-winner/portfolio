@@ -202,9 +202,17 @@ export function HorizontalProjects({
   const progressRef = useRef<HTMLDivElement>(null);
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
     if (reduced || isMobile) return;
 
     const section = sectionRef.current;
@@ -332,10 +340,10 @@ export function HorizontalProjects({
     })();
 
     return () => ctx?.revert();
-  }, [list, reduced]);
+  }, [list, reduced, isMobile]);
 
   // ── Fallback: vertical stack on mobile / reduced-motion ──────────────────
-  if (reduced) {
+  if (reduced || isMobile) {
     return (
       <section id="projects" className="relative py-20 md:py-28 lg:py-32">
         <div className="container">

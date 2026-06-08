@@ -1,24 +1,18 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 interface MagneticButtonProps {
   children: React.ReactNode;
   className?: string;
   strength?: number;
-  as?: "div" | "span";
 }
 
-/**
- * Wraps its children and applies a magnetic attraction toward the cursor on hover.
- * On reduced-motion devices it renders as a plain div.
- */
 export function MagneticButton({
   children,
   className,
-  strength = 0.35,
-  as: Tag = "div",
+  strength = 0.4,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -26,7 +20,24 @@ export function MagneticButton({
   const springX = useSpring(x, { stiffness: 220, damping: 22 });
   const springY = useSpring(y, { stiffness: 220, damping: 22 });
 
+  // Engage only on devices with true hover + no reduced-motion preference
+  const [engaged, setEngaged] = useState(false);
+
+  useEffect(() => {
+    const hoverMq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => setEngaged(hoverMq.matches && !reducedMq.matches);
+    apply();
+    hoverMq.addEventListener("change", apply);
+    reducedMq.addEventListener("change", apply);
+    return () => {
+      hoverMq.removeEventListener("change", apply);
+      reducedMq.removeEventListener("change", apply);
+    };
+  }, []);
+
   function onMove(e: React.MouseEvent) {
+    if (!engaged) return;
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -39,16 +50,14 @@ export function MagneticButton({
     y.set(0);
   }
 
-  // motion.div has the actual ref / event handlers; Tag just controls semantic role
-  void Tag; // consumed above
   return (
     <motion.div
       ref={ref}
-      style={{ x: springX, y: springY }}
+      style={engaged ? { x: springX, y: springY } : undefined}
       className={className}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      data-magnetic
+      onMouseMove={engaged ? onMove : undefined}
+      onMouseLeave={engaged ? onLeave : undefined}
+      data-magnetic={engaged ? "" : undefined}
     >
       {children}
     </motion.div>
