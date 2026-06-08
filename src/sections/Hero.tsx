@@ -1,38 +1,68 @@
 "use client";
 
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Shield, Sparkles } from "lucide-react";
-import Balancer from "react-wrap-balancer";
 import { TypedLines } from "@/components/TypedLines";
 import { StatusBadge } from "@/components/StatusBadge";
+import { HeroAnimation, CharSplit } from "@/components/HeroAnimation";
 import { profile } from "@/content/profile";
 
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Orb parallax: y 0 → -80 over the full hero scroll
+  const orbY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+
   function go(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
-    <section id="top" className="relative overflow-x-clip pt-[calc(7rem+env(safe-area-inset-top,0px))] pb-12 md:pb-20 md:pt-40">
-      <div className="container">
+    <section
+      ref={sectionRef}
+      id="top"
+      className="relative overflow-x-clip pt-[calc(7rem+env(safe-area-inset-top,0px))] pb-12 md:pb-20 md:pt-40"
+    >
+      {/* Parallax orbs */}
+      <motion.div
+        aria-hidden
+        style={{ y: orbY }}
+        className="pointer-events-none absolute inset-0 will-change-transform"
+      >
+        <div className="absolute -top-40 -left-32 size-[520px] rounded-full bg-cyber-300/5 blur-3xl" />
+        <div className="absolute top-20 -right-40 size-[440px] rounded-full bg-signal-300/4 blur-3xl" />
+      </motion.div>
+
+      <div className="container relative">
         <div className="grid items-center gap-10 lg:gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Left: identity */}
           <div className="flex min-w-0 flex-col items-start gap-7 text-left">
-            <StatusBadge className="max-w-full sm:max-w-lg" label={profile.availability.label} />
+            <StatusBadge
+              className="max-w-full sm:max-w-lg"
+              label={profile.availability.label}
+            />
 
-            <h1 className="max-w-full font-display text-display-xl tracking-tight">
-              <Balancer>
-                <span className="block text-display-etched">SOC Analyst</span>
+            <HeroAnimation>
+              <h1 className="max-w-full font-display text-display-xl tracking-tight">
+                <CharSplit text="SOC Analyst" className="block text-display-etched" />
                 <span className="block">
-                  <span className="text-gradient-cyber">&amp; AI Engineer</span>
+                  {/* charClassName applies gradient to each char span so background-clip:text
+                      has direct text content to clip against (inline-block children break
+                      parent-level background-clip:text) */}
+                  <CharSplit text="& Cloud Security" charClassName="text-gradient-cyber" />
                 </span>
-              </Balancer>
-            </h1>
+              </h1>
+            </HeroAnimation>
 
             <p className="min-w-0 w-full max-w-xl text-lg text-slate-600 dark:text-white/70">
-              <Balancer>
-                I build and defend intelligent systems — from detection engineering in the SOC
-                to agentic AI that reasons, retrieves, and acts.
-              </Balancer>
+              Detection engineering in the SOC. Identity and posture hardening
+              in the cloud. Automation that closes the gap between alert volume
+              and analyst time.
             </p>
 
             <div className="flex w-full max-w-md flex-col gap-3 font-sans sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
@@ -58,7 +88,7 @@ export function Hero() {
                   Focus
                 </dt>
                 <dd className="mt-1 text-sm font-medium text-slate-900 dark:text-white/90">
-                  SOC &amp; agentic AI
+                  SOC · cloud security
                 </dd>
               </div>
               <div>
@@ -72,16 +102,25 @@ export function Hero() {
             </dl>
           </div>
 
-          {/* Right: terminal whoami (decorative) + hint for real console */}
+          {/* Right: terminal */}
           <div className="relative min-w-0 overflow-x-clip">
             <p className="mb-3 max-w-full font-sans text-sm leading-relaxed text-slate-600 md:max-w-md dark:text-white/60">
-              <span className="font-medium text-slate-800 dark:text-white/75">This window</span> is a{" "}
-              <em className="not-italic text-cyber-600 dark:text-cyber-200/90">decorative</em> terminal — it sets the
-              security vibe and auto-typed lines. The{" "}
-              <strong className="text-cyber-700 dark:text-cyber-200/90">real, typeable</strong> one is the{" "}
-              <strong className="text-slate-900 dark:text-white/80">bar at the bottom</strong> of the page, or open{" "}
-              <strong>Console</strong> in the header. You can use normal sentences; no command-line
-              experience needed.
+              <span className="font-medium text-slate-800 dark:text-white/75">
+                This window
+              </span>{" "}
+              is a{" "}
+              <em className="not-italic text-cyber-600 dark:text-cyber-200/90">
+                decorative
+              </em>{" "}
+              terminal. The{" "}
+              <strong className="text-cyber-700 dark:text-cyber-200/90">
+                real, typeable
+              </strong>{" "}
+              one is the{" "}
+              <strong className="text-slate-900 dark:text-white/80">
+                bar at the bottom
+              </strong>{" "}
+              of the page.
             </p>
             <div
               className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white/[0.92] shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-ink-100/80 dark:shadow-none"
@@ -117,7 +156,10 @@ export function Hero() {
                       text: "$ cat ~/role.txt",
                       className: "text-slate-500 dark:text-white/60",
                     },
-                    { text: profile.role, className: "text-cyber-700 dark:text-cyber-200" },
+                    {
+                      text: profile.role,
+                      className: "text-cyber-700 dark:text-cyber-200",
+                    },
                     {
                       text: "$ ls ~/focus --depth=1",
                       className: "text-slate-500 dark:text-white/60",
@@ -126,28 +168,39 @@ export function Hero() {
                       text: "soc/ threat-hunting/ detection-engineering/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
-                    { text: "ai-agents/ rag/ llm-security/", className: "text-emerald-600 dark:text-ok-400" },
-                    { text: "cloud/ aws/ azure/ gcp/ hardening/", className: "text-emerald-600 dark:text-ok-400" },
+                    {
+                      text: "ai-agents/ rag/ llm-security/",
+                      className: "text-emerald-600 dark:text-ok-400",
+                    },
+                    {
+                      text: "cloud/ aws/ azure/ gcp/ hardening/",
+                      className: "text-emerald-600 dark:text-ok-400",
+                    },
                     {
                       text: "$ status --now",
                       className: "text-slate-500 dark:text-white/60",
                     },
-                    { text: "◆ available — shipping + defending", className: "text-amber-600 dark:text-signal-300" },
+                    {
+                      text: "◆ available — shipping + defending",
+                      className: "text-amber-600 dark:text-signal-300",
+                    },
                   ]}
                 />
               </div>
 
               <div className="border-t border-slate-200/85 bg-white/95 dark:border-white/10 dark:bg-ink-100/60">
                 <p className="px-4 pt-2 font-sans text-[11px] leading-snug text-slate-500 dark:text-white/45">
-                  <span className="text-cyber-600 dark:text-cyber-200/80">→</span> To actually type,
-                  use the console at the bottom of the screen.
+                  <span className="text-cyber-600 dark:text-cyber-200/80">→</span>{" "}
+                  To actually type, use the console at the bottom of the screen.
                 </p>
                 <div className="flex flex-col gap-1.5 px-4 py-2 text-[11px] text-slate-500 dark:text-white/50 sm:flex-row sm:items-center sm:gap-3">
                   <div className="flex items-center gap-2">
                     <Sparkles className="size-3 text-cyber-500 dark:text-cyber-300" />
                     <span>
                       agent runtime:{" "}
-                      <span className="text-slate-800 dark:text-white/80">online</span>
+                      <span className="text-slate-800 dark:text-white/80">
+                        online
+                      </span>
                     </span>
                   </div>
                   <span className="font-mono text-slate-400 sm:ml-auto dark:text-white/40">

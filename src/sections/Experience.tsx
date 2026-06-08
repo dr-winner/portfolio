@@ -16,7 +16,6 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
     offset: ["start 0.8", "end 0.2"],
   });
 
-  // Animated line fill — grows as you scroll through the section
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
@@ -42,17 +41,6 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
             className="pointer-events-none absolute left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-cyber-300/80 via-cyber-300/40 to-signal-300/40 shadow-glow-sm md:block"
           />
 
-          {/* Mobile spine — centered with dot at left-[calc(15px+0.5px)] (half of 1px line) */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-[calc(15px+0.5px)] top-0 hidden h-full w-px -translate-x-1/2 bg-slate-300/50 dark:bg-white/[0.06] md:hidden"
-          />
-          <motion.div
-            aria-hidden
-            style={{ height: lineHeight }}
-            className="pointer-events-none absolute left-[calc(15px+0.5px)] top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-cyber-300/80 via-cyber-300/40 to-signal-300/40 shadow-glow-sm dark:shadow-glow-sm md:hidden"
-          />
-
           <ol className="relative m-0 flex list-none flex-col gap-16 md:gap-24 p-0">
             {list.map((entry, i) => (
               <TimelineItem
@@ -69,26 +57,35 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
 }
 
 function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "right" }) {
-  const ref = useRef<HTMLLIElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
+  const rowRef = useRef<HTMLLIElement>(null);
+  const { scrollYProgress: rowProg } = useScroll({
+    target: rowRef,
     offset: ["start 0.95", "end 0.05"],
   });
-  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+
+  const opacity = useTransform(rowProg, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
   const x = useTransform(
-    scrollYProgress,
+    rowProg,
     [0, 0.1, 0.9, 1],
     side === "left" ? [-48, 0, 0, -28] : [48, 0, 0, 28]
   );
-  const dotScale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.5, 1, 1, 0.7]);
+  const dotScale = useTransform(rowProg, [0, 0.2, 0.8, 1], [0.5, 1, 1, 0.7]);
+
+  // Separator line: scaleX 0 → 1 as row enters
+  const lineScale = useTransform(rowProg, [0, 0.35], [0, 1]);
+  // Date fades in after line is mostly drawn (~60% progress = 0.21 on our [0,0.35] range)
+  const dateOpacity = useTransform(rowProg, [0.18, 0.35], [0, 1]);
 
   return (
-    <li ref={ref} className="relative">
-      {/*
-        Positioning lives on a static wrapper so Framer Motion’s scale doesn’t wipe out translate centering.
-        Mobile: unchanged — dot on spine at top-7.
-        Desktop: dot centered on the spine (50%) and vertically centered with the timeline row (= card middle).
-      */}
+    <li ref={rowRef} className="relative">
+      {/* Separator line — draws left-to-right on scroll enter */}
+      <motion.div
+        aria-hidden
+        style={{ scaleX: lineScale, transformOrigin: "left" }}
+        className="mb-5 h-px w-full origin-left bg-gradient-to-r from-cyber-300/40 via-slate-300/30 to-transparent dark:from-cyber-300/25 dark:via-white/[0.06]"
+      />
+
+      {/* Timeline dot */}
       <div
         className="pointer-events-none absolute left-[calc(15px+0.5px)] top-7 z-10 flex size-4 -translate-x-1/2 md:left-1/2 md:top-1/2 md:-translate-y-1/2"
         aria-hidden
@@ -132,17 +129,24 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
                 side === "left" && "md:justify-end"
               )}
             >
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/45">
+              <motion.span
+                style={{ opacity: dateOpacity }}
+                className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/45"
+              >
                 {entry.period}
-              </span>
+              </motion.span>
               {entry.current && (
-                <span className="chip-cyber font-mono text-[10px] uppercase">current</span>
+                <span className="chip-cyber font-mono text-[10px] uppercase">
+                  current
+                </span>
               )}
             </div>
             <h3 className="mt-3 font-display text-xl tracking-tight text-slate-900 md:text-2xl dark:text-white">
               {entry.title}
             </h3>
-            <p className="mt-1 text-sm font-mono text-slate-500 dark:text-white/45">@ {entry.org}</p>
+            <p className="mt-1 text-sm font-mono text-slate-500 dark:text-white/45">
+              @ {entry.org}
+            </p>
             <p className="mt-4 text-[14px] leading-relaxed text-slate-700 md:text-[15px] dark:text-white/70">
               {entry.description}
             </p>
@@ -164,7 +168,6 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
           </Card>
         </motion.div>
 
-        {/* Empty cell on the opposite side keeps the grid balanced. */}
         <div className="hidden md:block" />
       </div>
     </li>

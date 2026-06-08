@@ -3,7 +3,8 @@ import { Hero } from "@/sections/Hero";
 import { SignalStrip } from "@/sections/SignalStrip";
 import { Capabilities } from "@/sections/Capabilities";
 import { Stack } from "@/sections/Stack";
-import { Projects } from "@/sections/Projects";
+import { Marquee } from "@/components/Marquee";
+import { HorizontalProjects } from "@/sections/HorizontalProjects";
 import { Experience } from "@/sections/Experience";
 import { Certifications } from "@/sections/Certifications";
 import { Testimonials } from "@/sections/Testimonials";
@@ -11,6 +12,7 @@ import { About } from "@/sections/About";
 import { Contact } from "@/sections/Contact";
 import { GitHubActivity } from "@/sections/GitHubActivity";
 import { Footer } from "@/sections/Footer";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import {
   getCertifications,
   getExperience,
@@ -41,13 +43,15 @@ export default async function Home() {
         <SignalStrip />
         <Capabilities />
         <Stack categories={stack} />
-        <Projects items={projects} />
+        <Marquee />
+        <HorizontalProjects items={projects} />
         <Experience items={experience} />
         <Certifications items={certs} />
         <Testimonials items={testimonials} />
         <About />
         <GitHubActivity />
         <Contact />
+        <ScrollToTop />
       </main>
       <Footer />
     </>

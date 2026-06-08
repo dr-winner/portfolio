@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx";
 import {
@@ -38,7 +39,58 @@ const accentRing: Record<Capability["accent"], string> = {
     "shadow-[inset_0_0_0_1px_rgba(255,82,119,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.14)]",
 };
 
+const accentBar: Record<Capability["accent"], string> = {
+  cyber: "bg-cyber-400 dark:bg-cyber-300",
+  signal: "bg-amber-500 dark:bg-signal-300",
+  ok: "bg-emerald-500 dark:bg-ok-400",
+  threat: "bg-rose-500 dark:bg-threat-400",
+};
+
+const levelLabel: Record<Capability["level"], string> = {
+  core: "core",
+  working: "working",
+  exploring: "exploring",
+};
+
 export function Capabilities() {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // GSAP ScrollTrigger.batch for staggered card entrance
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    let ctx: { revert: () => void } | undefined;
+
+    (async () => {
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        const cards = grid.querySelectorAll<HTMLElement>(".cap-card");
+        gsap.set(cards, { opacity: 0, y: 32 });
+
+        ScrollTrigger.batch(cards, {
+          onEnter: (batch) => {
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              stagger: 0.06,
+              duration: 0.7,
+              ease: "power3.out",
+            });
+          },
+          once: true,
+          start: "top 88%",
+        });
+      }, grid);
+    })();
+
+    return () => ctx?.revert();
+  }, []);
+
   return (
     <section id="capabilities" className="relative py-20 md:py-28 lg:py-32">
       <div className="container">
@@ -57,21 +109,24 @@ export function Capabilities() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 md:mt-20 md:gap-10 lg:mt-24 lg:grid-cols-2">
+        <div
+          ref={gridRef}
+          className="mt-16 grid gap-8 md:mt-20 md:gap-10 lg:mt-24 lg:grid-cols-2"
+        >
           {capabilities.map((cap) => {
             const Icon = cap.icon;
             return (
-              <ScrollReveal key={cap.id} from="up" amount={36}>
-                <motion.div
-                  className="h-full"
-                  whileHover={{
-                    y: -8,
-                    transition: { type: "spring", stiffness: 420, damping: 28 },
-                  }}
-                >
+              <motion.div
+                key={cap.id}
+                className="cap-card h-full"
+                whileHover={{
+                  y: -4,
+                  transition: { type: "spring", stiffness: 420, damping: 28 },
+                }}
+              >
                 <Card
                   className={clsx(
-                    "group relative h-full p-6 sm:p-8 md:p-10 lg:p-11 transition-shadow duration-300",
+                    "group relative h-full p-6 transition-shadow duration-300 sm:p-8 md:p-10 lg:p-11",
                     accentRing[cap.accent],
                     "hover:shadow-glow-sm dark:hover:shadow-none"
                   )}
@@ -93,23 +148,53 @@ export function Capabilities() {
                   <h3 className="mt-5 font-display text-2xl leading-tight tracking-tight text-slate-900 md:text-[1.75rem] dark:text-white">
                     {cap.title}
                   </h3>
-                  <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-300">{cap.description}</p>
+                  <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-300">
+                    {cap.description}
+                  </p>
 
                   <div className="my-8 divider-hair" />
 
                   <ul className="space-y-3.5 text-[14px] md:text-[15px]">
                     {cap.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-3 text-slate-700 dark:text-slate-100">
-                        <span className={clsx("mt-2 size-1 shrink-0 rounded-full", accentText[cap.accent])}>
+                      <li
+                        key={b}
+                        className="flex items-start gap-3 text-slate-700 dark:text-slate-100"
+                      >
+                        <span
+                          className={clsx(
+                            "mt-2 size-1 shrink-0 rounded-full",
+                            accentText[cap.accent]
+                          )}
+                        >
                           <span className="block size-1 rounded-full bg-current shadow-glow-sm" />
                         </span>
                         <span className="leading-relaxed">{b}</span>
                       </li>
                     ))}
                   </ul>
+
+                  {/* Proficiency bar */}
+                  <div className="mt-8">
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/35">
+                        Proficiency
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-white/35">
+                        {levelLabel[cap.level]}
+                      </span>
+                    </div>
+                    <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-white/[0.08]">
+                      <motion.div
+                        className={clsx("h-full rounded-full", accentBar[cap.accent])}
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${cap.proficiency}%` }}
+                        viewport={{ once: true, margin: "-10% 0%" }}
+                        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                      />
+                    </div>
+                  </div>
                 </Card>
-                </motion.div>
-              </ScrollReveal>
+              </motion.div>
             );
           })}
         </div>

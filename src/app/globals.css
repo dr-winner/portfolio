@@ -222,6 +222,62 @@ html.light .bg-grid-soft {
   background-size: 48px 48px;
 }
 
+/* ─── Custom cursor ────────────────────────────────────────────────────────── */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* ─── Link underline animation ─────────────────────────────────────────────── */
+.link-hover {
+  position: relative;
+  text-decoration: none;
+}
+.link-hover::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease;
+}
+.link-hover:hover::after {
+  transform: scaleX(1);
+}
+
+/* ─── Ripple on click ──────────────────────────────────────────────────────── */
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(0);
+  animation: ripple-expand 600ms ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ripple-expand {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* ─── Grain texture animation ──────────────────────────────────────────────── */
+@keyframes grain-move {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-4%, -3%); }
+  40%  { transform: translate(4%, 3%); }
+  60%  { transform: translate(-3%, 4%); }
+  80%  { transform: translate(3%, -4%); }
+  100% { transform: translate(0, 0); }
+}
+.animate-grain-move {
+  animation: grain-move 30s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -230,5 +286,8 @@ html.light .bg-grid-soft {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  .animate-grain-move {
+    animation: none !important;
   }
 }
