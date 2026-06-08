@@ -2,9 +2,9 @@ export const profile = {
   name: "Richard Winner Duvor",
   handle: "dr_winner",
   initials: "RW",
-  role: "SOC Analyst & Cloud Security Engineer",
+  role: "Cybersecurity Professional",
   tagline:
-    "Detection engineering and cloud security — from alert triage to identity hardening across AWS, Azure, and GCP.",
+    "Threat detection, cloud hardening, offensive testing, digital forensics, and compliance — the full security lifecycle.",
   /** Optional — not shown in public UI */
   location: "Accra, Ghana",
   timezone: "GMT+0",
@@ -14,10 +14,10 @@ export const profile = {
   resumeUrl: "#",
   availability: {
     status: "available",
-    label: "Open to SOC / cloud-security & detection-engineering roles",
+    label: "Open to SOC · cloud security · pentesting & GRC roles",
   },
   bio: [
-    "I work in the space between the SOC and the cloud control plane. By day that means triaging alerts, hunting threats, and writing detections that survive contact with real traffic. By week it means hardening the identity layer, tightening cloud posture, and making sure the logs that matter are actually reaching the SIEM.",
+    "I work across the full security lifecycle — from triaging alerts and hunting threats in the SOC, to hardening cloud environments, running penetration tests, and handling incident investigations. I understand both how attacks are built and how to make them show up in the data.",
     "I started as a full-stack engineer shipping production apps and smart contracts, which shapes how I defend them today: with attacker empathy, an understanding of what developers actually ship, and a preference for automation over toil.",
   ],
   socials: {

@@ -49,20 +49,17 @@ export function Hero() {
 
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="SOC Analyst" className="block text-display-etched" />
+                <CharSplit text="Cybersecurity" className="block text-display-etched" />
                 <span className="block">
-                  {/* charClassName applies gradient to each char span so background-clip:text
-                      has direct text content to clip against (inline-block children break
-                      parent-level background-clip:text) */}
-                  <CharSplit text="& Cloud Security" charClassName="text-gradient-cyber" />
+                  <CharSplit text="Professional" charClassName="text-gradient-cyber" />
                 </span>
               </h1>
             </HeroAnimation>
 
-            <p className="min-w-0 w-full max-w-xl text-lg text-slate-600 dark:text-white/70">
-              Detection engineering in the SOC. Identity and posture hardening
-              in the cloud. Automation that closes the gap between alert volume
-              and analyst time.
+            <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/70">
+              Threat detection and response in the SOC. Cloud hardening across
+              AWS, Azure, and GCP. Penetration testing, digital forensics, and
+              governance — the full security lifecycle.
             </p>
 
             <div className="flex w-full max-w-md flex-col gap-3 font-sans sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
@@ -82,15 +79,36 @@ export function Hero() {
               </button>
             </div>
 
-            <dl className="mt-2 grid w-full max-w-md grid-cols-1 gap-x-6 gap-y-4 border-t border-slate-200 pt-6 text-left font-sans min-[380px]:grid-cols-2 sm:max-w-lg sm:gap-x-8 dark:border-white/10">
-              <div>
-                <dt className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">
-                  Focus
-                </dt>
-                <dd className="mt-1 text-sm font-medium text-slate-900 dark:text-white/90">
-                  SOC · cloud security
-                </dd>
-              </div>
+            {/* Specialty chips */}
+            <div className="mt-1 flex w-full flex-wrap gap-2 border-t border-slate-200/80 pt-6 dark:border-white/10">
+              {[
+                { label: "Cloud Security",      accent: "cyber"   },
+                { label: "SOC Analyst",          accent: "signal"  },
+                { label: "Penetration Testing",  accent: "threat"  },
+                { label: "Ethical Hacking",      accent: "threat"  },
+                { label: "DFIR",                 accent: "ok"      },
+                { label: "GRC",                  accent: "cyber"   },
+              ].map(({ label, accent }) => (
+                <span
+                  key={label}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${
+                    accent === "cyber"
+                      ? "border-cyber-400/30 bg-cyber-400/8 text-cyber-600 dark:border-cyber-300/20 dark:bg-cyber-300/[0.06] dark:text-cyber-300"
+                      : accent === "signal"
+                      ? "border-amber-400/30 bg-amber-400/8 text-amber-700 dark:border-signal-300/20 dark:bg-signal-300/[0.06] dark:text-signal-300"
+                      : accent === "threat"
+                      ? "border-rose-400/30 bg-rose-400/8 text-rose-700 dark:border-threat-400/20 dark:bg-threat-400/[0.06] dark:text-threat-400"
+                      : "border-emerald-400/30 bg-emerald-400/8 text-emerald-700 dark:border-ok-400/20 dark:bg-ok-400/[0.06] dark:text-ok-400"
+                  }`}
+                >
+                  <span className="size-1 rounded-full bg-current" />
+                  {label}
+                </span>
+              ))}
+            </div>
+
+            {/* Keep clouds stat for quick scan */}
+            <dl className="hidden">
               <div>
                 <dt className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">
                   Clouds
@@ -161,19 +179,15 @@ export function Hero() {
                       className: "text-cyber-700 dark:text-cyber-200",
                     },
                     {
-                      text: "$ ls ~/focus --depth=1",
+                      text: "$ ls ~/specializations/",
                       className: "text-slate-500 dark:text-white/60",
                     },
                     {
-                      text: "soc/ threat-hunting/ detection-engineering/",
+                      text: "cloud-security/  soc-analyst/  pentest/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {
-                      text: "ai-agents/ rag/ llm-security/",
-                      className: "text-emerald-600 dark:text-ok-400",
-                    },
-                    {
-                      text: "cloud/ aws/ azure/ gcp/ hardening/",
+                      text: "ethical-hacking/  dfir/  grc/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {
@@ -181,7 +195,7 @@ export function Hero() {
                       className: "text-slate-500 dark:text-white/60",
                     },
                     {
-                      text: "◆ available — shipping + defending",
+                      text: "◆ available — open to new roles",
                       className: "text-amber-600 dark:text-signal-300",
                     },
                   ]}
