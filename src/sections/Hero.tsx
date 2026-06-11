@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Shield, Sparkles } from "lucide-react";
 import { TypedLines } from "@/components/TypedLines";
-import { StatusBadge } from "@/components/StatusBadge";
 import { HeroAnimation, CharSplit } from "@/components/HeroAnimation";
 import { MagneticButton } from "@/components/MagneticButton";
 import { profile } from "@/content/profile";
@@ -43,16 +42,9 @@ export function Hero() {
         <div className="grid items-center gap-10 lg:gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Left: identity */}
           <div className="flex min-w-0 flex-col items-start gap-7 text-left">
-            <div data-hero-status className="w-full">
-              <StatusBadge
-                className="max-w-full sm:max-w-lg"
-                label={profile.availability.label}
-              />
-            </div>
-
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap text-display-etched" />
+                <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
                 <span className="block">
                   <CharSplit text="Security" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
                 </span>
