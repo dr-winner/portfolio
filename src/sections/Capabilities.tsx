@@ -13,15 +13,15 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 const accentText: Record<Capability["accent"], string> = {
-  cyber: "text-cyber-600 dark:text-cyber-300",
+  ocean: "text-ocean-600 dark:text-ocean-300",
   signal: "text-amber-700 dark:text-signal-300",
   ok: "text-emerald-700 dark:text-ok-400",
   threat: "text-rose-700 dark:text-threat-400",
 };
 
 const accentIconSurface: Record<Capability["accent"], string> = {
-  cyber:
-    "border-cyber-400/35 bg-cyan-50 text-cyber-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-cyber-300",
+  ocean:
+    "border-ocean-400/35 bg-cyan-50 text-ocean-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-ocean-300",
   signal:
     "border-amber-400/40 bg-amber-50 text-amber-700 dark:border-white/10 dark:bg-white/[0.03] dark:text-signal-300",
   ok: "border-emerald-400/40 bg-emerald-50 text-emerald-800 dark:border-white/10 dark:bg-white/[0.03] dark:text-ok-400",
@@ -30,7 +30,7 @@ const accentIconSurface: Record<Capability["accent"], string> = {
 };
 
 const accentRing: Record<Capability["accent"], string> = {
-  cyber:
+  ocean:
     "shadow-[inset_0_0_0_1px_rgba(60,207,255,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(60,207,255,0.12)]",
   signal:
     "shadow-[inset_0_0_0_1px_rgba(255,174,0,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(255,174,0,0.14)]",
@@ -40,7 +40,7 @@ const accentRing: Record<Capability["accent"], string> = {
 };
 
 const accentBar: Record<Capability["accent"], string> = {
-  cyber: "bg-cyber-400 dark:bg-cyber-300",
+  ocean: "bg-ocean-400 dark:bg-ocean-300",
   signal: "bg-amber-500 dark:bg-signal-300",
   ok: "bg-emerald-500 dark:bg-ok-400",
   threat: "bg-rose-500 dark:bg-threat-400",

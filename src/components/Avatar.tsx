@@ -2,14 +2,14 @@ import React from "react";
 import clsx from "clsx";
 
 const palettes = {
-  cyber: "from-cyber-300 to-cyber-500",
+  ocean: "from-ocean-300 to-ocean-500",
   signal: "from-signal-300 to-signal-500",
-  ok: "from-ok-400 to-cyber-500",
+  ok: "from-ok-400 to-ocean-500",
 } as const;
 
 export function Avatar({
   initials,
-  accent = "cyber",
+  accent = "ocean",
   size = 48,
   className,
 }: {

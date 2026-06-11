@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { ArrowRight, Briefcase, FolderGit2, MessageSquareQuote, ShieldCheck, Wrench } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -61,10 +62,10 @@ export default async function AdminHomePage() {
             <Link
               key={t.href}
               href={t.href}
-              className="group rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition-colors hover:border-cyber-300/40 hover:bg-white/[0.035]"
+              className="group rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition-colors hover:border-ocean-300/40 hover:bg-white/[0.035]"
             >
               <div className="flex items-center justify-between">
-                <div className="inline-flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-cyber-300">
+                <div className="inline-flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-ocean-300">
                   <Icon className="size-5" />
                 </div>
                 <ArrowRight className="size-4 text-white/40 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />

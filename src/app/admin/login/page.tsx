@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -17,7 +18,7 @@ export default function LoginPage() {
         className="w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.02] p-8 shadow-glow-sm"
       >
         <div className="flex items-center gap-3">
-          <div className="inline-flex size-10 items-center justify-center rounded-lg border border-cyber-300/30 bg-cyber-300/[0.06] text-cyber-300">
+          <div className="inline-flex size-10 items-center justify-center rounded-lg border border-ocean-300/30 bg-ocean-300/[0.06] text-ocean-300">
             <TerminalSquare className="size-5" />
           </div>
           <div>
@@ -35,7 +36,7 @@ export default function LoginPage() {
           <input
             name="username"
             autoComplete="username"
-            className="mt-2 w-full rounded-lg border border-white/10 bg-ink-100 px-3 py-2.5 text-sm text-white outline-none focus:border-cyber-300/60"
+            className="mt-2 w-full rounded-lg border border-white/10 bg-ink-100 px-3 py-2.5 text-sm text-white outline-none focus:border-ocean-300/60"
           />
         </label>
 
@@ -48,7 +49,7 @@ export default function LoginPage() {
             type="password"
             autoComplete="current-password"
             required
-            className="mt-2 w-full rounded-lg border border-white/10 bg-ink-100 px-3 py-2.5 text-sm text-white outline-none focus:border-cyber-300/60"
+            className="mt-2 w-full rounded-lg border border-white/10 bg-ink-100 px-3 py-2.5 text-sm text-white outline-none focus:border-ocean-300/60"
           />
         </label>
 

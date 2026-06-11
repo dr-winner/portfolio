@@ -57,11 +57,10 @@ export function HeroAnimation({ children }: HeroAnimationProps) {
         }
       }
 
-      gsap.set(chars, { y: 20, opacity: 0 });
-      if (status) gsap.set(status, { y: 12, opacity: 0 });
-      if (terminal) gsap.set(terminal, { scaleY: 0, transformOrigin: "bottom" });
-
       ctx = gsap.context(() => {
+        gsap.set(chars, { y: 20, opacity: 0 });
+        if (status) gsap.set(status, { y: 12, opacity: 0 });
+        if (terminal) gsap.set(terminal, { scaleY: 0, transformOrigin: "bottom" });
         const tl = gsap.timeline({
           onComplete: () => {
             try {
