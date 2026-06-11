@@ -21,8 +21,8 @@ export function About() {
       <div className="container">
         <SectionHeader
           eyebrow="About"
-          title="A quick read on who I am"
-          description="Short on fluff, long on why I do the work."
+          title="Who I am"
+          description="No fluff. Just what I do and why."
         />
 
         <div className="mt-14 grid gap-6 md:grid-cols-5">
@@ -35,7 +35,7 @@ export function About() {
           >
             <Card className="h-full p-6 md:p-8">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
+                <span className="chip-ocean font-mono text-[10px] uppercase tracking-[0.2em]">
                   bio.md
                 </span>
               </div>
@@ -45,7 +45,7 @@ export function About() {
                     <Balancer>{p}</Balancer>
                   </p>
                 ))}
-                <p className="text-slate-600 dark:text-white/60">
+                <p className="text-slate-600 dark:text-white/75">
                   If you&apos;re building something ambitious that needs to be fast, well-instrumented,
                   and hard to compromise — we should talk.
                 </p>
@@ -61,16 +61,16 @@ export function About() {
             className="md:col-span-2"
           >
             <Card className="h-full p-6 md:p-8">
-              <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
+              <span className="chip-ocean font-mono text-[10px] uppercase tracking-[0.2em]">
                 signals.txt
               </span>
               <h3 className="mt-5 font-display text-xl tracking-tight text-slate-900 dark:text-white">
-                Small things about how I work
+                How I work
               </h3>
               <ul className="mt-5 space-y-3">
                 {signals.map(({ icon: Icon, label }) => (
                   <li key={label} className="flex items-start gap-3 text-sm text-slate-700 dark:text-white/75">
-                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-cyber-600 dark:text-cyber-300" />
+                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-ocean-600 dark:text-ocean-300" />
                     <span>{label}</span>
                   </li>
                 ))}

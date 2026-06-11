@@ -70,7 +70,7 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
           {/* Decorative large quote mark */}
           <span
             aria-hidden
-            className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 select-none font-display text-[9rem] leading-none text-cyber-300/10 dark:text-cyber-300/8 md:-top-8 md:text-[12rem]"
+            className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 select-none font-display text-[9rem] leading-none text-ocean-300/10 dark:text-ocean-300/8 md:-top-8 md:text-[12rem]"
           >
             &ldquo;
           </span>
@@ -121,9 +121,9 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
                 onClick={() => goTo(i)}
                 aria-label={`Go to testimonial ${i + 1}`}
                 className={clsx(
-                  "h-1 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-300",
+                  "h-1 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300",
                   i === current
-                    ? "w-6 bg-cyber-400"
+                    ? "w-6 bg-ocean-400"
                     : "w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-white/15 dark:hover:bg-white/30"
                 )}
               />

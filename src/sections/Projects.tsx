@@ -16,7 +16,7 @@ const tagPill: Record<ProjectTag, string> = {
   /* Light: soft tints. Dark: ink fill + accent border (no pastel panels that read as “white cards”). */
   Security:
     "border-amber-400/40 bg-amber-50 text-amber-950 dark:border-signal-300/50 dark:bg-ink-200 dark:text-signal-200",
-  AI: "border-cyan-400/40 bg-cyan-50 text-cyan-950 dark:border-cyber-300/55 dark:bg-ink-200 dark:text-cyber-200",
+  AI: "border-cyan-400/40 bg-cyan-50 text-cyan-950 dark:border-ocean-300/55 dark:bg-ink-200 dark:text-ocean-200",
   "Full-Stack":
     "border-emerald-400/40 bg-emerald-50 text-emerald-950 dark:border-ok-400/50 dark:bg-ink-200 dark:text-ok-400",
   Web3: "border-slate-300/80 bg-slate-100 text-slate-800 dark:border-white/25 dark:bg-ink-200 dark:text-slate-100",
@@ -25,7 +25,7 @@ const tagPill: Record<ProjectTag, string> = {
 const statusMeta = {
   live: { label: "Live", icon: CheckCircle2, className: "text-emerald-700 dark:text-ok-400" },
   "in-progress": { label: "In progress", icon: Clock, className: "text-amber-700 dark:text-signal-300" },
-  upcoming: { label: "Upcoming", icon: Hourglass, className: "text-cyan-700 dark:text-cyber-300" },
+  upcoming: { label: "Upcoming", icon: Hourglass, className: "text-cyan-700 dark:text-ocean-300" },
 } as const;
 
 export function Projects({ items }: { items?: Project[] } = {}) {
@@ -58,8 +58,8 @@ export function Projects({ items }: { items?: Project[] } = {}) {
                 className={clsx(
                   "rounded-full border px-4 py-2 text-[13px] font-medium tracking-tight transition-colors",
                   filter === t
-                    ? "border-cyber-500/40 bg-cyber-500/10 text-slate-900 shadow-glow-sm dark:border-cyber-300/50 dark:bg-cyber-300/12 dark:text-white"
-                    : "border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/70 dark:hover:border-white/22 dark:hover:text-white"
+                    ? "border-ocean-500/40 bg-ocean-500/10 text-slate-900 shadow-glow-sm dark:border-ocean-300/50 dark:bg-ocean-300/12 dark:text-white"
+                    : "border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/85 dark:hover:border-white/22 dark:hover:text-white"
                 )}
               >
                 {t}
@@ -135,7 +135,7 @@ function ProjectRow({
       <ul className="mt-3 space-y-3 text-base text-slate-700 dark:text-slate-100">
         {project.results.map((r) => (
           <li key={r} className="flex gap-3">
-            <span className="mt-2.5 size-1 shrink-0 rounded-full bg-cyber-600 shadow-glow-sm dark:bg-cyber-300" />
+            <span className="mt-2.5 size-1 shrink-0 rounded-full bg-ocean-600 shadow-glow-sm dark:bg-ocean-300" />
             <span className="leading-relaxed text-inherit">{r}</span>
           </li>
         ))}
@@ -168,7 +168,7 @@ function ProjectRow({
           {project.techStack.map((t) => (
             <li
               key={t}
-              className="border-l-2 border-cyber-500/35 pl-3 text-[15px] leading-snug text-slate-600 dark:border-cyber-300/40 dark:text-slate-200"
+              className="border-l-2 border-ocean-500/35 pl-3 text-[15px] leading-snug text-slate-600 dark:border-ocean-300/40 dark:text-slate-200"
             >
               {t}
             </li>
@@ -182,7 +182,7 @@ function ProjectRow({
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-3.5 text-[15px] font-semibold text-slate-900 transition-colors hover:border-cyber-500/45 dark:border-white/16 dark:bg-white/[0.06] dark:text-slate-50 dark:hover:border-cyber-300/45 sm:min-h-0 sm:w-auto sm:justify-start sm:py-3"
+            className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-3.5 text-[15px] font-semibold text-slate-900 transition-colors hover:border-ocean-500/45 dark:border-white/16 dark:bg-white/[0.06] dark:text-slate-50 dark:hover:border-ocean-300/45 sm:min-h-0 sm:w-auto sm:justify-start sm:py-3"
           >
             Open project
             <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -270,7 +270,7 @@ function PlaceholderPreview({ tags }: { tags: ProjectTag[] }) {
         }}
       />
       <div className="absolute inset-0 flex items-center justify-center p-8">
-        <p className="text-center font-mono text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-white/45">
+        <p className="text-center font-mono text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-white/60">
           {isSecurity ? "lab · building" : "build · in progress"}
         </p>
       </div>

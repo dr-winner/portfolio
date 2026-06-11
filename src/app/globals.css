@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --ring-color: rgba(60, 207, 255, 0.4);
+    --ring-color: rgba(14, 165, 233, 0.5);
   }
 
   html {
@@ -16,7 +16,7 @@
 
   html.light {
     color-scheme: light;
-    --ring-color: rgba(0, 132, 180, 0.45);
+    --ring-color: rgba(37, 99, 235, 0.5);
   }
 
   html.dark {
@@ -24,31 +24,31 @@
   }
 
   html.dark body {
-    background-color: #05070d;
-    color: #e6ecf7;
+    background-color: #0a1628;
+    color: #e0f2fe;
     background-image:
-      radial-gradient(1000px 500px at 20% 0%, rgba(60, 207, 255, 0.04), transparent 55%),
-      radial-gradient(800px 450px at 100% 15%, rgba(255, 174, 0, 0.03), transparent 50%);
+      radial-gradient(1000px 500px at 20% 0%, rgba(14, 165, 233, 0.06), transparent 55%),
+      radial-gradient(800px 450px at 100% 15%, rgba(34, 211, 238, 0.04), transparent 50%);
     background-attachment: fixed;
   }
 
   html.light body {
-    background-color: #eaf0f9;
-    color: #0e1729;
+    background-color: #f0f9ff;
+    color: #0c4a6e;
     background-image:
-      radial-gradient(980px 520px at 18% -2%, rgba(60, 207, 255, 0.12), transparent 58%),
-      radial-gradient(760px 420px at 92% 10%, rgba(255, 174, 0, 0.08), transparent 52%);
+      radial-gradient(980px 520px at 18% -2%, rgba(56, 189, 248, 0.15), transparent 58%),
+      radial-gradient(760px 420px at 92% 10%, rgba(34, 211, 238, 0.12), transparent 52%);
     background-attachment: fixed;
   }
 
   ::selection {
-    background: rgba(60, 207, 255, 0.35);
+    background: rgba(56, 189, 248, 0.4);
     color: #ffffff;
   }
 
   html.light ::selection {
-    background: rgba(60, 180, 220, 0.28);
-    color: #081018;
+    background: rgba(14, 165, 233, 0.3);
+    color: #0a1628;
   }
 
   *:focus-visible {
@@ -63,21 +63,21 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #05070d;
+    background: #0a1628;
   }
   html.light ::-webkit-scrollbar-track {
-    background: #e4ecf5;
+    background: #dbeafe;
   }
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #0fb8f0, #ffae00);
+    background: linear-gradient(180deg, #0ea5e9, #22d3ee);
     border-radius: 10px;
-    border: 2px solid #05070d;
+    border: 2px solid #0a1628;
   }
   html.light ::-webkit-scrollbar-thumb {
-    border: 2px solid #e4ecf5;
+    border: 2px solid #dbeafe;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #3ccfff, #ffae00);
+    background: linear-gradient(180deg, #38bdf8, #67e8f9);
   }
 }
 
@@ -97,9 +97,9 @@
     @apply dark:border-white/10 dark:bg-white/[0.03] dark:text-white/75;
   }
 
-  .chip-cyber {
-    @apply font-sans inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium tracking-tight rounded-full border border-cyber-400/45 bg-cyber-400/10 text-cyber-600;
-    @apply dark:border-cyber-300/30 dark:bg-cyber-300/[0.06] dark:text-cyber-200;
+  .chip-ocean {
+    @apply font-sans inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium tracking-tight rounded-full border border-ocean-400/45 bg-ocean-400/10 text-ocean-700;
+    @apply dark:border-ocean-300/30 dark:bg-ocean-300/[0.06] dark:text-ocean-200;
   }
 
   .kbd {
@@ -112,12 +112,12 @@
     @apply dark:border-white/10 dark:bg-ink-100/60;
   }
 
-  .text-gradient-cyber {
-    @apply bg-gradient-to-r from-cyber-200 via-cyber-300 to-cyber-400 bg-clip-text text-transparent;
+  .text-gradient-ocean {
+    @apply bg-gradient-to-r from-ocean-300 via-sea-400 to-azure-500 bg-clip-text text-transparent;
   }
 
   .text-gradient-agent {
-    @apply bg-gradient-to-r from-cyber-300 via-white to-signal-300 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-sea-300 via-white to-ocean-400 bg-clip-text text-transparent;
   }
 
   .text-display-etched {
@@ -196,10 +196,10 @@
     mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
   }
 
-  /* Section grid — cyan on dark bg; muted teal on light (see html.light override below) */
+  /* Section grid — ocean blue on dark bg; muted azure on light (see html.light override below) */
   .bg-grid-soft {
-    background-image: linear-gradient(rgba(60, 207, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(60, 207, 255, 0.06) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(14, 165, 233, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14, 165, 233, 0.08) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 
@@ -217,8 +217,8 @@
 
 html.light .bg-grid-soft {
   background-image:
-    linear-gradient(rgba(20, 100, 130, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(20, 100, 130, 0.1) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.12) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 

@@ -51,7 +51,7 @@ export function Hero() {
               </h1>
             </HeroAnimation>
 
-            <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/70">
+            <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/85">
               Threat detection in the SOC. Cloud hardening on AWS, Azure, GCP.
               Pentesting, forensics, compliance.
             </p>
@@ -106,7 +106,7 @@ export function Hero() {
             {/* Keep clouds stat for quick scan */}
             <dl className="hidden">
               <div>
-                <dt className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">
+                <dt className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">
                   Clouds
                 </dt>
                 <dd className="mt-1 text-sm font-medium text-slate-900 dark:text-white/90">
@@ -118,7 +118,7 @@ export function Hero() {
 
           {/* Right: terminal */}
           <div className="relative min-w-0 overflow-x-clip">
-            <p className="mb-3 max-w-full font-sans text-sm leading-relaxed text-slate-600 md:max-w-md dark:text-white/60">
+            <p className="mb-3 max-w-full font-sans text-sm leading-relaxed text-slate-600 md:max-w-md dark:text-white/75">
               <span className="font-medium text-slate-800 dark:text-white/75">
                 This window
               </span>{" "}
@@ -147,10 +147,10 @@ export function Hero() {
                   <span className="size-2.5 rounded-full bg-signal-300/80" />
                   <span className="size-2.5 rounded-full bg-ok-400/80" />
                 </div>
-                <span className="min-w-0 truncate text-center font-mono text-[10px] tracking-tight text-slate-600 sm:text-[11px] dark:text-white/50">
+                <span className="min-w-0 truncate text-center font-mono text-[10px] tracking-tight text-slate-600 sm:text-[11px] dark:text-white/65">
                   ~ /soc/agents — zsh
                 </span>
-                <div className="flex shrink-0 items-center justify-end gap-1 text-[10px] text-slate-600 sm:text-[11px] dark:text-white/50">
+                <div className="flex shrink-0 items-center justify-end gap-1 text-[10px] text-slate-600 sm:text-[11px] dark:text-white/65">
                   <Shield className="size-3 shrink-0 text-ocean-500 dark:text-ocean-300" />
                   <span>secure</span>
                 </div>
@@ -161,7 +161,7 @@ export function Hero() {
                   lines={[
                     {
                       text: "$ whoami",
-                      className: "text-slate-500 dark:text-white/60",
+                      className: "text-slate-500 dark:text-white/75",
                     },
                     {
                       text: profile.name.toLowerCase().replace(/ /g, "_"),
@@ -169,7 +169,7 @@ export function Hero() {
                     },
                     {
                       text: "$ cat ~/role.txt",
-                      className: "text-slate-500 dark:text-white/60",
+                      className: "text-slate-500 dark:text-white/75",
                     },
                     {
                       text: profile.role,
@@ -177,7 +177,7 @@ export function Hero() {
                     },
                     {
                       text: "$ ls ~/specializations/",
-                      className: "text-slate-500 dark:text-white/60",
+                      className: "text-slate-500 dark:text-white/75",
                     },
                     {
                       text: "cloud-security/  soc-analyst/  pentest/",
@@ -189,7 +189,7 @@ export function Hero() {
                     },
                     {
                       text: "$ status --now",
-                      className: "text-slate-500 dark:text-white/60",
+                      className: "text-slate-500 dark:text-white/75",
                     },
                     {
                       text: "◆ available — open to new roles",
@@ -200,11 +200,11 @@ export function Hero() {
               </div>
 
               <div className="border-t border-slate-200/85 bg-white/95 dark:border-white/10 dark:bg-ink-100/60">
-                <p className="px-4 pt-2 font-sans text-[11px] leading-snug text-slate-500 dark:text-white/45">
+                <p className="px-4 pt-2 font-sans text-[11px] leading-snug text-slate-500 dark:text-white/60">
                   <span className="text-ocean-600 dark:text-ocean-200/80">→</span>{" "}
                   To actually type, use the console at the bottom of the screen.
                 </p>
-                <div className="flex flex-col gap-1.5 px-4 py-2 text-[11px] text-slate-500 dark:text-white/50 sm:flex-row sm:items-center sm:gap-3">
+                <div className="flex flex-col gap-1.5 px-4 py-2 text-[11px] text-slate-500 dark:text-white/65 sm:flex-row sm:items-center sm:gap-3">
                   <div className="flex items-center gap-2">
                     <Sparkles className="size-3 text-ocean-500 dark:text-ocean-300" />
                     <span>
@@ -214,7 +214,7 @@ export function Hero() {
                       </span>
                     </span>
                   </div>
-                  <span className="font-mono text-slate-400 sm:ml-auto dark:text-white/40">
+                  <span className="font-mono text-slate-400 sm:ml-auto dark:text-white/55">
                     enc: TLS 1.3
                   </span>
                 </div>

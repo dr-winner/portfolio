@@ -123,21 +123,21 @@ export function GitHubLivePanel() {
       {/* Top summary — one horizontal band */}
       <div className="mb-6 flex flex-col gap-4 border-b border-slate-200/90 pb-5 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">Last 12 months</p>
-          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-cyber-700 sm:text-4xl dark:text-cyber-200">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">Last 12 months</p>
+          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-ocean-700 sm:text-4xl dark:text-ocean-200">
             {s.totalContributions.toLocaleString()}
-            <span className="ml-2 font-sans text-base font-medium text-slate-500 dark:text-white/50">contributions</span>
+            <span className="ml-2 font-sans text-base font-medium text-slate-500 dark:text-white/65">contributions</span>
           </p>
         </div>
         <a
           href={gh}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex w-fit items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-sm text-slate-800 transition-all hover:border-cyber-500/35 hover:bg-slate-50 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/85 dark:hover:border-cyber-300/35 dark:hover:bg-white/[0.06]"
+          className="group inline-flex w-fit items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-sm text-slate-800 transition-all hover:border-ocean-500/35 hover:bg-slate-50 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/85 dark:hover:border-ocean-300/35 dark:hover:bg-white/[0.06]"
         >
-          <GithubIcon className="size-4 text-cyber-600/90 dark:text-cyber-200/80" />
+          <GithubIcon className="size-4 text-ocean-600/90 dark:text-ocean-200/80" />
           @{data.login}
-          <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/35 dark:group-hover:text-white/55" />
+          <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/50 dark:group-hover:text-white/55" />
         </a>
       </div>
 
@@ -148,11 +148,11 @@ export function GitHubLivePanel() {
           <div className="order-1 min-w-0 self-start lg:col-span-7 xl:col-span-8">
             <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100 p-3 shadow-[inset_0_0_0_1px_rgba(15,23,42,0.04)] [background-image:radial-gradient(120%_80%_at_10%_0%,rgba(60,207,255,0.1)_0%,transparent_50%)] dark:border-white/10 dark:bg-[#06080d] dark:shadow-none dark:[background-image:radial-gradient(120%_80%_at_10%_0%,rgba(60,207,255,0.06)_0%,transparent_50%)] sm:p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-white/50">
+                <h3 className="text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-white/65">
                   Contribution graph
                 </h3>
-                <p className="text-[10px] text-cyber-600/70 md:hidden dark:text-cyber-200/50">Swipe graph →</p>
-                <div className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-white/35">
+                <p className="text-[10px] text-ocean-600/70 md:hidden dark:text-ocean-200/50">Swipe graph →</p>
+                <div className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-white/50">
                   <span>Less</span>
                   <span className="inline-flex gap-0.5">
                     <span className={clsx("h-2 w-2 rounded-sm", GH.empty)} />
@@ -168,7 +168,7 @@ export function GitHubLivePanel() {
                 <div className="mb-1.5 flex w-full min-w-0 gap-1.5 sm:gap-2">
                   <div className="w-5 shrink-0 sm:w-6" aria-hidden />
                   <div
-                    className="grid min-h-[12px] min-w-0 flex-1 gap-0.5 text-left text-[9px] text-slate-400 sm:text-[10px] dark:text-white/30"
+                    className="grid min-h-[12px] min-w-0 flex-1 gap-0.5 text-left text-[9px] text-slate-400 sm:text-[10px] dark:text-white/45"
                     style={{ gridTemplateColumns: `repeat(${nWeeks}, minmax(0, 1fr))` }}
                     aria-hidden
                   >
@@ -181,7 +181,7 @@ export function GitHubLivePanel() {
                 </div>
                 <div className="flex w-full min-w-0 items-stretch gap-1.5 sm:gap-2">
                   <div
-                    className="grid w-5 shrink-0 text-[8px] leading-none text-slate-400 sm:w-6 sm:text-[9px] dark:text-white/30"
+                    className="grid w-5 shrink-0 text-[8px] leading-none text-slate-400 sm:w-6 sm:text-[9px] dark:text-white/45"
                     style={{ gridTemplateRows: "repeat(7, minmax(0, 1fr))" }}
                     aria-hidden
                   >
@@ -251,7 +251,7 @@ export function GitHubLivePanel() {
         {/* Sidebar: metrics + streaks */}
         <aside className="order-2 flex min-w-0 flex-col gap-4 self-start lg:col-span-5 xl:col-span-4">
           <div>
-            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 dark:text-white/40">
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 dark:text-white/55">
               Activity
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -262,8 +262,8 @@ export function GitHubLivePanel() {
                     key={key}
                     className="rounded-xl border border-slate-200/90 bg-white/90 px-2.5 py-2.5 transition-colors hover:border-slate-300 dark:border-white/8 dark:bg-white/[0.02] dark:hover:border-white/12"
                   >
-                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-500 dark:text-white/40">
-                      <Icon className="size-3 shrink-0 text-cyber-600/70 dark:text-cyber-200/45" />
+                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-500 dark:text-white/55">
+                      <Icon className="size-3 shrink-0 text-ocean-600/70 dark:text-ocean-200/45" />
                       {label}
                     </div>
                     <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
@@ -275,20 +275,20 @@ export function GitHubLivePanel() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-gradient-to-b from-cyber-500/[0.06] to-transparent p-3 dark:border-white/8 dark:from-cyber-300/[0.04]">
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-gradient-to-b from-ocean-500/[0.06] to-transparent p-3 dark:border-white/8 dark:from-ocean-300/[0.04]">
             <div className="text-center">
-              <p className="text-[9px] text-slate-500 dark:text-white/40">Current streak</p>
+              <p className="text-[9px] text-slate-500 dark:text-white/55">Current streak</p>
               <p className="mt-1 flex items-center justify-center gap-1 font-mono text-xl font-semibold text-slate-900 dark:text-white">
                 <Zap className="size-4 text-amber-600/90 dark:text-amber-300/80" />
                 {data.streak.current}
-                <span className="text-xs font-sans font-normal text-slate-500 dark:text-white/45">d</span>
+                <span className="text-xs font-sans font-normal text-slate-500 dark:text-white/60">d</span>
               </p>
             </div>
             <div className="text-center sm:border-l sm:border-slate-200/90 sm:pl-2 dark:sm:border-white/10">
-              <p className="text-[9px] text-slate-500 dark:text-white/40">Longest streak</p>
+              <p className="text-[9px] text-slate-500 dark:text-white/55">Longest streak</p>
               <p className="mt-1 font-mono text-xl font-semibold text-slate-900 dark:text-white/90">
                 {data.streak.longest}
-                <span className="ml-0.5 text-xs font-sans font-normal text-slate-500 dark:text-white/45">d</span>
+                <span className="ml-0.5 text-xs font-sans font-normal text-slate-500 dark:text-white/60">d</span>
               </p>
             </div>
           </div>
@@ -302,7 +302,7 @@ function GitHubFallback({ gh, login }: { gh: string; login?: string }) {
   return (
     <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
       <div className="min-w-0">
-        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">
           Open source
         </p>
         <p className="mt-2 max-w-xl text-base text-slate-700 dark:text-white/75">
@@ -314,11 +314,11 @@ function GitHubFallback({ gh, login }: { gh: string; login?: string }) {
             href={gh}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-cyber-500/35 bg-cyber-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-cyber-500/55 hover:bg-cyber-500/[0.12] dark:border-cyber-300/35 dark:bg-cyber-300/[0.05] dark:text-white dark:hover:border-cyber-300/55"
+            className="group inline-flex items-center gap-2 rounded-full border border-ocean-500/35 bg-ocean-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-ocean-500/55 hover:bg-ocean-500/[0.12] dark:border-ocean-300/35 dark:bg-ocean-300/[0.05] dark:text-white dark:hover:border-ocean-300/55"
           >
-            <GithubIcon className="size-4 text-cyber-600 dark:text-cyber-300" />
+            <GithubIcon className="size-4 text-ocean-600 dark:text-ocean-300" />
             View profile on GitHub{login ? ` (@${login})` : ""}
-            <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/45 dark:group-hover:text-white/70" />
+            <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/60 dark:group-hover:text-white/70" />
           </a>
         </div>
       </div>

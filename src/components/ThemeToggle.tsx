@@ -21,8 +21,8 @@ export function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={clsx(
         "inline-flex size-9 shrink-0 items-center justify-center rounded-full border transition-colors",
-        "border-slate-300/80 bg-white text-slate-700 hover:border-cyber-400/50 hover:text-slate-900",
-        "dark:border-white/10 dark:bg-ink-100/60 dark:text-white/65 dark:hover:border-cyber-300/35 dark:hover:text-white"
+        "border-slate-300/80 bg-white text-slate-700 hover:border-ocean-400/50 hover:text-slate-900",
+        "dark:border-white/10 dark:bg-ink-100/60 dark:text-white/65 dark:hover:border-ocean-300/35 dark:hover:text-white"
       )}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Light mode" : "Dark mode"}

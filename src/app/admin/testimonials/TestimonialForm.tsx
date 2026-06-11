@@ -36,7 +36,7 @@ export function TestimonialForm({
             type="checkbox"
             name="hidden"
             defaultChecked={testimonial?.hidden}
-            className="accent-cyber-300"
+            className="accent-ocean-300"
           />
           Hide from the public site
         </label>

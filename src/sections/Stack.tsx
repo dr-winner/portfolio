@@ -43,7 +43,7 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
         </ScrollReveal>
 
         <ScrollReveal>
-          <div className="mt-12 flex flex-wrap justify-center gap-5 text-[11px] font-mono uppercase tracking-[0.22em] text-slate-500 dark:text-white/45">
+          <div className="mt-12 flex flex-wrap justify-center gap-5 text-[11px] font-mono uppercase tracking-[0.22em] text-slate-500 dark:text-white/60">
             <span className="inline-flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-emerald-600 shadow-glow-sm dark:bg-ok-400" /> core
             </span>
@@ -78,7 +78,7 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
                     </motion.div>
                     <div>
                       <h3 className="font-display text-xl tracking-tight text-slate-900 dark:text-white">{cat.label}</h3>
-                      <p className="text-xs text-slate-500 dark:text-white/50">{cat.description}</p>
+                      <p className="text-xs text-slate-500 dark:text-white/65">{cat.description}</p>
                     </div>
                   </div>
 

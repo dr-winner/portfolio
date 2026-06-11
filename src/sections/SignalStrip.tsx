@@ -22,7 +22,7 @@ export function SignalStrip() {
                         key={`${i}-${w}`}
                         className="inline-flex shrink-0 items-center gap-2.5 text-[13px] font-medium tracking-tight text-slate-600 md:text-sm dark:text-slate-300"
                       >
-                        <span className="size-1 shrink-0 rounded-full bg-cyber-500/70 dark:bg-cyber-300" />
+                        <span className="size-1 shrink-0 rounded-full bg-ocean-500/70 dark:bg-ocean-300" />
                         <span className="font-mono uppercase tracking-wider">{w}</span>
                       </span>
                     ))}

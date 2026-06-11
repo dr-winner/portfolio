@@ -190,10 +190,10 @@ export function Capabilities() {
                   {/* Proficiency bar */}
                   <div className="mt-8">
                     <div className="mb-1.5 flex items-center justify-between">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/35">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">
                         Proficiency
                       </span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-white/35">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-white/50">
                         {levelLabel[cap.level]}
                       </span>
                     </div>

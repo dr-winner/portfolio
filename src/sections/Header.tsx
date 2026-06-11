@@ -90,9 +90,9 @@ export function Header() {
             className="group flex min-w-0 items-center gap-1.5 justify-self-start text-left text-sm font-mono text-slate-700 transition-colors hover:text-slate-950 dark:text-white/80 dark:hover:text-white sm:gap-2"
             aria-label="Go to top"
           >
-            <TerminalSquare className="size-4 shrink-0 text-cyber-500 dark:text-cyber-300" />
+            <TerminalSquare className="size-4 shrink-0 text-ocean-500 dark:text-ocean-300" />
             <span className="min-w-0 truncate font-semibold tracking-tight">{profile.handle}</span>
-            <span className="hidden shrink-0 text-cyber-500 animate-cursor-blink dark:text-cyber-300 sm:inline">
+            <span className="hidden shrink-0 text-ocean-500 animate-cursor-blink dark:text-ocean-300 sm:inline">
               _
             </span>
           </button>
@@ -119,7 +119,7 @@ export function Header() {
             <button
               type="button"
               onClick={openShell}
-              className="inline-flex size-9 items-center justify-center rounded-full border transition-colors hover:border-cyber-400/40 hover:text-slate-900 md:h-9 md:w-auto md:gap-1.5 md:px-2.5 md:py-1.5 md:text-xs dark:hover:border-cyber-300/35 dark:hover:text-cyber-200 border-slate-300/85 bg-white text-slate-600 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/60"
+              className="inline-flex size-9 items-center justify-center rounded-full border transition-colors hover:border-ocean-400/40 hover:text-slate-900 md:h-9 md:w-auto md:gap-1.5 md:px-2.5 md:py-1.5 md:text-xs dark:hover:border-ocean-300/35 dark:hover:text-ocean-200 border-slate-300/85 bg-white text-slate-600 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/75"
               aria-label="Open site console: ask a question in plain language, or type help"
               title="Site console (same look as a terminal; just type a question or help)"
             >
@@ -128,7 +128,7 @@ export function Header() {
             </button>
             <button
               onClick={() => setPaletteOpen(true)}
-              className="inline-flex size-9 items-center justify-center rounded-full border transition-colors hover:border-cyber-400/35 hover:text-slate-900 md:h-9 md:w-auto md:gap-1.5 md:px-2.5 md:py-1.5 md:text-xs dark:hover:border-cyber-300/40 dark:hover:text-white border-slate-300/85 bg-white text-slate-600 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/60"
+              className="inline-flex size-9 items-center justify-center rounded-full border transition-colors hover:border-ocean-400/35 hover:text-slate-900 md:h-9 md:w-auto md:gap-1.5 md:px-2.5 md:py-1.5 md:text-xs dark:hover:border-ocean-300/40 dark:hover:text-white border-slate-300/85 bg-white text-slate-600 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/75"
               aria-label="Open command menu (sections and links)"
               title="Quick nav (⌘K)"
             >
@@ -139,7 +139,7 @@ export function Header() {
             <MagneticButton strength={0.4}>
               <button
                 onClick={() => jump("contact")}
-                className="inline-flex h-9 min-w-9 shrink-0 items-center justify-center gap-1 rounded-full bg-gradient-to-r from-cyber-300 to-signal-300 px-2.5 text-[11px] font-semibold leading-none text-ink shadow-glow-sm transition-shadow hover:shadow-glow md:h-10 md:min-w-10 md:gap-1.5 md:px-4 md:text-xs"
+                className="inline-flex h-9 min-w-9 shrink-0 items-center justify-center gap-1 rounded-full bg-gradient-to-r from-ocean-300 to-signal-300 px-2.5 text-[11px] font-semibold leading-none text-ink shadow-glow-sm transition-shadow hover:shadow-glow md:h-10 md:min-w-10 md:gap-1.5 md:px-4 md:text-xs"
                 aria-label="Go to contact section"
               >
                 <Mail className="size-3.5 md:hidden" aria-hidden />

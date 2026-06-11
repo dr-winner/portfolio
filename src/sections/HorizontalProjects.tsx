@@ -70,7 +70,7 @@ function ProjectSlide({
           <div className="flex flex-col gap-6">
             {/* Counter + company + status */}
             <div className="flex items-center gap-4 flex-wrap">
-              <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/40">
+              <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/55">
                 {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 {project.company ? ` — ${project.company}` : ""}
               </span>
@@ -91,7 +91,7 @@ function ProjectSlide({
             </h2>
 
             {/* Year */}
-            <p className="font-mono text-[12px] text-slate-500 dark:text-white/35">
+            <p className="font-mono text-[12px] text-slate-500 dark:text-white/50">
               {project.year}
             </p>
 
@@ -118,14 +118,14 @@ function ProjectSlide({
             {/* Stack */}
             {project.techStack?.length ? (
               <div>
-                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/35">
+                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">
                   Stack
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {project.techStack.slice(0, 6).map((t) => (
                     <span
                       key={t}
-                      className="rounded-md border border-slate-200/90 bg-white px-2.5 py-1 text-[12px] text-slate-700 dark:border-white/10 dark:bg-ink-50/70 dark:text-white/70"
+                      className="rounded-md border border-slate-200/90 bg-white px-2.5 py-1 text-[12px] text-slate-700 dark:border-white/10 dark:bg-ink-50/70 dark:text-white/85"
                     >
                       {t}
                     </span>
@@ -147,7 +147,7 @@ function ProjectSlide({
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               ) : (
-                <span className="inline-flex items-center gap-2 font-mono text-[13px] text-slate-400 dark:text-white/30">
+                <span className="inline-flex items-center gap-2 font-mono text-[13px] text-slate-400 dark:text-white/45">
                   <Clock className="size-4" />
                   Not shipped yet
                 </span>
@@ -237,7 +237,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
               return (
                 <Card key={p.slug} className="flex flex-col gap-5 p-6 sm:p-8">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/40">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/55">
                       {String(i + 1).padStart(2, "0")} — {p.company}
                     </span>
                     <span className={clsx("inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]", statusCls)}>
@@ -247,7 +247,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                   </div>
                   <div>
                     <h3 className="font-display text-2xl tracking-tight text-slate-900 dark:text-white sm:text-3xl">{p.title}</h3>
-                    <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/40">{p.year}</p>
+                    <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/55">{p.year}</p>
                   </div>
                   {hasImage && (
                     <div className="relative h-44 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-ink-200">

@@ -29,11 +29,11 @@ export function SectionHeader({
     >
       <span
         className={clsx(
-          "chip-cyber w-fit",
+          "chip-ocean w-fit",
           isCenter && "md:mx-auto"
         )}
       >
-        <span className="size-1.5 shrink-0 rounded-full bg-cyber-400 shadow-glow-sm dark:bg-cyber-300" />
+        <span className="size-1.5 shrink-0 rounded-full bg-ocean-400 shadow-glow-sm dark:bg-ocean-300" />
         {eyebrow}
       </span>
       <h2
@@ -47,7 +47,7 @@ export function SectionHeader({
       {description && (
         <p
           className={clsx(
-            "min-w-0 text-slate-600 dark:text-white/60 md:text-lg",
+            "min-w-0 text-slate-600 dark:text-white/75 md:text-lg",
             isCenter ? "max-w-xl md:mx-auto" : "max-w-2xl"
           )}
         >

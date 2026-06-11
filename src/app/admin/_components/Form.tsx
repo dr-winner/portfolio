@@ -29,7 +29,7 @@ export function Field({
 }
 
 const inputBase =
-  "mt-2 w-full rounded-lg border border-white/10 bg-ink-100 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-cyber-300/60";
+  "mt-2 w-full rounded-lg border border-white/10 bg-ink-100 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-ocean-300/60";
 
 export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={clsx(inputBase, props.className)} />;

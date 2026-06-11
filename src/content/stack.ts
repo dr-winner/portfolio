@@ -15,7 +15,7 @@ export type StackItem = {
 export type StackCategory = {
   id: string;
   label: string;
-  accent: "cyber" | "signal" | "ok" | "threat";
+  accent: "ocean" | "signal" | "ok" | "threat";
   iconKey: string;
   description: string;
   items: StackItem[];
@@ -57,7 +57,7 @@ export const stackCategories: StackCategory[] = [
   {
     id: "cloud",
     label: "Cloud & Platform",
-    accent: "cyber",
+    accent: "ocean",
     iconKey: "Cloud",
     description: "Where I deploy, harden, and monitor.",
     items: [
@@ -74,7 +74,7 @@ export const stackCategories: StackCategory[] = [
   {
     id: "ai",
     label: "AI & Agents",
-    accent: "cyber",
+    accent: "ocean",
     iconKey: "Bot",
     description: "Where agentic systems meet the real world.",
     items: [

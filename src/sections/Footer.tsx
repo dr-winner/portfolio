@@ -41,9 +41,9 @@ export function Footer() {
       />
       <div className="container flex flex-col">
         <div className="flex flex-col items-stretch justify-between gap-6 border-t border-slate-200/80 pt-6 dark:border-white/5 md:flex-row md:items-center">
-          <p className="text-center text-sm text-slate-600 dark:text-white/60 md:text-left">
+          <p className="text-center text-sm text-slate-600 dark:text-white/75 md:text-left">
             &copy; {year ?? ""}{" "}
-            <span className="text-gradient-cyber font-semibold">{profile.name}</span>
+            <span className="text-gradient-ocean font-semibold">{profile.name}</span>
             {". "}
             All rights reserved.
           </p>
@@ -66,7 +66,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   aria-label={entry.label}
                   title={title}
-                  className="inline-flex size-9 items-center justify-center rounded-full border border-slate-300/85 bg-white/80 text-slate-500 transition-colors hover:border-slate-400 hover:bg-white hover:text-slate-800 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/50 dark:hover:border-white/15 dark:hover:bg-white/[0.04] dark:hover:text-white/80"
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-slate-300/85 bg-white/80 text-slate-500 transition-colors hover:border-slate-400 hover:bg-white hover:text-slate-800 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/65 dark:hover:border-white/15 dark:hover:bg-white/[0.04] dark:hover:text-white/80"
                 >
                   <Icon className="size-4" />
                 </a>

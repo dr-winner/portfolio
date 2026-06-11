@@ -71,9 +71,9 @@ export function Marquee({
           {[...items, ...items].map((item, i) => (
             <span
               key={i}
-              className="inline-flex shrink-0 items-center gap-2.5 px-8 text-[11px] font-mono uppercase tracking-[0.22em] text-slate-500 dark:text-white/40"
+              className="inline-flex shrink-0 items-center gap-2.5 px-8 text-[11px] font-mono uppercase tracking-[0.22em] text-slate-500 dark:text-white/55"
             >
-              <span className="size-1 rounded-full bg-cyber-400/70 dark:bg-cyber-300/60" />
+              <span className="size-1 rounded-full bg-ocean-400/70 dark:bg-ocean-300/60" />
               {item}
             </span>
           ))}
