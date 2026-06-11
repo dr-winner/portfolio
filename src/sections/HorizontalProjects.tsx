@@ -306,26 +306,26 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
       ref={sectionRef}
       id="projects"
       className="relative overflow-hidden"
+      style={{ height: "100vh" }}
     >
       {/* Top progress bar */}
       <div
         ref={progressRef}
         aria-hidden
-        className="absolute top-0 left-0 z-10 h-[2px] w-full bg-ocean-400/70 dark:bg-ocean-300/70"
+        className="absolute top-0 left-0 z-30 h-[2px] w-full bg-ocean-400/70 dark:bg-ocean-300/70"
         style={{ transformOrigin: "left", transform: "scaleX(0)" }}
       />
 
-      {/* Section heading — fades as scroll begins */}
+      {/* Heading — absolute so it overlays the track without pushing it down */}
       <div
         ref={headingRef}
-        className="relative z-10 container pt-16 pb-10"
+        className="absolute top-0 left-0 right-0 z-20 container pt-20 pb-8 pointer-events-none"
       >
         <SectionHeader
           eyebrow="Selected work"
           title="Projects that shipped"
           description="Built, deployed, and defended."
         />
-        {/* Counter */}
         <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/55">
           <span className="text-ocean-600 dark:text-ocean-300">
             {String(activeIdx + 1).padStart(2, "0")}
@@ -353,11 +353,11 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         ))}
       </div>
 
-      {/* Scrolling track — each card is 100vw × 100vh */}
+      {/* Track — absolutely positioned at top-left so cards fill the full 100vh */}
       <div
         ref={trackRef}
-        className="flex will-change-transform"
-        style={{ width: `${list.length * 100}vw` }}
+        className="absolute top-0 left-0 flex will-change-transform"
+        style={{ width: `${list.length * 100}vw`, height: "100vh" }}
       >
         {list.map((p, i) => (
           <ProjectCard key={p.slug} project={p} index={i} total={list.length} />
