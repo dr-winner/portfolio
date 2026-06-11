@@ -35,7 +35,7 @@ export function Hero() {
         style={{ y: orbY }}
         className="pointer-events-none absolute inset-0 will-change-transform"
       >
-        <div className="absolute -top-40 -left-32 size-[520px] rounded-full bg-cyber-300/5 blur-3xl" />
+        <div className="absolute -top-40 -left-32 size-[520px] rounded-full bg-ocean-300/5 blur-3xl" />
         <div className="absolute top-20 -right-40 size-[440px] rounded-full bg-signal-300/4 blur-3xl" />
       </motion.div>
 
@@ -52,23 +52,22 @@ export function Hero() {
 
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="Cybersecurity" className="block text-display-etched" />
+                <CharSplit text="Cyber &" className="block whitespace-nowrap text-display-etched" />
                 <span className="block">
-                  <CharSplit text="Professional" charClassName="text-gradient-cyber" />
+                  <CharSplit text="Cloud Security" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
 
             <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/70">
-              Threat detection and response in the SOC. Cloud hardening across
-              AWS, Azure, and GCP. Penetration testing, digital forensics, and
-              governance — the full security lifecycle.
+              Threat detection in the SOC. Cloud hardening on AWS, Azure, GCP.
+              Pentesting, forensics, compliance.
             </p>
 
             <div className="flex w-full max-w-md flex-col gap-3 font-sans sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
               <button
                 onClick={() => go("projects")}
-                className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyber-300 to-signal-300 px-5 py-3.5 text-sm font-semibold text-ink shadow-glow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 sm:min-h-0 sm:w-auto sm:py-3"
+                className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-ocean-300 to-signal-300 px-5 py-3.5 text-sm font-semibold text-ink shadow-glow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 sm:min-h-0 sm:w-auto sm:py-3"
               >
                 Explore my work
                 <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
@@ -76,7 +75,7 @@ export function Hero() {
               <MagneticButton strength={0.4} className="w-full sm:w-auto">
                 <button
                   onClick={() => go("contact")}
-                  className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white/90 px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-300 hover:border-cyber-400/45 hover:bg-white dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:shadow-none dark:hover:border-cyber-300/40 dark:hover:bg-white/[0.05] dark:hover:text-white sm:min-h-0 sm:w-auto sm:py-3"
+                  className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white/90 px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-300 hover:border-ocean-400/45 hover:bg-white dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:shadow-none dark:hover:border-ocean-300/40 dark:hover:bg-white/[0.05] dark:hover:text-white sm:min-h-0 sm:w-auto sm:py-3"
                 >
                   Let&apos;s talk
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -98,7 +97,7 @@ export function Hero() {
                   key={label}
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${
                     accent === "cyber"
-                      ? "border-cyber-400/30 bg-cyber-400/8 text-cyber-600 dark:border-cyber-300/20 dark:bg-cyber-300/[0.06] dark:text-cyber-300"
+                      ? "border-ocean-400/30 bg-ocean-400/8 text-ocean-600 dark:border-ocean-300/20 dark:bg-ocean-300/[0.06] dark:text-ocean-300"
                       : accent === "signal"
                       ? "border-amber-400/30 bg-amber-400/8 text-amber-700 dark:border-signal-300/20 dark:bg-signal-300/[0.06] dark:text-signal-300"
                       : accent === "threat"
@@ -132,11 +131,11 @@ export function Hero() {
                 This window
               </span>{" "}
               is a{" "}
-              <em className="not-italic text-cyber-600 dark:text-cyber-200/90">
+              <em className="not-italic text-ocean-600 dark:text-ocean-200/90">
                 decorative
               </em>{" "}
               terminal. The{" "}
-              <strong className="text-cyber-700 dark:text-cyber-200/90">
+              <strong className="text-ocean-700 dark:text-ocean-200/90">
                 real, typeable
               </strong>{" "}
               one is the{" "}
@@ -160,7 +159,7 @@ export function Hero() {
                   ~ /soc/agents — zsh
                 </span>
                 <div className="flex shrink-0 items-center justify-end gap-1 text-[10px] text-slate-600 sm:text-[11px] dark:text-white/50">
-                  <Shield className="size-3 shrink-0 text-cyber-500 dark:text-cyber-300" />
+                  <Shield className="size-3 shrink-0 text-ocean-500 dark:text-ocean-300" />
                   <span>secure</span>
                 </div>
               </div>
@@ -182,7 +181,7 @@ export function Hero() {
                     },
                     {
                       text: profile.role,
-                      className: "text-cyber-700 dark:text-cyber-200",
+                      className: "text-ocean-700 dark:text-ocean-200",
                     },
                     {
                       text: "$ ls ~/specializations/",
@@ -210,12 +209,12 @@ export function Hero() {
 
               <div className="border-t border-slate-200/85 bg-white/95 dark:border-white/10 dark:bg-ink-100/60">
                 <p className="px-4 pt-2 font-sans text-[11px] leading-snug text-slate-500 dark:text-white/45">
-                  <span className="text-cyber-600 dark:text-cyber-200/80">→</span>{" "}
+                  <span className="text-ocean-600 dark:text-ocean-200/80">→</span>{" "}
                   To actually type, use the console at the bottom of the screen.
                 </p>
                 <div className="flex flex-col gap-1.5 px-4 py-2 text-[11px] text-slate-500 dark:text-white/50 sm:flex-row sm:items-center sm:gap-3">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="size-3 text-cyber-500 dark:text-cyber-300" />
+                    <Sparkles className="size-3 text-ocean-500 dark:text-ocean-300" />
                     <span>
                       agent runtime:{" "}
                       <span className="text-slate-800 dark:text-white/80">
