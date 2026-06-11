@@ -25,7 +25,6 @@ function buildSystemPrompt(): string {
     `x=${profile.socials.x}`,
     `medium=${profile.socials.medium}`,
     `instagram=${profile.socials.instagram}`,
-    `discord=${profile.socials.discord}`,
     `tiktok=${profile.socials.tiktok}`,
   ].join("\n");
 

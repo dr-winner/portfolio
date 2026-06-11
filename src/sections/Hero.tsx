@@ -118,24 +118,6 @@ export function Hero() {
 
           {/* Right: terminal */}
           <div className="relative min-w-0 overflow-x-clip">
-            <p className="mb-3 max-w-full font-sans text-sm leading-relaxed text-slate-600 md:max-w-md dark:text-white/75">
-              <span className="font-medium text-slate-800 dark:text-white/75">
-                This window
-              </span>{" "}
-              is a{" "}
-              <em className="not-italic text-ocean-600 dark:text-ocean-200/90">
-                decorative
-              </em>{" "}
-              terminal. The{" "}
-              <strong className="text-ocean-700 dark:text-ocean-200/90">
-                real, typeable
-              </strong>{" "}
-              one is the{" "}
-              <strong className="text-slate-900 dark:text-white/80">
-                bar at the bottom
-              </strong>{" "}
-              of the page.
-            </p>
             <div
               data-hero-terminal
               className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white/[0.92] shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-ink-100/80 dark:shadow-none"

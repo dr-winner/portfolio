@@ -120,7 +120,6 @@ function runLocal(t: string): string[] | null {
       "X        " + profile.socials.x,
       "MEDIUM   " + profile.socials.medium,
       "IG       " + profile.socials.instagram,
-      "DISCORD  " + profile.socials.discord,
       "TIKTOK   " + profile.socials.tiktok,
       "EMAIL    use `Email` in title bar (opens your mail app)",
     ];
