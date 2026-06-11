@@ -1,11 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import clsx from "clsx";
 import { ArrowUpRight, CheckCircle2, Clock, Hourglass } from "lucide-react";
@@ -32,68 +28,45 @@ const statusMeta = {
   upcoming: { label: "Coming soon", Icon: Hourglass, cls: "text-cyan-700 dark:text-ocean-300" },
 };
 
-// ─── Single fullscreen slide ───────────────────────────────────────────────────
+// ─── Full-width project card ───────────────────────────────────────────────────
 
-function ProjectSlide({
-  project,
-  index,
-  total,
-  direction,
-}: {
-  project: Project;
-  index: number;
-  total: number;
-  direction: 1 | -1;
-}) {
-  const { label: statusLabel, Icon: StatusIcon, cls: statusCls } =
-    statusMeta[project.status];
-
+function ProjectCard({ project, index, total }: { project: Project; index: number; total: number }) {
+  const { label: statusLabel, Icon: StatusIcon, cls: statusCls } = statusMeta[project.status];
   const hasImage = !!(project.imageUrl || project.image);
 
   return (
-    <motion.div
-      key={project.slug}
-      initial={{ opacity: 0, y: direction * 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: direction * -60 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute inset-0 flex items-center"
+    <div
+      className="project-card flex flex-shrink-0 items-center"
+      style={{ width: "100vw", height: "100vh" }}
     >
       <div className="container">
         <div
           className={clsx(
-            "grid items-center gap-10 lg:gap-16",
-            hasImage ? "lg:grid-cols-[1fr_1fr]" : "max-w-3xl"
+            "grid items-center gap-12 lg:gap-20",
+            hasImage ? "lg:grid-cols-[1.1fr_0.9fr]" : "max-w-3xl"
           )}
         >
-          {/* ── Left: text ─────────────────────────────── */}
-          <div className="flex flex-col gap-6">
-            {/* Counter + company + status */}
-            <div className="flex items-center gap-4 flex-wrap">
+          {/* ── Left: text ──────────────────────────────── */}
+          <div className="flex flex-col gap-5">
+            {/* Counter + status */}
+            <div className="flex flex-wrap items-center gap-4">
               <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/55">
                 {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 {project.company ? ` — ${project.company}` : ""}
               </span>
-              <span
-                className={clsx(
-                  "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]",
-                  statusCls
-                )}
-              >
+              <span className={clsx("inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]", statusCls)}>
                 <StatusIcon className="size-3.5" />
                 {statusLabel}
               </span>
             </div>
 
             {/* Title */}
-            <h2 className="font-display text-4xl leading-[1.06] tracking-tight text-slate-900 dark:text-white sm:text-5xl xl:text-6xl">
+            <h2 className="font-display text-4xl leading-[1.06] tracking-tight text-slate-900 dark:text-white sm:text-5xl xl:text-[3.5rem]">
               {project.title}
             </h2>
 
             {/* Year */}
-            <p className="font-mono text-[12px] text-slate-500 dark:text-white/50">
-              {project.year}
-            </p>
+            <p className="font-mono text-[12px] text-slate-400 dark:text-white/50">{project.year}</p>
 
             {/* Summary */}
             <p className="max-w-lg text-[17px] leading-relaxed text-slate-600 dark:text-slate-300">
@@ -103,13 +76,7 @@ function ProjectSlide({
             {/* Tags */}
             <div className="flex flex-wrap gap-2">
               {project.tags.map((t) => (
-                <span
-                  key={t}
-                  className={clsx(
-                    "inline-flex rounded-md border px-2.5 py-1 text-[12px] font-semibold",
-                    tagPill[t]
-                  )}
-                >
+                <span key={t} className={clsx("inline-flex rounded-md border px-2.5 py-1 text-[12px] font-semibold", tagPill[t])}>
                   {t}
                 </span>
               ))}
@@ -118,15 +85,10 @@ function ProjectSlide({
             {/* Stack */}
             {project.techStack?.length ? (
               <div>
-                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">
-                  Stack
-                </p>
+                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">Stack</p>
                 <div className="flex flex-wrap gap-1.5">
                   {project.techStack.slice(0, 6).map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-md border border-slate-200/90 bg-white px-2.5 py-1 text-[12px] text-slate-700 dark:border-white/10 dark:bg-ink-50/70 dark:text-white/85"
-                    >
+                    <span key={t} className="rounded-md border border-slate-200/90 bg-white px-2.5 py-1 text-[12px] text-slate-700 dark:border-white/10 dark:bg-ink-50/70 dark:text-white/85">
                       {t}
                     </span>
                   ))}
@@ -135,7 +97,7 @@ function ProjectSlide({
             ) : null}
 
             {/* Link */}
-            <div className="pt-2">
+            <div className="pt-1">
               {project.link ? (
                 <a
                   href={project.link}
@@ -148,8 +110,7 @@ function ProjectSlide({
                 </a>
               ) : (
                 <span className="inline-flex items-center gap-2 font-mono text-[13px] text-slate-400 dark:text-white/45">
-                  <Clock className="size-4" />
-                  Not shipped yet
+                  <Clock className="size-4" /> Not shipped yet
                 </span>
               )}
             </div>
@@ -158,12 +119,12 @@ function ProjectSlide({
           {/* ── Right: image ───────────────────────────── */}
           {hasImage && (
             <div className="relative hidden lg:block">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-100 shadow-2xl dark:border-white/8 dark:bg-ink-200">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-100 shadow-2xl dark:border-white/8 dark:bg-ink-200">
                 <Image
                   src={project.imageUrl ?? project.image!}
                   alt={`${project.title} preview`}
                   fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  sizes="45vw"
                   className="object-contain object-center p-4"
                   unoptimized={!!project.imageUrl}
                 />
@@ -172,19 +133,22 @@ function ProjectSlide({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-// ─── Main section ─────────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function HorizontalProjects({ items }: { items?: Project[] }) {
   const list = items?.length ? items : seedProjects;
   const reduced = useReducedMotion();
 
   const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+
   const [activeIdx, setActiveIdx] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -195,30 +159,89 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // Drive active index from scroll position
   useEffect(() => {
     if (reduced || isMobile) return;
+
     const section = sectionRef.current;
-    if (!section) return;
+    const track = trackRef.current;
+    const heading = headingRef.current;
+    const bar = progressRef.current;
+    if (!section || !track) return;
 
-    function onScroll() {
-      const rect = section!.getBoundingClientRect();
-      const scrolled = -rect.top;
-      if (scrolled < 0) return;
-      const idx = Math.min(
-        Math.max(Math.floor(scrolled / window.innerHeight), 0),
-        list.length - 1
-      );
-      setActiveIdx((prev) => {
-        if (idx !== prev) setDirection(idx > prev ? 1 : -1);
-        return idx;
-      });
-    }
+    let ctx: { revert: () => void } | undefined;
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [list.length, reduced, isMobile]);
+    (async () => {
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        // Scroll distance = (n-1) card widths
+        const getDistance = () => (list.length - 1) * window.innerWidth;
+
+        // ── Main horizontal tween ─────────────────────
+        const mainTween = gsap.to(track, {
+          x: () => -getDistance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            pin: true,
+            scrub: 1,
+            start: "top top",
+            end: () => `+=${getDistance()}`,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // ── Heading fades as scroll starts ────────────
+        if (heading) {
+          gsap.to(heading, {
+            opacity: 0,
+            y: -24,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: "+=300",
+              scrub: 1,
+            },
+          });
+        }
+
+        // ── Progress bar ──────────────────────────────
+        if (bar) {
+          gsap.context(() => {
+            gsap.set(bar, { scaleX: 0, transformOrigin: "left" });
+            gsap.to(bar, {
+              scaleX: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: () => `+=${getDistance()}`,
+                scrub: 1,
+              },
+            });
+          });
+        }
+
+        // ── Active card tracker ───────────────────────
+        const cards = track.querySelectorAll<HTMLElement>(".project-card");
+        cards.forEach((card, i) => {
+          ScrollTrigger.create({
+            containerAnimation: mainTween,
+            trigger: card,
+            start: "left 60%",
+            end: "right 40%",
+            onEnter: () => setActiveIdx(i),
+            onEnterBack: () => setActiveIdx(i),
+          });
+        });
+      }, section);
+    })();
+
+    return () => ctx?.revert();
+  }, [list, reduced, isMobile]);
 
   // ── Mobile / reduced-motion: vertical stack ───────────────────────────────
   if (reduced || isMobile) {
@@ -241,13 +264,12 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                       {String(i + 1).padStart(2, "0")} — {p.company}
                     </span>
                     <span className={clsx("inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]", statusCls)}>
-                      <StatusIcon className="size-3" />
-                      {statusLabel}
+                      <StatusIcon className="size-3" />{statusLabel}
                     </span>
                   </div>
                   <div>
                     <h3 className="font-display text-2xl tracking-tight text-slate-900 dark:text-white sm:text-3xl">{p.title}</h3>
-                    <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/55">{p.year}</p>
+                    <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/50">{p.year}</p>
                   </div>
                   {hasImage && (
                     <div className="relative h-44 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-ink-200">
@@ -278,62 +300,68 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
     );
   }
 
-  // ── Desktop: fullscreen sticky showcase ──────────────────────────────────
+  // ── Desktop: GSAP-pinned horizontal scroll ────────────────────────────────
   return (
     <section
       ref={sectionRef}
       id="projects"
-      style={{ height: `${list.length * 100}vh` }}
-      className="relative"
+      className="relative overflow-hidden"
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Section header — fades once scroll starts */}
-        <motion.div
-          animate={{ opacity: activeIdx === 0 ? 1 : 0, y: activeIdx === 0 ? 0 : -20 }}
-          transition={{ duration: 0.4 }}
-          className="absolute top-0 left-0 right-0 z-10 container pt-16 pb-6"
-        >
-          <SectionHeader
-            eyebrow="Selected work"
-            title="Projects that shipped"
-            description="Built, deployed, and defended."
-          />
-        </motion.div>
+      {/* Top progress bar */}
+      <div
+        ref={progressRef}
+        aria-hidden
+        className="absolute top-0 left-0 z-10 h-[2px] w-full bg-ocean-400/70 dark:bg-ocean-300/70"
+        style={{ transformOrigin: "left", transform: "scaleX(0)" }}
+      />
 
-        {/* Project slide */}
-        <AnimatePresence mode="wait" custom={direction}>
-          <ProjectSlide
-            key={activeIdx}
-            project={list[activeIdx]}
-            index={activeIdx}
-            total={list.length}
-            direction={direction}
-          />
-        </AnimatePresence>
+      {/* Section heading — fades as scroll begins */}
+      <div
+        ref={headingRef}
+        className="relative z-10 container pt-16 pb-10"
+      >
+        <SectionHeader
+          eyebrow="Selected work"
+          title="Projects that shipped"
+          description="Built, deployed, and defended."
+        />
+        {/* Counter */}
+        <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/55">
+          <span className="text-ocean-600 dark:text-ocean-300">
+            {String(activeIdx + 1).padStart(2, "0")}
+          </span>{" "}
+          / {String(list.length).padStart(2, "0")}
+        </p>
+      </div>
 
-        {/* Dot nav — right edge */}
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
-          {list.map((_, i) => (
-            <div
-              key={i}
-              className={clsx(
-                "rounded-full transition-all duration-300",
-                i === activeIdx
-                  ? "h-4 w-1.5 bg-ocean-400 dark:bg-ocean-300"
-                  : "size-1.5 bg-slate-400/40 dark:bg-white/20"
-              )}
-            />
-          ))}
-        </div>
-
-        {/* Progress bar — bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-slate-200/40 dark:bg-white/8">
+      {/* Dot nav — right edge */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
+        {list.map((_, i) => (
           <motion.div
-            className="h-full bg-ocean-400/70 dark:bg-ocean-300/70"
-            animate={{ width: `${((activeIdx + 1) / list.length) * 100}%` }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            key={i}
+            animate={{
+              height: i === activeIdx ? 16 : 6,
+              width: i === activeIdx ? 4 : 4,
+              opacity: i === activeIdx ? 1 : 0.35,
+            }}
+            transition={{ duration: 0.3 }}
+            className={clsx(
+              "rounded-full",
+              i === activeIdx ? "bg-ocean-400 dark:bg-ocean-300" : "bg-slate-400 dark:bg-white/40"
+            )}
           />
-        </div>
+        ))}
+      </div>
+
+      {/* Scrolling track — each card is 100vw × 100vh */}
+      <div
+        ref={trackRef}
+        className="flex will-change-transform"
+        style={{ width: `${list.length * 100}vw` }}
+      >
+        {list.map((p, i) => (
+          <ProjectCard key={p.slug} project={p} index={i} total={list.length} />
+        ))}
       </div>
     </section>
   );
