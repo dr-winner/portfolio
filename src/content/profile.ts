@@ -4,21 +4,21 @@ export const profile = {
   initials: "RW",
   role: "Cybersecurity Professional",
   tagline:
-    "Threat detection, cloud hardening, offensive testing, digital forensics, and compliance — the full security lifecycle.",
+    "Threat detection, cloud hardening, pentesting, forensics, compliance.",
   /** Optional — not shown in public UI */
   location: "Accra, Ghana",
   timezone: "GMT+0",
   email: "drwinner03@gmail.com",
   /** Shown in contact; full address is revealed only in mailto */
   emailObfuscated: "drwinner ···@gmail.com",
-  resumeUrl: "#",
+  resumeUrl: "https://drive.google.com/file/d/1T-06kyZ_RSD-lu8JzHal_gZBZxOiq2fW/view?usp=sharing",
   availability: {
     status: "available",
     label: "Open to SOC · cloud security · pentesting & GRC roles",
   },
   bio: [
-    "I work across the full security lifecycle — from triaging alerts and hunting threats in the SOC, to hardening cloud environments, running penetration tests, and handling incident investigations. I understand both how attacks are built and how to make them show up in the data.",
-    "I started as a full-stack engineer shipping production apps and smart contracts, which shapes how I defend them today: with attacker empathy, an understanding of what developers actually ship, and a preference for automation over toil.",
+    "I triage alerts, hunt threats, harden cloud setups, run pentests, and investigate incidents. I know how attacks work and how to catch them in logs.",
+    "Started building full-stack apps and smart contracts. Now I defend them. I automate the boring parts and focus on what actually matters.",
   ],
   socials: {
     github: "https://github.com/dr-winner",
