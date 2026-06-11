@@ -52,9 +52,9 @@ export function Hero() {
 
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="Cyber &" className="block whitespace-nowrap text-display-etched" />
+                <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap text-display-etched" />
                 <span className="block">
-                  <CharSplit text="Cloud Security" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
+                  <CharSplit text="Security" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
