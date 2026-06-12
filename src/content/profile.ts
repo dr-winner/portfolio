@@ -2,7 +2,7 @@ export const profile = {
   name: "Richard Winner Duvor",
   handle: "dr_winner",
   initials: "RW",
-  role: "Cyber & Cloud Security",
+  role: "Cyber & Cloud Security Engineer",
   tagline:
     "Threat detection, cloud hardening, pentesting, forensics, compliance.",
   /** Optional — not shown in public UI */

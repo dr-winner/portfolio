@@ -326,12 +326,6 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
           title="Projects that shipped"
           description="Built, deployed, and defended."
         />
-        <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/55">
-          <span className="text-ocean-600 dark:text-ocean-300">
-            {String(activeIdx + 1).padStart(2, "0")}
-          </span>{" "}
-          / {String(list.length).padStart(2, "0")}
-        </p>
       </div>
 
       {/* Dot nav — right edge */}
