@@ -225,9 +225,45 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
           });
         }
 
-        // ── Active card tracker ───────────────────────
+        // ── Per-card entry / exit animations ──────────
         const cards = track.querySelectorAll<HTMLElement>(".project-card");
         cards.forEach((card, i) => {
+          // Set perspective on each card for 3D transforms
+          gsap.set(card, { transformPerspective: 1100 });
+
+          // Entry: rise up + scale in + slight 3D tilt from the right
+          if (i > 0) {
+            gsap.fromTo(
+              card,
+              { opacity: 0, scale: 0.84, y: 70, rotateY: 10 },
+              {
+                opacity: 1, scale: 1, y: 0, rotateY: 0,
+                ease: "power3.out",
+                scrollTrigger: {
+                  containerAnimation: mainTween,
+                  trigger: card,
+                  start: "left 92%",
+                  end: "left 8%",
+                  scrub: 1.4,
+                },
+              }
+            );
+          }
+
+          // Exit: sink down + scale out + slight 3D tilt to the left
+          gsap.to(card, {
+            opacity: 0, scale: 0.84, y: -70, rotateY: -10,
+            ease: "power2.in",
+            scrollTrigger: {
+              containerAnimation: mainTween,
+              trigger: card,
+              start: "right 92%",
+              end: "right 8%",
+              scrub: 1.4,
+            },
+          });
+
+          // Active card tracker
           ScrollTrigger.create({
             containerAnimation: mainTween,
             trigger: card,
