@@ -29,7 +29,6 @@ type CommandItem = {
 };
 
 const items: CommandItem[] = [
-  { id: "hero", label: "Go to Home", group: "Navigate", icon: Sparkles, action: { kind: "scroll", id: "top" } },
   {
     id: "capabilities",
     label: "Capabilities",
@@ -79,14 +78,6 @@ const items: CommandItem[] = [
     icon: GithubIcon,
     keywords: "profile dr-winner dr-winner",
     action: { kind: "link", href: profile.socials.github },
-  },
-  {
-    id: "github-graph",
-    label: "Contribution graph",
-    keywords: "github insights activity commits",
-    group: "Navigate",
-    icon: GithubIcon,
-    action: { kind: "scroll", id: "github-activity" },
   },
   {
     id: "contact-scroll",
