@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx";
 import {
@@ -54,56 +54,6 @@ const levelLabel: Record<Capability["level"], string> = {
 
 export function Capabilities() {
   const sectionRef = useRef<HTMLElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  // Pinned sticky stack reveal — cards slide in from the left as scroll progresses.
-  // Skipped on mobile (<768px) and under reduced motion.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const mq = window.matchMedia("(min-width: 768px)");
-    if (!mq.matches) return;
-
-    const section = sectionRef.current;
-    const grid = gridRef.current;
-    if (!section || !grid) return;
-
-    let ctx: { revert: () => void } | undefined;
-
-    (async () => {
-      const { gsap } = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      gsap.registerPlugin(ScrollTrigger);
-
-      ctx = gsap.context(() => {
-        const cards = grid.querySelectorAll<HTMLElement>(".cap-card");
-        if (!cards.length) return;
-
-        gsap.set(cards, { opacity: 0, x: -40 });
-
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: section,
-              start: "top top",
-              end: () => `+=${window.innerHeight * 1.2}`,
-              pin: true,
-              scrub: 1,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-            },
-          })
-          .to(cards, {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power2.out",
-            stagger: 0.08,
-          });
-      }, section);
-    })();
-
-    return () => ctx?.revert();
-  }, []);
 
   return (
     <section ref={sectionRef} id="capabilities" className="relative py-20 md:py-28 lg:py-32">
@@ -123,16 +73,17 @@ export function Capabilities() {
           </p>
         </div>
 
-        <div
-          ref={gridRef}
-          className="mt-16 grid gap-8 md:mt-20 md:gap-10 lg:mt-24 lg:grid-cols-2"
-        >
-          {capabilities.map((cap) => {
+        <div className="mt-16 grid gap-8 md:mt-20 md:gap-10 lg:mt-24 lg:grid-cols-2">
+          {capabilities.map((cap, i) => {
             const Icon = cap.icon;
             return (
               <motion.div
                 key={cap.id}
                 className="cap-card h-full"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10% 0%" }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: i * 0.08 }}
                 whileHover={{
                   y: -4,
                   transition: { type: "spring", stiffness: 420, damping: 28 },
