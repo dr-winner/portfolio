@@ -226,59 +226,54 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         }
 
         // ── Per-card cinematic animations ─────────────
+        // One timeline per card spans the card's full travel distance
+        // (enters from right → centres → exits to left) so there are
+        // zero gaps between entry and exit — no blank-screen moments
+        // in either scroll direction.
         const cards = track.querySelectorAll<HTMLElement>(".project-card");
         cards.forEach((card, i) => {
           gsap.set(card, { transformPerspective: 1400 });
 
-          // ── Entry: materialises from the right ───────
-          // (scrub reversal = graceful re-entry when scrolling back up)
-          if (i > 0) {
-            gsap.fromTo(
-              card,
-              {
-                opacity: 0,
-                scale: 0.65,
-                y: 140,
-                rotateY: 28,
-                filter: "blur(18px)",
+          if (i === 0) {
+            // First card is already visible — only needs an exit tween.
+            gsap.to(card, {
+              opacity: 0, scale: 0.7, y: -120, rotateY: -22, filter: "blur(14px)",
+              ease: "expo.in",
+              scrollTrigger: {
+                containerAnimation: mainTween,
+                trigger: card,
+                start: "left 5%",
+                end: "right 5%",
+                scrub: 1.6,
               },
-              {
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                rotateY: 0,
-                filter: "blur(0px)",
-                ease: "expo.out",
-                scrollTrigger: {
-                  containerAnimation: mainTween,
-                  trigger: card,
-                  start: "left 98%",
-                  end: "left 2%",
-                  scrub: 1.8,
-                },
-              }
-            );
-          }
+            });
+          } else {
+            // Cards 2–N: unified entry → linger → exit timeline.
+            // start = card just entering viewport from the right
+            // end   = card fully off-screen to the left
+            const tl = gsap.timeline({
+              scrollTrigger: {
+                containerAnimation: mainTween,
+                trigger: card,
+                start: "left 100%",
+                end: "right 0%",
+                scrub: 1.6,
+              },
+            });
 
-          // ── Exit: dissolves to the left ───────────────
-          // Starts only when card centre has passed halfway — gives
-          // a clean "linger then vanish" feel; reversal on scroll-up
-          // means the card pulls back into focus before re-centring.
-          gsap.to(card, {
-            opacity: 0,
-            scale: 0.65,
-            y: -140,
-            rotateY: -28,
-            filter: "blur(18px)",
-            ease: "expo.in",
-            scrollTrigger: {
-              containerAnimation: mainTween,
-              trigger: card,
-              start: "left -15%",
-              end: "left -85%",
-              scrub: 1.8,
-            },
-          });
+            // First half — entry (card travels from off-right to centre)
+            tl.fromTo(
+              card,
+              { opacity: 0, scale: 0.68, y: 130, rotateY: 24, filter: "blur(16px)" },
+              { opacity: 1, scale: 1,    y: 0,   rotateY: 0,  filter: "blur(0px)",
+                ease: "expo.out", duration: 1 }
+            );
+            // Second half — exit (card travels from centre to off-left)
+            tl.to(card, {
+              opacity: 0, scale: 0.68, y: -130, rotateY: -24, filter: "blur(16px)",
+              ease: "expo.in", duration: 1,
+            });
+          }
 
           // ── Active index tracker ──────────────────────
           ScrollTrigger.create({
