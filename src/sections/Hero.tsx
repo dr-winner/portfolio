@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ArrowUpRight, Shield, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Shield } from "lucide-react";
 import { TypedLines } from "@/components/TypedLines";
 import { HeroAnimation, CharSplit } from "@/components/HeroAnimation";
 import { MagneticButton } from "@/components/MagneticButton";
@@ -46,7 +46,7 @@ export function Hero() {
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
                 <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
                 <span className="block">
-                  <CharSplit text="Security Engineer" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
+                  <CharSplit text="Security Engineer" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
@@ -182,10 +182,6 @@ export function Hero() {
               </div>
 
               <div className="border-t border-slate-200/85 bg-white/95 dark:border-white/10 dark:bg-ink-100/60">
-                <p className="px-4 pt-2 font-sans text-[11px] leading-snug text-slate-500 dark:text-white/60">
-                  <span className="text-ocean-600 dark:text-ocean-200/80">→</span>{" "}
-                  To actually type, use the console at the bottom of the screen.
-                </p>
                 <div className="flex flex-col gap-1.5 px-4 py-2 text-[11px] text-slate-500 dark:text-white/65 sm:flex-row sm:items-center sm:gap-3">
                   <div className="flex items-center gap-2">
                     <Sparkles className="size-3 text-ocean-500 dark:text-ocean-300" />
