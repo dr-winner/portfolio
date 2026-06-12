@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
-import { Command as CommandIcon, Mail, SquareTerminal, TerminalSquare } from "lucide-react";
+import { Command as CommandIcon, FileText, Mail, SquareTerminal, TerminalSquare } from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MagneticButton } from "@/components/MagneticButton";
@@ -136,6 +136,17 @@ export function Header() {
               <span className="hidden md:inline">Menu</span>
               <span className="hidden lg:inline kbd">⌘K</span>
             </button>
+            <a
+              href={profile.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex size-9 items-center justify-center rounded-full border transition-colors hover:border-ocean-400/40 hover:text-slate-900 md:h-9 md:w-auto md:gap-1.5 md:px-2.5 md:py-1.5 md:text-xs dark:hover:border-ocean-300/35 dark:hover:text-ocean-200 border-slate-300/85 bg-white text-slate-600 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/75"
+              aria-label="View CV"
+              title="View CV"
+            >
+              <FileText className="size-3.5" aria-hidden />
+              <span className="hidden md:inline">CV</span>
+            </a>
             <MagneticButton strength={0.4}>
               <button
                 onClick={() => jump("contact")}

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Balancer from "react-wrap-balancer";
-import { Brain, Coffee, Mountain, Music, Terminal } from "lucide-react";
+import { ArrowUpRight, Brain, Coffee, Mountain, Music, Terminal } from "lucide-react";
 import { profile } from "@/content/profile";
 import { Card } from "@/components/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -49,6 +49,17 @@ export function About() {
                   If you&apos;re building something ambitious that needs to be fast, well-instrumented,
                   and hard to compromise — we should talk.
                 </p>
+              </div>
+              <div className="mt-6 border-t border-slate-200/80 pt-5 dark:border-white/10">
+                <a
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 text-sm font-semibold text-ocean-600 transition-colors hover:text-ocean-700 dark:text-ocean-300 dark:hover:text-ocean-200"
+                >
+                  <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  View full CV
+                </a>
               </div>
             </Card>
           </motion.div>

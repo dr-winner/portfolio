@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowUpRight, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, FileText, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import { profile } from "@/content/profile";
 import { Card } from "@/components/Card";
 import { track } from "@/lib/telemetry.client";
@@ -135,6 +135,18 @@ export function Contact() {
                     onClick={addRipple}
                   >
                     LinkedIn
+                    <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
+                </MagneticButton>
+                <MagneticButton strength={0.25}>
+                  <a
+                    href={profile.resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative group inline-flex overflow-hidden w-full items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition-colors hover:border-ocean-400/40 hover:text-slate-950 sm:w-auto sm:justify-start dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:hover:border-ocean-300/40 dark:hover:text-white"
+                  >
+                    <FileText className="size-4" />
+                    View CV
                     <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </a>
                 </MagneticButton>
