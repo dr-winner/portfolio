@@ -43,10 +43,10 @@ export function Hero() {
           {/* Left: identity */}
           <div className="flex min-w-0 flex-col items-start gap-7 text-left">
             <HeroAnimation>
-              <h1 className="max-w-full font-display text-display-xl tracking-tight">
+              <h1 className="max-w-full font-display text-display-lg tracking-tight">
                 <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
                 <span className="block">
-                  <CharSplit text="Security Engineer" charClassName="text-gradient-ocean" />
+                  <CharSplit text="Security Engineer" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
