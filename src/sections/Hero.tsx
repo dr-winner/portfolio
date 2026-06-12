@@ -184,7 +184,7 @@ export function Hero() {
               <div className="border-t border-slate-200/85 bg-white/95 dark:border-white/10 dark:bg-ink-100/60">
                 <div className="flex flex-col gap-1.5 px-4 py-2 text-[11px] text-slate-500 dark:text-white/65 sm:flex-row sm:items-center sm:gap-3">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="size-3 text-ocean-500 dark:text-ocean-300" />
+                    <span className="size-2 rounded-full bg-ok-400 animate-pulse-soft" />
                     <span>
                       agent runtime:{" "}
                       <span className="text-slate-800 dark:text-white/80">
