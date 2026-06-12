@@ -225,45 +225,62 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
           });
         }
 
-        // ── Per-card entry / exit animations ──────────
+        // ── Per-card cinematic animations ─────────────
         const cards = track.querySelectorAll<HTMLElement>(".project-card");
         cards.forEach((card, i) => {
-          // Set perspective on each card for 3D transforms
-          gsap.set(card, { transformPerspective: 1100 });
+          gsap.set(card, { transformPerspective: 1400 });
 
-          // Entry: rise up + scale in + slight 3D tilt from the right
+          // ── Entry: materialises from the right ───────
+          // (scrub reversal = graceful re-entry when scrolling back up)
           if (i > 0) {
             gsap.fromTo(
               card,
-              { opacity: 0, scale: 0.84, y: 70, rotateY: 10 },
               {
-                opacity: 1, scale: 1, y: 0, rotateY: 0,
-                ease: "power3.out",
+                opacity: 0,
+                scale: 0.65,
+                y: 140,
+                rotateY: 28,
+                filter: "blur(18px)",
+              },
+              {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                rotateY: 0,
+                filter: "blur(0px)",
+                ease: "expo.out",
                 scrollTrigger: {
                   containerAnimation: mainTween,
                   trigger: card,
-                  start: "left 92%",
-                  end: "left 8%",
-                  scrub: 1.4,
+                  start: "left 98%",
+                  end: "left 2%",
+                  scrub: 1.8,
                 },
               }
             );
           }
 
-          // Exit: sink down + scale out + slight 3D tilt to the left
+          // ── Exit: dissolves to the left ───────────────
+          // Starts only when card centre has passed halfway — gives
+          // a clean "linger then vanish" feel; reversal on scroll-up
+          // means the card pulls back into focus before re-centring.
           gsap.to(card, {
-            opacity: 0, scale: 0.84, y: -70, rotateY: -10,
-            ease: "power2.in",
+            opacity: 0,
+            scale: 0.65,
+            y: -140,
+            rotateY: -28,
+            filter: "blur(18px)",
+            ease: "expo.in",
             scrollTrigger: {
               containerAnimation: mainTween,
               trigger: card,
-              start: "right 92%",
-              end: "right 8%",
-              scrub: 1.4,
+              start: "left -15%",
+              end: "left -85%",
+              scrub: 1.8,
             },
           });
 
-          // Active card tracker
+          // ── Active index tracker ──────────────────────
           ScrollTrigger.create({
             containerAnimation: mainTween,
             trigger: card,
