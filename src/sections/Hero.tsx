@@ -41,9 +41,9 @@ export function Hero() {
       <div className="container relative">
         <div className="grid items-center gap-10 lg:gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Left: identity */}
-          <div className="flex min-w-0 flex-col items-start gap-7 text-left">
+          <div className="relative z-10 flex min-w-0 flex-col items-start gap-7 text-left">
             <HeroAnimation>
-              <h1 className="max-w-full font-display text-display-lg tracking-tight">
+              <h1 className="max-w-full font-display text-display-xl tracking-tight">
                 <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
                 <span className="block">
                   <CharSplit text="Security Engineer" className="whitespace-nowrap" charClassName="text-gradient-ocean" />
