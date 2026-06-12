@@ -76,31 +76,38 @@ export function Hero() {
             </div>
 
             {/* Specialty chips */}
-            <div className="mt-1 flex w-full flex-wrap gap-2 border-t border-slate-200/80 pt-6 dark:border-white/10">
-              {[
-                { label: "Cloud Security",      accent: "cyber"   },
-                { label: "SOC Analyst",          accent: "signal"  },
-                { label: "Penetration Testing",  accent: "threat"  },
-                { label: "Ethical Hacking",      accent: "threat"  },
-                { label: "DFIR",                 accent: "ok"      },
-                { label: "GRC",                  accent: "cyber"   },
-              ].map(({ label, accent }) => (
-                <span
-                  key={label}
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${
-                    accent === "cyber"
-                      ? "border-ocean-400/30 bg-ocean-400/8 text-ocean-600 dark:border-ocean-300/20 dark:bg-ocean-300/[0.06] dark:text-ocean-300"
-                      : accent === "signal"
-                      ? "border-amber-400/30 bg-amber-400/8 text-amber-700 dark:border-signal-300/20 dark:bg-signal-300/[0.06] dark:text-signal-300"
-                      : accent === "threat"
-                      ? "border-rose-400/30 bg-rose-400/8 text-rose-700 dark:border-threat-400/20 dark:bg-threat-400/[0.06] dark:text-threat-400"
-                      : "border-emerald-400/30 bg-emerald-400/8 text-emerald-700 dark:border-ok-400/20 dark:bg-ok-400/[0.06] dark:text-ok-400"
-                  }`}
-                >
-                  <span className="size-1 rounded-full bg-current" />
-                  {label}
-                </span>
-              ))}
+            <div className="mt-1 w-full border-t border-slate-200/80 pt-6 dark:border-white/10">
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "Cloud Security",     accent: "cyber"  },
+                  { label: "SOC Analyst",         accent: "signal" },
+                  { label: "Penetration Testing", accent: "threat" },
+                  { label: "Ethical Hacking",     accent: "threat" },
+                  { label: "DFIR",                accent: "ok"     },
+                  { label: "GRC",                 accent: "cyber"  },
+                ].map(({ label, accent }) => (
+                  <span
+                    key={label}
+                    className={`inline-flex items-center gap-2 rounded-lg border px-3.5 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
+                      accent === "cyber"
+                        ? "border-ocean-400/40 bg-ocean-400/10 text-ocean-600 dark:border-ocean-300/25 dark:bg-ocean-300/[0.08] dark:text-ocean-200"
+                        : accent === "signal"
+                        ? "border-amber-400/40 bg-amber-400/10 text-amber-700 dark:border-signal-300/25 dark:bg-signal-300/[0.08] dark:text-signal-200"
+                        : accent === "threat"
+                        ? "border-rose-400/40 bg-rose-400/10 text-rose-600 dark:border-threat-400/25 dark:bg-threat-400/[0.08] dark:text-threat-400"
+                        : "border-emerald-400/40 bg-emerald-400/10 text-emerald-700 dark:border-ok-400/25 dark:bg-ok-400/[0.08] dark:text-ok-300"
+                    }`}
+                  >
+                    <span className={`size-1.5 rounded-full ${
+                      accent === "cyber"   ? "bg-ocean-400 dark:bg-ocean-300" :
+                      accent === "signal"  ? "bg-amber-500 dark:bg-signal-300" :
+                      accent === "threat"  ? "bg-rose-500 dark:bg-threat-400" :
+                      "bg-emerald-500 dark:bg-ok-400"
+                    }`} />
+                    {label}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Keep clouds stat for quick scan */}
