@@ -45,8 +45,8 @@ export function Hero() {
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
                 <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
-                <span className="block">
-                  <CharSplit text="Security Engineer" className="whitespace-nowrap [letter-spacing:-0.06em]" charClassName="text-gradient-ocean" />
+                <span className="block text-[0.75em]">
+                  <CharSplit text="Security Engineer" className="whitespace-nowrap tracking-tight" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
