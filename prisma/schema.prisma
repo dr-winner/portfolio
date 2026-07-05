@@ -91,6 +91,13 @@ model Testimonial {
   updatedAt DateTime @updatedAt
 }
 
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
 /// First-party, privacy-tilted event log (IP stored as daily hash + salt only).
 model AnalyticsEvent {
   id        String   @id @default(cuid())
