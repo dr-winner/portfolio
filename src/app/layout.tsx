@@ -170,8 +170,7 @@ export default function RootLayout({
       className={clsx(sans.variable, display.variable, mono.variable, "dark")}
     >
       <head>
-        {/* Resource hints */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        {/* Resource hints — fonts are self-hosted via next/font, no preconnect needed */}
         <link rel="dns-prefetch" href="https://github.com" />
 
         {/* Structured data — three separate JSON-LD blocks for clarity */}

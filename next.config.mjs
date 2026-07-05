@@ -1,6 +1,28 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === "production";
 
+/*
+ * CSP notes:
+ * - 'unsafe-inline' in script-src is required by Next.js's inline bootstrap
+ *   on statically prerendered pages (no nonce support there).
+ * - 'unsafe-inline' in style-src is required by Framer Motion / GSAP.
+ * - The blob host serves admin-uploaded project screenshots.
+ * - Prod-only: dev needs 'unsafe-eval' for react-refresh.
+ */
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
+  "font-src 'self'",
+  "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  "upgrade-insecure-requests",
+].join("; ");
+
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -8,7 +30,10 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
   ...(isProd
-    ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]
+    ? [
+        { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+        { key: "Content-Security-Policy", value: csp },
+      ]
     : []),
 ];
 
@@ -24,6 +49,9 @@ const nextConfig = {
   images: {
     localPatterns: [
       { pathname: "/uploads/**" },
+    ],
+    remotePatterns: [
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
   },
   webpack(config) {
