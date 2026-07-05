@@ -25,7 +25,6 @@ export function personSchema() {
     jobTitle: profile.role,
     description: profile.tagline,
     url: BASE_URL,
-    email: `mailto:${profile.email}`,
     image: {
       "@type": "ImageObject",
       "@id": `${BASE_URL}/#avatar`,

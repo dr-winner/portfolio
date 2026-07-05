@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { assertSameOriginOrMissing } from "@/lib/allow-same-site";
+import { checkRateLimit, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +15,19 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!assertSameOriginOrMissing(req)) {
+    return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+  }
+
+  const ip = clientIpFromHeaders(req.headers);
+  const rl = checkRateLimit(`wl:${ip}`, 5, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   try {
     const { email, name } = await req.json();
 
@@ -27,7 +42,10 @@ export async function POST(req: NextRequest) {
     }
 
     await prisma.waitlistEntry.create({
-      data: { email: trimmed, name: name?.trim() || null },
+      data: {
+        email: trimmed.slice(0, 254),
+        name: typeof name === "string" ? name.trim().slice(0, 100) || null : null,
+      },
     });
 
     return NextResponse.json({ ok: true });

@@ -1,8 +1,10 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { setSessionCookie } from "@/lib/auth";
+import { checkRateLimit, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export type LoginState = { error?: string };
 
@@ -49,6 +51,12 @@ export async function loginAction(
   _prev: LoginState,
   formData: FormData
 ): Promise<LoginState> {
+  const ip = clientIpFromHeaders(await headers());
+  const rl = checkRateLimit(`login:${ip}`, 5, 60_000);
+  if (!rl.ok) {
+    return { error: "Too many attempts. Try again in a minute." };
+  }
+
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const from = String(formData.get("from") ?? "/admin");
