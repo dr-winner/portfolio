@@ -143,7 +143,7 @@ export function CommandPalette({
       >
         <Command label="Command menu" className="flex flex-col">
           <div className="flex items-center gap-3 border-b border-slate-200/90 px-4 py-3 dark:border-white/10">
-            <Sparkles className="size-4 text-ocean-500 dark:text-ocean-300" />
+            <Sparkles className="size-4 text-cyber-500 dark:text-cyber-300" />
             <Command.Input
               value={search}
               onValueChange={setSearch}
@@ -170,9 +170,9 @@ export function CommandPalette({
                       key={it.id}
                       value={`${it.group} ${it.label}${it.keywords ? ` ${it.keywords}` : ""}`}
                       onSelect={() => run(it)}
-                      className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-800 data-[selected=true]:bg-ocean-500/15 data-[selected=true]:text-slate-950 dark:text-white/80 dark:data-[selected=true]:bg-ocean-300/10 dark:data-[selected=true]:text-white"
+                      className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-800 data-[selected=true]:bg-cyber-500/15 data-[selected=true]:text-slate-950 dark:text-white/80 dark:data-[selected=true]:bg-cyber-300/10 dark:data-[selected=true]:text-white"
                     >
-                      <Icon className="size-4 shrink-0 text-ocean-500 dark:text-ocean-300" />
+                      <Icon className="size-4 shrink-0 text-cyber-500 dark:text-cyber-300" />
                       <span className="flex-1">{it.label}</span>
                       {(it.action.kind === "link" || it.action.kind === "email") && (
                         <ArrowUpRight className="size-3.5 text-slate-400 dark:text-white/55" />

@@ -37,7 +37,7 @@ export function ExperienceForm({
           type="checkbox"
           name="current"
           defaultChecked={entry?.current}
-          className="accent-ocean-300"
+          className="accent-cyber-300"
         />
         This is my current role
       </label>

@@ -1,63 +1,71 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useRef, type ReactNode } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useReducedMotion,
+} from "framer-motion";
+import { MAGNETIC } from "@/config/motion.config";
 
-interface MagneticButtonProps {
-  children: React.ReactNode;
+interface Props {
+  children: ReactNode;
   className?: string;
+  /** Fraction of cursor offset to apply — 0.35 is default */
   strength?: number;
 }
 
+/**
+ * Wraps any element and makes it drift slightly toward the cursor on hover.
+ * Uses a spring so it settles back smoothly when the mouse leaves.
+ * No-ops under prefers-reduced-motion.
+ */
 export function MagneticButton({
   children,
   className,
-  strength = 0.4,
-}: MagneticButtonProps) {
+  strength = MAGNETIC.strength,
+}: Props) {
+  const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 220, damping: 22 });
-  const springY = useSpring(y, { stiffness: 220, damping: 22 });
 
-  // Engage only on devices with true hover + no reduced-motion preference
-  const [engaged, setEngaged] = useState(false);
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
 
-  useEffect(() => {
-    const hoverMq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const reducedMq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setEngaged(hoverMq.matches && !reducedMq.matches);
-    apply();
-    hoverMq.addEventListener("change", apply);
-    reducedMq.addEventListener("change", apply);
-    return () => {
-      hoverMq.removeEventListener("change", apply);
-      reducedMq.removeEventListener("change", apply);
-    };
-  }, []);
+  const x = useSpring(rawX, {
+    stiffness: MAGNETIC.stiffness,
+    damping: MAGNETIC.damping,
+    mass: 1,
+  });
+  const y = useSpring(rawY, {
+    stiffness: MAGNETIC.stiffness,
+    damping: MAGNETIC.damping,
+    mass: 1,
+  });
 
-  function onMove(e: React.MouseEvent) {
-    if (!engaged) return;
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    x.set((e.clientX - (rect.left + rect.width / 2)) * strength);
-    y.set((e.clientY - (rect.top + rect.height / 2)) * strength);
+  function onMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (reduced || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    rawX.set((e.clientX - cx) * strength);
+    rawY.set((e.clientY - cy) * strength);
   }
 
   function onLeave() {
-    x.set(0);
-    y.set(0);
+    rawX.set(0);
+    rawY.set(0);
   }
+
+  if (reduced) return <div className={className}>{children}</div>;
 
   return (
     <motion.div
       ref={ref}
-      style={engaged ? { x: springX, y: springY } : undefined}
+      style={{ x, y, display: "inline-flex" }}
       className={className}
-      onMouseMove={engaged ? onMove : undefined}
-      onMouseLeave={engaged ? onLeave : undefined}
-      data-magnetic={engaged ? "" : undefined}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
     >
       {children}
     </motion.div>

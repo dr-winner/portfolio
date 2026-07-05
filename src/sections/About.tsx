@@ -35,7 +35,7 @@ export function About() {
           >
             <Card className="h-full p-6 md:p-8">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="chip-ocean font-mono text-[10px] uppercase tracking-[0.2em]">
+                <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
                   bio.md
                 </span>
               </div>
@@ -55,7 +55,7 @@ export function About() {
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2 text-sm font-semibold text-ocean-600 transition-colors hover:text-ocean-700 dark:text-ocean-300 dark:hover:text-ocean-200"
+                  className="group inline-flex items-center gap-2 text-sm font-semibold text-cyber-600 transition-colors hover:text-cyber-700 dark:text-cyber-300 dark:hover:text-cyber-200"
                 >
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   View full CV
@@ -72,7 +72,7 @@ export function About() {
             className="md:col-span-2"
           >
             <Card className="h-full p-6 md:p-8">
-              <span className="chip-ocean font-mono text-[10px] uppercase tracking-[0.2em]">
+              <span className="chip-cyber font-mono text-[10px] uppercase tracking-[0.2em]">
                 signals.txt
               </span>
               <h3 className="mt-5 font-display text-xl tracking-tight text-slate-900 dark:text-white">
@@ -81,7 +81,7 @@ export function About() {
               <ul className="mt-5 space-y-3">
                 {signals.map(({ icon: Icon, label }) => (
                   <li key={label} className="flex items-start gap-3 text-sm text-slate-700 dark:text-white/75">
-                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-ocean-600 dark:text-ocean-300" />
+                    <Icon className="mt-0.5 size-4 flex-shrink-0 text-cyber-600 dark:text-cyber-300" />
                     <span>{label}</span>
                   </li>
                 ))}

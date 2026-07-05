@@ -2,9 +2,9 @@ import React from "react";
 import clsx from "clsx";
 
 const palettes = {
-  ocean: "from-ocean-300 to-ocean-500",
+  cyber: "from-cyber-300 to-cyber-500",
   signal: "from-signal-300 to-signal-500",
-  ok: "from-ok-400 to-ocean-500",
+  ok: "from-ok-400 to-cyber-500",
 } as const;
 
 export function Avatar({

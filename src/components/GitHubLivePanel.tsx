@@ -124,7 +124,7 @@ export function GitHubLivePanel() {
       <div className="mb-6 flex flex-col gap-4 border-b border-slate-200/90 pb-5 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">Last 12 months</p>
-          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-ocean-700 sm:text-4xl dark:text-ocean-200">
+          <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-tight text-cyber-700 sm:text-4xl dark:text-cyber-200">
             {s.totalContributions.toLocaleString()}
             <span className="ml-2 font-sans text-base font-medium text-slate-500 dark:text-white/65">contributions</span>
           </p>
@@ -133,9 +133,9 @@ export function GitHubLivePanel() {
           href={gh}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex w-fit items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-sm text-slate-800 transition-all hover:border-ocean-500/35 hover:bg-slate-50 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/85 dark:hover:border-ocean-300/35 dark:hover:bg-white/[0.06]"
+          className="group inline-flex w-fit items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-sm text-slate-800 transition-all hover:border-cyber-500/35 hover:bg-slate-50 dark:border-white/12 dark:bg-white/[0.04] dark:text-white/85 dark:hover:border-cyber-300/35 dark:hover:bg-white/[0.06]"
         >
-          <GithubIcon className="size-4 text-ocean-600/90 dark:text-ocean-200/80" />
+          <GithubIcon className="size-4 text-cyber-600/90 dark:text-cyber-200/80" />
           @{data.login}
           <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/50 dark:group-hover:text-white/55" />
         </a>
@@ -151,7 +151,7 @@ export function GitHubLivePanel() {
                 <h3 className="text-xs font-medium uppercase tracking-wider text-slate-600 dark:text-white/65">
                   Contribution graph
                 </h3>
-                <p className="text-[10px] text-ocean-600/70 md:hidden dark:text-ocean-200/50">Swipe graph →</p>
+                <p className="text-[10px] text-cyber-600/70 md:hidden dark:text-cyber-200/50">Swipe graph →</p>
                 <div className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-white/50">
                   <span>Less</span>
                   <span className="inline-flex gap-0.5">
@@ -263,7 +263,7 @@ export function GitHubLivePanel() {
                     className="rounded-xl border border-slate-200/90 bg-white/90 px-2.5 py-2.5 transition-colors hover:border-slate-300 dark:border-white/8 dark:bg-white/[0.02] dark:hover:border-white/12"
                   >
                     <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-500 dark:text-white/55">
-                      <Icon className="size-3 shrink-0 text-ocean-600/70 dark:text-ocean-200/45" />
+                      <Icon className="size-3 shrink-0 text-cyber-600/70 dark:text-cyber-200/45" />
                       {label}
                     </div>
                     <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
@@ -275,7 +275,7 @@ export function GitHubLivePanel() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-gradient-to-b from-ocean-500/[0.06] to-transparent p-3 dark:border-white/8 dark:from-ocean-300/[0.04]">
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-gradient-to-b from-cyber-500/[0.06] to-transparent p-3 dark:border-white/8 dark:from-cyber-300/[0.04]">
             <div className="text-center">
               <p className="text-[9px] text-slate-500 dark:text-white/55">Current streak</p>
               <p className="mt-1 flex items-center justify-center gap-1 font-mono text-xl font-semibold text-slate-900 dark:text-white">
@@ -314,9 +314,9 @@ function GitHubFallback({ gh, login }: { gh: string; login?: string }) {
             href={gh}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-ocean-500/35 bg-ocean-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-ocean-500/55 hover:bg-ocean-500/[0.12] dark:border-ocean-300/35 dark:bg-ocean-300/[0.05] dark:text-white dark:hover:border-ocean-300/55"
+            className="group inline-flex items-center gap-2 rounded-full border border-cyber-500/35 bg-cyber-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-cyber-500/55 hover:bg-cyber-500/[0.12] dark:border-cyber-300/35 dark:bg-cyber-300/[0.05] dark:text-white dark:hover:border-cyber-300/55"
           >
-            <GithubIcon className="size-4 text-ocean-600 dark:text-ocean-300" />
+            <GithubIcon className="size-4 text-cyber-600 dark:text-cyber-300" />
             View profile on GitHub{login ? ` (@${login})` : ""}
             <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/60 dark:group-hover:text-white/70" />
           </a>

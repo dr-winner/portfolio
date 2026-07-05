@@ -13,19 +13,19 @@ const statusMeta: Record<Cert["status"], { label: string; icon: typeof BadgeChec
     label: "Earned",
     icon: BadgeCheck,
     className: "text-emerald-700 dark:text-ok-400",
-    bar: "from-emerald-500 to-cyan-500 dark:from-ok-400 dark:to-ocean-400",
+    bar: "from-emerald-500 to-cyan-500 dark:from-ok-400 dark:to-cyber-400",
   },
   pursuing: {
     label: "Pursuing",
     icon: GraduationCap,
     className: "text-amber-700 dark:text-signal-300",
-    bar: "from-amber-500 to-cyan-500 dark:from-signal-300 dark:to-ocean-300",
+    bar: "from-amber-500 to-cyan-500 dark:from-signal-300 dark:to-cyber-300",
   },
   "in-progress": {
     label: "In progress",
     icon: Loader2,
-    className: "text-cyan-700 dark:text-ocean-300",
-    bar: "from-cyan-600 to-cyan-700 dark:from-ocean-300 dark:to-ocean-500",
+    className: "text-cyan-700 dark:text-cyber-300",
+    bar: "from-cyan-600 to-cyan-700 dark:from-cyber-300 dark:to-cyber-500",
   },
 };
 
@@ -121,7 +121,7 @@ export function Certifications({ items }: { items?: Cert[] } = {}) {
                       <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-500 dark:text-white/55">
                         Domains on the syllabi
                       </span>
-                      <ol className="mt-4 list-inside list-decimal space-y-2.5 text-[14px] text-slate-700 marker:text-ocean-600/70 dark:text-white/75 dark:marker:text-ocean-300/60">
+                      <ol className="mt-4 list-inside list-decimal space-y-2.5 text-[14px] text-slate-700 marker:text-cyber-600/70 dark:text-white/75 dark:marker:text-cyber-300/60">
                         {cert.modules.map((m) => (
                           <li key={m} className="pl-1">
                             {m}
