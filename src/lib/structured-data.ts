@@ -8,9 +8,10 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
 
-const BASE_URL = "https://richardwinner.dev";
+const BASE_URL = SITE_URL;
 
 /* ─── Person ──────────────────────────────────────────────────────────────── */
 export function personSchema() {

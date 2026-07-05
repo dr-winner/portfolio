@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/config/site";
 
-const BASE = "https://richardwinner.dev";
+const BASE = SITE_URL;
 
 /**
  * Next.js robots.txt generator.

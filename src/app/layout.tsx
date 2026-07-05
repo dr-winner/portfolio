@@ -10,6 +10,7 @@ import { Providers } from "@/components/Providers";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
 import {
   personSchema,
@@ -48,7 +49,7 @@ const mono = IBM_Plex_Mono({
 
 /* ─── Site constants ──────────────────────────────────────────────────────── */
 
-const url = "https://richardwinner.dev";
+const url = SITE_URL;
 const ogImage = `${url}/opengraph-image`;
 
 /* ─── Metadata ────────────────────────────────────────────────────────────── */
