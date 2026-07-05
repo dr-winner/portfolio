@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import { profile } from "@/content/profile";

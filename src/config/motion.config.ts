@@ -176,8 +176,8 @@ export const varFadeIn = (reduced = false): Variants => ({
 
 /** Stagger parent — wrap a list or grid in this */
 export const varStagger = (
-  stagger = STAGGER.item,
-  reduced  = false,
+  stagger: number = STAGGER.item,
+  reduced = false,
 ): Variants => ({
   hidden:  {},
   visible: {

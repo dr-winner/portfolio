@@ -170,12 +170,3 @@ export function projectsListSchema(
     })),
   };
 }
-
-/* ─── Combined page schema (inject all at once) ──────────────────────────── */
-export function buildPageSchemas(
-  projects?: Array<{ title: string; slug: string; summary: string; link?: string | null }>
-) {
-  const schemas = [personSchema(), webSiteSchema(), profilePageSchema()];
-  if (projects?.length) schemas.push(projectsListSchema(projects));
-  return schemas;
-}

@@ -10,7 +10,7 @@ export type Capability = {
   description: string;
   bullets: string[];
   icon: LucideIcon;
-  accent: "ocean" | "signal" | "ok" | "threat";
+  accent: "cyber" | "signal" | "ok" | "threat";
   /** Proficiency level drives the progress bar on the capability card. */
   level: CapabilityLevel;
   /** 0-100 percentage for the progress bar width. */
@@ -52,7 +52,7 @@ export const capabilities: Capability[] = [
       "Fix misconfigs, harden containers",
     ],
     icon: Cloud,
-    accent: "ocean",
+    accent: "cyber",
     level: "core",
     proficiency: 88,
   },

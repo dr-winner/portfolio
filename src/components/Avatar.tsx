@@ -9,7 +9,7 @@ const palettes = {
 
 export function Avatar({
   initials,
-  accent = "ocean",
+  accent = "cyber",
   size = 48,
   className,
 }: {
