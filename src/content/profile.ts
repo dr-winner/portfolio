@@ -19,6 +19,7 @@ export const profile = {
   bio: [
     "I triage alerts, hunt threats, harden cloud setups, run pentests, and investigate incidents. I know how attacks work and how to catch them in logs.",
     "Started building full-stack apps and smart contracts. Now I defend them. I automate the boring parts and focus on what actually matters.",
+    "Currently going deep on cloud engineering and cloud security — I build it, then I harden it. You protect best what you know how to build.",
   ],
   socials: {
     github: "https://github.com/dr-winner",

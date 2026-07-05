@@ -4,36 +4,17 @@ const BASE = "https://richardwinner.dev";
 
 /**
  * Next.js sitemap.xml generator.
- * Includes the home page (priority 1.0, weekly) and every major section
- * as a hash-linked URL (priority 0.7, monthly).
+ * Single-page site: only the root URL is a real, crawlable document.
+ * (Hash-fragment section links are ignored by search engines, so they
+ * are intentionally not listed.)
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
-  // Sections that live on the single-page layout as anchor targets.
-  const sections = [
-    "projects",
-    "capabilities",
-    "experience",
-    "certifications",
-    "about",
-    "contact",
-  ] as const;
-
-  const sectionEntries: MetadataRoute.Sitemap = sections.map((id) => ({
-    url: `${BASE}/#${id}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
-
   return [
     {
       url: BASE,
-      lastModified: now,
+      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
-    ...sectionEntries,
   ];
 }

@@ -66,7 +66,7 @@ export const certifications: Cert[] = [
       "Exploitation Techniques",
       "Post-Exploitation & Reporting",
     ],
-    link: "https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/associate/ccna.html",
+    link: "https://www.netacad.com/courses/ethical-hacker",
   },
   {
     name: "AWS Cloud Practitioner",

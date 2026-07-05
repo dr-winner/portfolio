@@ -8,7 +8,7 @@ const highlights = [
   { icon: Terminal, text: "Hands-on labs: SIEM, EDR, cloud logging, detection engineering" },
   { icon: Shield,   text: "Real-world threat hunts and incident response walkthroughs" },
   { icon: Cloud,    text: "AWS / Azure / GCP hardening from identity to control plane" },
-  { icon: Zap,      text: "Weekly 1-on-1 check-ins + job-ready portfolio by day 100" },
+  { icon: Zap,      text: "Weekly check-ins + a public portfolio of labs you can show hiring managers" },
 ];
 
 export function Mentorship() {
@@ -65,13 +65,14 @@ export function Mentorship() {
           </span>
 
           <h2 className="mt-6 font-display text-4xl tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-[3.5rem]">
-            <span className="text-gradient-cyber">0 → Cloud Security</span>
-            <span className="block">Engineer in 100 Days</span>
+            <span className="text-gradient-cyber">Break Into Cloud Security</span>
+            <span className="block">— a hands-on study cohort</span>
           </h2>
 
           <p className="mt-5 text-lg leading-relaxed text-slate-600 dark:text-white/75">
-            A structured, hands-on mentorship — from zero security background to job-ready cloud
-            security engineer. Built around what actually gets you hired.
+            Learn cloud security the way it actually sticks: build real cloud environments,
+            break them, defend them, and turn every lab into portfolio proof. I&apos;m walking
+            the same road — SOC floor to cloud security — and sharing everything that works.
           </p>
         </div>
 
