@@ -38,7 +38,7 @@ export default async function AdminAnalyticsPage() {
       </p>
       <Link
         href="/admin"
-        className="mt-4 inline-flex items-center gap-1 text-sm text-cyber-300 hover:text-cyber-200"
+        className="mt-4 inline-flex items-center gap-1 text-sm text-ocean-300 hover:text-ocean-200"
       >
         <ArrowLeft className="size-3.5" /> Admin overview
       </Link>
@@ -59,7 +59,7 @@ export default async function AdminAnalyticsPage() {
               byName.map((b) => (
                 <li key={b.name} className="flex justify-between font-mono">
                   <span>{b.name}</span>
-                  <span className="text-cyber-300">{b._count.name}</span>
+                  <span className="text-ocean-300">{b._count.name}</span>
                 </li>
               ))
             )}
@@ -85,7 +85,7 @@ export default async function AdminAnalyticsPage() {
                 <td className="p-2.5 font-mono text-xs text-white/50">
                   {r.createdAt.toISOString().replace("T", " ").slice(0, 19)}
                 </td>
-                <td className="p-2.5 font-mono text-cyber-200/90">{r.name}</td>
+                <td className="p-2.5 font-mono text-ocean-200/90">{r.name}</td>
                 <td className="p-2.5 text-xs">{r.path}</td>
                 <td className="p-2.5">{r.device}</td>
                 <td className="p-2.5 text-xs">{r.browser}</td>

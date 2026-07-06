@@ -31,7 +31,7 @@ model StackCategory {
   key         String      @unique
   label       String
   description String
-  accent      String      // cyber | signal | ok | threat
+  accent      String      // ocean | signal | ok | threat
   iconKey     String
   order       Int         @default(0)
   items       StackItem[]

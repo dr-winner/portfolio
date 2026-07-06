@@ -36,7 +36,7 @@ export function Footer() {
         <div className="flex flex-col items-stretch justify-between gap-6 border-t border-slate-200/80 pt-6 dark:border-white/5 md:flex-row md:items-center">
           <p className="text-center text-sm text-slate-600 dark:text-white/75 md:text-left">
             &copy; {year ?? ""}{" "}
-            <span className="text-gradient-cyber font-semibold">{profile.name}</span>
+            <span className="text-gradient-ocean font-semibold">{profile.name}</span>
             {". "}
             All rights reserved.
           </p>

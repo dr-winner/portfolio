@@ -50,7 +50,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   href={item.href}
                   className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/[0.04] hover:text-white"
                 >
-                  <Icon className="size-4 text-white/50 group-hover:text-cyber-300" />
+                  <Icon className="size-4 text-white/50 group-hover:text-ocean-300" />
                   {item.label}
                 </Link>
               );

@@ -16,7 +16,7 @@ import { Card } from "@/components/Card";
 const tagPill: Record<ProjectTag, string> = {
   Security:
     "border-amber-400/40 bg-amber-50 text-amber-900 dark:border-signal-300/50 dark:bg-ink-200 dark:text-signal-200",
-  AI: "border-cyan-400/40 bg-cyan-50 text-cyan-900 dark:border-cyber-300/55 dark:bg-ink-200 dark:text-cyber-200",
+  AI: "border-cyan-400/40 bg-cyan-50 text-cyan-900 dark:border-ocean-300/55 dark:bg-ink-200 dark:text-ocean-200",
   "Full-Stack":
     "border-emerald-400/40 bg-emerald-50 text-emerald-900 dark:border-ok-400/50 dark:bg-ink-200 dark:text-ok-400",
   Web3: "border-slate-300/80 bg-slate-100 text-slate-800 dark:border-white/25 dark:bg-ink-200 dark:text-slate-100",
@@ -25,7 +25,7 @@ const tagPill: Record<ProjectTag, string> = {
 const statusMeta = {
   live: { label: "Live", Icon: CheckCircle2, cls: "text-emerald-700 dark:text-ok-400" },
   "in-progress": { label: "In progress", Icon: Clock, cls: "text-amber-700 dark:text-signal-300" },
-  upcoming: { label: "Coming soon", Icon: Hourglass, cls: "text-cyan-700 dark:text-cyber-300" },
+  upcoming: { label: "Coming soon", Icon: Hourglass, cls: "text-cyan-700 dark:text-ocean-300" },
 };
 
 // ─── Full-width project card ───────────────────────────────────────────────────
@@ -103,7 +103,7 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-5 py-3 text-[14px] font-semibold text-slate-900 transition-colors hover:border-cyber-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-cyber-300/40"
+                  className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-5 py-3 text-[14px] font-semibold text-slate-900 transition-colors hover:border-ocean-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-ocean-300/40"
                 >
                   Open project
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -332,7 +332,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                   </div>
                   <div className="mt-auto pt-2">
                     {p.link ? (
-                      <a href={p.link} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-2.5 text-[13px] font-semibold text-slate-900 transition-colors hover:border-cyber-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-cyber-300/40">
+                      <a href={p.link} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-2.5 text-[13px] font-semibold text-slate-900 transition-colors hover:border-ocean-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-ocean-300/40">
                         Open project <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </a>
                     ) : (
@@ -360,7 +360,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
       <div
         ref={progressRef}
         aria-hidden
-        className="absolute top-0 left-0 z-30 h-[2px] w-full bg-cyber-400/70 dark:bg-cyber-300/70"
+        className="absolute top-0 left-0 z-30 h-[2px] w-full bg-ocean-400/70 dark:bg-ocean-300/70"
         style={{ transformOrigin: "left", transform: "scaleX(0)" }}
       />
 
@@ -389,7 +389,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
             transition={{ duration: 0.3 }}
             className={clsx(
               "rounded-full",
-              i === activeIdx ? "bg-cyber-400 dark:bg-cyber-300" : "bg-slate-400 dark:bg-white/40"
+              i === activeIdx ? "bg-ocean-400 dark:bg-ocean-300" : "bg-slate-400 dark:bg-white/40"
             )}
           />
         ))}

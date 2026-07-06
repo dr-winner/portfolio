@@ -1,78 +1,65 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import {
-  testimonials as seedTestimonials,
-  type Testimonial,
-} from "@/content/testimonials";
+import { useEffect, useCallback, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import clsx from "clsx";
+import { testimonials as seedTestimonials, type Testimonial } from "@/content/testimonials";
 import { Avatar } from "@/components/Avatar";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { TESTIMONIAL, EASE } from "@/config/motion.config";
+
+const SLIDE_DURATION = 6000;
+
+const variants = {
+  enter: (dir: number) => ({ x: dir > 0 ? "60%" : "-60%", opacity: 0 }),
+  center: { x: "0%", opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? "-60%" : "60%", opacity: 0 }),
+};
+
+const transition = {
+  duration: 0.5,
+  ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+};
 
 export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
   const list = items?.length ? items : seedTestimonials;
+  const [current, setCurrent] = useState(0);
+  const [dir, setDir] = useState(1);
+  const [paused, setPaused] = useState(false);
   const reduced = useReducedMotion();
 
-  const [idx, setIdx] = useState(0);
-  const [dir, setDir] = useState<1 | -1>(1); // 1 = forward, -1 = backward
-  const [paused, setPaused] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const go = useCallback(
-    (next: number, direction: 1 | -1) => {
-      setDir(direction);
-      setIdx((next + list.length) % list.length);
+  const goTo = useCallback(
+    (idx: number) => {
+      setDir(idx >= current ? 1 : -1);
+      setCurrent(idx);
     },
-    [list.length],
+    [current]
   );
 
-  const prev = useCallback(() => go(idx - 1, -1), [go, idx]);
-  const next = useCallback(() => go(idx + 1, 1), [go, idx]);
+  const next = useCallback(() => {
+    setDir(1);
+    setCurrent((c) => (c + 1) % list.length);
+  }, [list.length]);
 
-  // Auto-advance — disabled under reduced motion
   useEffect(() => {
     if (reduced || paused) return;
-    timerRef.current = setTimeout(() => go(idx + 1, 1), TESTIMONIAL.interval);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [idx, paused, reduced, go]);
+    const t = setInterval(next, SLIDE_DURATION);
+    return () => clearInterval(t);
+  }, [next, paused, reduced]);
 
-  const slide = {
-    enter: (d: number) => ({ opacity: 0, x: reduced ? 0 : d * 64 }),
-    center: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: TESTIMONIAL.slideDur, ease: EASE.slide },
-    },
-    exit: (d: number) => ({
-      opacity: 0,
-      x: reduced ? 0 : d * -64,
-      transition: { duration: TESTIMONIAL.slideDur, ease: EASE.slide },
-    }),
-  };
-
-  const current = list[idx];
+  const t = list[current];
 
   return (
-    <section
-      id="testimonials"
-      className="relative py-20 md:py-28 lg:py-32"
-      aria-label="Testimonials"
-    >
+    <section id="testimonials" className="relative py-20 md:py-28 lg:py-32">
       <div className="container">
         <ScrollReveal from="none" fadeOut={false}>
           <SectionHeader
             eyebrow="Trust"
             title="What people I've worked with say"
-            description="Honest words from people I've built and defended alongside."
+            description="Colleagues and clients — across security, AI, and product."
           />
         </ScrollReveal>
 
-        {/* Carousel */}
         <div
           className="relative mt-14 md:mt-20"
           onMouseEnter={() => setPaused(true)}
@@ -80,96 +67,67 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
           aria-live="polite"
           aria-atomic="true"
         >
-          {/* Card wrapper — fixed height so layout never jumps */}
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white/[0.88] backdrop-blur-sm dark:border-white/10 dark:bg-ink-100/70 min-h-[260px] md:min-h-[220px]">
-            {/* Decorative large quote mark */}
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -top-4 left-6 select-none font-display text-[8rem] leading-none text-cyber-300/10 dark:text-cyber-300/[0.07] md:text-[11rem]"
-            >
-              &#8220;
-            </span>
+          {/* Decorative large quote mark */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 select-none font-display text-[9rem] leading-none text-ocean-300/10 dark:text-ocean-300/8 md:-top-8 md:text-[12rem]"
+          >
+            &ldquo;
+          </span>
 
-            <AnimatePresence custom={dir} mode="wait">
-              <motion.div
-                key={idx}
-                custom={dir}
-                variants={slide}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="p-8 md:p-10"
-              >
-                <Quote
-                  className="size-6 text-cyber-500 dark:text-cyber-300"
-                  aria-hidden
-                />
+          {/* Slide area */}
+          <div className="relative overflow-hidden">
+            {/* Fixed height so layout doesn't shift between slides */}
+            <div className="relative min-h-[240px] sm:min-h-[220px] md:min-h-[200px]">
+              <AnimatePresence initial={false} custom={dir} mode="sync">
+                <motion.div
+                  key={current}
+                  custom={dir}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={transition}
+                  className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center md:px-0"
+                >
+                  {/* Quote text — constrained for readability */}
+                  <p className="mx-auto max-w-2xl text-[17px] leading-[1.75] text-slate-700 md:text-xl md:leading-[1.7] dark:text-slate-200">
+                    {t.text}
+                  </p>
 
-                <blockquote className="mt-5 text-lg leading-relaxed text-slate-700 md:text-xl dark:text-slate-200">
-                  &ldquo;{current.text}&rdquo;
-                </blockquote>
-
-                <div className="mt-8 flex items-center gap-4 border-t border-slate-200/80 pt-6 dark:border-white/10">
-                  <Avatar
-                    initials={current.initials}
-                    accent={current.accent}
-                    size={48}
-                  />
-                  <div>
-                    <p className="font-semibold text-slate-900 dark:text-white">
-                      {current.name}
-                    </p>
-                    <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-                      {current.position}
-                    </p>
+                  {/* Attribution */}
+                  <div className="mt-8 flex items-center gap-3">
+                    <Avatar initials={t.initials} accent={t.accent} size={40} />
+                    <div className="text-left">
+                      <div className="text-[14px] font-semibold text-slate-900 dark:text-white">
+                        {t.name}
+                      </div>
+                      <div className="text-[13px] text-slate-500 dark:text-slate-400">
+                        {t.position}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
 
-          {/* Controls row */}
-          <div className="mt-6 flex items-center justify-between">
-            {/* Dot indicators */}
-            <div
-              className="flex items-center gap-2"
-              role="tablist"
-              aria-label="Select testimonial"
-            >
-              {list.map((_, i) => (
-                <button
-                  key={i}
-                  role="tab"
-                  aria-selected={i === idx}
-                  aria-label={`Testimonial ${i + 1}`}
-                  onClick={() => go(i, i > idx ? 1 : -1)}
-                  className={[
-                    "h-1.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-300",
-                    i === idx
-                      ? "w-6 bg-cyber-400 dark:bg-cyber-300"
-                      : "w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-white/25 dark:hover:bg-white/40",
-                  ].join(" ")}
-                />
-              ))}
-            </div>
-
-            {/* Prev / Next buttons */}
-            <div className="flex items-center gap-2">
+          {/* Dot indicators */}
+          <div className="mt-10 flex items-center justify-center gap-2">
+            {list.map((_, i) => (
               <button
-                onClick={prev}
-                aria-label="Previous testimonial"
-                className="inline-flex size-9 items-center justify-center rounded-full border border-slate-200/90 bg-white/80 text-slate-600 transition-colors hover:border-cyber-400/40 hover:text-slate-900 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/60 dark:hover:border-cyber-300/40 dark:hover:text-white"
-              >
-                <ChevronLeft className="size-4" />
-              </button>
-              <button
-                onClick={next}
-                aria-label="Next testimonial"
-                className="inline-flex size-9 items-center justify-center rounded-full border border-slate-200/90 bg-white/80 text-slate-600 transition-colors hover:border-cyber-400/40 hover:text-slate-900 dark:border-white/10 dark:bg-ink-100/60 dark:text-white/60 dark:hover:border-cyber-300/40 dark:hover:text-white"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Go to testimonial ${i + 1}`}
+                className={clsx(
+                  "h-1 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300",
+                  i === current
+                    ? "w-6 bg-ocean-400"
+                    : "w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-white/15 dark:hover:bg-white/30"
+                )}
+              />
+            ))}
           </div>
         </div>
       </div>

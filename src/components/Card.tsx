@@ -17,7 +17,7 @@ export function Card({ className, glow = false, interactive = false, children, .
         "before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl",
         "before:bg-[radial-gradient(ellipse_at_top_left,rgba(60,207,255,0.14),transparent_45%)]",
         "dark:before:bg-[radial-gradient(ellipse_at_top_left,rgba(60,207,255,0.10),transparent_45%)]",
-        interactive && "transition-colors duration-300 hover:border-cyber-400/40 dark:hover:border-cyber-300/30",
+        interactive && "transition-colors duration-300 hover:border-ocean-400/40 dark:hover:border-ocean-300/30",
         glow &&
           "shadow-[0_0_24px_-6px_rgba(60,207,255,0.22)] dark:shadow-glow-sm",
         className

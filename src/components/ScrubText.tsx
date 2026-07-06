@@ -1,41 +1,26 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import {
-  GSAP_EASE,
-  SCRUB_CLIP_INITIAL,
-  SCRUB_CLIP_VISIBLE,
-  prefersReducedMotion,
-} from "@/config/motion.config";
+import { useRef, useEffect } from "react";
 
-interface Props {
-  children: ReactNode;
+interface ScrubTextProps {
+  children: React.ReactNode;
   className?: string;
-  /** ScrollTrigger start position, e.g. "top 85%" */
-  start?: string;
-  /** Scrub factor — true for 1:1, number for lag */
-  scrub?: number | boolean;
 }
 
 /**
- * Wraps text in a clip-path reveal that wipes left-to-right as it enters
- * the viewport. Uses GSAP ScrollTrigger with scrub for a smooth scrub effect.
+ * Reveals its children left-to-right as the element scrolls into view.
+ * A dimmed ghost underlay ensures text is readable even before reveal.
  * Falls back to instant reveal under prefers-reduced-motion.
  */
-export function ScrubText({
-  children,
-  className,
-  start = "top 85%",
-  scrub = 1,
-}: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+export function ScrubText({ children, className }: ScrubTextProps) {
+  const revealRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = revealRef.current;
     if (!el) return;
 
-    if (prefersReducedMotion()) {
-      el.style.clipPath = SCRUB_CLIP_VISIBLE;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.style.clipPath = "inset(0 0% 0 0)";
       return;
     }
 
@@ -49,35 +34,41 @@ export function ScrubText({
       ctx = gsap.context(() => {
         gsap.fromTo(
           el,
-          { clipPath: SCRUB_CLIP_INITIAL },
+          { clipPath: "inset(0 100% 0 0)" },
           {
-            clipPath: SCRUB_CLIP_VISIBLE,
-            ease: GSAP_EASE.smooth,
+            clipPath: "inset(0 0% 0 0)",
+            ease: "none",
             scrollTrigger: {
               trigger: el,
-              start,
-              end: "bottom 60%",
-              scrub,
+              start: "top 88%",
+              end: "top 28%",
+              scrub: 0.6,
             },
-          },
+          }
         );
       });
     })();
 
     return () => ctx?.revert();
-  }, [start, scrub]);
+  }, []);
 
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        clipPath: prefersReducedMotion()
-          ? SCRUB_CLIP_VISIBLE
-          : SCRUB_CLIP_INITIAL,
-      }}
-    >
-      {children}
-    </div>
+    <span className={`relative inline ${className ?? ""}`}>
+      {/* ghost underlay */}
+      <span className="opacity-[0.18]" aria-hidden>
+        {children}
+      </span>
+      {/* clip-revealed overlay */}
+      <span
+        ref={revealRef}
+        className="absolute inset-0"
+        style={{ clipPath: "inset(0 100% 0 0)" }}
+        aria-hidden
+      >
+        {children}
+      </span>
+      {/* screen-reader text */}
+      <span className="sr-only">{children}</span>
+    </span>
   );
 }

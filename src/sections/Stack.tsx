@@ -13,8 +13,8 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { iconFromKey } from "@/lib/icons";
 
 const accent: Record<StackCategory["accent"], string> = {
-  cyber:
-    "border-cyber-400/40 bg-cyan-50 text-cyber-700 dark:border-cyber-300/30 dark:bg-cyber-300/[0.06] dark:text-cyber-300",
+  ocean:
+    "border-ocean-400/40 bg-cyan-50 text-ocean-700 dark:border-ocean-300/30 dark:bg-ocean-300/[0.06] dark:text-ocean-300",
   signal:
     "border-amber-400/40 bg-amber-50 text-amber-800 dark:border-signal-300/30 dark:bg-signal-300/[0.06] dark:text-signal-300",
   ok: "border-emerald-400/40 bg-emerald-50 text-emerald-800 dark:border-ok-400/30 dark:bg-ok-400/[0.06] dark:text-ok-400",
@@ -24,7 +24,7 @@ const accent: Record<StackCategory["accent"], string> = {
 
 const levelDot: Record<StackLevel, string> = {
   core: "bg-emerald-600 dark:bg-ok-400",
-  working: "bg-cyber-600 dark:bg-cyber-300",
+  working: "bg-ocean-600 dark:bg-ocean-300",
   learning: "bg-amber-600 dark:bg-signal-300",
 };
 
@@ -48,7 +48,7 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
               <span className="size-1.5 rounded-full bg-emerald-600 shadow-glow-sm dark:bg-ok-400" /> core
             </span>
             <span className="inline-flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-cyber-600 shadow-glow-sm dark:bg-cyber-300" /> working
+              <span className="size-1.5 rounded-full bg-ocean-600 shadow-glow-sm dark:bg-ocean-300" /> working
             </span>
             <span className="inline-flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-amber-600 shadow-glow-sm dark:bg-signal-300" /> learning
@@ -88,9 +88,9 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
                       return (
                         <div
                           key={item.name}
-                          className="group inline-flex items-center gap-2 rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-800 transition-all hover:-translate-y-0.5 hover:border-cyber-400/50 hover:shadow-glow-sm hover:text-slate-900 dark:border-white/10 dark:bg-ink-50/80 dark:text-white/80 dark:hover:border-cyber-300/35 dark:hover:text-white"
+                          className="group inline-flex items-center gap-2 rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-800 transition-all hover:-translate-y-0.5 hover:border-ocean-400/50 hover:shadow-glow-sm hover:text-slate-900 dark:border-white/10 dark:bg-ink-50/80 dark:text-white/80 dark:hover:border-ocean-300/35 dark:hover:text-white"
                         >
-                          <ItemIcon className="size-4 text-cyber-600 dark:text-cyber-300/90" />
+                          <ItemIcon className="size-4 text-ocean-600 dark:text-ocean-300/90" />
                           <span className="font-medium">{item.name}</span>
                           {item.level && (
                             <span

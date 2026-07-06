@@ -38,7 +38,7 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
           <motion.div
             aria-hidden
             style={{ height: lineHeight }}
-            className="pointer-events-none absolute left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-cyber-300/80 via-cyber-300/40 to-signal-300/40 shadow-glow-sm md:block"
+            className="pointer-events-none absolute left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-ocean-300/80 via-ocean-300/40 to-signal-300/40 shadow-glow-sm md:block"
           />
 
           <ol className="relative m-0 flex list-none flex-col gap-16 md:gap-24 p-0">
@@ -82,7 +82,7 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
       <motion.div
         aria-hidden
         style={{ scaleX: lineScale, transformOrigin: "left" }}
-        className="mb-5 h-px w-full origin-left bg-gradient-to-r from-cyber-300/40 via-slate-300/30 to-transparent dark:from-cyber-300/25 dark:via-white/[0.06]"
+        className="mb-5 h-px w-full origin-left bg-gradient-to-r from-ocean-300/40 via-slate-300/30 to-transparent dark:from-ocean-300/25 dark:via-white/[0.06]"
       />
 
       {/* Timeline dot */}
@@ -97,7 +97,7 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
           <span
             className={clsx(
               "size-1.5 rounded-full shadow-glow-sm",
-              entry.current ? "bg-ok-400" : "bg-cyber-300"
+              entry.current ? "bg-ok-400" : "bg-ocean-300"
             )}
           />
         </motion.span>
@@ -136,7 +136,7 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
                 {entry.period}
               </motion.span>
               {entry.current && (
-                <span className="chip-cyber font-mono text-[10px] uppercase">
+                <span className="chip-ocean font-mono text-[10px] uppercase">
                   current
                 </span>
               )}

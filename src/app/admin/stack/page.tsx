@@ -30,7 +30,7 @@ export default async function StackAdminPage() {
           <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 p-5">
             <Link href={`/admin/stack/${c.id}`} className="group min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <p className="font-semibold text-white truncate group-hover:text-cyber-300">
+                <p className="font-semibold text-white truncate group-hover:text-ocean-300">
                   {c.label}
                 </p>
                 <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-white/50">
@@ -44,7 +44,7 @@ export default async function StackAdminPage() {
             <div className="flex items-center gap-2">
               <Link
                 href={`/admin/stack/${c.id}`}
-                className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/80 hover:text-white hover:border-cyber-300/40"
+                className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/80 hover:text-white hover:border-ocean-300/40"
               >
                 <Pencil className="size-3.5" /> Manage
                 <ArrowRight className="size-3.5" />

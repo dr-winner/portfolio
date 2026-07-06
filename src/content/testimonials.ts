@@ -3,7 +3,7 @@ export type Testimonial = {
   position: string;
   text: string;
   initials: string;
-  accent?: "cyber" | "signal" | "ok";
+  accent?: "ocean" | "signal" | "ok";
 };
 
 export const testimonials: Testimonial[] = [
@@ -12,7 +12,7 @@ export const testimonials: Testimonial[] = [
     position: "CEO, Tanic Technologies",
     text: "Richard rebuilt our website from scratch. His attention to detail and understanding of our brand were exceptional. We're thrilled with what he delivered.",
     initials: "NK",
-    accent: "cyber",
+    accent: "ocean",
   },
   {
     name: "Alikamatu DevRel",
@@ -33,7 +33,7 @@ export const testimonials: Testimonial[] = [
     position: "Front-End Developer, AIT",
     text: "Winner delivers quality work consistently. Good insights, strong work ethic. Easy recommendation.",
     initials: "SM",
-    accent: "cyber",
+    accent: "ocean",
   },
   {
     name: "Ewoenam Bridget",
