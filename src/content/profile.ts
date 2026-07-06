@@ -11,7 +11,8 @@ export const profile = {
   email: "drwinner03@gmail.com",
   /** Shown in contact; full address is revealed only in mailto */
   emailObfuscated: "drwinner ···@gmail.com",
-  resumeUrl: "https://drive.google.com/file/d/1T-06kyZ_RSD-lu8JzHal_gZBZxOiq2fW/view?usp=sharing",
+  /** Served from our own domain; source copy lives on Google Drive */
+  resumeUrl: "/resume.pdf",
   availability: {
     status: "available",
     label: "Open to SOC · cloud security · pentesting & GRC roles",

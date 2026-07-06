@@ -20,6 +20,24 @@ export type ProjectData = {
 
 export const projectsData: ProjectData[] = [
   {
+    slug: "aws-threat-detection-lab",
+    company: "Open Source",
+    year: "2026",
+    title: "AWS Threat Detection Lab",
+    summary:
+      "Detection-as-code on AWS: CloudTrail + GuardDuty telemetry, EventBridge detections mapped to MITRE ATT&CK, least-privilege Lambda alerting.",
+    tags: ["Security"],
+    results: [
+      "Six ATT&CK-mapped detections as Terraform",
+      "Root usage, no-MFA logins, log tampering, IAM persistence",
+      "One apply, one destroy, ~zero idle cost",
+      "CI: fmt/validate, Checkov IaC scan, ruff",
+    ],
+    techStack: ["Terraform", "CloudTrail", "GuardDuty", "EventBridge", "Lambda", "MITRE ATT&CK"],
+    repo: "https://github.com/dr-winner/aws-threat-detection-lab",
+    status: "live",
+  },
+  {
     slug: "proof9",
     company: "Proof9",
     year: "2025",
