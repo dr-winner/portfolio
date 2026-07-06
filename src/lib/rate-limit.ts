@@ -42,3 +42,41 @@ export function clientIpFromHeaders(h: Headers): string {
   }
   return h.get("x-real-ip") || "0";
 }
+
+/**
+ * Durable variant: shared across serverless instances via a Postgres bucket
+ * row (single atomic upsert). The in-memory check runs first as a cheap
+ * short-circuit; if the DB is unreachable the in-memory verdict stands, so
+ * this never takes an endpoint down. Node runtime only (Prisma).
+ */
+export async function checkRateLimitDurable(
+  key: string,
+  max: number,
+  windowMs: number
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
+  const local = checkRateLimit(key, max, windowMs);
+  if (!local.ok) return local;
+
+  try {
+    const { prisma } = await import("@/lib/prisma");
+    const resetAt = new Date(Date.now() + windowMs);
+    const rows = await prisma.$queryRaw<{ count: number; resetAt: Date }[]>`
+      INSERT INTO "RateLimitBucket" ("key", "count", "resetAt")
+      VALUES (${key}, 1, ${resetAt})
+      ON CONFLICT ("key") DO UPDATE SET
+        "count"   = CASE WHEN "RateLimitBucket"."resetAt" < now() THEN 1 ELSE "RateLimitBucket"."count" + 1 END,
+        "resetAt" = CASE WHEN "RateLimitBucket"."resetAt" < now() THEN ${resetAt} ELSE "RateLimitBucket"."resetAt" END
+      RETURNING "count", "resetAt"
+    `;
+    const row = rows[0];
+    if (row && row.count > max) {
+      return {
+        ok: false,
+        retryAfterSec: Math.max(1, Math.ceil((row.resetAt.getTime() - Date.now()) / 1000)),
+      };
+    }
+  } catch {
+    // DB down or provider without the table — in-memory verdict already passed.
+  }
+  return { ok: true };
+}

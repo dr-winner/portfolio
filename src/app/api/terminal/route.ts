@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { profile } from "@/content/profile";
 import { signalWords } from "@/content/keywords";
 import { sameOriginForRequestLike } from "@/lib/allow-same-site";
-import { checkRateLimit, clientIpFromHeaders } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
 
 const MAX_IN = 4000;
 const MAX_OUT = 1200;
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIpFromHeaders(req.headers);
-  const rl = checkRateLimit(`term:${ip}`, 40, 60_000);
+  const rl = await checkRateLimitDurable(`term:${ip}`, 40, 60_000);
   if (!rl.ok) {
     return NextResponse.json(
       { error: "[err] slow down" },

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { assertSameOriginOrMissing } from "@/lib/allow-same-site";
-import { checkRateLimit, clientIpFromHeaders } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = clientIpFromHeaders(req.headers);
-  const rl = checkRateLimit(`wl:${ip}`, 5, 60_000);
+  const rl = await checkRateLimitDurable(`wl:${ip}`, 5, 60_000);
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many requests. Try again shortly." },

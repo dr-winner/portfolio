@@ -3,7 +3,7 @@
 Personal portfolio site for **Richard Winner Duvor**, SOC Analyst & AI Engineer.
 
 Built with Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS and
-Framer Motion. Ships with a lightweight admin CMS backed by Prisma + SQLite so
+Framer Motion. Ships with a lightweight admin CMS backed by Prisma + PostgreSQL (Neon) so
 every project, tool, experience entry, certification, and testimonial can be
 managed without touching code.
 
@@ -21,7 +21,7 @@ npm run admin:hash -- "your-strong-password"
 Paste the generated values into `.env`, then:
 
 ```bash
-npm run db:push      # create the SQLite schema
+npm run db:push      # create the database schema
 npm run db:seed      # populate it from src/content/*
 npm run dev          # start the site on http://localhost:3000
 ```
@@ -35,7 +35,7 @@ Sign in at `/admin/login` with username `admin` and the password you hashed.
 | `npm run dev` | Next.js dev server. |
 | `npm run build` | `prisma generate` + `next build`. |
 | `npm run start` | Production server after a build. |
-| `npm run db:push` | Creates / updates the SQLite schema from `prisma/schema.prisma`. |
+| `npm run db:push` | Creates / updates the database schema from `prisma/schema.prisma`. |
 | `npm run db:studio` | Opens Prisma Studio, a DB GUI. |
 | `npm run db:seed` | Seeds the database from `src/content/*`. |
 | `npm run admin:hash -- "password"` | Generates a bcrypt hash for the admin password. |
@@ -70,7 +70,7 @@ site always renders — editing via the admin is a pure upgrade.
 
 ## Data model
 
-Prisma / SQLite schema in [`prisma/schema.prisma`](./prisma/schema.prisma):
+Prisma / PostgreSQL schema in [`prisma/schema.prisma`](./prisma/schema.prisma):
 
 - `Project`, `StackCategory` + `StackItem`, `Experience`, `Certification`, `Testimonial`.
 - Array-shaped fields (`tags`, `results`, `skills`, …) are stored as JSON strings
@@ -112,16 +112,13 @@ If the remote is new: `git remote add origin https://github.com/YOUR_USER/portfo
 4. Optional: `GITHUB_TOKEN`, `GROQ_API_KEY` / `GROQ_MODEL`, `ANALYTICS_SALT` for full feature parity.
 5. **Deploy**. Vercel runs `postinstall` → `prisma generate` and your `build` script.
 
-**SQLite on Vercel:** Serverless instances do not keep a durable `file:` database or `/public/uploads` across invocations. The **public site still renders** using built-in fallbacks in `src/content/*` if the DB is empty or unavailable; **admin and DB-backed edits** need a real `DATABASE_URL` and (for uploads) blob storage—see below.
-
-**Production checklist (recommended before relying on admin in prod):** switch Prisma to PostgreSQL, run migrations, seed if needed, and replace local file uploads with object storage (e.g. Vercel Blob / S3 / R2) in [`src/lib/upload.ts`](./src/lib/upload.ts).
+**Serverless storage:** Vercel's filesystem is ephemeral, so the app uses PostgreSQL (Neon, isolated in a `portfolio` schema) for data and Vercel Blob for admin image uploads (`BLOB_READ_WRITE_TOKEN`). The **public site still renders** from the built-in fallbacks in `src/content/*` if the DB is ever empty or unavailable; without a Blob token, uploads fall back to `public/uploads` (fine locally, lost on serverless).
 
 ## Deployment notes (self‑hosted / advanced)
 
-- **Local / self-hosted**: SQLite at `prisma/dev.db` works out of the box.
-  The `public/uploads` directory persists between deploys as long as the
-  filesystem does (e.g. on a VPS or Railway volume).
-- **Vercel + full CMS:** Same as above: PostgreSQL + object storage for uploads; SQLite + local disk are dev-friendly only in serverless.
+- **Local dev** uses the same Postgres URL from `.env`. On a VPS or Railway
+  volume, `public/uploads` persists between deploys, so the filesystem
+  fallback in [`src/lib/upload.ts`](./src/lib/upload.ts) is enough there.
 
 ## Tech
 
@@ -129,7 +126,7 @@ If the remote is new: `git remote add origin https://github.com/YOUR_USER/portfo
 - **Styling**: Tailwind CSS 3, `clsx`, `tailwind-merge`.
 - **Motion**: Framer Motion + canvas / CSS animations.
 - **UX**: `cmdk` (command palette), `react-wrap-balancer`, `lucide-react`.
-- **Backend**: Prisma 6, SQLite, bcryptjs, Web-Crypto HMAC cookie sessions,
+- **Backend**: Prisma 6, PostgreSQL (Neon), bcryptjs, Web-Crypto HMAC cookie sessions,
   Next.js Server Actions.
 
 Made with care by Richard Winner Duvor (`drwinner03@gmail.com`).
