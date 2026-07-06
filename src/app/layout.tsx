@@ -5,11 +5,8 @@ import "./globals.css";
 import { AgenticBackground } from "@/components/AgenticBackground";
 import { Analytics } from "@vercel/analytics/next";
 import { ClientChrome } from "@/components/ClientChrome";
-import { CustomCursor } from "@/components/CustomCursor";
 import { Providers } from "@/components/Providers";
 import { ScrollProgress } from "@/components/ScrollProgress";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
 import {
@@ -192,16 +189,15 @@ export default function RootLayout({
       </head>
 
       <body className="font-sans antialiased overflow-x-hidden touch-pan-y [overscroll-behavior-x:none]">
+        {/* Native scrolling, no custom cursor — deliberate: the Lenis +
+            cursor combo made the site feel sluggish (removed in e06ac11,
+            accidentally reintroduced by a stale design pass). */}
         <Providers>
-          <SmoothScrollProvider>
-            <CustomCursor />
-            <ClientChrome>
-              <AgenticBackground />
-              <ScrollProgress />
-              {children}
-            </ClientChrome>
-            <ScrollToTop />
-          </SmoothScrollProvider>
+          <ClientChrome>
+            <AgenticBackground />
+            <ScrollProgress />
+            {children}
+          </ClientChrome>
         </Providers>
         <Analytics />
       </body>

@@ -146,6 +146,10 @@
         @apply bg-gradient-to-r from-cyber-200 via-cyber-300 to-cyber-400 bg-clip-text text-transparent;
     }
 
+    .text-gradient-ocean {
+        @apply bg-gradient-to-r from-ocean-300 via-sea-400 to-azure-500 bg-clip-text text-transparent;
+    }
+
     .text-gradient-agent {
         @apply bg-gradient-to-r from-cyber-300 via-white to-signal-300 bg-clip-text text-transparent;
     }
