@@ -2,7 +2,7 @@
  * Edge-compatible auth helpers (Web Crypto API only — no node:crypto).
  * Used from both middleware (Edge runtime) and server actions (Node runtime).
  */
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export const COOKIE_NAME = "rw_admin";
 const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
@@ -89,10 +89,15 @@ export async function verifySession(token: string | undefined | null): Promise<S
 export async function setSessionCookie(username: string) {
   const session: Session = { sub: username, exp: Date.now() + SESSION_DURATION_MS };
   const value = await signSession(session);
+  // Secure flag follows the actual request protocol, not NODE_ENV: a
+  // production build served over http://localhost would otherwise set a
+  // Secure cookie the browser silently drops → login loops forever.
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto") ?? "";
   const jar = await cookies();
   jar.set(COOKIE_NAME, value, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: proto === "https",
     sameSite: "lax",
     path: "/",
     maxAge: Math.floor(SESSION_DURATION_MS / 1000),

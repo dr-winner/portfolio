@@ -20,7 +20,9 @@ const csp = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
-  "upgrade-insecure-requests",
+  // upgrade-insecure-requests intentionally omitted: HSTS + Vercel's
+  // https-only serving already cover it, and it breaks production builds
+  // tested over http://localhost.
 ].join("; ");
 
 const securityHeaders = [
@@ -29,11 +31,12 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
-  ...(isProd
-    ? [
-        { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
-        { key: "Content-Security-Policy", value: csp },
-      ]
+  ...(isProd ? [{ key: "Content-Security-Policy", value: csp }] : []),
+  // HSTS only on the real deployment — sending it from `next start` on
+  // http://localhost makes the browser force-upgrade to https://localhost
+  // and everything breaks with SSL errors.
+  ...(process.env.VERCEL
+    ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]
     : []),
 ];
 
