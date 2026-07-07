@@ -1,6 +1,6 @@
 "use server";
 
-import bcrypt from "bcryptjs";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { setSessionCookie } from "@/lib/auth";
@@ -8,43 +8,18 @@ import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export type LoginState = { error?: string };
 
-/** Shown when password hash env is missing or invalid — no env var names or commands. */
+/** Shown when ADMIN_PASSWORD is missing — no env var names or commands. */
 const SIGNIN_UNAVAILABLE = "Sign-in is not available.";
 
-function isLikelyBcryptHash(s: string): boolean {
-  if (!s || s.length < 55) return false;
-  if (!/^\$2[aby]\$/.test(s)) return false;
-  const parts = s.split("$");
-  return parts.length >= 4;
-}
-
-function loadAdminPasswordHash(): { hash: string } | { error: string } {
-  const b64 = process.env.ADMIN_PASSWORD_HASH_B64?.trim();
-  if (b64) {
-    let decoded: string | null = null;
-    for (const enc of ["base64url", "base64"] as const) {
-      const t = Buffer.from(b64, enc).toString("utf8");
-      if (isLikelyBcryptHash(t)) {
-        decoded = t;
-        break;
-      }
-    }
-    if (!decoded) {
-      return { error: SIGNIN_UNAVAILABLE };
-    }
-    return { hash: decoded };
-  }
-
-  const raw = process.env.ADMIN_PASSWORD_HASH?.trim();
-  if (!raw) {
-    return { error: SIGNIN_UNAVAILABLE };
-  }
-  // Strip a single layer of surrounding quotes if present
-  const unquoted = raw.replace(/^["']|["']$/g, "").trim();
-  if (!isLikelyBcryptHash(unquoted)) {
-    return { error: SIGNIN_UNAVAILABLE };
-  }
-  return { hash: unquoted };
+/**
+ * Constant-time string comparison. Hashing both sides first means
+ * timingSafeEqual always gets equal-length buffers, so neither content
+ * nor length leaks through timing.
+ */
+function safeEqual(a: string, b: string): boolean {
+  const da = createHash("sha256").update(a).digest();
+  const db = createHash("sha256").update(b).digest();
+  return timingSafeEqual(da, db);
 }
 
 export async function loginAction(
@@ -62,20 +37,19 @@ export async function loginAction(
   const from = String(formData.get("from") ?? "/admin");
 
   const expectedUser = (process.env.ADMIN_USERNAME || "admin").trim();
+  const expectedPassword = (process.env.ADMIN_PASSWORD ?? "").trim();
 
-  const loaded = loadAdminPasswordHash();
-  if ("error" in loaded) {
-    return { error: loaded.error };
+  // Refuse to run with a missing or weak configured password.
+  if (expectedPassword.length < 12) {
+    return { error: SIGNIN_UNAVAILABLE };
   }
-  const { hash } = loaded;
 
-  if (username !== expectedUser) {
+  const userOk = safeEqual(username, expectedUser);
+  const passOk = safeEqual(password, expectedPassword);
+  if (!userOk || !passOk) {
     return { error: "Invalid credentials." };
   }
 
-  const ok = await bcrypt.compare(password, hash);
-  if (!ok) return { error: "Invalid credentials." };
-
-  await setSessionCookie(username);
+  await setSessionCookie(expectedUser);
   redirect(from.startsWith("/admin") ? from : "/admin");
 }

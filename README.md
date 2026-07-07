@@ -12,10 +12,9 @@ managed without touching code.
 ```bash
 npm install
 cp .env.example .env
-# generate a session secret (any long random string)
+# generate a session secret (32+ chars, required)
 node -e "console.log('SESSION_SECRET=\"' + require('crypto').randomBytes(48).toString('hex') + '\"')"
-# generate an admin password hash
-npm run admin:hash -- "your-strong-password"
+# pick an admin password (12+ chars) and set ADMIN_PASSWORD in .env
 ```
 
 Paste the generated values into `.env`, then:
@@ -26,7 +25,7 @@ npm run db:seed      # populate it from src/content/*
 npm run dev          # start the site on http://localhost:3000
 ```
 
-Sign in at `/admin/login` with username `admin` and the password you hashed.
+Sign in at `/admin/login` with username `admin` and your `ADMIN_PASSWORD`.
 
 ## Scripts
 
@@ -38,19 +37,18 @@ Sign in at `/admin/login` with username `admin` and the password you hashed.
 | `npm run db:push` | Creates / updates the database schema from `prisma/schema.prisma`. |
 | `npm run db:studio` | Opens Prisma Studio, a DB GUI. |
 | `npm run db:seed` | Seeds the database from `src/content/*`. |
-| `npm run admin:hash -- "password"` | Generates a bcrypt hash for the admin password. |
 
 ## Admin console
 
 The admin lives under `/admin`. It is protected by a signed HTTP-only cookie
 (HMAC-SHA256 via the Web Crypto API, so it works on the Edge runtime too). Only
-one admin user is supported; the username and bcrypt-hashed password come from
-`.env`:
+one admin user is supported. The password lives in `.env` and is compared in
+constant time server-side; sign-in is rate-limited to 5 attempts/min per IP:
 
 ```env
 ADMIN_USERNAME="admin"
-ADMIN_PASSWORD_HASH="$2b$12$…"   # npm run admin:hash -- "your password"
-SESSION_SECRET="at-least-32-chars-of-random"
+ADMIN_PASSWORD="a-strong-password-12-chars-plus"
+SESSION_SECRET="at-least-32-chars-of-random"   # empty/short = sign-in always fails
 ```
 
 It covers:
@@ -108,7 +106,7 @@ If the remote is new: `git remote add origin https://github.com/YOUR_USER/portfo
 3. **Environment Variables** — add the same keys as in [`.env.example`](./.env.example), at minimum for a working public site + admin:
    - `DATABASE_URL` — **not** a local `file:` path for production; use a hosted PostgreSQL URL (Vercel Postgres, Neon, Supabase, etc.) and change `provider` in `prisma/schema.prisma` to `postgresql`, then run `npx prisma migrate` / `db push` against that database once.
    - `SESSION_SECRET` — long random string.
-   - `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH` (or `ADMIN_PASSWORD_HASH_B64`) — same as local.
+   - `ADMIN_USERNAME`, `ADMIN_PASSWORD` — same as local.
 4. Optional: `GITHUB_TOKEN`, `GROQ_API_KEY` / `GROQ_MODEL`, `ANALYTICS_SALT` for full feature parity.
 5. **Deploy**. Vercel runs `postinstall` → `prisma generate` and your `build` script.
 
@@ -126,7 +124,7 @@ If the remote is new: `git remote add origin https://github.com/YOUR_USER/portfo
 - **Styling**: Tailwind CSS 3, `clsx`, `tailwind-merge`.
 - **Motion**: Framer Motion + canvas / CSS animations.
 - **UX**: `cmdk` (command palette), `react-wrap-balancer`, `lucide-react`.
-- **Backend**: Prisma 6, PostgreSQL (Neon), bcryptjs, Web-Crypto HMAC cookie sessions,
+- **Backend**: Prisma 6, PostgreSQL (Neon), Web-Crypto HMAC cookie sessions,
   Next.js Server Actions.
 
 Made with care by Richard Winner Duvor (`drwinner03@gmail.com`).
