@@ -86,18 +86,55 @@ export function GitHubLivePanel() {
   }, [data]);
 
   useEffect(() => {
-    let c = false;
-    (async () => {
+    let cancelled = false;
+
+    // Some API error states are permanent (a retry can't fix them) and should
+    // surface immediately; others are transient blips — a cold serverless
+    // start, a momentary GitHub API hiccup, a brief rate-limit — worth another
+    // attempt before we collapse the whole panel to the fallback.
+    const isTransientError = (e: string | null | undefined) =>
+      e === "graphql" || e === "exception" || e === "rate";
+
+    // One attempt: returns parsed insights to commit (success OR permanent
+    // error worth surfacing), or null if the caller should retry.
+    async function attempt(): Promise<GitHubInsights | null> {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
       try {
-        const r = await fetch("/api/github/insights", { cache: "no-store" });
+        const r = await fetch("/api/github/insights", {
+          cache: "no-store",
+          signal: ctrl.signal,
+        });
+        if (r.status === 429 || r.status >= 500) return null; // retryable
         const j = (await r.json()) as GitHubInsights;
-        if (!c) setData(j);
+        if (j.error && isTransientError(j.error)) return null; // retryable
+        return j;
       } catch {
-        if (!c) setErr(true);
+        return null; // network error or timeout — retryable
+      } finally {
+        clearTimeout(timer);
       }
+    }
+
+    (async () => {
+      // 3 attempts with backoff; the skeleton stays visible until we either
+      // succeed or exhaust retries, so a single blip never reads as data loss.
+      const backoffsMs = [0, 700, 1600];
+      for (const wait of backoffsMs) {
+        if (wait > 0) await new Promise((res) => setTimeout(res, wait));
+        if (cancelled) return;
+        const j = await attempt();
+        if (cancelled) return;
+        if (j) {
+          setData(j);
+          return;
+        }
+      }
+      if (!cancelled) setErr(true); // all attempts failed transiently
     })();
+
     return () => {
-      c = true;
+      cancelled = true;
     };
   }, []);
 
