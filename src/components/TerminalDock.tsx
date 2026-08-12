@@ -161,10 +161,10 @@ function runLocal(t: string): string[] | null {
 
 export function TerminalDock({
   expanded,
-  onExpandedChange,
+  onExpandedChangeAction,
 }: {
   expanded: boolean;
-  onExpandedChange: (v: boolean) => void;
+  onExpandedChangeAction: (v: boolean) => void;
 }) {
   const [lines, setLines] = useState<Line[]>([WELCOME]);
   const [history, setHistory] = useState<TMsg[]>([]);
@@ -173,8 +173,10 @@ export function TerminalDock({
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [rot, setRot] = useState(0);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const saveDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const statusLines = useMemo(() => buildStatusLines(), []);
@@ -211,20 +213,60 @@ export function TerminalDock({
   }, [lines, busy, expanded]);
 
   useEffect(() => {
-    if (expanded) {
-      const t = setTimeout(() => inputRef.current?.focus(), 80);
-      return () => clearTimeout(t);
-    }
-  }, [expanded]);
-
-  useEffect(() => {
     if (!expanded) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onExpandedChange(false);
+
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    const background = Array.from(
+      document.querySelectorAll<HTMLElement>("header, main, footer")
+    ).filter((element) => !dialogRef.current?.contains(element));
+    const previouslyInert = background.filter((element) => element.inert);
+    const previousOverflow = document.body.style.overflow;
+
+    background.forEach((element) => {
+      element.inert = true;
+    });
+    document.body.style.overflow = "hidden";
+
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 80);
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onExpandedChangeAction(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable?.length) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
+
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [expanded, onExpandedChange]);
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("keydown", onKey);
+      background.forEach((element) => {
+        element.inert = previouslyInert.includes(element);
+      });
+      document.body.style.overflow = previousOverflow;
+      previousFocusRef.current?.focus({ preventScroll: true });
+    };
+  }, [expanded, onExpandedChangeAction]);
 
   const refocusInput = useCallback(() => {
     queueMicrotask(() => {
@@ -278,7 +320,7 @@ export function TerminalDock({
 
         if (t0.toLowerCase() === "exit" || t0.toLowerCase() === "quit") {
           restoreFocus = false;
-          onExpandedChange(false);
+          onExpandedChangeAction(false);
           return;
         }
 
@@ -329,7 +371,7 @@ export function TerminalDock({
         if (restoreFocus) refocusInput();
       }
     },
-    [busy, history, onExpandedChange, refocusInput]
+    [busy, history, onExpandedChangeAction, refocusInput]
   );
 
   const onSubmit = (e: React.FormEvent) => {
@@ -349,7 +391,7 @@ export function TerminalDock({
         <div
           className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-[1px]"
           aria-hidden
-          onClick={() => onExpandedChange(false)}
+          onClick={() => onExpandedChangeAction(false)}
         />
       ) : null}
 
@@ -382,7 +424,7 @@ export function TerminalDock({
               type="button"
               onClick={() => {
                 track("shell_open");
-                onExpandedChange(true);
+                onExpandedChangeAction(true);
               }}
               className="inline-flex min-h-10 min-w-[4.5rem] shrink-0 items-center justify-center gap-0.5 rounded border border-[#14532d] bg-[#0a1f10] px-2 text-xs font-medium text-[#4ade80] sm:min-h-0 sm:min-w-0 sm:px-1.5 sm:py-0.5 sm:text-[10px] active:bg-[#14532d]/50"
               title="Open the site console (type a question, or “help” for commands)"
@@ -394,6 +436,7 @@ export function TerminalDock({
           </div>
         ) : (
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Site console"
@@ -422,14 +465,14 @@ export function TerminalDock({
                   className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#ff5f57] transition hover:brightness-110 md:h-3 md:w-3"
                   title="Close"
                   aria-label="Close"
-                  onClick={() => onExpandedChange(false)}
+                  onClick={() => onExpandedChangeAction(false)}
                 />
                 <button
                   type="button"
                   className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#febc2e] transition hover:brightness-110 md:h-3 md:w-3"
                   title="Minimize"
                   aria-label="Minimize"
-                  onClick={() => onExpandedChange(false)}
+                  onClick={() => onExpandedChangeAction(false)}
                 />
                 <button
                   type="button"
@@ -456,7 +499,7 @@ export function TerminalDock({
                 </a>
                 <button
                   type="button"
-                  onClick={() => onExpandedChange(false)}
+                  onClick={() => onExpandedChangeAction(false)}
                   className="inline-flex min-h-10 min-w-10 items-center justify-center gap-0.5 rounded-lg px-2.5 text-sm text-white/60 hover:bg-white/10 hover:text-white md:min-h-0 md:min-w-0 md:rounded md:px-1.5 md:text-[10px]"
                   aria-label="Close console"
                 >
@@ -470,6 +513,8 @@ export function TerminalDock({
             <div
               className="min-h-0 flex-1 overflow-y-auto overscroll-contain border-x border-[#0d280d] bg-[#050a06] px-4 py-4 text-sm leading-relaxed [text-shadow:0_0_6px_rgba(0,255,80,0.12)] [-webkit-overflow-scrolling:touch] md:px-3 md:py-3 md:text-[12px]"
               role="log"
+              aria-live="polite"
+              aria-relevant="additions text"
             >
               {lines.map((line, i) => (
                 <p

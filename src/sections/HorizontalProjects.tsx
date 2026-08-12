@@ -61,9 +61,9 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
             </div>
 
             {/* Title */}
-            <h2 className="font-display text-4xl leading-[1.06] tracking-tight text-slate-900 dark:text-white sm:text-5xl xl:text-[3.5rem]">
+            <h3 className="font-display text-4xl leading-[1.06] tracking-tight text-slate-900 dark:text-white sm:text-5xl xl:text-[3.5rem]">
               {project.title}
-            </h2>
+            </h3>
 
             {/* Year */}
             <p className="font-mono text-[12px] text-slate-400 dark:text-white/50">{project.year}</p>
@@ -149,11 +149,13 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
   const progressRef = useRef<HTMLDivElement>(null);
 
   const [activeIdx, setActiveIdx] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  // Render the semantic vertical stack on the server and progressively enhance
+  // only large screens after hydration. Content remains reachable without JS.
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const apply = () => setIsMobile(mq.matches);
+    const mq = window.matchMedia("(min-width: 1200px)");
+    const apply = () => setIsMobile(!mq.matches);
     apply();
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
@@ -168,11 +170,13 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
     const bar = progressRef.current;
     if (!section || !track) return;
 
+    let active = true;
     let ctx: { revert: () => void } | undefined;
 
     (async () => {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (!active) return;
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
@@ -237,7 +241,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
           if (i === 0) {
             // First card is already visible — only needs an exit tween.
             gsap.to(card, {
-              opacity: 0, scale: 0.7, y: -120, rotateY: -22, filter: "blur(14px)",
+              opacity: 0, scale: 0.9, y: -40, rotateY: -6,
               ease: "expo.in",
               scrollTrigger: {
                 containerAnimation: mainTween,
@@ -247,8 +251,8 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                 scrub: 1.6,
               },
             });
-          } else {
-            // Cards 2–N: unified entry → linger → exit timeline.
+          } else if (i < 3) {
+            // Cards 2–3: unified entry → linger → exit timeline.
             // start = card just entering viewport from the right
             // end   = card fully off-screen to the left
             const tl = gsap.timeline({
@@ -264,15 +268,31 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
             // First half — entry (card travels from off-right to centre)
             tl.fromTo(
               card,
-              { opacity: 0, scale: 0.68, y: 130, rotateY: 24, filter: "blur(16px)" },
-              { opacity: 1, scale: 1,    y: 0,   rotateY: 0,  filter: "blur(0px)",
+              { opacity: 0, scale: 0.94, y: 20, rotateY: 6 },
+              { opacity: 1, scale: 1, y: 0, rotateY: 0,
                 ease: "expo.out", duration: 1 }
             );
             // Second half — exit (card travels from centre to off-left)
             tl.to(card, {
-              opacity: 0, scale: 0.68, y: -130, rotateY: -24, filter: "blur(16px)",
+              opacity: 0, scale: 0.94, y: -20, rotateY: -6,
               ease: "expo.in", duration: 1,
             });
+          } else {
+            gsap.fromTo(
+              card,
+              { opacity: 0 },
+              {
+                opacity: 1,
+                ease: "none",
+                scrollTrigger: {
+                  containerAnimation: mainTween,
+                  trigger: card,
+                  start: "left 95%",
+                  end: "left 60%",
+                  scrub: 1,
+                },
+              }
+            );
           }
 
           // ── Active index tracker ──────────────────────
@@ -288,7 +308,10 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
       }, section);
     })();
 
-    return () => ctx?.revert();
+    return () => {
+      active = false;
+      ctx?.revert();
+    };
   }, [list, reduced, isMobile]);
 
   // ── Mobile / reduced-motion: vertical stack ───────────────────────────────
@@ -379,19 +402,19 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
       {/* Dot nav — right edge */}
       <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
         {list.map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              height: i === activeIdx ? 16 : 6,
-              width: i === activeIdx ? 4 : 4,
-              opacity: i === activeIdx ? 1 : 0.35,
-            }}
-            transition={{ duration: 0.3 }}
-            className={clsx(
-              "rounded-full",
-              i === activeIdx ? "bg-ocean-400 dark:bg-ocean-300" : "bg-slate-400 dark:bg-white/40"
-            )}
-          />
+          <span key={i} className="flex h-4 w-1 items-center" aria-hidden="true">
+            <motion.span
+              animate={{
+                scaleY: i === activeIdx ? 1 : 0.375,
+                opacity: i === activeIdx ? 1 : 0.35,
+              }}
+              transition={{ duration: 0.3 }}
+              className={clsx(
+                "block h-4 w-1 origin-center rounded-full",
+                i === activeIdx ? "bg-ocean-400 dark:bg-ocean-300" : "bg-slate-400 dark:bg-white/40"
+              )}
+            />
+          </span>
         ))}
       </div>
 

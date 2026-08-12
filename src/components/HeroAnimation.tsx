@@ -77,7 +77,7 @@ export function HeroAnimation({ children }: HeroAnimationProps) {
           {
             y: 0,
             opacity: 1,
-            duration: 0.8,
+            duration: 0.6,
             ease: charEase,
             stagger: 0.04,
           },
@@ -120,7 +120,9 @@ export function CharSplit({
   const words = text.split(" ");
 
   return (
-    <span className={className} aria-label={text}>
+    <span className={className}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
       {words.map((word, wi) => (
         <Fragment key={wi}>
           <span className="inline-block whitespace-nowrap">
@@ -141,6 +143,7 @@ export function CharSplit({
           )}
         </Fragment>
       ))}
+      </span>
     </span>
   );
 }

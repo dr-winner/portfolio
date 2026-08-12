@@ -62,34 +62,18 @@ export const metadata: Metadata = {
   description: profile.tagline,
 
   keywords: [
-    "SOC Analyst",
+    "Cybersecurity Engineer Accra",
+    "Cloud Security Engineer Ghana",
     "Security Engineer",
-    "AI Engineer",
-    "Agentic AI",
-    "Cybersecurity",
-    "Threat Hunting",
-    "MITRE ATT&CK",
+    "SOC Analyst",
     "Cloud Security",
-    "Full-Stack Developer",
+    "Threat Detection",
     "Detection Engineering",
-    "Security Operations Center",
     "Incident Response",
-    "LLM Security",
-    "Large Language Models",
-    "Retrieval Augmented Generation",
-    "RAG",
-    "Python Developer",
-    "TypeScript Developer",
-    "Next.js Developer",
     "AWS Security",
     "Azure Security",
     "Splunk",
-    "Elastic SIEM",
-    "Blockchain Security",
-    "Smart Contracts",
-    "Offensive Security",
-    "Vulnerability Assessment",
-    "Zero Trust Architecture",
+    "MITRE ATT&CK",
     profile.name,
   ],
 
@@ -189,9 +173,8 @@ export default function RootLayout({
       </head>
 
       <body className="font-sans antialiased overflow-x-hidden touch-pan-y [overscroll-behavior-x:none]">
-        {/* Native scrolling, no custom cursor — deliberate: the Lenis +
-            cursor combo made the site feel sluggish (removed in e06ac11,
-            accidentally reintroduced by a stale design pass). */}
+        {/* Smooth scrolling is initialized once by Providers and disabled for
+            visitors who prefer reduced motion. */}
         <Providers>
           <ClientChrome>
             <AgenticBackground />
@@ -199,7 +182,7 @@ export default function RootLayout({
             {children}
           </ClientChrome>
         </Providers>
-        <Analytics />
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );

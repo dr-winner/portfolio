@@ -105,8 +105,8 @@ export function Contact() {
               </h2>
 
               <p className="mt-4 max-w-xl text-slate-600 md:text-lg dark:text-white/85">
-                I&apos;m open to SOC, detection-engineering, and AI-agent roles,
-                and to select contract work. The fastest way in is email.
+                I&apos;m open to cybersecurity, SOC, detection-engineering, and
+                cloud-security roles, plus select contract work. The fastest way in is email.
               </p>
 
               <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -116,7 +116,7 @@ export function Contact() {
                     onClick={mailto}
                     className="relative group inline-flex overflow-hidden min-w-0 w-full max-w-full items-center justify-start gap-2 rounded-xl bg-gradient-to-r from-ocean-300 to-signal-300 px-4 py-3 text-left text-sm font-semibold text-ink shadow-glow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 sm:w-auto sm:max-w-none sm:px-5"
                     title={`Email ${profile.name}`}
-                    aria-label="Send email (opens your mail app)"
+                    aria-label={`${profile.emailObfuscated} — send email (opens your mail app)`}
                   >
                     <Mail className="size-4 shrink-0" />
                     <span className="min-w-0 flex-1 break-words sm:break-normal">
@@ -174,7 +174,7 @@ export function Contact() {
               </ul>
               <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4 text-[11px] text-slate-500 dark:border-white/10 dark:text-white/65">
                 <ShieldCheck className="size-3.5 text-ok-400" />
-                <span>Response within 24h. PGP on request.</span>
+                <span>Share only non-sensitive project details by email.</span>
               </div>
             </div>
           </div>

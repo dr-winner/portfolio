@@ -98,7 +98,7 @@ export function Stack({ categories }: { categories?: StackCategory[] } = {}) {
                                 "ml-1 size-1.5 rounded-full shadow-glow-sm",
                                 levelDot[item.level]
                               )}
-                              aria-label={`level: ${item.level}`}
+                              aria-hidden="true"
                             />
                           )}
                         </div>

@@ -53,10 +53,7 @@ export function personSchema() {
       "Threat Hunting",
       "Detection Engineering",
       "MITRE ATT&CK Framework",
-      "Agentic AI Systems",
-      "Large Language Models",
-      "Retrieval Augmented Generation",
-      "LLM Security",
+
       "Cloud Security",
       "Amazon Web Services",
       "Microsoft Azure",
@@ -66,32 +63,23 @@ export function personSchema() {
       "Next.js",
       "React",
       "FastAPI",
-      "LangChain",
       "Splunk",
       "Elastic SIEM",
       "Incident Response",
-      "Smart Contracts",
-      "Blockchain Security",
+
     ],
     hasOccupation: {
       "@type": "Occupation",
-      name: "SOC Analyst & AI Engineer",
+      name: profile.role,
       description:
-        "Specialist in security operations, detection engineering, and agentic AI systems.",
-      skills: "Threat hunting, detection engineering, agentic AI, cloud security hardening",
+        "Cybersecurity and cloud security engineering focused on threat detection, incident response, and secure cloud infrastructure.",
+      skills:
+        "Threat detection, incident response, cloud security, security operations, detection engineering",
       occupationLocation: {
         "@type": "Country",
         name: "Ghana",
       },
     },
-    seeks: {
-      "@type": "Demand",
-      name: "SOC Analyst, Security Engineer, or AI Engineering roles",
-      description:
-        "Open to SOC, detection-engineering, and AI-agent roles, and select contract work.",
-    },
-    alumniOf: [],
-    award: [],
   };
 }
 
@@ -109,14 +97,6 @@ export function webSiteSchema() {
     publisher: { "@id": `${BASE_URL}/#person` },
     copyrightHolder: { "@id": `${BASE_URL}/#person` },
     copyrightYear: new Date().getFullYear(),
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${BASE_URL}/?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 

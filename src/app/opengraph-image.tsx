@@ -51,7 +51,7 @@ export default async function Image() {
               color: "transparent",
             }}
           >
-            SOC Analyst & AI Engineer
+            {profile.role}
           </div>
           <div style={{ fontSize: 32, color: "#c4cde0", maxWidth: 900 }}>
             {profile.tagline}
@@ -72,7 +72,7 @@ export default async function Image() {
           <div>•</div>
           <div>MITRE ATT&CK</div>
           <div>•</div>
-          <div>Agentic AI</div>
+          <div>Threat Detection</div>
         </div>
       </div>
     ),

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, Cloud, Shield, Terminal, Zap } from "lucide-react";
 
@@ -16,23 +17,19 @@ export function Mentorship() {
   const [name, setName]       = useState("");
   const [status, setStatus]   = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-  const [count, setCount]     = useState<number | null>(null);
 
-  useEffect(() => {
-    fetch("/api/waitlist")
-      .then((r) => r.json())
-      .then((d) => setCount(d.count ?? null))
-      .catch(() => {});
-  }, []);
-
-  async function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name }),
+        body: JSON.stringify({
+          email,
+          name,
+          website: String(new FormData(e.currentTarget).get("website") ?? ""),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -40,7 +37,6 @@ export function Mentorship() {
         setStatus("error");
       } else {
         setStatus("success");
-        setCount((c) => (c ?? 0) + 1);
       }
     } catch {
       setMessage("Network error. Please try again.");
@@ -111,11 +107,7 @@ export function Mentorship() {
                       I&apos;ll reach out with launch details and early-access info.
                     </p>
                   </div>
-                  {count !== null && (
-                    <p className="font-mono text-[13px] text-cyber-600 dark:text-cyber-300">
-                      {count} {count === 1 ? "person" : "people"} ahead of the launch.
-                    </p>
-                  )}
+
                 </motion.div>
               ) : (
                 <motion.form
@@ -134,22 +126,55 @@ export function Mentorship() {
                     </p>
                   </div>
 
+                  <label htmlFor="waitlist-name" className="sr-only">Your name (optional)</label>
                   <input
+                    id="waitlist-name"
+                    name="name"
                     type="text"
+                    autoComplete="name"
                     placeholder="Your name (optional)"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-cyber-400/60 focus:ring-2 focus:ring-cyber-400/20 dark:border-white/10 dark:bg-ink-200/60 dark:text-white dark:placeholder:text-white/35 dark:focus:border-cyber-300/40"
                   />
 
+                  <label htmlFor="waitlist-email" className="sr-only">Email address</label>
                   <input
+                    id="waitlist-email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-cyber-400/60 focus:ring-2 focus:ring-cyber-400/20 dark:border-white/10 dark:bg-ink-200/60 dark:text-white dark:placeholder:text-white/35 dark:focus:border-cyber-300/40"
                   />
+
+                  <div className="absolute -left-[9999px]" aria-hidden="true">
+                    <label htmlFor="waitlist-website">Website</label>
+                    <input
+                      id="waitlist-website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  <label className="flex items-start gap-2.5 text-[12px] leading-5 text-slate-500 dark:text-white/55">
+                    <input
+                      type="checkbox"
+                      required
+                      className="mt-1 size-4 shrink-0 accent-cyber-500"
+                    />
+                    <span>
+                      I agree that my details may be used for cohort launch updates as described in the{" "}
+                      <Link href="/privacy" className="link-hover text-cyber-700 dark:text-cyber-300">
+                        privacy notice
+                      </Link>.
+                    </span>
+                  </label>
 
                   {status === "error" && (
                     <p className="text-[13px] text-rose-600 dark:text-threat-400">{message}</p>
@@ -164,14 +189,9 @@ export function Mentorship() {
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                   </button>
 
-                  <div className="flex items-center justify-between text-[12px] text-slate-400 dark:text-white/40">
-                    <span>No spam. Unsubscribe anytime.</span>
-                    {count !== null && count > 0 && (
-                      <span className="font-mono text-cyber-600 dark:text-cyber-300">
-                        {count} already joined
-                      </span>
-                    )}
-                  </div>
+                  <p className="text-[12px] text-slate-400 dark:text-white/40">
+                    Used only for material cohort launch and early-access updates.
+                  </p>
                 </motion.form>
               )}
             </AnimatePresence>

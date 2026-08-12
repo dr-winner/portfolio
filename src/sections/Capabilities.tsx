@@ -150,9 +150,9 @@ export function Capabilities() {
                     </div>
                     <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-white/[0.08]">
                       <motion.div
-                        className={clsx("h-full rounded-full", accentBar[cap.accent])}
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${cap.proficiency}%` }}
+                        className={clsx("h-full origin-left rounded-full", accentBar[cap.accent])}
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: cap.proficiency / 100 }}
                         viewport={{ once: true, margin: "-10% 0%" }}
                         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                       />

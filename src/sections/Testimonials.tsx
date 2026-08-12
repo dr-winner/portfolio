@@ -3,6 +3,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import clsx from "clsx";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { testimonials as seedTestimonials, type Testimonial } from "@/content/testimonials";
 import { Avatar } from "@/components/Avatar";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -41,6 +42,11 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
     setCurrent((c) => (c + 1) % list.length);
   }, [list.length]);
 
+  const previous = useCallback(() => {
+    setDir(-1);
+    setCurrent((c) => (c - 1 + list.length) % list.length);
+  }, [list.length]);
+
   useEffect(() => {
     if (reduced || paused) return;
     const t = setInterval(next, SLIDE_DURATION);
@@ -64,8 +70,10 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
           className="relative mt-14 md:mt-20"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
-          aria-live="polite"
-          aria-atomic="true"
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false);
+          }}
         >
           {/* Decorative large quote mark */}
           <span
@@ -87,7 +95,7 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={transition}
+                  transition={reduced ? { duration: 0 } : transition}
                   className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center md:px-0"
                 >
                   {/* Quote text — constrained for readability */}
@@ -112,22 +120,48 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
             </div>
           </div>
 
-          {/* Dot indicators */}
-          <div className="mt-10 flex items-center justify-center gap-2">
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            Testimonial {current + 1} of {list.length}: {t.name}, {t.position}
+          </p>
+
+          {/* Manual controls and indicators use 44px touch targets. */}
+          <div className="mt-8 flex items-center justify-center gap-1">
+            <button
+              type="button"
+              onClick={previous}
+              aria-label="Previous testimonial"
+              className="inline-flex size-11 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300 dark:text-white/65 dark:hover:bg-white/10 dark:hover:text-white"
+            >
+              <ChevronLeft className="size-4" aria-hidden="true" />
+            </button>
             {list.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Go to testimonial ${i + 1}`}
-                className={clsx(
-                  "h-1 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300",
-                  i === current
-                    ? "w-6 bg-ocean-400"
-                    : "w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-white/15 dark:hover:bg-white/30"
-                )}
-              />
+                aria-current={i === current ? "true" : undefined}
+                className="group inline-flex size-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300"
+              >
+                <span
+                  className={clsx(
+                    "block h-1 w-6 rounded-full origin-center transition-[transform,background-color] duration-300",
+                    i === current
+                      ? "scale-x-100 bg-ocean-400"
+                      : "scale-x-25 bg-slate-300 group-hover:bg-slate-400 dark:bg-white/15 dark:group-hover:bg-white/30"
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
             ))}
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next testimonial"
+              className="inline-flex size-11 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300 dark:text-white/65 dark:hover:bg-white/10 dark:hover:text-white"
+            >
+              <ChevronRight className="size-4" aria-hidden="true" />
+            </button>
           </div>
         </div>
       </div>

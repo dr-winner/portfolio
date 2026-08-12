@@ -4,7 +4,7 @@ export const profile = {
   initials: "RW",
   role: "Cyber & Cloud Security Engineer",
   tagline:
-    "Threat detection, cloud hardening, pentesting, forensics, compliance.",
+    "I investigate threats, engineer detections, and harden cloud infrastructure across AWS, Azure, and GCP.",
   /** Optional — not shown in public UI */
   location: "Accra, Ghana",
   timezone: "GMT+0",
@@ -15,7 +15,7 @@ export const profile = {
   resumeUrl: "/resume.pdf",
   availability: {
     status: "available",
-    label: "Open to SOC · cloud security · pentesting & GRC roles",
+    label: "Open to SOC · detection engineering · cloud security roles",
   },
   bio: [
     "I triage alerts, hunt threats, harden cloud setups, run pentests, and investigate incidents. I know how attacks work and how to catch them in logs.",

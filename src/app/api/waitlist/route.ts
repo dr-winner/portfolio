@@ -5,14 +5,6 @@ import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
-  try {
-    const count = await prisma.waitlistEntry.count();
-    return NextResponse.json({ count });
-  } catch {
-    return NextResponse.json({ count: 0 });
-  }
-}
 
 export async function POST(req: NextRequest) {
   if (!assertSameOriginOrMissing(req)) {
@@ -29,7 +21,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { email, name } = await req.json();
+    const { email, name, website } = await req.json();
+
+    // Honeypot fields are hidden from people but commonly filled by bots.
+    // Return a generic success response so automated clients cannot tune around it.
+    if (typeof website === "string" && website.trim()) {
+      return NextResponse.json({ ok: true });
+    }
 
     if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Valid email required." }, { status: 400 });

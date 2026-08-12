@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import clsx from "clsx";
 import { Command as CommandIcon, Mail, SquareTerminal, TerminalSquare } from "lucide-react";
-import { CommandPalette } from "@/components/CommandPalette";
+
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MagneticButton } from "@/components/MagneticButton";
 import { useOpenShell } from "@/components/ClientChrome";
 import { profile } from "@/content/profile";
+
+const CommandPalette = dynamic(
+  () => import("@/components/CommandPalette").then((mod) => mod.CommandPalette),
+  { ssr: false }
+);
 
 const scrollNavItems = [
   { id: "capabilities", label: "Capabilities" },
@@ -88,7 +94,7 @@ export function Header() {
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="group flex min-w-0 items-center gap-1.5 justify-self-start text-left text-sm font-mono text-slate-700 transition-colors hover:text-slate-950 dark:text-white/80 dark:hover:text-white sm:gap-2"
-            aria-label="Go to top"
+            aria-label="dr_winner — scroll to top"
           >
             <TerminalSquare className="size-4 shrink-0 text-ocean-500 dark:text-ocean-300" />
             <span className="min-w-0 truncate font-semibold tracking-tight">{profile.handle}</span>
@@ -150,7 +156,9 @@ export function Header() {
           </div>
         </div>
       </header>
-      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      {paletteOpen ? (
+        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      ) : null}
     </>
   );
 }

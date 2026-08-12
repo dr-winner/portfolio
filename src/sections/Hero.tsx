@@ -44,16 +44,15 @@ export function Hero() {
           <div className="relative z-10 flex min-w-0 flex-col items-start gap-7 text-left">
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
+                <CharSplit text="Cyber & Cloud" className="block font-bold text-display-etched" />
                 <span className="block text-[0.75em]">
-                  <CharSplit text="Security Engineer" className="whitespace-nowrap tracking-tight" charClassName="text-gradient-ocean" />
+                  <CharSplit text="Security Engineer" className="tracking-tight" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
 
-            <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/85">
-              Threat detection in the SOC. Cloud hardening on AWS, Azure, GCP.
-              Pentesting, forensics, compliance.
+            <p className="min-w-0 w-full max-w-lg text-lg leading-relaxed text-slate-600 dark:text-white/85">
+              {profile.tagline}
             </p>
 
             <div className="flex w-full max-w-md flex-col gap-3 font-sans sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
@@ -79,12 +78,10 @@ export function Hero() {
             <div className="mt-1 w-full border-t border-slate-200/80 pt-6 dark:border-white/10">
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label: "Cloud Security",     accent: "cyber"  },
-                  { label: "SOC Analyst",         accent: "signal" },
-                  { label: "Penetration Testing", accent: "threat" },
-                  { label: "Ethical Hacking",     accent: "threat" },
-                  { label: "DFIR",                accent: "ok"     },
-                  { label: "GRC",                 accent: "cyber"  },
+                  { label: "Cloud Security", accent: "cyber" },
+                  { label: "Security Operations", accent: "signal" },
+                  { label: "Threat Detection", accent: "threat" },
+                  { label: "Incident Response", accent: "ok" },
                 ].map(({ label, accent }) => (
                   <span
                     key={label}
@@ -169,11 +166,11 @@ export function Hero() {
                       className: "text-slate-500 dark:text-white/75",
                     },
                     {
-                      text: "cloud-security/  soc-analyst/  pentest/",
+                      text: "cloud-security/  security-operations/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {
-                      text: "ethical-hacking/  dfir/  grc/",
+                      text: "threat-detection/  incident-response/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {
