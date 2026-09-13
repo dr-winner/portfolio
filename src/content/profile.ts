@@ -11,11 +11,9 @@ export const profile = {
   email: "drwinner03@gmail.com",
   /** Shown in contact; full address is revealed only in mailto */
   emailObfuscated: "drwinner ···@gmail.com",
-  /** Served from our own domain; source copy lives on Google Drive */
-  resumeUrl: "/resume.pdf",
   availability: {
     status: "available",
-    label: "Open to SOC · detection engineering · cloud security roles",
+    label: "Open to SOC · pentest · application security · cloud security roles",
   },
   bio: [
     "I triage alerts, hunt threats, harden cloud setups, run pentests, and investigate incidents. I know how attacks work and how to catch them in logs.",
