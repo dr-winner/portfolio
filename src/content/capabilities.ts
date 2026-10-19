@@ -46,11 +46,12 @@ export const capabilities: Capability[] = [
     label: "02 / Security Tooling",
     title: "Make testing repeatable.",
     description:
-      "Use Python and APIs to reduce repetitive work, organize evidence, and make security checks easier to repeat.",
+      "Use Python and APIs to automate routine checks, organize evidence, and keep scoped security testing clear and repeatable.",
     bullets: [
-      "Write small Python helpers for scoped testing tasks",
-      "Organize findings and supporting evidence clearly",
+      "Write small Python helpers for scoped, repeatable testing tasks",
+      "Organize findings, evidence, and notes for clear, actionable reports",
       "Use version control to keep tools and reports reproducible",
+      "Automate routine checks while keeping every test within agreed scope",
     ],
     icon: Code2,
     accent: "ok",

@@ -91,7 +91,7 @@ export function Capabilities() {
               >
                 <Card
                   className={clsx(
-                    "group relative h-full p-6 transition-shadow duration-300 sm:p-8 md:p-10 lg:p-11",
+                    "group relative flex h-full flex-col p-6 transition-shadow duration-300 sm:p-8 md:p-10 lg:p-11",
                     accentRing[cap.accent],
                     "hover:shadow-glow-sm dark:hover:shadow-none"
                   )}
@@ -139,7 +139,7 @@ export function Capabilities() {
                   </ul>
 
                   {/* Proficiency bar */}
-                  <div className="mt-8">
+                  <div className="mt-auto pt-8">
                     <div className="mb-1.5 flex items-center justify-between">
                       <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">
                         Proficiency
