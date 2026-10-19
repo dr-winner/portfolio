@@ -9,13 +9,12 @@ export type TimelineEntry = {
 
 export const experience: TimelineEntry[] = [
   {
-    period: "2025 — Present",
-    title: "SOC Analyst / Security Engineer",
-    org: "Freelance / Contract",
+    period: "August — September 2026 · 2 months",
+    title: "Penetration Testing Intern",
+    org: "NetworkWalks",
     description:
-      "Triaging alerts across SIEM + EDR, running ATT&CK-driven threat hunts, tuning detections, and contributing to IR playbooks and post-incident reviews.",
-    tags: ["SIEM", "EDR", "MITRE ATT&CK", "Incident Response"],
-    current: true,
+      "Completed a two-month internship focused on ethical hacking and penetration testing.",
+    tags: ["Ethical Hacking", "Penetration Testing", "Web Security", "Network Security"],
   },
   {
     period: "2024 — 2025",
