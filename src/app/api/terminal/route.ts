@@ -90,7 +90,7 @@ export async function POST(req: Request) {
     { role: "user", content: input },
   ];
 
-  const model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
   try {
     const r = await fetch(GROQ_API, {
