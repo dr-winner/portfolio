@@ -10,7 +10,16 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Card } from "@/components/Card";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
-const ALL_TAGS: (ProjectTag | "All")[] = ["All", "Security", "AI", "Full-Stack", "Web3"];
+const ALL_TAGS: (ProjectTag | "All")[] = [
+  "All",
+  "Security",
+  "Pentest",
+  "Web Security",
+  "Recon",
+  "AI",
+  "Full-Stack",
+  "Web3",
+];
 
 const tagPill: Record<ProjectTag, string> = {
   /* Light: soft tints. Dark: ink fill + accent border (no pastel panels that read as “white cards”). */
@@ -20,6 +29,12 @@ const tagPill: Record<ProjectTag, string> = {
   "Full-Stack":
     "border-emerald-400/40 bg-emerald-50 text-emerald-950 dark:border-ok-400/50 dark:bg-ink-200 dark:text-ok-400",
   Web3: "border-slate-300/80 bg-slate-100 text-slate-800 dark:border-white/25 dark:bg-ink-200 dark:text-slate-100",
+  Pentest:
+    "border-rose-400/40 bg-rose-50 text-rose-950 dark:border-threat-300/50 dark:bg-ink-200 dark:text-threat-200",
+  "Web Security":
+    "border-cyan-400/40 bg-cyan-50 text-cyan-950 dark:border-ocean-300/55 dark:bg-ink-200 dark:text-ocean-200",
+  Recon:
+    "border-violet-400/40 bg-violet-50 text-violet-950 dark:border-violet-300/50 dark:bg-ink-200 dark:text-violet-200",
 };
 
 const statusMeta = {

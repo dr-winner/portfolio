@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import clsx from "clsx";
-import { ArrowUpRight, CheckCircle2, Clock, Hourglass } from "lucide-react";
+import { ArrowUpRight, Clock } from "lucide-react";
 import {
   projects as seedProjects,
   type Project,
@@ -20,19 +20,49 @@ const tagPill: Record<ProjectTag, string> = {
   "Full-Stack":
     "border-emerald-400/40 bg-emerald-50 text-emerald-900 dark:border-ok-400/50 dark:bg-ink-200 dark:text-ok-400",
   Web3: "border-slate-300/80 bg-slate-100 text-slate-800 dark:border-white/25 dark:bg-ink-200 dark:text-slate-100",
+  Pentest:
+    "border-rose-400/40 bg-rose-50 text-rose-900 dark:border-threat-300/50 dark:bg-ink-200 dark:text-threat-200",
+  "Web Security":
+    "border-cyan-400/40 bg-cyan-50 text-cyan-900 dark:border-ocean-300/55 dark:bg-ink-200 dark:text-ocean-200",
+  Recon:
+    "border-violet-400/40 bg-violet-50 text-violet-900 dark:border-violet-300/50 dark:bg-ink-200 dark:text-violet-200",
 };
 
-const statusMeta = {
-  live: { label: "Live", Icon: CheckCircle2, cls: "text-emerald-700 dark:text-ok-400" },
-  "in-progress": { label: "In progress", Icon: Clock, cls: "text-amber-700 dark:text-signal-300" },
-  upcoming: { label: "Coming soon", Icon: Hourglass, cls: "text-cyan-700 dark:text-ocean-300" },
-};
+const FEATURED_PROJECT_ORDER = [
+  "healthcare-pentest-case-study",
+  "footprinting-network-scanning-week-2",
+  "password-hash-cracking-week-3",
+  "aws-threat-detection-lab",
+  "soc-detection-lab",
+];
+const OTHER_BUILD_ORDER = ["proof9", "aix-market-analyzer", "motifi-ai"];
+const REPORT_PROJECTS = new Set([
+  "healthcare-pentest-case-study",
+  "footprinting-network-scanning-week-2",
+  "password-hash-cracking-week-3",
+]);
+
+function projectHref(project: Project) {
+  return project.link ?? project.repo;
+}
+
+function projectActionLabel(project: Project) {
+  if (REPORT_PROJECTS.has(project.slug)) return "Read report";
+  return project.repo ? "View source" : "Open project";
+}
+
+function progressLabel(project: Project) {
+  if (project.status === "in-progress") return "In progress";
+  if (project.status === "upcoming") return "Coming soon";
+  return null;
+}
 
 // ─── Full-width project card ───────────────────────────────────────────────────
 
 function ProjectCard({ project, index, total }: { project: Project; index: number; total: number }) {
-  const { label: statusLabel, Icon: StatusIcon, cls: statusCls } = statusMeta[project.status];
   const hasImage = !!(project.imageUrl || project.image);
+  const href = projectHref(project);
+  const pendingStatus = progressLabel(project);
 
   return (
     <div
@@ -54,10 +84,12 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
                 {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 {project.company ? ` — ${project.company}` : ""}
               </span>
-              <span className={clsx("inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]", statusCls)}>
-                <StatusIcon className="size-3.5" />
-                {statusLabel}
-              </span>
+              {pendingStatus && (
+                <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-amber-700 dark:text-signal-300">
+                  <Clock className="size-3.5" />
+                  {pendingStatus}
+                </span>
+              )}
             </div>
 
             {/* Title */}
@@ -66,7 +98,9 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
             </h2>
 
             {/* Year */}
-            <p className="font-mono text-[12px] text-slate-400 dark:text-white/50">{project.year}</p>
+            {project.year ? (
+              <p className="font-mono text-[12px] text-slate-400 dark:text-white/50">{project.year}</p>
+            ) : null}
 
             {/* Summary */}
             <p className="max-w-lg text-[17px] leading-relaxed text-slate-600 dark:text-slate-300">
@@ -85,9 +119,9 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
             {/* Stack */}
             {project.techStack?.length ? (
               <div>
-                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">Stack</p>
+                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">Chips</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {project.techStack.slice(0, 6).map((t) => (
+                  {project.techStack.map((t) => (
                     <span key={t} className="rounded-md border border-slate-200/90 bg-white px-2.5 py-1 text-[12px] text-slate-700 dark:border-white/10 dark:bg-ink-50/70 dark:text-white/85">
                       {t}
                     </span>
@@ -98,19 +132,22 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
 
             {/* Link */}
             <div className="pt-1">
-              {project.link ? (
+              {href ? (
                 <a
-                  href={project.link}
+                  href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-5 py-3 text-[14px] font-semibold text-slate-900 transition-colors hover:border-ocean-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-ocean-300/40"
                 >
-                  Open project
+                  {projectActionLabel(project)}
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               ) : (
                 <span className="inline-flex items-center gap-2 font-mono text-[13px] text-slate-400 dark:text-white/45">
-                  <Clock className="size-4" /> Not shipped yet
+                  <Clock className="size-4" />
+                  {project.slug === "healthcare-pentest-case-study"
+                    ? "Report link pending review"
+                    : pendingStatus ?? "No public link yet"}
                 </span>
               )}
             </div>
@@ -137,10 +174,80 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
   );
 }
 
+function OtherBuilds({ projects }: { projects: Project[] }) {
+  if (!projects.length) return null;
+
+  return (
+    <section className="relative py-16 md:py-20">
+      <div className="container">
+        <SectionHeader
+          eyebrow="Selected software work"
+          title="Other builds"
+          description="A smaller selection from my AI, Web3, and product engineering work."
+        />
+        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {projects.map((project) => {
+            const href = projectHref(project);
+            return (
+              <Card key={project.slug} className="flex h-full flex-col gap-4 p-5 md:p-6">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">
+                    {project.year} · {project.company}
+                  </p>
+                  <h3 className="mt-2 font-display text-xl tracking-tight text-slate-900 dark:text-white">
+                    {project.title}
+                  </h3>
+                </div>
+                <p className="flex-1 text-sm leading-relaxed text-slate-600 dark:text-white/75">
+                  {project.summary}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className={clsx("inline-flex rounded-md border px-2 py-0.5 text-[10px] font-semibold", tagPill[tag])}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                {href ? (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-700 transition-colors hover:text-ocean-500 dark:text-white/80 dark:hover:text-ocean-300"
+                  >
+                    {projectActionLabel(project)}
+                    <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
+                ) : null}
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function HorizontalProjects({ items }: { items?: Project[] }) {
-  const list = items?.length ? items : seedProjects;
+  const allProjects = items?.length ? items : seedProjects;
+  const { list, otherBuilds } = useMemo(() => {
+    const bySlug = new Map(allProjects.map((project) => [project.slug, project]));
+    return {
+      list: FEATURED_PROJECT_ORDER.flatMap((slug) => {
+        const project = bySlug.get(slug);
+        return project ? [project] : [];
+      }),
+      otherBuilds: OTHER_BUILD_ORDER.flatMap((slug) => {
+        const project = bySlug.get(slug);
+        return project ? [project] : [];
+      }),
+    };
+  }, [allProjects]);
   const reduced = useReducedMotion();
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -294,30 +401,36 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
   // ── Mobile / reduced-motion: vertical stack ───────────────────────────────
   if (reduced || isMobile) {
     return (
-      <section id="projects" className="relative py-20 md:py-28 lg:py-32">
+      <>
+        <section id="projects" className="relative py-20 md:py-28 lg:py-32">
         <div className="container">
           <SectionHeader
-            eyebrow="Selected work"
-            title="Projects that shipped"
-            description="Built, deployed, and defended."
+            eyebrow="Ethical hacking · pentesting · AppSec"
+            title="Security work"
+            description="Tested, documented, and written up so it can be fixed."
           />
           <div className="mt-16 flex flex-col gap-8">
             {list.map((p, i) => {
-              const { label: statusLabel, Icon: StatusIcon, cls: statusCls } = statusMeta[p.status];
               const hasImage = !!(p.imageUrl || p.image);
+              const href = projectHref(p);
+              const pendingStatus = progressLabel(p);
               return (
                 <Card key={p.slug} className="flex flex-col gap-5 p-6 sm:p-8">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/55">
                       {String(i + 1).padStart(2, "0")} — {p.company}
                     </span>
-                    <span className={clsx("inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]", statusCls)}>
-                      <StatusIcon className="size-3" />{statusLabel}
-                    </span>
+                    {pendingStatus ? (
+                      <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-amber-700 dark:text-signal-300">
+                        <Clock className="size-3" />{pendingStatus}
+                      </span>
+                    ) : null}
                   </div>
                   <div>
                     <h3 className="font-display text-2xl tracking-tight text-slate-900 dark:text-white sm:text-3xl">{p.title}</h3>
-                    <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/50">{p.year}</p>
+                    {p.year ? (
+                      <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/50">{p.year}</p>
+                    ) : null}
                   </div>
                   {hasImage && (
                     <div className="relative h-44 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-ink-200">
@@ -331,12 +444,12 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                     ))}
                   </div>
                   <div className="mt-auto pt-2">
-                    {p.link ? (
-                      <a href={p.link} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-2.5 text-[13px] font-semibold text-slate-900 transition-colors hover:border-ocean-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-ocean-300/40">
-                        Open project <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    {href ? (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-slate-50 px-4 py-2.5 text-[13px] font-semibold text-slate-900 transition-colors hover:border-ocean-400/40 hover:bg-white dark:border-white/12 dark:bg-white/[0.04] dark:text-slate-50 dark:hover:border-ocean-300/40">
+                        {projectActionLabel(p)} <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </a>
                     ) : (
-                      <span className="inline-flex items-center gap-2 font-mono text-[12px] text-slate-400"><Clock className="size-3.5" /> Coming soon</span>
+                      <span className="inline-flex items-center gap-2 font-mono text-[12px] text-slate-400"><Clock className="size-3.5" />{p.slug === "healthcare-pentest-case-study" ? "Report link pending review" : pendingStatus ?? "No public link yet"}</span>
                     )}
                   </div>
                 </Card>
@@ -344,12 +457,15 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
             })}
           </div>
         </div>
-      </section>
+        </section>
+        <OtherBuilds projects={otherBuilds} />
+      </>
     );
   }
 
   // ── Desktop: GSAP-pinned horizontal scroll ────────────────────────────────
   return (
+    <>
     <section
       ref={sectionRef}
       id="projects"
@@ -370,9 +486,9 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         className="absolute top-0 left-0 right-0 z-20 container pt-20 pb-8 pointer-events-none"
       >
         <SectionHeader
-          eyebrow="Selected work"
-          title="Projects that shipped"
-          description="Built, deployed, and defended."
+          eyebrow="Ethical hacking · pentesting · AppSec"
+          title="Security work"
+          description="Tested, documented, and written up so it can be fixed."
         />
       </div>
 
@@ -406,5 +522,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         ))}
       </div>
     </section>
+      <OtherBuilds projects={otherBuilds} />
+    </>
   );
 }

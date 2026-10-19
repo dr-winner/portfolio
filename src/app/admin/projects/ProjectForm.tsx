@@ -26,7 +26,7 @@ export function ProjectForm({
         <Field label="Title">
           <Input name="title" defaultValue={project?.title} required />
         </Field>
-        <Field label="Company / subject">
+        <Field label="Label / company">
           <Input name="company" defaultValue={project?.company} />
         </Field>
         <Field label="Year">
@@ -48,7 +48,7 @@ export function ProjectForm({
         <Textarea name="summary" defaultValue={project?.summary} rows={3} />
       </Field>
 
-      <Field label="Tags" hint="Comma-separated. Valid: Security, AI, Full-Stack, Web3">
+      <Field label="Tags" hint="Comma-separated. Examples: Pentest, Web Security, Recon, Security, AI, Web3">
         <Input name="tags" defaultValue={parsedTags.join(", ")} placeholder="AI, Security" />
       </Field>
 

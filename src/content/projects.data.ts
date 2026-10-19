@@ -1,6 +1,13 @@
 // Plain data only — safe to import from Node scripts (no image imports here).
 
-export type ProjectTag = "Security" | "AI" | "Full-Stack" | "Web3";
+export type ProjectTag =
+  | "Security"
+  | "Pentest"
+  | "Web Security"
+  | "Recon"
+  | "AI"
+  | "Full-Stack"
+  | "Web3";
 
 export type ProjectData = {
   slug: string;
@@ -20,8 +27,47 @@ export type ProjectData = {
 
 export const projectsData: ProjectData[] = [
   {
+    slug: "healthcare-pentest-case-study",
+    company: "Case Study",
+    year: "",
+    title: "Healthcare Penetration Test and Security Audit (2026)",
+    summary:
+      "Full pentest of a hospital target, from recon to a compliance-mapped report.",
+    tags: ["Pentest", "Web Security"],
+    results: [],
+    techStack: ["SQL Injection", "Cryptanalysis", "Metadata Forensics", "POPIA", "GDPR"],
+    // Link intentionally held until the public report's confidentiality concerns are resolved.
+    status: "live",
+  },
+  {
+    slug: "footprinting-network-scanning-week-2",
+    company: "Report",
+    year: "",
+    title: "Footprinting and Network Scanning (2026)",
+    summary:
+      "Recon and scanning against a permitted target and my own network.",
+    tags: ["Pentest", "Recon"],
+    results: [],
+    techStack: ["Nmap", "WHOIS", "dnsrecon", "theHarvester", "Maltego", "wafw00f", "WhatWeb"],
+    repo: "https://github.com/dr-winner/Penetration-Testing-Reports---Internship-Week2-Task-",
+    status: "live",
+  },
+  {
+    slug: "password-hash-cracking-week-3",
+    company: "Lab",
+    year: "",
+    title: "Password and Hash Cracking (2026)",
+    summary:
+      "Cracking protected PDFs, plus AI-assisted analysis with HexStrike AI connected to Claude through MCP.",
+    tags: ["Pentest", "AI"],
+    results: [],
+    techStack: ["John the Ripper", "HexStrike AI", "MCP"],
+    repo: "https://github.com/dr-winner/Password-Cracking-W-Claude-MCP-AI-Internship-Week3",
+    status: "live",
+  },
+  {
     slug: "aws-threat-detection-lab",
-    company: "Open Source",
+    company: "Lab",
     year: "2026",
     title: "AWS Threat Detection Lab",
     summary:
@@ -36,6 +82,22 @@ export const projectsData: ProjectData[] = [
     techStack: ["Terraform", "CloudTrail", "GuardDuty", "EventBridge", "Lambda", "MITRE ATT&CK"],
     repo: "https://github.com/dr-winner/aws-threat-detection-lab",
     status: "live",
+  },
+  {
+    slug: "soc-detection-lab",
+    company: "Lab",
+    year: "2026",
+    title: "SOC Detection Lab",
+    summary:
+      "Home lab simulating attacker TTPs against Wazuh + ELK. Build and tune detections mapped to MITRE ATT&CK.",
+    tags: ["Security"],
+    results: [
+      "Ingest Sysmon, Zeek, cloud logs",
+      "Custom detections mapped to ATT&CK",
+      "Atomic Red Team sims with auto reports",
+    ],
+    techStack: ["Wazuh", "ELK", "Sysmon", "Zeek", "Atomic Red Team", "MITRE ATT&CK"],
+    status: "in-progress",
   },
   {
     slug: "proof9",
@@ -91,37 +153,5 @@ export const projectsData: ProjectData[] = [
     link: "https://motifi-ai.vercel.app/",
     imageFile: "motiFiAi.png",
     status: "live",
-  },
-  {
-    slug: "soc-detection-lab",
-    company: "Home Lab",
-    year: "2026",
-    title: "SOC Detection Lab",
-    summary:
-      "Home lab simulating attacker TTPs against Wazuh + ELK. Build and tune detections mapped to MITRE ATT&CK.",
-    tags: ["Security"],
-    results: [
-      "Ingest Sysmon, Zeek, cloud logs",
-      "Custom detections mapped to ATT&CK",
-      "Atomic Red Team sims with auto reports",
-    ],
-    techStack: ["Wazuh", "ELK", "Sysmon", "Zeek", "Atomic Red Team", "MITRE ATT&CK"],
-    status: "in-progress",
-  },
-  {
-    slug: "agentic-triage-copilot",
-    company: "Research",
-    year: "2026",
-    title: "Agentic Triage Copilot",
-    summary:
-      "LLM copilot enriches and triages SOC alerts. Pulls IOCs, threat intel, prior cases before analyst opens ticket.",
-    tags: ["AI", "Security"],
-    results: [
-      "LLM agent queries VT, OTX, case history",
-      "Auto-summarizes alerts with ATT&CK mapping",
-      "Guardrails against prompt injection from logs",
-    ],
-    techStack: ["Python", "LangGraph", "RAG", "VirusTotal", "OTX", "ATT&CK"],
-    status: "upcoming",
   },
 ];
