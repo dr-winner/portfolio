@@ -3,7 +3,6 @@ import { Hero } from "@/sections/Hero";
 import { SignalStrip } from "@/sections/SignalStrip";
 import { Capabilities } from "@/sections/Capabilities";
 import { Stack } from "@/sections/Stack";
-import { TechMarquee } from "@/sections/TechMarquee";
 import { HorizontalProjects } from "@/sections/HorizontalProjects";
 import { Experience } from "@/sections/Experience";
 import { Certifications } from "@/sections/Certifications";
@@ -61,8 +60,6 @@ export default async function Home() {
         <SignalStrip />
         <Capabilities />
         <Stack categories={stack} />
-        {/* TechMarquee replaces the previous Marquee component */}
-        <TechMarquee />
         <HorizontalProjects items={projects} />
         <Experience items={experience} />
         <Certifications items={certs} />

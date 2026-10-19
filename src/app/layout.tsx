@@ -48,6 +48,7 @@ const mono = IBM_Plex_Mono({
 
 const url = SITE_URL;
 const ogImage = `${url}/opengraph-image`;
+const xHandle = new URL(profile.socials.x).pathname.split("/").filter(Boolean)[0];
 
 /* ─── Metadata ────────────────────────────────────────────────────────────── */
 
@@ -64,25 +65,16 @@ export const metadata: Metadata = {
   keywords: [
     "Ethical Hacker",
     "Penetration Tester",
-    "Penetration Testing",
-    "Red Teaming",
-    "Web Application Security",
+    "Web Application Penetration Testing",
+    "API Security Testing",
     "Network Penetration Testing",
+    "Red Teaming",
     "Application Security",
-    "API Security",
     "OWASP Top 10",
     "Burp Suite",
     "Nmap",
-    "Cybersecurity",
-    "Offensive Security",
-    "Vulnerability Assessment",
-    "Python Security Tools",
-    "Full-Stack Developer",
-    "Python Developer",
-    "TypeScript Developer",
-    "Next.js Developer",
-    "Blockchain Security",
-    "Smart Contracts",
+    "Authorized Security Testing",
+    "Python Security Tooling",
     profile.name,
   ],
 
@@ -100,7 +92,7 @@ export const metadata: Metadata = {
     title: `${profile.name} — ${profile.role}`,
     description: profile.tagline,
     siteName: profile.name,
-    locale: "en_US",
+    locale: "en_GH",
     images: [
       {
         url: ogImage,
@@ -115,7 +107,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${profile.name} — ${profile.role}`,
     description: profile.tagline,
-    creator: `@${profile.handle}`,
+    creator: `@${xHandle}`,
     images: [ogImage],
   },
 

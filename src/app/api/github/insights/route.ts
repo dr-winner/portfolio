@@ -32,6 +32,81 @@ type GQLContrib = {
 };
 
 type ContributionDay = { date: string; count: number };
+type GitHubRepository = {
+  name: string;
+  description: string | null;
+  html_url: string;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  pushed_at: string | null;
+  fork: boolean;
+};
+
+type PublicProfileSummary = {
+  publicRepos: number;
+  followers: number;
+  following: number;
+  repositories: {
+    name: string;
+    description: string | null;
+    url: string;
+    language: string | null;
+    stars: number;
+    forks: number;
+    pushedAt: string | null;
+  }[];
+};
+
+async function publicProfileSummary(login: string): Promise<PublicProfileSummary | null> {
+  try {
+    const headers = {
+      Accept: "application/vnd.github+json",
+      "User-Agent": "portfolio-github-insights",
+    };
+    const [profileResponse, repositoriesResponse] = await Promise.all([
+      fetch(`https://api.github.com/users/${encodeURIComponent(login)}`, {
+        headers,
+        next: { revalidate: 3600 },
+      }),
+      fetch(
+        `https://api.github.com/users/${encodeURIComponent(login)}/repos?type=owner&sort=pushed&per_page=30`,
+        { headers, next: { revalidate: 3600 } }
+      ),
+    ]);
+
+    if (!profileResponse.ok || !repositoriesResponse.ok) return null;
+
+    const [user, repos] = await Promise.all([
+      profileResponse.json() as Promise<{
+        public_repos: number;
+        followers: number;
+        following: number;
+      }>,
+      repositoriesResponse.json() as Promise<GitHubRepository[]>,
+    ]);
+
+    return {
+      publicRepos: user.public_repos,
+      followers: user.followers,
+      following: user.following,
+      repositories: repos
+        .filter((repo) => !repo.fork)
+        .slice(0, 3)
+        .map((repo) => ({
+          name: repo.name,
+          description: repo.description,
+          url: repo.html_url,
+          language: repo.language,
+          stars: repo.stargazers_count,
+          forks: repo.forks_count,
+          pushedAt: repo.pushed_at,
+        })),
+    };
+  } catch {
+    return null;
+  }
+}
 
 function attribute(tag: string, name: string): string | null {
   const match = tag.match(new RegExp(`\\b${name}="([^"]*)"`));
@@ -66,7 +141,12 @@ function publicDaysFromHtml(html: string): ContributionDay[] {
   );
 }
 
-async function publicContributionResponse(login: string, from: Date, to: Date) {
+async function publicContributionResponse(
+  login: string,
+  from: Date,
+  to: Date,
+  profileSummary: PublicProfileSummary | null
+) {
   const firstWeek = new Date(from);
   firstWeek.setUTCDate(firstWeek.getUTCDate() - firstWeek.getUTCDay());
   const lastWeek = new Date(to);
@@ -118,6 +198,7 @@ async function publicContributionResponse(login: string, from: Date, to: Date) {
     login,
     error: null as string | null,
     source: "public" as const,
+    profile: profileSummary,
     range: { from: from.toISOString(), to: to.toISOString() },
     stats: {
       totalCommitContributions: null,
@@ -132,15 +213,25 @@ async function publicContributionResponse(login: string, from: Date, to: Date) {
   });
 }
 
-async function unavailableResponse(login: string, from: Date, to: Date) {
+async function unavailableResponse(
+  login: string,
+  from: Date,
+  to: Date,
+  profileSummary: PublicProfileSummary | null
+) {
   try {
-    return await publicContributionResponse(login, from, to);
+    return await publicContributionResponse(login, from, to, profileSummary);
   } catch (error) {
     console.error(
       `[github/insights] public graph unavailable: ${error instanceof Error ? error.message : "unknown error"}`
     );
     return NextResponse.json(
-      { error: "unavailable", message: "Could not load public contribution data.", login },
+      {
+        error: "unavailable",
+        message: "Could not load public contribution data.",
+        login,
+        profile: profileSummary,
+      },
       { status: 200 }
     );
   }
@@ -161,8 +252,9 @@ export async function GET(req: Request) {
   const to = new Date();
   const from = new Date(to);
   from.setUTCFullYear(from.getUTCFullYear() - 1);
+  const profileSummary = publicProfileSummary(login);
 
-  if (!token) return unavailableResponse(login, from, to);
+  if (!token) return unavailableResponse(login, from, to, await profileSummary);
 
   const q = `query($login: String!, $from: DateTime!, $to: DateTime!) {
   user(login: $login) {
@@ -213,7 +305,7 @@ export async function GET(req: Request) {
       console.error(
         `[github/insights] auth failure status=${gRes.status} scopes=${tokenScopes} accepted=${acceptedScopes}; using public profile graph`
       );
-      return unavailableResponse(login, from, to);
+      return unavailableResponse(login, from, to, await profileSummary);
     }
 
     const gJson = (await gRes.json()) as GQLContrib;
@@ -221,14 +313,14 @@ export async function GET(req: Request) {
       console.error(
         `[github/insights] graphql errors: ${gJson.errors.map((e) => e.message).join("; ")}`
       );
-      return unavailableResponse(login, from, to);
+      return unavailableResponse(login, from, to, await profileSummary);
     }
     const user = gJson.data?.user;
     if (!user) {
       console.error(
         `[github/insights] unexpected null user (status=${gRes.status}); using public profile graph`
       );
-      return unavailableResponse(login, from, to);
+      return unavailableResponse(login, from, to, await profileSummary);
     }
     const c = user.contributionsCollection;
     const cal = c.contributionCalendar;
@@ -247,6 +339,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       login: user.login,
       error: null as string | null,
+      profile: await profileSummary,
       range: { from: from.toISOString(), to: to.toISOString() },
       stats: {
         totalCommitContributions: c.totalCommitContributions,
@@ -268,6 +361,6 @@ export async function GET(req: Request) {
     console.error(
       `[github/insights] GraphQL request failed: ${error instanceof Error ? error.message : "unknown error"}; using public profile graph`
     );
-    return unavailableResponse(login, from, to);
+    return unavailableResponse(login, from, to, await profileSummary);
   }
 }

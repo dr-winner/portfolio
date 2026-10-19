@@ -1,6 +1,9 @@
 {
-  "name": "portfolio",
-  "short_name": "portfolio",
+  "name": "Richard Winner Duvor — Ethical Hacker | Penetration Tester",
+  "short_name": "Richard Duvor",
+  "description": "Focused on authorized web and network penetration testing, red-team practice, and application security.",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +18,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#04060c",
+  "background_color": "#04060c",
   "display": "standalone"
 }

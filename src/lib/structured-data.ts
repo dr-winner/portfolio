@@ -36,7 +36,7 @@ export function personSchema() {
     },
     address: {
       "@type": "PostalAddress",
-      addressLocality: profile.location,
+      addressLocality: "Accra",
       addressCountry: "GH",
       addressRegion: "Greater Accra",
     },
@@ -45,6 +45,7 @@ export function personSchema() {
       profile.socials.linkedin,
       profile.socials.x,
       profile.socials.medium,
+      profile.socials.instagram,
       profile.socials.tiktok,
     ],
     knowsAbout: [
@@ -57,13 +58,8 @@ export function personSchema() {
       "Application Security",
       "OWASP Top 10",
       "Python Security Tooling",
-      "TypeScript",
+      "Vulnerability Assessment",
       "Python",
-      "Next.js",
-      "React",
-      "FastAPI",
-      "Smart Contracts",
-      "Blockchain Security",
     ],
     hasOccupation: {
       "@type": "Occupation",
@@ -83,8 +79,6 @@ export function personSchema() {
       description:
         "Open to ethical hacking, penetration testing, red-team, and application security roles, plus select authorized assessments with clearly defined scope.",
     },
-    alumniOf: [],
-    award: [],
   };
 }
 
@@ -97,19 +91,11 @@ export function webSiteSchema() {
     url: BASE_URL,
     name: `${profile.name} — ${profile.role}`,
     description: profile.tagline,
-    inLanguage: "en-US",
+    inLanguage: "en-GH",
     author: { "@id": `${BASE_URL}/#person` },
     publisher: { "@id": `${BASE_URL}/#person` },
     copyrightHolder: { "@id": `${BASE_URL}/#person` },
     copyrightYear: new Date().getFullYear(),
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${BASE_URL}/?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 
@@ -122,12 +108,10 @@ export function profilePageSchema() {
     url: BASE_URL,
     name: `${profile.name} — ${profile.role}`,
     description: profile.tagline,
-    inLanguage: "en-US",
+    inLanguage: "en-GH",
     isPartOf: { "@id": `${BASE_URL}/#website` },
     about: { "@id": `${BASE_URL}/#person` },
     mainEntity: { "@id": `${BASE_URL}/#person` },
-    dateCreated: "2024-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
     breadcrumb: {
       "@type": "BreadcrumbList",
       "@id": `${BASE_URL}/#breadcrumb`,

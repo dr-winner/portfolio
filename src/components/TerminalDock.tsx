@@ -173,7 +173,7 @@ export function TerminalDock({
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [rot, setRot] = useState(0);
-  const endRef = useRef<HTMLDivElement>(null);
+  const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const saveDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -207,14 +207,48 @@ export function TerminalDock({
   }, [expanded, statusLines.length]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "end" });
+    const log = logRef.current;
+    if (expanded && log) log.scrollTop = log.scrollHeight;
   }, [lines, busy, expanded]);
 
-  useEffect(() => {
-    if (expanded) {
-      const t = setTimeout(() => inputRef.current?.focus(), 80);
-      return () => clearTimeout(t);
-    }
+  useLayoutEffect(() => {
+    if (!expanded) return;
+
+    const body = document.body;
+    const root = document.documentElement;
+    const scrollY = window.scrollY;
+    const previous = {
+      rootOverflow: root.style.overflow,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      bodyOverflow: body.style.overflow,
+    };
+
+    root.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+
+    return () => {
+      root.style.overflow = previous.rootOverflow;
+      body.style.position = previous.bodyPosition;
+      body.style.top = previous.bodyTop;
+      body.style.left = previous.bodyLeft;
+      body.style.right = previous.bodyRight;
+      body.style.width = previous.bodyWidth;
+      body.style.overflow = previous.bodyOverflow;
+      window.scrollTo({ left: 0, top: scrollY, behavior: "instant" });
+    };
+  }, [expanded]);
+
+  useLayoutEffect(() => {
+    if (expanded) inputRef.current?.focus({ preventScroll: true });
   }, [expanded]);
 
   useEffect(() => {
@@ -468,8 +502,11 @@ export function TerminalDock({
 
             {/* Phosphor-style scrollback */}
             <div
+              ref={logRef}
               className="min-h-0 flex-1 overflow-y-auto overscroll-contain border-x border-[#0d280d] bg-[#050a06] px-4 py-4 text-sm leading-relaxed [text-shadow:0_0_6px_rgba(0,255,80,0.12)] [-webkit-overflow-scrolling:touch] md:px-3 md:py-3 md:text-[12px]"
               role="log"
+              aria-label="Terminal output"
+              tabIndex={0}
             >
               {lines.map((line, i) => (
                 <p
@@ -499,7 +536,6 @@ export function TerminalDock({
                   <span className={shellCol}>… </span>working
                 </p>
               ) : null}
-              <div ref={endRef} className="h-px" />
             </div>
 
             <p id="tty-hint" className="sr-only">

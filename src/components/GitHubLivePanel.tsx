@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ExternalLink, GitBranch, GitPullRequest, Zap } from "lucide-react";
+import {
+  BookOpen,
+  ExternalLink,
+  GitBranch,
+  GitFork,
+  GitPullRequest,
+  Star,
+  UserRound,
+  Users,
+  Zap,
+} from "lucide-react";
 import clsx from "clsx";
 import { GithubIcon } from "@/components/BrandIcons";
 import { profile } from "@/content/profile";
@@ -17,6 +27,21 @@ const GH = {
 
 type Day = { date: string; count: number };
 type Week = { days: Day[] };
+type GitHubRepository = {
+  name: string;
+  description: string | null;
+  url: string;
+  language: string | null;
+  stars: number;
+  forks: number;
+  pushedAt: string | null;
+};
+type PublicProfileSummary = {
+  publicRepos: number;
+  followers: number;
+  following: number;
+  repositories: GitHubRepository[];
+};
 
 export type GitHubInsights = {
   error: string | null;
@@ -29,6 +54,7 @@ export type GitHubInsights = {
     totalContributions: number;
   };
   source?: "graphql" | "public";
+  profile?: PublicProfileSummary | null;
   streak: { current: number; longest: number };
   weeks: Week[];
 };
@@ -51,6 +77,95 @@ function isInsightsReady(
   if (d == null) return false;
   if (d.error) return false;
   return Array.isArray(d.weeks) && d.weeks.length > 0;
+}
+
+function GitHubProfileDetails({ profile }: { profile?: PublicProfileSummary | null }) {
+  if (!profile) return null;
+
+  const metrics = [
+    { label: "Public repositories", value: profile.publicRepos, icon: BookOpen },
+    { label: "Followers", value: profile.followers, icon: Users },
+    { label: "Following", value: profile.following, icon: UserRound },
+  ];
+
+  return (
+    <div className="mt-7 border-t border-slate-200/90 pt-6 dark:border-white/10">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {metrics.map(({ label, value, icon: Icon }) => (
+          <div
+            key={label}
+            className="rounded-xl border border-slate-200/80 bg-white/60 px-3 py-3 dark:border-white/8 dark:bg-white/[0.025]"
+          >
+            <div className="flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-wide text-slate-500 sm:text-[10px] dark:text-white/55">
+              <Icon className="size-3 shrink-0 text-ocean-600/75 dark:text-ocean-200/60" />
+              {label}
+            </div>
+            <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
+              {value.toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {profile.repositories.length > 0 && (
+        <section className="mt-6" aria-labelledby="github-recent-title">
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <h3
+              id="github-recent-title"
+              className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 dark:text-white/55"
+            >
+              Recently pushed
+            </h3>
+            <span className="text-[10px] text-slate-400 dark:text-white/40">
+              Public repositories
+            </span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {profile.repositories.map((repo) => (
+              <a
+                key={repo.url}
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex min-w-0 flex-col rounded-xl border border-slate-200/80 bg-white/60 p-4 transition-colors hover:border-ocean-500/35 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300 dark:border-white/8 dark:bg-white/[0.025] dark:hover:border-ocean-300/30 dark:hover:bg-white/[0.05]"
+              >
+                <span className="flex items-center justify-between gap-2">
+                  <span className="truncate font-mono text-sm font-semibold text-slate-900 group-hover:text-ocean-700 dark:text-white dark:group-hover:text-ocean-200">
+                    {repo.name}
+                  </span>
+                  <ExternalLink className="size-3.5 shrink-0 text-slate-400 group-hover:text-ocean-600 dark:text-white/45 dark:group-hover:text-ocean-200" />
+                </span>
+                <span className="mt-2 line-clamp-2 min-h-10 text-xs leading-5 text-slate-600 dark:text-white/65">
+                  {repo.description || "Public project on GitHub."}
+                </span>
+                <span className="mt-4 flex items-center justify-between gap-3 border-t border-slate-200/70 pt-3 text-[10px] text-slate-500 dark:border-white/8 dark:text-white/50">
+                  <span className="truncate">{repo.language || "Repository"}</span>
+                  <span className="flex shrink-0 items-center gap-3">
+                    <span className="inline-flex items-center gap-1" aria-label={`${repo.stars} stars`}>
+                      <Star className="size-3" /> {fmtCompact(repo.stars)}
+                    </span>
+                    <span className="inline-flex items-center gap-1" aria-label={`${repo.forks} forks`}>
+                      <GitFork className="size-3" /> {fmtCompact(repo.forks)}
+                    </span>
+                  </span>
+                </span>
+                {repo.pushedAt && (
+                  <span className="mt-2 text-[10px] text-slate-400 dark:text-white/40">
+                    Pushed {new Date(repo.pushedAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      timeZone: "UTC",
+                    })}
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
 }
 
 export function GitHubLivePanel() {
@@ -142,7 +257,12 @@ export function GitHubLivePanel() {
   const gh = profile.socials.github;
 
   if (err || (data && data.error)) {
-    return <GitHubFallback gh={gh} login={data?.login} />;
+    return (
+      <>
+        <GitHubFallback gh={gh} login={data?.login} />
+        <GitHubProfileDetails profile={data?.profile} />
+      </>
+    );
   }
 
   if (!data) {
@@ -335,6 +455,7 @@ export function GitHubLivePanel() {
           </div>
         </aside>
       </div>
+      <GitHubProfileDetails profile={data.profile} />
     </div>
   );
 }

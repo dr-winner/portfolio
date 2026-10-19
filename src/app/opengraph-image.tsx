@@ -4,6 +4,7 @@ import { profile } from "@/content/profile";
 export const alt = `${profile.name} — ${profile.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+const roleLines = profile.role.split("|").map((role) => role.trim());
 
 export default async function Image() {
   return new ImageResponse(
@@ -54,8 +55,9 @@ export default async function Image() {
               color: "transparent",
             }}
           >
-            Ethical Hacker
-            {"\n"}Penetration Tester
+            {roleLines.map((role) => (
+              <div key={role}>{role}</div>
+            ))}
           </div>
           <div style={{ fontSize: 32, color: "#c4cde0", maxWidth: 900 }}>
             {profile.tagline}

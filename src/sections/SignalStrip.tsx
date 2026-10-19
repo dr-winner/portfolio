@@ -17,9 +17,9 @@ export function SignalStrip() {
               <div className="flex w-max animate-move-left gap-10 md:gap-14 pr-10 md:pr-14 [animation-duration:90s] hover:[animation-play-state:paused]">
                 {[...Array(2)].map((_, i) => (
                   <Fragment key={i}>
-                    {signalWords.map((w) => (
+                    {signalWords.map((w, wordIndex) => (
                       <span
-                        key={`${i}-${w}`}
+                        key={`${i}-${wordIndex}-${w}`}
                         className="inline-flex shrink-0 items-center gap-2.5 text-[13px] font-medium tracking-tight text-slate-600 md:text-sm dark:text-slate-300"
                       >
                         <span className="size-1 shrink-0 rounded-full bg-ocean-500/70 dark:bg-ocean-300" />
