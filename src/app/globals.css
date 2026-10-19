@@ -283,6 +283,68 @@ html.light .bg-grid-soft {
   animation: grain-move 30s linear infinite;
 }
 
+/* ─── Infinite testimonial rail ────────────────────────────────────────────── */
+@keyframes testimonial-marquee-scroll {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.testimonial-marquee {
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.testimonial-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: testimonial-marquee-scroll 54s linear infinite;
+  will-change: transform;
+}
+
+.testimonial-marquee[data-paused="true"] .testimonial-marquee__track {
+  animation-play-state: paused;
+}
+
+.testimonial-marquee__group {
+  display: flex;
+  flex: none;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.testimonial-marquee-card {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 180ms ease-out;
+}
+
+.testimonial-marquee-card__glow {
+  background: radial-gradient(
+    360px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+    rgba(60, 207, 255, 0.12),
+    transparent 72%
+  );
+}
+
+.testimonial-marquee--reduced {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+}
+
+.testimonial-marquee--reduced .testimonial-marquee__track {
+  animation: none;
+}
+
+.testimonial-marquee--reduced .testimonial-marquee__group[aria-hidden="true"] {
+  display: none;
+}
+
+.testimonial-marquee--reduced .testimonial-marquee-card {
+  scroll-snap-align: start;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
