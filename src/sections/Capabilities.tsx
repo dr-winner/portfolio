@@ -61,8 +61,8 @@ export function Capabilities() {
         <ScrollReveal>
           <SectionHeader
             eyebrow="What I do"
-            title="The work, not the job title."
-            description="How I show up: defend systems, make models useful, harden the cloud, and still ship the product. Four lanes — one through-line: fewer surprises, faster answers."
+            title="Ethical hacking. Practical security."
+            description="I focus on authorized web, API, and network testing, with red-team practice and application security at the center. My software engineering background helps me turn findings into fixes teams can use."
           />
         </ScrollReveal>
 

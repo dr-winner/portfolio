@@ -24,8 +24,8 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
         <ScrollReveal>
           <SectionHeader
             eyebrow="Trajectory"
-            title="Engineer → AI builder → Security operator."
-            description="Same curiosity, broader lens. I stack layers instead of replacing them."
+            title="From building systems to testing how they break."
+            description="My software engineering background shapes my focus on ethical hacking and application security."
           />
         </ScrollReveal>
 

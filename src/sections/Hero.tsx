@@ -44,16 +44,15 @@ export function Hero() {
           <div className="relative z-10 flex min-w-0 flex-col items-start gap-7 text-left">
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="Cyber & Cloud" className="block whitespace-nowrap font-bold text-display-etched" />
+                <CharSplit text="Ethical Hacker" className="block whitespace-nowrap font-bold text-display-etched" />
                 <span className="block text-[0.75em]">
-                  <CharSplit text="Security Engineer" className="whitespace-nowrap tracking-tight" charClassName="text-gradient-ocean" />
+                  <CharSplit text="Penetration Tester" className="whitespace-nowrap tracking-tight" charClassName="text-gradient-ocean" />
                 </span>
               </h1>
             </HeroAnimation>
 
             <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/85">
-              Threat detection in the SOC. Cloud hardening on AWS, Azure, GCP.
-              Pentesting, forensics, compliance.
+              Focused on authorized web and network penetration testing, red-team practice, and application security.
             </p>
 
             <div className="flex w-full max-w-md flex-col gap-3 font-sans sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
@@ -79,12 +78,12 @@ export function Hero() {
             <div className="mt-1 w-full border-t border-slate-200/80 pt-6 dark:border-white/10">
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label: "Cloud Security",     accent: "cyber"  },
-                  { label: "SOC Analyst",         accent: "signal" },
-                  { label: "Penetration Testing", accent: "threat" },
-                  { label: "Ethical Hacking",     accent: "threat" },
-                  { label: "DFIR",                accent: "ok"     },
-                  { label: "GRC",                 accent: "cyber"  },
+                  { label: "Web App Pentesting", accent: "threat" },
+                  { label: "Network Testing",    accent: "threat" },
+                  { label: "Red Teaming",        accent: "signal" },
+                  { label: "Application Security", accent: "cyber" },
+                  { label: "Authorized Scope",   accent: "signal" },
+                  { label: "Python Tooling",     accent: "cyber"  },
                 ].map(({ label, accent }) => (
                   <span
                     key={label}
@@ -110,17 +109,6 @@ export function Hero() {
               </div>
             </div>
 
-            {/* Keep clouds stat for quick scan */}
-            <dl className="hidden">
-              <div>
-                <dt className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">
-                  Clouds
-                </dt>
-                <dd className="mt-1 text-sm font-medium text-slate-900 dark:text-white/90">
-                  AWS · Azure · GCP
-                </dd>
-              </div>
-            </dl>
           </div>
 
           {/* Right: terminal */}
@@ -137,7 +125,7 @@ export function Hero() {
                   <span className="size-2.5 rounded-full bg-ok-400/80" />
                 </div>
                 <span className="min-w-0 truncate text-center font-mono text-[10px] tracking-tight text-slate-600 sm:text-[11px] dark:text-white/65">
-                  ~ /soc/agents — zsh
+                  ~ /web-pentest — zsh
                 </span>
                 <div className="flex shrink-0 items-center justify-end gap-1 text-[10px] text-slate-600 sm:text-[11px] dark:text-white/65">
                   <Shield className="size-3 shrink-0 text-ocean-500 dark:text-ocean-300" />
@@ -169,11 +157,11 @@ export function Hero() {
                       className: "text-slate-500 dark:text-white/75",
                     },
                     {
-                      text: "cloud-security/  soc-analyst/  pentest/",
+                      text: "web-apps/  network-pentest/  appsec/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {
-                      text: "ethical-hacking/  dfir/  grc/",
+                      text: "ethical-hacking/  red-team/  api-security/",
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {

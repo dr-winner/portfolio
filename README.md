@@ -1,6 +1,8 @@
 # Richard Winner Duvor — Portfolio
 
-Personal portfolio site for **Richard Winner Duvor**, SOC Analyst & AI Engineer.
+Personal portfolio site for **Richard Winner Duvor**, focused on ethical hacking,
+penetration testing, red-team assessments, and application security. His software
+engineering background supports that work.
 
 Built with Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS and
 Framer Motion. Ships with a lightweight admin CMS backed by Prisma + PostgreSQL (Neon) so

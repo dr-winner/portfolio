@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Cloud, Code2, ShieldAlert, Swords } from "lucide-react";
+import { Code2, Swords } from "lucide-react";
 
 export type CapabilityLevel = "core" | "working" | "exploring";
 
@@ -19,53 +19,22 @@ export type Capability = {
 
 /** Two-paragraph narrative above the capabilities grid. */
 export const capabilityPreamble: [string, string] = [
-  "SOC work: see something wrong, make it show up next time, shorten the gap between alert and fix. I care about detections that don't spam the team and case notes the next shift can use.",
-  "Cloud security: start from identity and blast radius, get logs flowing, tighten posture before audits, monitor the control plane like you monitor endpoints.",
+  "My focus is authorized ethical hacking and penetration testing across web applications, APIs, and networks. I work within an agreed scope, validate issues safely, and turn evidence into clear, actionable reports.",
+  "Red-team practice and application security build on my software engineering background, helping me explain impact and recommend practical remediation.",
 ];
 
 export const capabilities: Capability[] = [
   {
-    id: "soc",
-    label: "01 / Detect & Respond",
-    title: "Triage, hunt, close.",
-    description:
-      "I triage alerts, correlate events, and chase leads until it makes sense. Attackers get documented. Bad hygiene gets fixed in the detection.",
-    bullets: [
-      "Own cases from alert to close",
-      "ATT&CK-mapped hunts with real hypotheses",
-      "Write detection rules and postmortems people actually read",
-    ],
-    icon: ShieldAlert,
-    accent: "signal",
-    level: "core",
-    proficiency: 92,
-  },
-  {
-    id: "cloud",
-    label: "02 / Cloud Security",
-    title: "Lock down the cloud.",
-    description:
-      "Start from identity and blast radius. Get logs flowing. Tighten posture. Monitor the control plane.",
-    bullets: [
-      "Least privilege across AWS, Azure, GCP",
-      "CloudTrail, Entra, GCP Audit into one pipeline",
-      "Fix misconfigs, harden containers",
-    ],
-    icon: Cloud,
-    accent: "ocean",
-    level: "core",
-    proficiency: 88,
-  },
-  {
     id: "offensive",
-    label: "03 / Offensive Awareness",
-    title: "Think like an attacker.",
+    label: "01 / Ethical Hacking & Pentesting",
+    title: "Test the attack surface.",
     description:
-      "Know how attacks work to build better detections. Initial access, lateral movement, exfil — the real stuff, not theory.",
+      "I’m building depth through authorized hands-on web, API, and network testing, then turning findings into clear, useful reports.",
     bullets: [
-      "Pentest basics: recon, exploit, post-exploit",
-      "Purple team: test detections before attackers do",
-      "Track CVEs and exploits to keep rules current",
+      "Reconnaissance and enumeration within agreed scope",
+      "Safely validate weaknesses and capture reproducible evidence",
+      "Prioritize findings by impact and recommend practical remediation",
+      "Use red-team practice to understand attack paths and defensive visibility",
     ],
     icon: Swords,
     accent: "threat",
@@ -74,14 +43,14 @@ export const capabilities: Capability[] = [
   },
   {
     id: "automation",
-    label: "04 / Security Automation",
-    title: "Automate the boring parts.",
+    label: "02 / Security Tooling",
+    title: "Make testing repeatable.",
     description:
-      "Python, APIs, AI agents. Close the gap between alert volume and analyst time. Build tools that handle repetitive work.",
+      "Use Python and APIs to reduce repetitive work, organize evidence, and make security checks easier to repeat.",
     bullets: [
-      "SOAR playbooks and Python scripts that save time",
-      "LLM-assisted enrichment, IOC lookup, log summaries",
-      "Detection-as-code with version control and CI testing",
+      "Write small Python helpers for scoped testing tasks",
+      "Organize findings and supporting evidence clearly",
+      "Use version control to keep tools and reports reproducible",
     ],
     icon: Code2,
     accent: "ok",

@@ -39,7 +39,7 @@ export const certifications: Cert[] = [
     targetDate: "Q3 2026",
     progress: 30,
     description:
-      "The vendor-neutral baseline for security: I'm using it to lock in the fundamentals I touch every day in the SOC.",
+      "The vendor-neutral security baseline, covering threats and vulnerabilities, security architecture, operations, and risk management.",
     skills: ["Threats & Vulnerabilities", "Security Architecture", "Operations", "Governance & Risk", "IR"],
     modules: [
       "General Security Concepts",
@@ -75,7 +75,7 @@ export const certifications: Cert[] = [
     status: "earned",
     progress: 100,
     description:
-      "Anchoring AWS fundamentals so my cloud-security work stops at the right primitives: IAM, KMS, CloudTrail, GuardDuty.",
+      "AWS foundational knowledge covering identity, encryption, monitoring, shared responsibility, and core cloud services.",
     skills: ["IAM", "KMS", "CloudTrail", "GuardDuty", "Shared Responsibility", "Billing"],
     modules: [
       "Cloud Concepts",
@@ -91,11 +91,9 @@ export const certifications: Cert[] = [
     status: "in-progress",
     progress: 55,
     description:
-      "Hands-on labs across blue, red, and cloud security tracks — where the theory becomes muscle memory.",
-    skills: ["Blue-team", "SOC L1", "Web exploitation", "AD attacks", "Cloud labs", "Forensics"],
+      "Hands-on cybersecurity labs that reinforce practical techniques through guided challenges and repeatable practice.",
+    skills: ["Web exploitation", "Network testing", "AD attacks", "Linux", "Forensics"],
     modules: [
-      "SOC Level 1",
-      "Cyber Defense",
       "Junior Penetration Tester",
       "AD enumeration & lateral movement",
     ],

@@ -4,24 +4,23 @@ import { useEffect, useRef } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 
 const DEFAULT_ITEMS = [
+  "Burp Suite",
+  "Nmap",
+  "OWASP Top 10",
+  "Metasploit",
   "Python",
   "TypeScript",
   "Next.js",
   "FastAPI",
   "LangChain",
-  "Splunk",
-  "Elastic",
-  "AWS",
   "Docker",
   "Solidity",
   "React",
   "Node.js",
   "PostgreSQL",
-  "MITRE ATT&CK",
+  "Linux",
   "LangGraph",
-  "CrowdStrike",
   "Redis",
-  "Terraform",
 ];
 
 export function Marquee({

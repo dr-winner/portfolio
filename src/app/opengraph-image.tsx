@@ -42,16 +42,18 @@ export default async function Image() {
           <div style={{ fontSize: 34, color: "#a8b2c7" }}>{profile.name}</div>
           <div
             style={{
-              fontSize: 84,
+              fontSize: 72,
               fontWeight: 700,
               lineHeight: 1.02,
               letterSpacing: -2,
+              whiteSpace: "pre-line",
               background: "linear-gradient(135deg, #7ee2ff 0%, #ffae00 100%)",
               backgroundClip: "text",
               color: "transparent",
             }}
           >
-            SOC Analyst & AI Engineer
+            Ethical Hacker
+            {"\n"}Penetration Tester
           </div>
           <div style={{ fontSize: 32, color: "#c4cde0", maxWidth: 900 }}>
             {profile.tagline}
@@ -68,11 +70,11 @@ export default async function Image() {
             textTransform: "uppercase",
           }}
         >
-          <div>AWS · Azure · GCP</div>
+          <div>Web & API Security</div>
           <div>•</div>
-          <div>MITRE ATT&CK</div>
+          <div>Network Pentesting</div>
           <div>•</div>
-          <div>Agentic AI</div>
+          <div>Red Teaming</div>
         </div>
       </div>
     ),

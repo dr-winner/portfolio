@@ -98,7 +98,7 @@ export async function getStackCategories(): Promise<StackCategory[]> {
         })
       ),
     })
-  );
+  ).filter((category) => !["security", "cloud"].includes(category.id));
 }
 
 export async function getExperience(): Promise<TimelineEntry[]> {

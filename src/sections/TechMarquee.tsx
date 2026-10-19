@@ -12,14 +12,15 @@ import {
 /* ─── Data ─────────────────────────────────────────────────────────────────── */
 
 const TECH_ITEMS = [
+  "Burp Suite",
+  "Nmap",
+  "OWASP Top 10",
+  "Metasploit",
   "Python",
   "TypeScript",
   "Next.js",
   "FastAPI",
-  "LangChain",
-  "Splunk",
-  "Elastic",
-  "AWS",
+  "Linux",
   "Docker",
   "React",
   "PostgreSQL",
@@ -28,10 +29,7 @@ const TECH_ITEMS = [
   "Framer Motion",
   "Solidity",
   "LLMs",
-  "Azure",
-  "GCP",
   "GitHub Actions",
-  "Terraform",
 ] as const;
 
 /* ─── Dot separator ────────────────────────────────────────────────────────── */

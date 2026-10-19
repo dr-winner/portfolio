@@ -46,8 +46,8 @@ export function About() {
                   </p>
                 ))}
                 <p className="text-slate-600 dark:text-white/75">
-                  If you&apos;re building something ambitious that needs to be fast, well-instrumented,
-                  and hard to compromise — we should talk.
+                  Need an authorized web, API, or network assessment with clear scope,
+                  reproducible findings, and practical remediation? Let&apos;s talk.
                 </p>
               </div>
             </Card>

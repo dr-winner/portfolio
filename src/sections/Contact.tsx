@@ -105,8 +105,9 @@ export function Contact() {
               </h2>
 
               <p className="mt-4 max-w-xl text-slate-600 md:text-lg dark:text-white/85">
-                I&apos;m open to SOC, detection-engineering, and AI-agent roles,
-                and to select contract work. The fastest way in is email.
+                I&apos;m focused on ethical hacking, penetration testing, red-team,
+                and application security roles, plus select authorized assessments
+                with clear scope. The fastest way in is email.
               </p>
 
               <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">

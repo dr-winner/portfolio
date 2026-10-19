@@ -10,7 +10,6 @@ import { Certifications } from "@/sections/Certifications";
 import { Testimonials } from "@/sections/Testimonials";
 import { About } from "@/sections/About";
 import { Contact } from "@/sections/Contact";
-import { Mentorship } from "@/sections/Mentorship";
 import { GitHubActivity } from "@/sections/GitHubActivity";
 import { Footer } from "@/sections/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -70,7 +69,6 @@ export default async function Home() {
         <Testimonials items={testimonials} />
         <About />
         <GitHubActivity />
-        <Mentorship />
         <Contact />
         <ScrollToTop />
       </main>
