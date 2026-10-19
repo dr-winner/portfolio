@@ -24,10 +24,11 @@ export type GitHubInsights = {
   login: string;
   range: { from: string; to: string };
   stats: {
-    totalCommitContributions: number;
-    totalPullRequestContributions: number;
+    totalCommitContributions: number | null;
+    totalPullRequestContributions: number | null;
     totalContributions: number;
   };
+  source?: "graphql" | "public";
   streak: { current: number; longest: number };
   weeks: Week[];
 };
@@ -154,6 +155,7 @@ export function GitHubLivePanel() {
   }
 
   const s = data.stats;
+  const visibleStats = statConfig.filter(({ key }) => typeof s[key] === "number");
 
   return (
     <div className="w-full text-left">
@@ -287,30 +289,32 @@ export function GitHubLivePanel() {
 
         {/* Sidebar: metrics + streaks */}
         <aside className="order-2 flex min-w-0 flex-col gap-4 self-start lg:col-span-5 xl:col-span-4">
-          <div>
-            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 dark:text-white/55">
-              Activity
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {statConfig.map(({ key, label, icon: Icon }) => {
-                const v = s[key];
-                return (
-                  <div
-                    key={key}
-                    className="rounded-xl border border-slate-200/90 bg-white/90 px-2.5 py-2.5 transition-colors hover:border-slate-300 dark:border-white/8 dark:bg-white/[0.02] dark:hover:border-white/12"
-                  >
-                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-500 dark:text-white/55">
-                      <Icon className="size-3 shrink-0 text-ocean-600/70 dark:text-ocean-200/45" />
-                      {label}
+          {visibleStats.length > 0 && (
+            <div>
+              <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 dark:text-white/55">
+                Activity
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {visibleStats.map(({ key, label, icon: Icon }) => {
+                  const v = s[key];
+                  return (
+                    <div
+                      key={key}
+                      className="rounded-xl border border-slate-200/90 bg-white/90 px-2.5 py-2.5 transition-colors hover:border-slate-300 dark:border-white/8 dark:bg-white/[0.02] dark:hover:border-white/12"
+                    >
+                      <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-500 dark:text-white/55">
+                        <Icon className="size-3 shrink-0 text-ocean-600/70 dark:text-ocean-200/45" />
+                        {label}
+                      </div>
+                      <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
+                        {typeof v === "number" ? fmtCompact(v) : "—"}
+                      </p>
                     </div>
-                    <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
-                      {typeof v === "number" ? fmtCompact(v) : "—"}
-                    </p>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-gradient-to-b from-ocean-500/[0.06] to-transparent p-3 dark:border-white/8 dark:from-ocean-300/[0.04]">
             <div className="text-center">
@@ -337,51 +341,26 @@ export function GitHubLivePanel() {
 
 function GitHubFallback({ gh, login }: { gh: string; login?: string }) {
   return (
-    <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">
           Open source
         </p>
         <p className="mt-2 max-w-xl text-base text-slate-700 dark:text-white/75">
-          Live contribution data isn&apos;t available right now. The full history,
-          pinned repos, and recent commits are on the GitHub profile.
+          Live contribution data is temporarily unavailable. Browse the public
+          activity, pinned repositories, and recent work on the GitHub profile.
         </p>
-        <div className="mt-5">
-          <a
-            href={gh}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-ocean-500/35 bg-ocean-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-ocean-500/55 hover:bg-ocean-500/[0.12] dark:border-ocean-300/35 dark:bg-ocean-300/[0.05] dark:text-white dark:hover:border-ocean-300/55"
-          >
-            <GithubIcon className="size-4 text-ocean-600 dark:text-ocean-300" />
-            View profile on GitHub{login ? ` (@${login})` : ""}
-            <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/60 dark:group-hover:text-white/70" />
-          </a>
-        </div>
       </div>
-
-      {/* Skeleton heatmap — gives the section visual presence even without data */}
-      <div
-        aria-hidden
-        className="grid w-full max-w-[260px] gap-0.5 rounded-xl border border-slate-200/90 bg-slate-100/70 p-3 dark:border-white/10 dark:bg-[#06080d]"
-        style={{ gridTemplateColumns: "repeat(13, 1fr)", gridAutoRows: "8px" }}
+      <a
+        href={gh}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-ocean-500/35 bg-ocean-500/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-ocean-500/55 hover:bg-ocean-500/[0.12] dark:border-ocean-300/35 dark:bg-ocean-300/[0.05] dark:text-white dark:hover:border-ocean-300/55"
       >
-        {Array.from({ length: 13 * 7 }).map((_, i) => {
-          // Pseudo-random fill weight so it doesn't look mechanical
-          const seed = (i * 7919) % 100;
-          const tone =
-            seed < 55
-              ? GH.empty
-              : seed < 75
-                ? GH.l1
-                : seed < 90
-                  ? GH.l2
-                  : seed < 97
-                    ? GH.l3
-                    : GH.l4;
-          return <span key={i} className={clsx("rounded-[1px]", tone)} />;
-        })}
-      </div>
+        <GithubIcon className="size-4 text-ocean-600 dark:text-ocean-300" />
+        View profile on GitHub{login ? ` (@${login})` : ""}
+        <ExternalLink className="size-3.5 text-slate-400 group-hover:text-slate-600 dark:text-white/60 dark:group-hover:text-white/70" />
+      </a>
     </div>
   );
 }
