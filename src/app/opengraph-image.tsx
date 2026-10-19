@@ -42,6 +42,8 @@ export default async function Image() {
           <div style={{ fontSize: 34, color: "#a8b2c7" }}>{profile.name}</div>
           <div
             style={{
+              display: "flex",
+              flexDirection: "column",
               fontSize: 72,
               fontWeight: 700,
               lineHeight: 1.02,
