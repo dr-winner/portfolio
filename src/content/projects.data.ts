@@ -72,9 +72,9 @@ export const projectsData: ProjectData[] = [
     results: [
       "Extracted 128-bit document hashes and executed offline dictionary recovery using John the Ripper to recover credentials within seconds",
       "Audited spatial keyboard-walk vulnerabilities (1qaz2wsx) to show how simple pattern-based passwords bypass naive complexity rules",
-      "Integrated HexStrike AI with Claude Desktop via Model Context Protocol (MCP) to automate password entropy scoring and analyze credential reuse across documents",
+      "Implemented HexStrike AI MCP workflow integration to automate password entropy scoring and analyze credential reuse across documents",
     ],
-    techStack: ["John the Ripper", "Hash Recovery", "HexStrike AI", "Claude Desktop MCP", "Cryptanalysis"],
+    techStack: ["John the Ripper", "Hash Recovery", "HexStrike AI MCP", "Cryptanalysis"],
     repo: "https://github.com/dr-winner/cryptanalysis-and-hash-recovery-assessment",
     status: "live",
   },

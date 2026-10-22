@@ -8,9 +8,9 @@ export const profile = {
   /** Optional - not shown in public UI */
   location: "Accra, Ghana",
   timezone: "GMT+0",
-  email: "drwinner03@gmail.com",
+  email: "duvorrichardwinner@gmail.com",
   /** Shown in contact; full address is revealed only in mailto */
-  emailObfuscated: "drwinner ···@gmail.com",
+  emailObfuscated: "duvorrichard···@gmail.com",
   availability: {
     status: "available",
     label: "Open to ethical hacking · penetration testing · red team · AppSec roles",

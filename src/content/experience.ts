@@ -9,7 +9,24 @@ export type TimelineEntry = {
 
 export const experience: TimelineEntry[] = [
   {
-    period: "August - September 2026 · 2 months",
+    period: "Feb 2025 - Present",
+    title: "Frontend Engineering Lead (AppSec & Healthcare Systems)",
+    org: "Synchora Health",
+    description:
+      "Architected and built an offline-first clinical web application for nurses in healthcare facilities. Enforced role-based access control (RBAC) across clinical dashboards, secured offline client-side PHI persistence, and engineered tamper-resilient API synchronization mechanisms.",
+    tags: ["AppSec", "Healthcare Systems", "React", "TypeScript", "Offline-First", "RBAC"],
+    current: true,
+  },
+  {
+    period: "Sep 2026 - Oct 2026",
+    title: "Cybersecurity Intern (Ethical Hacking & SOC)",
+    org: "TechBiz Security",
+    description:
+      "Completed 30+ offensive and defensive TryHackMe hands-on security labs covering web application exploitation, Linux and Windows privilege escalation, network reconnaissance, and SIEM alert triage.",
+    tags: ["Ethical Hacking", "SOC", "Web Exploitation", "TryHackMe", "SIEM"],
+  },
+  {
+    period: "Aug 2026 - Sep 2026",
     title: "Penetration Testing Intern",
     org: "NetworkWalks",
     description:
