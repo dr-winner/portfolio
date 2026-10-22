@@ -6,7 +6,7 @@ export type Cert = {
   description: string;
   examCode?: string;
   targetDate?: string;
-  progress?: number; // 0–100
+  progress?: number; // 0-100
   skills?: string[];
   modules?: string[];
   link?: string;
@@ -32,32 +32,13 @@ export const certifications: Cert[] = [
     link: "https://grow.google/certificates/cybersecurity/",
   },
   {
-    name: "CompTIA Security+",
-    issuer: "CompTIA",
-    examCode: "SY0-701",
-    status: "pursuing",
-    targetDate: "Q3 2026",
-    progress: 30,
-    description:
-      "The vendor-neutral security baseline, covering threats and vulnerabilities, security architecture, operations, and risk management.",
-    skills: ["Threats & Vulnerabilities", "Security Architecture", "Operations", "Governance & Risk", "IR"],
-    modules: [
-      "General Security Concepts",
-      "Threats, Vulnerabilities & Mitigations",
-      "Security Architecture",
-      "Security Operations",
-      "Security Program Management",
-    ],
-    link: "https://www.comptia.org/certifications/security",
-  },
-  {
     name: "Cisco Ethical Hacker",
     issuer: "Cisco",
     status: "pursuing",
     targetDate: "Q4 2026",
     progress: 60,
     description:
-      "Offensive security fundamentals from a vendor with deep network roots — recon, exploitation, and post-exploitation mapped to real-world attack surfaces.",
+      "Offensive security fundamentals from a vendor with deep network roots: recon, exploitation, and post-exploitation mapped to real-world attack surfaces.",
     skills: ["Reconnaissance", "Exploitation", "Post-Exploitation", "Network Attacks", "Web App Testing"],
     modules: [
       "Introduction to Ethical Hacking",

@@ -1,4 +1,4 @@
-// Plain data only — safe to import from Node scripts (no image imports here).
+// Plain data only - safe to import from Node scripts (no image imports here).
 
 export type ProjectTag =
   | "Security"
@@ -29,40 +29,53 @@ export const projectsData: ProjectData[] = [
   {
     slug: "healthcare-pentest-case-study",
     company: "Case Study",
-    year: "",
+    year: "2026",
     title: "Healthcare Penetration Test and Security Audit (2026)",
     summary:
-      "Full pentest of a hospital target, from recon to a compliance-mapped report.",
+      "Full-scope penetration test and security audit simulating hospital infrastructure, demonstrating a chained six-phase exploitation path from initial recon to complete administrative takeover and payroll data exfiltration.",
     tags: ["Pentest", "Web Security"],
-    results: [],
-    techStack: ["SQL Injection", "Cryptanalysis", "Metadata Forensics", "POPIA", "GDPR"],
-    // Link intentionally held until the public report's confidentiality concerns are resolved.
+    results: [
+      "Bypassed authentication barrier using SQL injection string truncation (admin ' --) to gain unauthenticated portal takeover",
+      "Recovered sensitive patient pathology records by executing offline dictionary attacks against weak 128-bit RC4 PDF encryption via pdf2john",
+      "Extracted embedded administrative identity from document metadata using ExifTool to locate and exfiltrate unindexed employee payroll data",
+      "Authored defense-in-depth remediation code including parameterized PHP PDO authentication patches and automated Python AES-256 PDF encryption and metadata scrubbing scripts",
+    ],
+    techStack: ["SQL Injection", "Cryptanalysis", "pdf2john", "ExifTool", "PHP PDO", "Python", "POPIA", "GDPR"],
+    repo: "https://github.com/dr-winner/healthcare-pentest-case-study",
     status: "live",
   },
   {
-    slug: "footprinting-network-scanning-week-2",
+    slug: "osint-and-network-recon-assessment",
     company: "Report",
-    year: "",
-    title: "Footprinting and Network Scanning (2026)",
+    year: "2026",
+    title: "External OSINT and Network Reconnaissance Assessment",
     summary:
-      "Recon and scanning against a permitted target and my own network.",
+      "Multi-vector reconnaissance engagement demonstrating how threat actors map organizational attack surfaces from public OSINT through active subnet discovery.",
     tags: ["Pentest", "Recon"],
-    results: [],
-    techStack: ["Nmap", "WHOIS", "dnsrecon", "theHarvester", "Maltego", "wafw00f", "WhatWeb"],
-    repo: "https://github.com/dr-winner/Penetration-Testing-Reports---Internship-Week2-Task-",
+    results: [
+      "Gathered external domain intelligence using WHOIS, DNSRecon, Wafw00f, and Google Hacking (GHDB) dorks",
+      "Mapped organizational infrastructure and contacts non-intrusively via theHarvester and Maltego Graph entity relationship transforms",
+      "Executed active subnet discovery and port enumeration with Nmap and Zenmap to profile live hosts and exposed legacy services",
+    ],
+    techStack: ["Nmap", "Zenmap", "WHOIS", "DNSRecon", "theHarvester", "Maltego", "Wafw00f", "WhatWeb"],
+    repo: "https://github.com/dr-winner/osint-and-network-recon-assessment",
     status: "live",
   },
   {
-    slug: "password-hash-cracking-week-3",
+    slug: "cryptanalysis-and-hash-recovery-assessment",
     company: "Lab",
-    year: "",
-    title: "Password and Hash Cracking (2026)",
+    year: "2026",
+    title: "Cryptanalysis and Automated Hash Recovery Assessment",
     summary:
-      "Cracking protected PDFs, plus AI-assisted analysis with HexStrike AI connected to Claude through MCP.",
+      "Applied cryptanalysis assessment evaluating document hash recovery, dictionary attacks, and AI-assisted credential entropy auditing.",
     tags: ["Pentest", "AI"],
-    results: [],
-    techStack: ["John the Ripper", "HexStrike AI", "MCP"],
-    repo: "https://github.com/dr-winner/Password-Cracking-W-Claude-MCP-AI-Internship-Week3",
+    results: [
+      "Extracted 128-bit document hashes and executed offline dictionary recovery using John the Ripper to recover credentials within seconds",
+      "Audited spatial keyboard-walk vulnerabilities (1qaz2wsx) to show how simple pattern-based passwords bypass naive complexity rules",
+      "Integrated HexStrike AI with Claude Desktop via Model Context Protocol (MCP) to automate password entropy scoring and analyze credential reuse across documents",
+    ],
+    techStack: ["John the Ripper", "Hash Recovery", "HexStrike AI", "Claude Desktop MCP", "Cryptanalysis"],
+    repo: "https://github.com/dr-winner/cryptanalysis-and-hash-recovery-assessment",
     status: "live",
   },
   {
@@ -71,33 +84,35 @@ export const projectsData: ProjectData[] = [
     year: "2026",
     title: "AWS Threat Detection Lab",
     summary:
-      "Detection-as-code on AWS: CloudTrail + GuardDuty telemetry, EventBridge detections mapped to MITRE ATT&CK, least-privilege Lambda alerting.",
+      "Detection-as-code on AWS: CloudTrail and GuardDuty telemetry, EventBridge detections mapped to MITRE ATT&CK, and least-privilege Lambda alerting.",
     tags: ["Security"],
     results: [
-      "Six ATT&CK-mapped detections as Terraform",
-      "Root usage, no-MFA logins, log tampering, IAM persistence",
-      "One apply, one destroy, ~zero idle cost",
-      "CI: fmt/validate, Checkov IaC scan, ruff",
+      "Six ATT&CK-mapped detections deployed as Terraform infrastructure",
+      "Automated alerts for root usage, non-MFA logins, CloudTrail tampering, and IAM persistence",
+      "Single apply and destroy workflow with zero idle operational cost",
+      "CI validation pipeline with formatting, validation, Checkov IaC scanning, and Ruff linting",
     ],
     techStack: ["Terraform", "CloudTrail", "GuardDuty", "EventBridge", "Lambda", "MITRE ATT&CK"],
     repo: "https://github.com/dr-winner/aws-threat-detection-lab",
     status: "live",
   },
   {
-    slug: "soc-detection-lab",
-    company: "Lab",
+    slug: "ghostpass",
+    company: "ZECATHON",
     year: "2026",
-    title: "SOC Detection Lab",
+    title: "Ghostpass: Zero-Knowledge Unlinkable Subscription Protocol",
     summary:
-      "Home lab simulating attacker TTPs against Wazuh + ELK. Build and tune detections mapped to MITRE ATT&CK.",
-    tags: ["Security"],
+      "Cryptographic privacy protocol enabling unlinkable digital subscriptions through shielded Zcash payments and RSA blind signatures (RFC 9474), separating user identities from recurring access rights.",
+    tags: ["Security", "Web3", "Full-Stack"],
     results: [
-      "Ingest Sysmon, Zeek, cloud logs",
-      "Custom detections mapped to ATT&CK",
-      "Atomic Red Team sims with auto reports",
+      "Architected zwatch viewing-key watcher and payment matching engine to verify shielded transactions without exposing customer wallets",
+      "Implemented RFC 9474 RSABSSA blind signature workflows to issue unlinkable bearer access tokens for unauthenticated subscription sessions",
+      "Conducted privacy threat modeling to protect subscriber access against timing correlation, transaction graph linkage, and replay attacks",
+      "Built full-stack verification demos with session-based newsletter access and per-request API token enforcement",
     ],
-    techStack: ["Wazuh", "ELK", "Sysmon", "Zeek", "Atomic Red Team", "MITRE ATT&CK"],
-    status: "in-progress",
+    techStack: ["Zcash (ZEC)", "RSA Blind Signatures", "RFC 9474", "TypeScript", "Node.js", "Express", "Applied Cryptography"],
+    repo: "https://github.com/dr-winner/Ghostpass",
+    status: "live",
   },
   {
     slug: "proof9",
@@ -105,7 +120,7 @@ export const projectsData: ProjectData[] = [
     year: "2025",
     title: "Sound Rights Platform",
     summary:
-      "On-chain IP verification for musicians. Provenance, licensing, AI originality checks.",
+      "On-chain IP verification for musicians covering provenance, licensing, and AI originality checks.",
     tags: ["AI", "Web3", "Full-Stack"],
     results: [
       "Verify and license sound IP on-chain",
@@ -124,12 +139,12 @@ export const projectsData: ProjectData[] = [
     year: "2024",
     title: "LSTM Signal Engine on SingularityNET",
     summary:
-      "Deep-learning analyzer for AI tokens. Compares stability, accuracy, decisiveness.",
+      "Deep-learning analyzer for AI tokens comparing stability, accuracy, and decisiveness.",
     tags: ["AI", "Full-Stack"],
     results: [
       "Investment signals for AI tokens",
-      "LSTM model vs baseline benchmarks",
-      "Full pipeline: data in, dashboard out",
+      "LSTM model benchmarked against baseline models",
+      "Full pipeline from data ingestion to live dashboard",
     ],
     techStack: ["Python", "PyTorch", "LSTM", "Next.js", "SingularityNET"],
     link: "https://aix-market-analyzer.vercel.app/",
@@ -142,12 +157,12 @@ export const projectsData: ProjectData[] = [
     year: "2025",
     title: "Agentic Market Intelligence",
     summary:
-      "AI agent watches multi-protocol portfolios, surfaces sentiment-weighted moves in real time.",
+      "AI agent monitoring multi-protocol portfolios and surfacing sentiment-weighted moves in real time.",
     tags: ["AI", "Full-Stack", "Web3"],
     results: [
       "Tracks investments across protocols",
-      "Sentiment + trend analysis on assets",
-      "Actionable alerts for quick reactions",
+      "Sentiment and trend analysis on digital assets",
+      "Actionable alerts for rapid threat and opportunity response",
     ],
     techStack: ["Next.js", "TypeScript", "LLM Agents", "RAG"],
     link: "https://motifi-ai.vercel.app/",

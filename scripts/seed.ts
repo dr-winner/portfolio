@@ -1,6 +1,6 @@
 /**
  * Seed the database from the static content files in src/content/*.
- * Safe to re-run: it skips entries that already exist (matched by unique key).
+ * Safe to re-run: upserts projects and categories, syncs items, and cleans up obsolete records.
  */
 import { PrismaClient } from "@prisma/client";
 import { projectsData as projects } from "../src/content/projects.data";
@@ -12,36 +12,57 @@ import { testimonials } from "../src/content/testimonials";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding projects…");
+  console.log("Seeding projects...");
+
+  // Purge obsolete projects no longer present in static seed
+  const validSlugs = projects.map((p) => p.slug);
+  await prisma.project.deleteMany({
+    where: { slug: { notIn: validSlugs } },
+  });
+
   for (const [i, p] of projects.entries()) {
+    const data = {
+      company: p.company,
+      year: p.year,
+      title: p.title,
+      summary: p.summary,
+      tags: JSON.stringify(p.tags),
+      results: JSON.stringify(p.results),
+      techStack: JSON.stringify(p.techStack),
+      link: p.link ?? null,
+      repo: p.repo ?? null,
+      status: p.status,
+      order: i,
+    };
+
     await prisma.project.upsert({
       where: { slug: p.slug },
-      update: {},
+      update: data,
       create: {
         slug: p.slug,
-        company: p.company,
-        year: p.year,
-        title: p.title,
-        summary: p.summary,
-        tags: JSON.stringify(p.tags),
-        results: JSON.stringify(p.results),
-        techStack: JSON.stringify(p.techStack),
-        link: p.link ?? null,
-        repo: p.repo ?? null,
-        // Seed-time screenshots are bundled static imports; admin-uploaded
-        // ones get stored under /uploads and their path persisted here.
+        ...data,
         imagePath: null,
-        status: p.status,
-        order: i,
       },
     });
   }
 
-  console.log("Seeding stack…");
+  console.log("Seeding stack...");
+  // Purge obsolete categories
+  const validCategoryKeys = stackCategories.map((c) => c.id);
+  await prisma.stackCategory.deleteMany({
+    where: { key: { notIn: validCategoryKeys } },
+  });
+
   for (const [i, cat] of stackCategories.entries()) {
     const created = await prisma.stackCategory.upsert({
       where: { key: cat.id },
-      update: {},
+      update: {
+        label: cat.label,
+        description: cat.description,
+        accent: cat.accent,
+        iconKey: cat.iconKey,
+        order: i,
+      },
       create: {
         key: cat.id,
         label: cat.label,
@@ -66,7 +87,7 @@ async function main() {
     }
   }
 
-  console.log("Seeding experience…");
+  console.log("Seeding experience...");
   await prisma.experience.deleteMany();
   for (const [i, e] of experience.entries()) {
     await prisma.experience.create({
@@ -82,7 +103,7 @@ async function main() {
     });
   }
 
-  console.log("Seeding certifications…");
+  console.log("Seeding certifications...");
   await prisma.certification.deleteMany();
   for (const [i, c] of certifications.entries()) {
     await prisma.certification.create({
@@ -103,7 +124,7 @@ async function main() {
     });
   }
 
-  console.log("Seeding testimonials…");
+  console.log("Seeding testimonials...");
   await prisma.testimonial.deleteMany();
   for (const [i, t] of testimonials.entries()) {
     await prisma.testimonial.create({

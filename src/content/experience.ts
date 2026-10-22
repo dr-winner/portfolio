@@ -9,23 +9,23 @@ export type TimelineEntry = {
 
 export const experience: TimelineEntry[] = [
   {
-    period: "August — September 2026 · 2 months",
+    period: "August - September 2026 · 2 months",
     title: "Penetration Testing Intern",
     org: "NetworkWalks",
     description:
-      "Completed a two-month internship focused on ethical hacking and penetration testing.",
-    tags: ["Ethical Hacking", "Penetration Testing", "Web Security", "Network Security"],
+      "Executed black-box web application exploitation including SQL injection and authentication bypass, performed multi-tool OSINT and local subnet enumeration, extracted and cracked legacy PDF and archive hashes offline, and delivered CVSS v3.1 audit reports accompanied by standalone PHP PDO and Python remediation code.",
+    tags: ["Penetration Testing", "Web Security", "OSINT", "Cryptanalysis", "Remediation"],
   },
   {
-    period: "2024 — 2025",
+    period: "2024 - 2025",
     title: "AI / Agentic Systems Engineer",
     org: "Proof9 · AIX · motiFi.ai",
     description:
-      "Designed LLM agents with tool-use and RAG over private corpora. Shipped production AI features — IP verification on Story Protocol, LSTM market signals on SingularityNET, and multi-protocol portfolio intelligence.",
+      "Designed LLM agents with tool-use and RAG over private corpora. Shipped production AI features including IP verification on Story Protocol, LSTM market signals on SingularityNET, and multi-protocol portfolio intelligence.",
     tags: ["LLM Agents", "RAG", "LangGraph", "Python", "TypeScript"],
   },
   {
-    period: "2022 — 2024",
+    period: "2022 - 2024",
     title: "Full-Stack & Smart Contract Engineer",
     org: "ChainCheque · PeerRamp · AdanfoCash · Tanic",
     description:
@@ -33,11 +33,11 @@ export const experience: TimelineEntry[] = [
     tags: ["Next.js", "Node", "Solidity", "Python", "Postgres"],
   },
   {
-    period: "2020 — 2022",
+    period: "2020 - 2022",
     title: "Software Engineer",
     org: "Freelance / Open Source",
     description:
-      "Built the engineering foundation across full-stack web, systems thinking, and Linux. Started reading CVEs recreationally — this is where the attacker-empathy began.",
+      "Built the engineering foundation across full-stack web, systems thinking, and Linux. Started reading CVEs recreationally, developing an attacker-informed security perspective.",
     tags: ["TypeScript", "React", "Git", "Linux"],
   },
 ];

@@ -5,7 +5,7 @@ export const profile = {
   role: "Ethical Hacker | Penetration Tester",
   tagline:
     "Focused on authorized web and network penetration testing, red-team practice, and application security.",
-  /** Optional — not shown in public UI */
+  /** Optional - not shown in public UI */
   location: "Accra, Ghana",
   timezone: "GMT+0",
   email: "drwinner03@gmail.com",
