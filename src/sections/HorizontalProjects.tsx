@@ -228,7 +228,16 @@ function OtherBuilds({ projects }: { projects: Project[] }) {
           title="Other builds"
           description="A smaller selection from my AI, Web3, and product engineering work."
         />
-        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div
+          className={clsx(
+            "mt-10 grid gap-6",
+            projects.length === 1
+              ? "mx-auto max-w-lg"
+              : projects.length === 2
+                ? "mx-auto max-w-4xl md:grid-cols-2"
+                : "md:grid-cols-2 xl:grid-cols-3"
+          )}
+        >
           {projects.map((project) => {
             const href = projectHref(project);
             return (
