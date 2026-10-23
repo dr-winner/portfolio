@@ -45,7 +45,6 @@ export function personSchema() {
       profile.socials.linkedin,
       profile.socials.x,
       profile.socials.medium,
-      profile.socials.instagram,
       profile.socials.tiktok,
     ],
     knowsAbout: [

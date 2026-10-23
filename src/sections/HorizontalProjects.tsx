@@ -30,16 +30,17 @@ const tagPill: Record<ProjectTag, string> = {
 
 const FEATURED_PROJECT_ORDER = [
   "healthcare-pentest-case-study",
-  "footprinting-network-scanning-week-2",
-  "password-hash-cracking-week-3",
   "aws-threat-detection-lab",
-  "soc-detection-lab",
+  "ghostpass",
+  "osint-and-network-recon-assessment",
+  "cryptanalysis-and-hash-recovery-assessment",
+  "proof9",
 ];
-const OTHER_BUILD_ORDER = ["proof9", "aix-market-analyzer", "motifi-ai"];
+const OTHER_BUILD_ORDER = ["aix-market-analyzer", "motifi-ai"];
 const REPORT_PROJECTS = new Set([
   "healthcare-pentest-case-study",
-  "footprinting-network-scanning-week-2",
-  "password-hash-cracking-week-3",
+  "osint-and-network-recon-assessment",
+  "cryptanalysis-and-hash-recovery-assessment",
 ]);
 
 function projectHref(project: Project) {
@@ -57,6 +58,51 @@ function progressLabel(project: Project) {
   return null;
 }
 
+function TerminalAuditPreview({ project }: { project: Project }) {
+  return (
+    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-slate-200/90 bg-[#090d16] p-5 shadow-2xl dark:border-white/10 dark:bg-[#06080d] flex flex-col justify-between">
+      {/* Chrome header */}
+      <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div className="flex items-center gap-2">
+          <span className="size-2.5 rounded-full bg-threat-500/80" />
+          <span className="size-2.5 rounded-full bg-signal-300/80" />
+          <span className="size-2.5 rounded-full bg-ok-400/80" />
+          <span className="ml-2 font-mono text-[11px] text-slate-400 dark:text-white/60">
+            ~ /audit/{project.slug} - zsh
+          </span>
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-ocean-400 dark:text-ocean-300">
+          TLP:CLEAR · VERIFIED
+        </span>
+      </div>
+
+      {/* Terminal audit body */}
+      <div className="my-auto space-y-2.5 py-3 font-mono text-xs">
+        <p className="text-[11px] text-slate-400 dark:text-white/50">
+          <span className="text-ok-400">$</span> audit --scope <span className="text-amber-300">&quot;{project.company}&quot;</span> --target <span className="text-ocean-300">&quot;{project.slug}&quot;</span>
+        </p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-white/40">
+          Key Findings &amp; Outcomes:
+        </p>
+        <div className="space-y-2">
+          {project.results?.slice(0, 4).map((res, i) => (
+            <div key={i} className="flex items-start gap-2 text-slate-200 dark:text-slate-300 text-[11px] leading-relaxed">
+              <span className="text-ocean-400 shrink-0 font-semibold">[0{i + 1}]</span>
+              <span className="line-clamp-2">{res}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Terminal footer */}
+      <div className="flex items-center justify-between border-t border-white/[0.08] pt-2.5 text-[10px] font-mono text-slate-400 dark:text-white/50">
+        <span className="truncate">Status: All exploit chains &amp; patches verified</span>
+        <span className="shrink-0 text-ok-400">● 100% PASS</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Full-width project card ───────────────────────────────────────────────────
 
 function ProjectCard({ project, index, total }: { project: Project; index: number; total: number }) {
@@ -70,12 +116,7 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
       style={{ width: "100vw", height: "100vh" }}
     >
       <div className="container">
-        <div
-          className={clsx(
-            "grid items-center gap-12 lg:gap-20",
-            hasImage ? "lg:grid-cols-[1.1fr_0.9fr]" : "max-w-3xl"
-          )}
-        >
+        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 xl:gap-20">
           {/* ── Left: text ──────────────────────────────── */}
           <div className="flex flex-col gap-5">
             {/* Counter + status */}
@@ -153,9 +194,9 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
             </div>
           </div>
 
-          {/* ── Right: image ───────────────────────────── */}
-          {hasImage && (
-            <div className="relative hidden lg:block">
+          {/* ── Right: image or terminal audit preview ───────────── */}
+          <div className="relative hidden lg:block">
+            {hasImage ? (
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-100 shadow-2xl dark:border-white/8 dark:bg-ink-200">
                 <Image
                   src={project.imageUrl ?? project.image!}
@@ -166,8 +207,10 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
                   unoptimized={!!project.imageUrl}
                 />
               </div>
-            </div>
-          )}
+            ) : (
+              <TerminalAuditPreview project={project} />
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -432,9 +475,24 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                       <p className="mt-1 font-mono text-[12px] text-slate-500 dark:text-white/50">{p.year}</p>
                     ) : null}
                   </div>
-                  {hasImage && (
+                  {hasImage ? (
                     <div className="relative h-44 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-ink-200">
                       <Image src={p.imageUrl ?? p.image!} alt={`${p.title} preview`} fill sizes="100vw" className="object-contain object-center p-2" unoptimized={!!p.imageUrl} />
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-slate-200/80 bg-slate-900 p-3.5 font-mono text-xs dark:border-white/10 dark:bg-[#07090e]">
+                      <div className="mb-2 flex items-center justify-between border-b border-white/10 pb-2 text-[10px] text-slate-400 dark:text-white/50">
+                        <span>~ /audit/{p.slug}</span>
+                        <span className="text-ok-400">● VERIFIED</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        {p.results?.slice(0, 3).map((res, idx) => (
+                          <div key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-300">
+                            <span className="text-ocean-400 shrink-0 font-semibold">[0{idx + 1}]</span>
+                            <span className="line-clamp-2">{res}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                   <p className="flex-1 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">{p.summary}</p>

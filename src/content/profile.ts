@@ -24,9 +24,7 @@ export const profile = {
     github: "https://github.com/dr-winner",
     linkedin: "https://www.linkedin.com/in/richard-winner-duvor/",
     x: "https://x.com/dr_winner6",
-    medium: "https://medium.com/@duvorr60",
-    instagram: "https://www.instagram.com/winner.richard",
-    /** Pro Coder (public handle) */
-    tiktok: "https://www.tiktok.com/@procoder_",
+    medium: "https://medium.com/@drwinner",
+    tiktok: "https://www.tiktok.com/@.drwinner",
   },
 } as const;

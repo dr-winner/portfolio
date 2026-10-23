@@ -13,34 +13,23 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding projects...");
-
-  // Purge obsolete projects no longer present in static seed
-  const validSlugs = projects.map((p) => p.slug);
-  await prisma.project.deleteMany({
-    where: { slug: { notIn: validSlugs } },
-  });
+  await prisma.project.deleteMany();
 
   for (const [i, p] of projects.entries()) {
-    const data = {
-      company: p.company,
-      year: p.year,
-      title: p.title,
-      summary: p.summary,
-      tags: JSON.stringify(p.tags),
-      results: JSON.stringify(p.results),
-      techStack: JSON.stringify(p.techStack),
-      link: p.link ?? null,
-      repo: p.repo ?? null,
-      status: p.status,
-      order: i,
-    };
-
-    await prisma.project.upsert({
-      where: { slug: p.slug },
-      update: data,
-      create: {
+    await prisma.project.create({
+      data: {
         slug: p.slug,
-        ...data,
+        company: p.company,
+        year: p.year,
+        title: p.title,
+        summary: p.summary,
+        tags: JSON.stringify(p.tags),
+        results: JSON.stringify(p.results),
+        techStack: JSON.stringify(p.techStack),
+        link: p.link ?? null,
+        repo: p.repo ?? null,
+        status: p.status,
+        order: i,
         imagePath: null,
       },
     });

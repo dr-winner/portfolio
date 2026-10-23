@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   GithubIcon,
-  InstagramIcon,
   LinkedInIcon,
   MediumIcon,
   TikTokIcon,
@@ -16,7 +15,6 @@ const socials = [
   { label: "LinkedIn", href: profile.socials.linkedin, icon: LinkedInIcon },
   { label: "X", href: profile.socials.x, icon: XIcon },
   { label: "Medium", href: profile.socials.medium, icon: MediumIcon },
-  { label: "Instagram", href: profile.socials.instagram, icon: InstagramIcon },
   { label: "TikTok", href: profile.socials.tiktok, icon: TikTokIcon },
 ];
 

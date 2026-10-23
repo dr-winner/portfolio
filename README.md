@@ -129,4 +129,4 @@ If the remote is new: `git remote add origin https://github.com/YOUR_USER/portfo
 - **Backend**: Prisma 6, PostgreSQL (Neon), Web-Crypto HMAC cookie sessions,
   Next.js Server Actions.
 
-Made with care by Richard Winner Duvor (`drwinner03@gmail.com`).
+Made with care by Richard Winner Duvor (`duvorrichardwinner@gmail.com`).
