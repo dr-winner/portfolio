@@ -31,7 +31,7 @@ const NAV = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getCurrentSession();
 
-  // No session (login page): no sidebar — showing "Signed in as admin" and a
+  // No session (login page): no sidebar. Showing "Signed in as admin" and a
   // Log out button to a logged-out visitor is confusing and wrong.
   if (!session) {
     return (

@@ -17,7 +17,7 @@ import {
 
 /* ─── Fonts ───────────────────────────────────────────────────────────────── */
 
-/* Enterprise / readable UI — common in security products */
+/* Enterprise / readable UI: common in security products */
 const sans = IBM_Plex_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -57,10 +57,11 @@ export const metadata: Metadata = {
   generator: "Next.js",
 
   title: {
-    default: `${profile.name} — ${profile.role}`,
-    template: `%s — ${profile.name}`,
+    default: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+    template: `%s | ${profile.name}`,
   },
-  description: profile.tagline,
+  description:
+    "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
 
   keywords: [
     "Ethical Hacker",
@@ -89,8 +90,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url,
-    title: `${profile.name} — ${profile.role}`,
-    description: profile.tagline,
+    title: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+    description:
+      "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
     siteName: profile.name,
     locale: "en_GH",
     images: [
@@ -98,15 +100,16 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: `${profile.name} — ${profile.role}`,
+        alt: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: `${profile.name} — ${profile.role}`,
-    description: profile.tagline,
+    title: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+    description:
+      "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
     creator: `@${xHandle}`,
     images: [ogImage],
   },
@@ -153,10 +156,10 @@ export default function RootLayout({
       className={clsx(sans.variable, display.variable, mono.variable, "dark")}
     >
       <head>
-        {/* Resource hints — fonts are self-hosted via next/font, no preconnect needed */}
+        {/* Resource hints: fonts are self-hosted via next/font, no preconnect needed */}
         <link rel="dns-prefetch" href="https://github.com" />
 
-        {/* Structured data — three separate JSON-LD blocks for clarity */}
+        {/* Structured data: three separate JSON-LD blocks for clarity */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema()) }}
@@ -174,7 +177,7 @@ export default function RootLayout({
       </head>
 
       <body className="font-sans antialiased overflow-x-hidden touch-pan-y [overscroll-behavior-x:none]">
-        {/* Native scrolling, no custom cursor — deliberate: the Lenis +
+        {/* Native scrolling, no custom cursor. Deliberate: the Lenis +
             cursor combo made the site feel sluggish (removed in e06ac11,
             accidentally reintroduced by a stale design pass). */}
         <Providers>

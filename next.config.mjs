@@ -32,7 +32,7 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
   ...(isProd ? [{ key: "Content-Security-Policy", value: csp }] : []),
-  // HSTS only on the real deployment — sending it from `next start` on
+  // HSTS only on the real deployment: sending it from `next start` on
   // http://localhost makes the browser force-upgrade to https://localhost
   // and everything breaks with SSL errors.
   ...(process.env.VERCEL

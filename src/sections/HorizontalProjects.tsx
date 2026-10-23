@@ -82,7 +82,7 @@ function ProjectCard({ project, index, total }: { project: Project; index: numbe
             <div className="flex flex-wrap items-center gap-4">
               <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/55">
                 {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-                {project.company ? ` — ${project.company}` : ""}
+                {project.company ? ` · ${project.company}` : ""}
               </span>
               {pendingStatus && (
                 <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-amber-700 dark:text-signal-300">
@@ -335,14 +335,14 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         // ── Per-card cinematic animations ─────────────
         // One timeline per card spans the card's full travel distance
         // (enters from right → centres → exits to left) so there are
-        // zero gaps between entry and exit — no blank-screen moments
+        // zero gaps between entry and exit: no blank-screen moments
         // in either scroll direction.
         const cards = track.querySelectorAll<HTMLElement>(".project-card");
         cards.forEach((card, i) => {
           gsap.set(card, { transformPerspective: 1400 });
 
           if (i === 0) {
-            // First card is already visible — only needs an exit tween.
+            // First card is already visible: only needs an exit tween.
             gsap.to(card, {
               opacity: 0, scale: 0.7, y: -120, rotateY: -22, filter: "blur(14px)",
               ease: "expo.in",
@@ -368,14 +368,14 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
               },
             });
 
-            // First half — entry (card travels from off-right to centre)
+            // First half: entry (card travels from off-right to centre)
             tl.fromTo(
               card,
               { opacity: 0, scale: 0.68, y: 130, rotateY: 24, filter: "blur(16px)" },
               { opacity: 1, scale: 1,    y: 0,   rotateY: 0,  filter: "blur(0px)",
                 ease: "expo.out", duration: 1 }
             );
-            // Second half — exit (card travels from centre to off-left)
+            // Second half: exit (card travels from centre to off-left)
             tl.to(card, {
               opacity: 0, scale: 0.68, y: -130, rotateY: -24, filter: "blur(16px)",
               ease: "expo.in", duration: 1,
@@ -418,7 +418,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
                 <Card key={p.slug} className="flex flex-col gap-5 p-6 sm:p-8">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-slate-500 dark:text-white/55">
-                      {String(i + 1).padStart(2, "0")} — {p.company}
+                      {String(i + 1).padStart(2, "0")} · {p.company}
                     </span>
                     {pendingStatus ? (
                       <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-amber-700 dark:text-signal-300">
@@ -480,7 +480,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         style={{ transformOrigin: "left", transform: "scaleX(0)" }}
       />
 
-      {/* Heading — absolute so it overlays the track without pushing it down */}
+      {/* Heading: absolute so it overlays the track without pushing it down */}
       <div
         ref={headingRef}
         className="absolute top-0 left-0 right-0 z-20 container pt-20 pb-8 pointer-events-none"
@@ -492,7 +492,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         />
       </div>
 
-      {/* Dot nav — right edge */}
+      {/* Dot nav: right edge */}
       <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
         {list.map((_, i) => (
           <motion.div
@@ -511,7 +511,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
         ))}
       </div>
 
-      {/* Track — absolutely positioned at top-left so cards fill the full 100vh */}
+      {/* Track: absolutely positioned at top-left so cards fill the full 100vh */}
       <div
         ref={trackRef}
         className="absolute top-0 left-0 flex will-change-transform"

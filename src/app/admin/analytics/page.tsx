@@ -33,7 +33,7 @@ export default async function AdminAnalyticsPage() {
       <h1 className="mt-2 font-display text-3xl tracking-tight text-white">First-party usage</h1>
       <p className="mt-2 max-w-2xl text-sm text-white/60">
         Events from the last 7 days (in-browser session id, coarse device, country from edge when
-        available, daily visitor bucket — no raw IPs stored). Vercel Web Analytics in the project
+        available, daily visitor bucket: no raw IPs stored). Vercel Web Analytics in the project
         layout adds aggregate traffic in the Vercel dashboard.
       </p>
       <Link
@@ -89,7 +89,7 @@ export default async function AdminAnalyticsPage() {
                 <td className="p-2.5 text-xs">{r.path}</td>
                 <td className="p-2.5">{r.device}</td>
                 <td className="p-2.5 text-xs">{r.browser}</td>
-                <td className="p-2.5 font-mono text-xs">{r.country || "—"}</td>
+                <td className="p-2.5 font-mono text-xs">{r.country || "-"}</td>
               </tr>
             ))}
           </tbody>

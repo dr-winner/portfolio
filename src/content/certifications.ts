@@ -14,7 +14,24 @@ export type Cert = {
 
 export const certifications: Cert[] = [
   {
-    name: "Google Professional Cybersecurity",
+    name: "AWS Certified Cloud Practitioner",
+    issuer: "Amazon Web Services",
+    examCode: "CLF-C02",
+    status: "earned",
+    progress: 100,
+    description:
+      "AWS foundational knowledge covering identity, encryption, monitoring, shared responsibility, and core cloud services.",
+    skills: ["IAM", "KMS", "CloudTrail", "GuardDuty", "Shared Responsibility", "Billing"],
+    modules: [
+      "Cloud Concepts",
+      "Security & Compliance",
+      "Technology & Services",
+      "Billing, Pricing & Support",
+    ],
+    link: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+  },
+  {
+    name: "Google Cybersecurity Professional Certificate",
     issuer: "Google",
     status: "earned",
     progress: 100,
@@ -33,10 +50,10 @@ export const certifications: Cert[] = [
   },
   {
     name: "Cisco Ethical Hacker",
-    issuer: "Cisco",
-    status: "pursuing",
+    issuer: "Cisco Networking Academy",
+    status: "in-progress",
     targetDate: "Q4 2026",
-    progress: 60,
+    progress: 65,
     description:
       "Offensive security fundamentals from a vendor with deep network roots: recon, exploitation, and post-exploitation mapped to real-world attack surfaces.",
     skills: ["Reconnaissance", "Exploitation", "Post-Exploitation", "Network Attacks", "Web App Testing"],
@@ -50,34 +67,28 @@ export const certifications: Cert[] = [
     link: "https://www.netacad.com/courses/ethical-hacker",
   },
   {
-    name: "AWS Cloud Practitioner",
-    issuer: "Amazon Web Services",
-    examCode: "CLF-C02",
-    status: "earned",
-    progress: 100,
-    description:
-      "AWS foundational knowledge covering identity, encryption, monitoring, shared responsibility, and core cloud services.",
-    skills: ["IAM", "KMS", "CloudTrail", "GuardDuty", "Shared Responsibility", "Billing"],
-    modules: [
-      "Cloud Concepts",
-      "Security & Compliance",
-      "Technology & Services",
-      "Billing, Pricing & Support",
-    ],
-    link: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
-  },
-  {
-    name: "TryHackMe & HackTheBox Paths",
-    issuer: "TryHackMe / HTB Academy",
+    name: "PortSwigger Web Security Academy",
+    issuer: "PortSwigger",
     status: "in-progress",
-    progress: 55,
+    progress: 25,
     description:
-      "Hands-on cybersecurity labs that reinforce practical techniques through guided challenges and repeatable practice.",
-    skills: ["Web exploitation", "Network testing", "AD attacks", "Linux", "Forensics"],
-    modules: [
-      "Junior Penetration Tester",
-      "AD enumeration & lateral movement",
+      "Hands-on web application security labs covering SQL injection, authentication and access control bypasses, XSS, SSRF, API testing, and server-side vulnerabilities using Burp Suite.",
+    skills: [
+      "SQL Injection",
+      "Burp Suite",
+      "Authentication Bypass",
+      "Access Control",
+      "XSS",
+      "SSRF",
+      "API Security",
     ],
-    link: "https://tryhackme.com/p/dr_winner",
+    modules: [
+      "SQL Injection",
+      "Authentication & Access Control",
+      "Cross-Site Scripting (XSS)",
+      "Server-Side Request Forgery (SSRF)",
+      "API Security Testing",
+    ],
+    link: "https://portswigger.net/web-security",
   },
 ];

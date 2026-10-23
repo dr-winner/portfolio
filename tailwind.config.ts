@@ -102,7 +102,7 @@ const config: Config = {
         /* Long prose: same IBM Plex stack for consistency (was separate serif variable) */
         serif: ["var(--font-sans)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
-        /* Nav, forms, filters — same as sans but explicit in markup */
+        /* Nav, forms, filters: same as sans but explicit in markup */
         ui: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       fontSize: {

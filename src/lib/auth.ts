@@ -1,5 +1,5 @@
 /**
- * Edge-compatible auth helpers (Web Crypto API only — no node:crypto).
+ * Edge-compatible auth helpers (Web Crypto API only: no node:crypto).
  * Used from both middleware (Edge runtime) and server actions (Node runtime).
  */
 import { cookies, headers } from "next/headers";

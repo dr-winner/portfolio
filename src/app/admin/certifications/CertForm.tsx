@@ -37,7 +37,7 @@ export function CertForm({
         <Field label="Year earned">
           <Input name="year" defaultValue={cert?.year ?? ""} />
         </Field>
-        <Field label="Progress (%)" hint="Optional — 0 to 100">
+        <Field label="Progress (%)" hint="Optional: 0 to 100">
           <Input
             type="number"
             min={0}

@@ -205,8 +205,8 @@ export function GitHubLivePanel() {
     let cancelled = false;
 
     // Some API error states are permanent (a retry can't fix them) and should
-    // surface immediately; others are transient blips — a cold serverless
-    // start, a momentary GitHub API hiccup, a brief rate-limit — worth another
+    // surface immediately; others are transient blips (a cold serverless
+    // start, a momentary GitHub API hiccup, a brief rate-limit) worth another
     // attempt before we collapse the whole panel to the fallback.
     const isTransientError = (e: string | null | undefined) =>
       e === "graphql" || e === "exception" || e === "rate";
@@ -226,7 +226,7 @@ export function GitHubLivePanel() {
         if (j.error && isTransientError(j.error)) return null; // retryable
         return j;
       } catch {
-        return null; // network error or timeout — retryable
+        return null; // network error or timeout: retryable
       } finally {
         clearTimeout(timer);
       }
@@ -279,7 +279,7 @@ export function GitHubLivePanel() {
 
   return (
     <div className="w-full text-left">
-      {/* Top summary — one horizontal band */}
+      {/* Top summary: one horizontal band */}
       <div className="mb-6 flex flex-col gap-4 border-b border-slate-200/90 pb-5 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 dark:text-white/55">Last 12 months</p>
@@ -300,7 +300,7 @@ export function GitHubLivePanel() {
         </a>
       </div>
 
-      {/* Bento: graph + sidebar — items-start so the graph column doesn’t stretch to sidebar height */}
+      {/* Bento: graph + sidebar. items-start so the graph column does not stretch to sidebar height */}
       <div className="grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
         {/* Primary: heatmap (fluid width, no horizontal scroll) */}
         {nWeeks > 0 && (
@@ -321,7 +321,7 @@ export function GitHubLivePanel() {
                   <span>More</span>
                 </div>
               </div>
-              {/** On narrow screens the grid is hard to read — allow horizontal pan. Desktop stays fluid. */}
+              {/** On narrow screens the grid is hard to read: allow horizontal pan. Desktop stays fluid. */}
               <div className="overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] md:overflow-x-visible">
                 <div className="min-w-[560px] md:w-full md:min-w-0">
                 <div className="mb-1.5 flex w-full min-w-0 gap-1.5 sm:gap-2">
@@ -427,7 +427,7 @@ export function GitHubLivePanel() {
                         {label}
                       </div>
                       <p className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-slate-900 sm:text-xl dark:text-white">
-                        {typeof v === "number" ? fmtCompact(v) : "—"}
+                        {typeof v === "number" ? fmtCompact(v) : "-"}
                       </p>
                     </div>
                   );

@@ -23,7 +23,7 @@ type TMsg = { role: "user" | "assistant"; content: string };
 
 const WELCOME: Line = {
   kind: "out",
-  text: "You can write in plain English — or type `help` for commands. Same look as a terminal; it’s just a chat to this site. `links` lists URLs; Email (top) opens your mail app.",
+  text: "You can write in plain English, or type `help` for commands. Same look as a terminal; it’s just a chat to this site. `links` lists URLs; Email (top) opens your mail app.",
 };
 
 function loadSession(): { lines: Line[]; history: TMsg[] } | null {
@@ -107,8 +107,8 @@ function runLocal(t: string): string[] | null {
 
   if (cmd === "hostinfo" || cmd === "uname" || lower === "uname -a") {
     return [
-      "hostname : " + (typeof window !== "undefined" ? window.location.hostname : "—"),
-      "ua       : " + (typeof navigator !== "undefined" ? navigator.userAgent : "—"),
+      "hostname : " + (typeof window !== "undefined" ? window.location.hostname : "-"),
+      "ua       : " + (typeof navigator !== "undefined" ? navigator.userAgent : "-"),
       "session  : portfolio-tty-1.0",
     ];
   }
@@ -444,7 +444,7 @@ export function TerminalDock({
             <div className="flex justify-center bg-[#1a1a1a] pb-1 pt-2.5 md:hidden" aria-hidden>
               <div className="h-1 w-12 rounded-full bg-white/20" />
             </div>
-            {/* Title bar — dark chrome */}
+            {/* Title bar: dark chrome */}
             <div className="relative flex min-h-[3rem] shrink-0 items-center justify-between gap-2 border-b border-[#0d280d] bg-gradient-to-b from-[#1f1f1f] to-[#121212] px-3 md:min-h-8 md:gap-1 md:px-2.5">
               <div
                 className="flex items-center gap-2 pl-0.5"
@@ -474,7 +474,7 @@ export function TerminalDock({
                 />
               </div>
               <span className="pointer-events-none max-w-[min(50%,12rem)] truncate text-center text-[10px] text-[#6ee7a8]/50 md:max-w-none md:text-[11px]">
-                {profile.handle}@portfolio — tty
+                {profile.handle}@portfolio : tty
               </span>
               <div className="ml-auto flex min-w-0 items-center justify-end gap-1.5 md:gap-1.5 md:pl-6">
                 <a
@@ -548,7 +548,7 @@ export function TerminalDock({
               className="shrink-0 border border-t-0 border-[#14532d] bg-[#080c09] px-3 py-3 md:px-2 md:py-1.5"
             >
               <p className="mb-1.5 font-sans text-xs leading-snug text-[#4ade80]/50 md:mb-1 md:text-[9px] md:leading-tight lg:text-[10px]">
-                Plain English is fine — or try{" "}
+                Plain English is fine, or try{" "}
                 <span className="font-mono text-[#86efac]/80">help</span> ·{" "}
                 <span className="text-white/35">Enter sends</span>
               </p>

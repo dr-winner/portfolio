@@ -98,7 +98,7 @@ export function Contact() {
               </span>
 
               <h2 className="mt-4 font-display text-3xl tracking-tight text-slate-900 md:text-5xl dark:text-white">
-                <WordReveal text="Have a system that needs building — or" />
+                <WordReveal text="Have a system that needs building, or" />
                 <span className="text-gradient-ocean">
                   <WordReveal text="defending?" />
                 </span>

@@ -148,7 +148,7 @@
   /* Slightly tighter column so content does not feel edge-to-edge on large screens */
   .container {
     @apply relative mx-auto w-full max-w-5xl xl:max-w-6xl;
-    /* Slightly roomier than 1rem on phones — still respects notches */
+    /* Slightly roomier than 1rem on phones: still respects notches */
     padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
     padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
   }
@@ -169,7 +169,7 @@
     mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   }
 
-  /* Softer for marquees inside padded bands — no hard kiss at screen edge */
+  /* Softer for marquees inside padded bands: no hard kiss at screen edge */
   .mask-fade-x-soft {
     -webkit-mask-image: linear-gradient(
       to right,
@@ -201,7 +201,7 @@
     mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
   }
 
-  /* Section grid — ocean blue on dark bg; muted azure on light (see html.light override below) */
+  /* Section grid: ocean blue on dark bg; muted azure on light (see html.light override below) */
   .bg-grid-soft {
     background-image: linear-gradient(rgba(14, 165, 233, 0.08) 1px, transparent 1px),
       linear-gradient(90deg, rgba(14, 165, 233, 0.08) 1px, transparent 1px);

@@ -30,7 +30,7 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
         </ScrollReveal>
 
         <div ref={ref} className="relative mt-20 w-full md:mt-28">
-          {/* Center spine — desktop */}
+          {/* Center spine: desktop */}
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-slate-300/55 dark:bg-white/[0.06] md:block"
@@ -78,7 +78,7 @@ function TimelineItem({ entry, side }: { entry: TimelineEntry; side: "left" | "r
 
   return (
     <li ref={rowRef} className="relative">
-      {/* Separator line — draws left-to-right on scroll enter */}
+      {/* Separator line: draws left-to-right on scroll enter */}
       <motion.div
         aria-hidden
         style={{ scaleX: lineScale, transformOrigin: "left" }}

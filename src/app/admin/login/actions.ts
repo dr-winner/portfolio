@@ -8,7 +8,7 @@ import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
 
 export type LoginState = { error?: string };
 
-/** Shown when ADMIN_PASSWORD is missing — no env var names or commands. */
+/** Shown when ADMIN_PASSWORD is missing: no env var names or commands. */
 const SIGNIN_UNAVAILABLE = "Sign-in is not available.";
 
 /**

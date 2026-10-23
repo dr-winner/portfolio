@@ -76,7 +76,7 @@ export async function checkRateLimitDurable(
       };
     }
   } catch {
-    // DB down or provider without the table — in-memory verdict already passed.
+    // DB down or provider without the table: in-memory verdict already passed.
   }
   return { ok: true };
 }

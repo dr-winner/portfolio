@@ -66,13 +66,13 @@ export function Mentorship() {
 
           <h2 className="mt-6 font-display text-4xl tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-[3.5rem]">
             <span className="text-gradient-cyber">Break Into Cloud Security</span>
-            <span className="block">— a hands-on study cohort</span>
+            <span className="block">: a hands-on study cohort</span>
           </h2>
 
           <p className="mt-5 text-lg leading-relaxed text-slate-600 dark:text-white/75">
             Learn cloud security the way it actually sticks: build real cloud environments,
             break them, defend them, and turn every lab into portfolio proof. I&apos;m walking
-            the same road — SOC floor to cloud security — and sharing everything that works.
+            the same road (SOC floor to cloud security) and sharing everything that works.
           </p>
         </div>
 

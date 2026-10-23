@@ -42,7 +42,7 @@ export default async function AdminHomePage() {
         </h1>
         <p className="mt-2 text-white/60 max-w-xl">
           Everything you edit here is reflected on the public site on the next request. The
-          database is SQLite by default — if it&apos;s ever empty or unavailable, the site
+          database is SQLite by default: if it&apos;s ever empty or unavailable, the site
           gracefully falls back to the seed files in <code className="font-mono text-white/80">src/content/*</code>.
         </p>
       </header>
@@ -57,7 +57,7 @@ export default async function AdminHomePage() {
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {TILES.map((t) => {
           const Icon = t.icon;
-          const value = data ? (data as Record<string, number>)[t.key] ?? 0 : "—";
+          const value = data ? (data as Record<string, number>)[t.key] ?? 0 : "-";
           return (
             <Link
               key={t.href}

@@ -11,7 +11,7 @@ const MAX_BYTES = 5 * 1024 * 1024;
 /**
  * Saves an uploaded image and returns its public URL.
  *
- * Production (Vercel): stored in Vercel Blob — the local filesystem there is
+ * Production (Vercel): stored in Vercel Blob: the local filesystem there is
  * ephemeral/read-only, so writes to public/ would be lost or fail.
  * Local dev without a BLOB_READ_WRITE_TOKEN: falls back to public/uploads.
  */

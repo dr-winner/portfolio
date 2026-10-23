@@ -59,7 +59,7 @@ export function Projects({ items }: { items?: Project[] } = {}) {
           <SectionHeader
             eyebrow="Selected work"
             title="Projects that shipped, and work in the lab"
-            description="Each row is one story: full detail on one side, the visual on the other. Scroll the page — the pair fades in together and eases out as you go."
+            description="Each row is one story: full detail on one side, the visual on the other. Scroll the page: the pair fades in together and eases out as you go."
           />
         </ScrollReveal>
 
@@ -122,7 +122,7 @@ function ProjectRow({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
           <p className="font-mono text-[12px] uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
-            {String(index + 1).padStart(2, "0")} — {project.company}
+            {String(index + 1).padStart(2, "0")} · {project.company}
           </p>
           <h3 className="mt-2 font-display text-2xl leading-[1.12] tracking-tight text-slate-900 md:text-3xl lg:text-[2rem] dark:text-white">
             {project.title}
@@ -215,7 +215,7 @@ function ProjectRow({
   const visualBlock = (
     <Card className="h-full min-h-[280px] overflow-hidden p-0 lg:min-h-0">
       <div className="relative h-full min-h-[280px] w-full bg-slate-100/90 lg:aspect-[4/3] lg:min-h-full dark:bg-ink-200/50">
-        {/* imageUrl (admin upload) first — must win over seed StaticImageData for same slug */}
+        {/* imageUrl (admin upload) first: must win over seed StaticImageData for same slug */}
         {project.imageUrl ? (
           <Image
             key={project.imageUrl}

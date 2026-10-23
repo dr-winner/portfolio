@@ -125,7 +125,7 @@ export function Hero() {
                   <span className="size-2.5 rounded-full bg-ok-400/80" />
                 </div>
                 <span className="min-w-0 truncate text-center font-mono text-[10px] tracking-tight text-slate-600 sm:text-[11px] dark:text-white/65">
-                  ~ /web-pentest — zsh
+                  ~ /web-pentest - zsh
                 </span>
                 <div className="flex shrink-0 items-center justify-end gap-1 text-[10px] text-slate-600 sm:text-[11px] dark:text-white/65">
                   <Shield className="size-3 shrink-0 text-ocean-500 dark:text-ocean-300" />
@@ -169,7 +169,7 @@ export function Hero() {
                       className: "text-slate-500 dark:text-white/75",
                     },
                     {
-                      text: "◆ available — open to new roles",
+                      text: "◆ available · open to new roles",
                       className: "text-amber-600 dark:text-signal-300",
                     },
                   ]}

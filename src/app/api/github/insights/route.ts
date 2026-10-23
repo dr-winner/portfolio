@@ -295,7 +295,7 @@ export async function GET(req: Request) {
       }),
     });
 
-    // Detect REST-style auth failure (Bad credentials / rate limit) — these
+    // Detect REST-style auth failure (Bad credentials / rate limit): these
     // come back as { message: "...", documentation_url: "..." } with no
     // GraphQL `data` envelope, so the user-null check would otherwise
     // mis-classify them as "not_found".

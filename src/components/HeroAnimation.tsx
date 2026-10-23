@@ -66,7 +66,7 @@ export function HeroAnimation({ children }: HeroAnimationProps) {
             try {
               sessionStorage.setItem(SESSION_KEY, "true");
             } catch {
-              /* private mode etc — non-fatal */
+              /* private mode etc: non-fatal */
             }
             window.dispatchEvent(new CustomEvent("hero:reveal-complete"));
           },

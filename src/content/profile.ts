@@ -1,16 +1,16 @@
 export const profile = {
   name: "Richard Winner Duvor",
-  handle: "dr_winner",
+  handle: "dr-winner",
   initials: "RW",
-  role: "Ethical Hacker | Penetration Tester",
+  role: "Ethical Hacker | Web & Cloud Penetration Tester",
   tagline:
-    "Focused on authorized web and network penetration testing, red-team practice, and application security.",
+    "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
   /** Optional - not shown in public UI */
   location: "Accra, Ghana",
   timezone: "GMT+0",
   email: "duvorrichardwinner@gmail.com",
   /** Shown in contact; full address is revealed only in mailto */
-  emailObfuscated: "duvorrichard···@gmail.com",
+  emailObfuscated: "duvorrichardwinner ···@gmail.com",
   availability: {
     status: "available",
     label: "Open to ethical hacking · penetration testing · red team · AppSec roles",

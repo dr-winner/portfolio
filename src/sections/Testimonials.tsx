@@ -42,7 +42,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     <article
       role="button"
       tabIndex={0}
-      aria-label={`${testimonial.text} — ${testimonial.name}, ${testimonial.position}. Activate to ${isFlipped ? "show quote" : "show author"}.`}
+      aria-label={`${testimonial.text} - ${testimonial.name}, ${testimonial.position}. Activate to ${isFlipped ? "show quote" : "show author"}.`}
       aria-pressed={isFlipped}
       className="testimonial-marquee-card relative w-[min(84vw,390px)] shrink-0 rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-300 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-950 md:w-[410px]"
       data-flipped={isFlipped}
@@ -104,7 +104,7 @@ export function Testimonials({ items }: { items?: Testimonial[] } = {}) {
           <SectionHeader
             eyebrow="Trust"
             title="What people I've worked with say"
-            description="Colleagues and clients — across security, AI, and product."
+            description="Colleagues and clients: across security, AI, and product."
           />
         </ScrollReveal>
 

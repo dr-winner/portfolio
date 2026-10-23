@@ -14,7 +14,7 @@ function countryFromRequest(req: NextRequest): string {
 }
 
 /**
- * Vercel / Cloudflare may expose city on paid plans — keep field empty if absent.
+ * Vercel / Cloudflare may expose city on paid plans: keep field empty if absent.
  */
 function refererT(r: string | null): string {
   if (!r) return "";

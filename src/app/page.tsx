@@ -34,7 +34,7 @@ export default async function Home() {
 
   return (
     <>
-      {/* Structured data — projects list for search-engine rich results */}
+      {/* Structured data: projects list for search-engine rich results */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

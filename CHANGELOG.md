@@ -1,14 +1,14 @@
-# Motion + UX Overhaul — CHANGELOG
+# Motion + UX Overhaul: CHANGELOG
 
 ## What shipped
 
 ### 1. Lenis smooth scroll
 - `SmoothScrollProvider` initialises Lenis (lerp 0.1, duration 1.2) after first paint via dynamic import
 - GSAP ScrollTrigger wired via `lenis.on('scroll', ScrollTrigger.update)` and `gsap.ticker`
-- Full `prefers-reduced-motion` guard — Lenis does not boot, CSS animations collapse to 0.001 ms
+- Full `prefers-reduced-motion` guard: Lenis does not boot, CSS animations collapse to 0.001 ms
 - Added to `Providers.tsx` so it wraps the whole tree once
 
-### 2. Hero — character stagger + parallax orbs
+### 2. Hero: character stagger + parallax orbs
 - `HeroAnimation` + `CharSplit` components split H1 into individual `<span class="hero-char">` elements
 - GSAP stagger: y 24 → 0, opacity 0 → 1, duration 0.6, ease expo.out, stagger 0.04, delay 0.15 s
 - Two absolutely-positioned orb divs with Framer Motion `useTransform` parallax (y 0 → -80 over hero scroll)
@@ -67,11 +67,11 @@
 - `motion.config.ts`: centralises all easings, durations, stagger values, reduced-motion overrides
 
 ## Packages added
-- `gsap@^3.15.0` — ScrollTrigger, context cleanup, ticker
-- `lenis@^1.3.23` — smooth scroll; lazy-loaded after first paint
+- `gsap@^3.15.0`: ScrollTrigger, context cleanup, ticker
+- `lenis@^1.3.23`: smooth scroll; lazy-loaded after first paint
 
 ## Performance notes
-- GSAP and Lenis are dynamic `import()` — zero impact on first paint
+- GSAP and Lenis are dynamic `import()`: zero impact on first paint
 - All animations use `transform` and `opacity` only
 - `will-change: transform` only on elements actively animating; GSAP removes it on `onComplete` via context cleanup
 - Cards 4+ use single fade-in (no scale/y animation)
@@ -85,7 +85,7 @@
 - `ScrubText` has ghost underlay + `sr-only` span for screen readers
 - Heading hierarchy: h1 (hero), h2 (section headers added via SectionHeader), h3 (cards/items)
 
-## Lighthouse (self-reported — run `npm run build && npx serve out` to verify)
+## Lighthouse (self-reported: run `npm run build && npx serve out` to verify)
 - Build passes with zero type errors and zero ESLint errors
 - No hydration mismatches (all browser-only code in `useEffect`)
 - Target: LCP < 2.0 s, CLS < 0.05, INP < 200 ms, Performance ≥ 90

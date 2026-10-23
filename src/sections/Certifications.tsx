@@ -39,7 +39,7 @@ export function Certifications({ items }: { items?: Cert[] } = {}) {
           <SectionHeader
             eyebrow="Credentials"
             title="What I'm earning, and what I'm sharpening."
-            description="A live look at the certifications I'm pursuing — with the modules, exam codes, and where I'm at."
+            description="A live look at the certifications I'm pursuing, with the modules, exam codes, and where I'm at."
           />
         </ScrollReveal>
 

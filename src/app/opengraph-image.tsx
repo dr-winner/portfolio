@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/content/profile";
 
-export const alt = `${profile.name} — ${profile.role}`;
+export const alt = `${profile.name} | ${profile.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 const roleLines = profile.role.split("|").map((role) => role.trim());
@@ -35,7 +35,7 @@ export default async function Image() {
             }}
           />
           <div style={{ fontSize: 22, letterSpacing: 6, textTransform: "uppercase" }}>
-            dr_winner
+            {profile.handle}
           </div>
         </div>
 
