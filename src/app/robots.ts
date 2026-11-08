@@ -4,8 +4,8 @@ import { SITE_URL } from "@/config/site";
 const BASE = SITE_URL;
 
 /**
- * Next.js robots.txt generator.
- * Allows crawling of public pages while disallowing admin and API routes.
+ * Public crawl rules. Admin and API paths are omitted on purpose:
+ * a Disallow line is a map, and it does not control access.
  */
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -13,7 +13,6 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/"],
       },
     ],
     sitemap: `${BASE}/sitemap.xml`,

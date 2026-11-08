@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  schemas  = ["portfolio"]
 }
 
 model Project {
@@ -24,6 +24,8 @@ model Project {
   order      Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@schema("portfolio")
 }
 
 model StackCategory {
@@ -35,6 +37,8 @@ model StackCategory {
   iconKey     String
   order       Int         @default(0)
   items       StackItem[]
+
+  @@schema("portfolio")
 }
 
 model StackItem {
@@ -45,6 +49,8 @@ model StackItem {
   order      Int           @default(0)
   category   StackCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId String
+
+  @@schema("portfolio")
 }
 
 model Experience {
@@ -58,6 +64,8 @@ model Experience {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@schema("portfolio")
 }
 
 model Certification {
@@ -76,6 +84,8 @@ model Certification {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@schema("portfolio")
 }
 
 model Testimonial {
@@ -89,6 +99,8 @@ model Testimonial {
   hidden    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@schema("portfolio")
 }
 
 /// Shared rate-limit state across serverless instances (in-memory Map is per-instance).
@@ -96,6 +108,8 @@ model RateLimitBucket {
   key     String   @id
   count   Int      @default(0)
   resetAt DateTime
+
+  @@schema("portfolio")
 }
 
 model WaitlistEntry {
@@ -103,6 +117,8 @@ model WaitlistEntry {
   email     String   @unique
   name      String?
   createdAt DateTime @default(now())
+
+  @@schema("portfolio")
 }
 
 /// First-party, privacy-tilted event log (IP stored as daily hash + salt only).
@@ -122,4 +138,5 @@ model AnalyticsEvent {
 
   @@index([createdAt])
   @@index([name, createdAt])
+  @@schema("portfolio")
 }

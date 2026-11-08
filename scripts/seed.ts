@@ -2,14 +2,12 @@
  * Seed the database from the static content files in src/content/*.
  * Safe to re-run: upserts projects and categories, syncs items, and cleans up obsolete records.
  */
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../src/lib/prisma";
 import { projectsData as projects } from "../src/content/projects.data";
 import { stackCategories } from "../src/content/stack";
 import { experience } from "../src/content/experience";
 import { certifications } from "../src/content/certifications";
 import { testimonials } from "../src/content/testimonials";
-
-const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding projects...");
