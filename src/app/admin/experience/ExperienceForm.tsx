@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import type { Experience } from "@prisma/client";
 import { Field, Input, SubmitButton, Textarea } from "../_components/Form";
@@ -43,7 +44,7 @@ export function ExperienceForm({
       </label>
       <div className="flex items-center gap-3 pt-2">
         <SubmitButton>{entry ? "Save changes" : "Add entry"}</SubmitButton>
-        <Link href="/admin/experience" className="text-sm text-white/60 hover:text-white">
+        <Link href={adminHref("/experience")} className="text-sm text-white/60 hover:text-white">
           Cancel
         </Link>
       </div>

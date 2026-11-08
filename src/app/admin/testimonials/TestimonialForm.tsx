@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import type { Testimonial } from "@prisma/client";
 import { Field, Input, Select, SubmitButton, Textarea } from "../_components/Form";
@@ -48,7 +49,7 @@ export function TestimonialForm({
 
       <div className="flex items-center gap-3 pt-2">
         <SubmitButton>{testimonial ? "Save changes" : "Add testimonial"}</SubmitButton>
-        <Link href="/admin/testimonials" className="text-sm text-white/60 hover:text-white">
+        <Link href={adminHref("/testimonials")} className="text-sm text-white/60 hover:text-white">
           Cancel
         </Link>
       </div>

@@ -1,9 +1,11 @@
 "use server";
 
+import { adminHref } from "@/lib/admin-href";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/auth";
+import { requireAdmin } from "@/server/auth/session";
 
 function extractCategory(formData: FormData) {
   return {
@@ -18,28 +20,28 @@ function extractCategory(formData: FormData) {
 
 function revalidate() {
   revalidatePath("/");
-  revalidatePath("/admin/stack");
+  revalidatePath(adminHref("/stack"));
 }
 
 export async function createCategory(formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extractCategory(formData);
   if (!f.key || !f.label) throw new Error("Key and label are required.");
   await prisma.stackCategory.create({ data: f });
   revalidate();
-  redirect("/admin/stack");
+  redirect(adminHref("/stack"));
 }
 
 export async function updateCategory(id: string, formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extractCategory(formData);
   await prisma.stackCategory.update({ where: { id }, data: f });
   revalidate();
-  redirect(`/admin/stack/${id}`);
+  redirect(adminHref(`/stack/${id}`));
 }
 
 export async function deleteCategory(id: string) {
-  await requireSession();
+  await requireAdmin();
   await prisma.stackCategory.delete({ where: { id } });
   revalidate();
 }
@@ -54,25 +56,25 @@ function extractItem(formData: FormData) {
 }
 
 export async function createItem(categoryId: string, formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extractItem(formData);
   if (!f.name) throw new Error("Item name required.");
   await prisma.stackItem.create({ data: { ...f, categoryId } });
   revalidate();
-  redirect(`/admin/stack/${categoryId}`);
+  redirect(adminHref(`/stack/${categoryId}`));
 }
 
 export async function updateItem(itemId: string, categoryId: string, formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extractItem(formData);
   await prisma.stackItem.update({ where: { id: itemId }, data: f });
   revalidate();
-  redirect(`/admin/stack/${categoryId}`);
+  redirect(adminHref(`/stack/${categoryId}`));
 }
 
 export async function deleteItem(itemId: string, categoryId: string) {
-  await requireSession();
+  await requireAdmin();
   await prisma.stackItem.delete({ where: { id: itemId } });
   revalidatePath("/");
-  revalidatePath(`/admin/stack/${categoryId}`);
+  revalidatePath(adminHref(`/stack/${categoryId}`));
 }

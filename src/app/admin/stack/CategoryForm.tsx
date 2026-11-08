@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import type { StackCategory } from "@prisma/client";
 import { ICON_KEYS } from "@/lib/icons";
@@ -45,7 +46,7 @@ export function CategoryForm({
       </Field>
       <div className="flex items-center gap-3 pt-2">
         <SubmitButton>{category ? "Save changes" : "Create category"}</SubmitButton>
-        <Link href="/admin/stack" className="text-sm text-white/60 hover:text-white">
+        <Link href={adminHref("/stack")} className="text-sm text-white/60 hover:text-white">
           Cancel
         </Link>
       </div>

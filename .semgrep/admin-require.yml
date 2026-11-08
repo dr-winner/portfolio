@@ -1,0 +1,13 @@
+rules:
+  - id: admin-mutation-requires-admin
+    languages: [ts]
+    severity: ERROR
+    message: Admin mutations must call requireAdmin().
+    paths:
+      include:
+        - src/app/admin
+      exclude:
+        - src/app/admin/login
+    patterns:
+      - pattern-regex: '"use server"'
+      - pattern-not-regex: requireAdmin\(

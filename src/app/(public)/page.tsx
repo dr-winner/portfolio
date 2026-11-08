@@ -5,6 +5,7 @@ import { CopyEmail } from "@/components/site/CopyEmail";
 import { certifications } from "@/content/certifications";
 import { cvHref, mailto, site } from "@/content/site";
 import { work } from "@/content/work";
+import { headers } from "next/headers";
 import { personSchema, profilePageSchema, webSiteSchema } from "@/lib/structured-data";
 
 const proof = [
@@ -43,16 +44,17 @@ const practices = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   const featured = work.filter((item) => item.kind === "case-study");
   const earned = certifications.filter((item) => item.status === "earned");
   const progress = certifications.filter((item) => item.status !== "earned");
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema()) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema()) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema()) }} />
+      <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema()) }} />
+      <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema()) }} />
+      <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema()) }} />
 
       <section className="relative flex min-h-[100svh] flex-col justify-end px-[clamp(20px,5vw,64px)] pb-16 md:justify-center">
         <div

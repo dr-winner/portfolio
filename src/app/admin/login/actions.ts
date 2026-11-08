@@ -1,10 +1,13 @@
 "use server";
 
+import { adminHref } from "@/lib/admin-href";
+
 import { createHash, timingSafeEqual } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { setSessionCookie } from "@/lib/auth";
 import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
+import { audit } from "@/server/audit";
+import { openSession } from "@/server/auth/session";
 
 export type LoginState = { error?: string };
 
@@ -27,29 +30,31 @@ export async function loginAction(
   formData: FormData
 ): Promise<LoginState> {
   const ip = clientIpFromHeaders(await headers());
-  const rl = await checkRateLimitDurable(`login:${ip}`, 5, 60_000);
+  const rl = await checkRateLimitDurable(`login:${ip}`, 5, 15 * 60_000);
   if (!rl.ok) {
-    return { error: "Too many attempts. Try again in a minute." };
+    return { error: "Too many attempts. Try again later." };
+  }
+  if (process.env.LEGACY_PASSWORD_LOGIN === "false") {
+    return { error: SIGNIN_UNAVAILABLE };
   }
 
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const from = String(formData.get("from") ?? "/admin");
-
   const expectedUser = (process.env.ADMIN_USERNAME || "admin").trim();
   const expectedPassword = (process.env.ADMIN_PASSWORD ?? "").trim();
 
-  // Refuse to run with a missing or weak configured password.
-  if (expectedPassword.length < 12) {
+  if (expectedPassword.length < 24) {
     return { error: SIGNIN_UNAVAILABLE };
   }
 
   const userOk = safeEqual(username, expectedUser);
   const passOk = safeEqual(password, expectedPassword);
   if (!userOk || !passOk) {
+    await audit({ actor: "unknown", action: "sign-in-failed" });
     return { error: "Invalid credentials." };
   }
 
-  await setSessionCookie(expectedUser);
-  redirect(from.startsWith("/admin") ? from : "/admin");
+  const sid = await openSession(expectedUser);
+  await audit({ actor: expectedUser, action: "sign-in", sessionId: sid });
+  redirect(adminHref(""));
 }

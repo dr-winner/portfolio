@@ -7,7 +7,7 @@ import { visitKeyFromIp } from "@/lib/visit-fingerprint";
 
 export const dynamic = "force-dynamic";
 
-const NAME_RE = /^[a-z0-9_]{1,48}$/;
+const ALLOWED_EVENTS = new Set(["page_view", "cv_download", "email_click", "case_study_open", "palette_open", "assistant_open"]);
 
 function countryFromRequest(req: NextRequest): string {
   return (req.headers.get("x-vercel-ip-country") || req.headers.get("cf-ipcountry") || "").slice(0, 4);
@@ -27,7 +27,7 @@ function refererT(r: string | null): string {
 }
 
 export async function POST(req: NextRequest) {
-  if (!assertSameOriginOrMissing(req)) {
+  if (!req.headers.get("origin") || !assertSameOriginOrMissing(req)) {
     return NextResponse.json({ ok: false }, { status: 403 });
   }
 
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   const name = String(body.name ?? "");
-  if (!NAME_RE.test(name)) {
+  if (!ALLOWED_EVENTS.has(name)) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
   const path = String(body.path ?? "/").replace(/\s+/g, " ").slice(0, 300) || "/";
@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const salt = process.env.ANALYTICS_SALT || process.env.SESSION_SECRET || "dev-only-salt";
+  const salt = process.env.ANALYTICS_SALT;
+  if (!salt) return NextResponse.json({ ok: false }, { status: 503 });
   const visitKey = visitKeyFromIp(ip, salt);
   const ua = uaFromHeaders(req.headers);
   const { device, browser } = deviceClass(ua);
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
   let meta = "{}";
   try {
     meta = JSON.stringify(body.meta && typeof body.meta === "object" ? body.meta : {});
-    if (meta.length > 2000) meta = "{}";
+    if (meta.length > 512) meta = "{}";
   } catch {
     meta = "{}";
   }

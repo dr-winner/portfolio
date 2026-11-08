@@ -98,7 +98,7 @@ export function ProjectForm({
       <div className="flex items-center gap-3 pt-2">
         <SubmitButton>{project ? "Save changes" : "Create project"}</SubmitButton>
         <Link
-          href="/admin/projects"
+          href=".."
           className="text-sm text-white/60 hover:text-white"
         >
           Cancel

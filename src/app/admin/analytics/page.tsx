@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import { ArrowLeft, BarChart3 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -37,7 +38,7 @@ export default async function AdminAnalyticsPage() {
         layout adds aggregate traffic in the Vercel dashboard.
       </p>
       <Link
-        href="/admin"
+        href={adminHref("")}
         className="mt-4 inline-flex items-center gap-1 text-sm text-ocean-300 hover:text-ocean-200"
       >
         <ArrowLeft className="size-3.5" /> Admin overview

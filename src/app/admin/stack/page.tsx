@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import { ArrowRight, Pencil, Plus, Trash2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -17,7 +18,7 @@ export default async function StackAdminPage() {
         title="Stack categories"
         action={
           <Link
-            href="/admin/stack/new"
+            href={adminHref("/stack/new")}
             className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-sm font-semibold text-ink hover:bg-white/90"
           >
             <Plus className="size-4" /> New category
@@ -28,7 +29,7 @@ export default async function StackAdminPage() {
       <ul className="flex flex-col divide-y divide-white/[0.06] rounded-2xl border border-white/10 bg-white/[0.02]">
         {rows.map((c) => (
           <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 p-5">
-            <Link href={`/admin/stack/${c.id}`} className="group min-w-0 flex-1">
+            <Link href={adminHref(`/stack/${c.id}`)} className="group min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-white truncate group-hover:text-ocean-300">
                   {c.label}
@@ -43,7 +44,7 @@ export default async function StackAdminPage() {
             </Link>
             <div className="flex items-center gap-2">
               <Link
-                href={`/admin/stack/${c.id}`}
+                href={adminHref(`/stack/${c.id}`)}
                 className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/80 hover:text-white hover:border-ocean-300/40"
               >
                 <Pencil className="size-3.5" /> Manage

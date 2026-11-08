@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import type { Certification } from "@prisma/client";
 import { Field, Input, Select, SubmitButton, Textarea } from "../_components/Form";
@@ -69,7 +70,7 @@ export function CertForm({
 
       <div className="flex items-center gap-3 pt-2">
         <SubmitButton>{cert ? "Save changes" : "Add certification"}</SubmitButton>
-        <Link href="/admin/certifications" className="text-sm text-white/60 hover:text-white">
+        <Link href={adminHref("/certifications")} className="text-sm text-white/60 hover:text-white">
           Cancel
         </Link>
       </div>

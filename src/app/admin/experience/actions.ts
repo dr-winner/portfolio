@@ -1,9 +1,11 @@
 "use server";
 
+import { adminHref } from "@/lib/admin-href";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/auth";
+import { requireAdmin } from "@/server/auth/session";
 
 function splitList(v: FormDataEntryValue | null): string[] {
   if (!v) return [];
@@ -24,32 +26,32 @@ function extract(formData: FormData) {
 
 function revalidate() {
   revalidatePath("/");
-  revalidatePath("/admin/experience");
+  revalidatePath(adminHref("/experience"));
 }
 
 export async function createExperience(formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extract(formData);
   await prisma.experience.create({
     data: { ...f, tags: JSON.stringify(f.tags) },
   });
   revalidate();
-  redirect("/admin/experience");
+  redirect(adminHref("/experience"));
 }
 
 export async function updateExperience(id: string, formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extract(formData);
   await prisma.experience.update({
     where: { id },
     data: { ...f, tags: JSON.stringify(f.tags) },
   });
   revalidate();
-  redirect("/admin/experience");
+  redirect(adminHref("/experience"));
 }
 
 export async function deleteExperience(id: string) {
-  await requireSession();
+  await requireAdmin();
   await prisma.experience.delete({ where: { id } });
   revalidate();
 }
