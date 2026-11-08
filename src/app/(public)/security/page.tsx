@@ -11,27 +11,19 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "Headers",
-    text: "Responses send a Content Security Policy, HSTS on the public host, nosniff, a referrer policy, and framing limits. Per-request script nonces are the next hardening step, so the policy still allows the framework's inline bootstrap.",
+    text: "Responses send a per-request nonce Content Security Policy, HSTS on the public host, nosniff, a strict referrer policy, COOP/CORP isolation, and framing limits.",
   },
   {
-    title: "No secrets in the browser",
-    text: "API keys stay on the server. Production builds do not publish browser source maps.",
-  },
-  {
-    title: "Content management",
-    text: "The editing area is not linked from the public site and requires a sign-in. Changes are checked on the server.",
-  },
-  {
-    title: "The site assistant",
-    text: "The assistant answers from the facts published on this site. Visitor messages are treated as data, not instructions.",
+    title: "Small attack surface",
+    text: "Portfolio content lives in typed source files reviewed in Git. There is no public admin interface, database, file upload endpoint, or runtime secret in the browser.",
   },
   {
     title: "Dependencies and code",
-    text: "Dependency review and secret scanning are turned on for the repository.",
+    text: "Type checking, linting, and production dependency audits run in CI, with Dependabot and secret scanning enabled on the repository.",
   },
   {
     title: "Privacy",
-    text: "Page views use the host's analytics. There are no ad trackers.",
+    text: "Page views use the host's aggregate analytics. There are no ad trackers or third-party marketing scripts.",
   },
 ];
 

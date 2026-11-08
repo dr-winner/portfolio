@@ -121,25 +121,3 @@ export function profilePageSchema() {
     },
   };
 }
-
-/* ─── ItemList (projects overview for rich results) ──────────────────────── */
-export function projectsListSchema(
-  projects: Array<{ title: string; slug: string; summary: string; link?: string | null }>
-) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "@id": `${BASE_URL}/#projects`,
-    name: "Selected Projects",
-    description: "A curated list of projects by Richard Winner Duvor",
-    url: `${BASE_URL}/#projects`,
-    numberOfItems: projects.length,
-    itemListElement: projects.map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: p.title,
-      description: p.summary,
-      url: p.link ?? BASE_URL,
-    })),
-  };
-}

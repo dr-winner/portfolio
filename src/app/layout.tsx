@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 import clsx from "clsx";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { Providers } from "@/components/Providers";
 import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
 
@@ -120,7 +119,7 @@ export default async function RootLayout({
       style={{ ["--font-sans" as string]: "var(--font-geist-sans)", ["--font-mono" as string]: "var(--font-geist-mono)", ["--font-display" as string]: "var(--font-geist-sans)" }}
     >
       <body className="font-sans antialiased overflow-x-hidden">
-        <Providers>{children}</Providers>
+        {children}
         <Analytics />
       </body>
     </html>

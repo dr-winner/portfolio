@@ -1,18 +1,10 @@
 # Security notes
 
-The public editor is not at `/admin`. That path returns 404. The real path is `ADMIN_PATH` in the host environment, and it is not written in the repository.
+The portfolio is a static-first Next.js application with no runtime database, admin CMS, or file-upload surface.
 
-Sessions are rows in the database. Signing out deletes the row. The cookie is signed, `HttpOnly`, and `SameSite=Strict`. On HTTPS it uses the `__Host-` prefix.
+- Content is authored in `src/content/*` and reviewed in Git.
+- `/admin` and `/studio` return `404` with `X-Robots-Tag: noindex, nofollow, noarchive` and `Cache-Control: private, no-store`.
+- Every document response carries a per-request CSP nonce (`script-src 'self' 'nonce-...' 'strict-dynamic'`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Cross-Origin-Opener-Policy: same-origin`, and `Permissions-Policy`.
+- Vulnerability disclosure instructions live at `/security#report` and `/.well-known/security.txt`.
 
-Password sign-in stays available until `LEGACY_PASSWORD_LOGIN=false`. Passkeys and GitHub recovery need a GitHub OAuth app and are not switched on yet.
-
-## Rotation
-
-- `SESSION_SECRET`: generate a new 32+ character value, set it in every environment, and redeploy. Existing editor sessions stop working.
-- `ADMIN_PASSWORD`: set a new 24+ character value and redeploy.
-- `ADMIN_PATH`: set a new 24-character hex value and redeploy. Old bookmarks stop working.
-- `ANALYTICS_SALT`: set a new value and redeploy. Old visitor hashes cannot be correlated with new ones.
-- `GROQ_API_KEY` and `BLOB_READ_WRITE_TOKEN`: revoke them in the provider, then set the new value and redeploy.
-- `DATABASE_URL`: rotate the database password in Neon and update every environment.
-
-`GITHUB_TOKEN` is unused. Revoke it in GitHub if it is still present.
+If legacy environment variables (`DATABASE_URL`, `SESSION_SECRET`, `ADMIN_PASSWORD`, `ADMIN_PATH`, `ANALYTICS_SALT`, `GROQ_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `GITHUB_TOKEN`) are still configured in hosting environments from earlier versions, remove them and revoke the backing credentials in their providers.

@@ -1,6 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { adminPathSegment } from "@/lib/admin-href";
-import { COOKIE_NAMES, verifySession } from "@/lib/session-token";
 
 function buildCsp(nonce: string, isDev: boolean) {
   const script = isDev
@@ -10,7 +8,7 @@ function buildCsp(nonce: string, isDev: boolean) {
     "default-src 'self'",
     script,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
+    "img-src 'self' data: blob:",
     "font-src 'self'",
     "connect-src 'self' https://vitals.vercel-insights.com",
     "media-src 'self'",
@@ -29,7 +27,6 @@ function applyDocumentHeaders(response: NextResponse, req: NextRequest, nonce: s
   const isDev = process.env.NODE_ENV !== "production";
   const csp = buildCsp(nonce, isDev);
   response.headers.set("Content-Security-Policy", csp);
-  response.headers.set("Reporting-Endpoints", 'csp="/api/csp-report"');
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -49,32 +46,29 @@ function applyDocumentHeaders(response: NextResponse, req: NextRequest, nonce: s
 }
 
 function notFound() {
-  return new NextResponse("Not Found", { status: 404, headers: { "X-Robots-Tag": "noindex, nofollow, noarchive", "Cache-Control": "private, no-store" } });
+  return new NextResponse("Not Found", {
+    status: 404,
+    headers: {
+      "X-Robots-Tag": "noindex, nofollow, noarchive",
+      "Cache-Control": "private, no-store",
+    },
+  });
 }
 
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const nonce = btoa(crypto.randomUUID());
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("x-pathname", pathname);
 
-  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/studio" || pathname.startsWith("/studio/")) {
+  if (
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/studio" ||
+    pathname.startsWith("/studio/")
+  ) {
     return notFound();
-  }
-
-  const segment = adminPathSegment();
-  if (segment && (pathname === `/${segment}` || pathname.startsWith(`/${segment}/`))) {
-    const isLogin = pathname === `/${segment}/login`;
-    const token = COOKIE_NAMES.map((name) => req.cookies.get(name)?.value).find(Boolean);
-    const session = await verifySession(token);
-    if (!isLogin && !session) return notFound();
-    const url = req.nextUrl.clone();
-    url.pathname = `/admin${pathname.slice(segment.length + 1)}`;
-    const response = NextResponse.rewrite(url, { request: { headers: requestHeaders } });
-    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-    response.headers.set("Cache-Control", "private, no-store");
-    return applyDocumentHeaders(response, req, nonce);
   }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
