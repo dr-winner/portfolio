@@ -1,47 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Space_Grotesk } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+import { cookies } from "next/headers";
 import clsx from "clsx";
 import "./globals.css";
-import { AgenticBackground } from "@/components/AgenticBackground";
 import { Analytics } from "@vercel/analytics/next";
-import { ClientChrome } from "@/components/ClientChrome";
 import { Providers } from "@/components/Providers";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
-import {
-  personSchema,
-  profilePageSchema,
-  webSiteSchema,
-} from "@/lib/structured-data";
 
-/* ─── Fonts ───────────────────────────────────────────────────────────────── */
-
-/* Enterprise / readable UI: common in security products */
-const sans = IBM_Plex_Sans({
+const serif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
+  style: "italic",
+  variable: "--font-instrument-serif",
   display: "swap",
   adjustFontFallback: true,
-});
-
-/* Tech-forward headlines; pairs with ink/cyan theme */
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  adjustFontFallback: true,
-});
-
-/* Monospace: logs, kbd, terminal */
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  adjustFontFallback: true,
+  preload: false,
 });
 
 /* ─── Site constants ──────────────────────────────────────────────────────── */
@@ -119,8 +95,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eaf0f9" },
-    { media: "(prefers-color-scheme: dark)", color: "#04060c" },
+    { media: "(prefers-color-scheme: light)", color: "#F6F5F1" },
+    { media: "(prefers-color-scheme: dark)", color: "#07090C" },
   ],
   colorScheme: "dark light",
   width: "device-width",
@@ -130,47 +106,21 @@ export const viewport: Viewport = {
 
 /* ─── Root layout ─────────────────────────────────────────────────────────── */
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const theme = (await cookies()).get("theme")?.value;
+  const themeClass = theme === "light" || theme === "dark" ? theme : undefined;
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
-      className={clsx(sans.variable, display.variable, mono.variable, "dark")}
+      className={clsx(GeistSans.variable, GeistMono.variable, serif.variable, themeClass)}
+      style={{ ["--font-sans" as string]: "var(--font-geist-sans)", ["--font-mono" as string]: "var(--font-geist-mono)", ["--font-display" as string]: "var(--font-geist-sans)" }}
     >
-      <head>
-        {/* Resource hints: fonts are self-hosted via next/font, no preconnect needed */}
-        <link rel="dns-prefetch" href="https://github.com" />
-
-        {/* Structured data: three separate JSON-LD blocks for clarity */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema()) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema()) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(profilePageSchema()),
-          }}
-        />
-      </head>
-
-      <body className="font-sans antialiased overflow-x-hidden touch-pan-y [overscroll-behavior-x:none]">
-        {/* Native scrolling, no custom cursor. Deliberate: the Lenis +
-            cursor combo made the site feel sluggish (removed in e06ac11,
-            accidentally reintroduced by a stale design pass). */}
-        <Providers>
-          <ClientChrome>
-            <AgenticBackground />
-            <ScrollProgress />
-            {children}
-          </ClientChrome>
-        </Providers>
+      <body className="font-sans antialiased overflow-x-hidden">
+        <Providers>{children}</Providers>
         <Analytics />
       </body>
     </html>
