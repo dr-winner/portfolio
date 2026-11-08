@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import {
   BarChart3,
@@ -9,7 +10,9 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
-import { getCurrentSession } from "@/lib/auth";
+import { headers } from "next/headers";
+import { notFound } from "next/navigation";
+import { readPrincipal } from "@/server/auth/session";
 import { LogoutButton } from "./_components/LogoutButton";
 import "../globals.css";
 
@@ -19,17 +22,19 @@ export const metadata = {
 };
 
 const NAV = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/analytics", label: "Usage", icon: BarChart3 },
-  { href: "/admin/projects", label: "Projects", icon: FolderGit2 },
-  { href: "/admin/stack", label: "Stack", icon: Wrench },
-  { href: "/admin/experience", label: "Experience", icon: Briefcase },
-  { href: "/admin/certifications", label: "Certifications", icon: ShieldCheck },
-  { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
+  { href: adminHref(""), label: "Overview", icon: LayoutDashboard },
+  { href: adminHref("/analytics"), label: "Usage", icon: BarChart3 },
+  { href: adminHref("/projects"), label: "Projects", icon: FolderGit2 },
+  { href: adminHref("/stack"), label: "Stack", icon: Wrench },
+  { href: adminHref("/experience"), label: "Experience", icon: Briefcase },
+  { href: adminHref("/certifications"), label: "Certifications", icon: ShieldCheck },
+  { href: adminHref("/testimonials"), label: "Testimonials", icon: MessageSquareQuote },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getCurrentSession();
+  const session = await readPrincipal();
+  const path = (await headers()).get("x-pathname") ?? "";
+  if (!session && !path.endsWith("/login")) notFound();
 
   // No session (login page): no sidebar. Showing "Signed in as admin" and a
   // Log out button to a logged-out visitor is confusing and wrong.
@@ -66,7 +71,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </nav>
           <div className="mt-10 rounded-lg border border-white/10 p-4 text-xs text-white/60">
             <p className="font-mono uppercase tracking-[0.2em] text-white/40">Signed in as</p>
-            <p className="mt-1 font-semibold text-white">{session?.sub ?? "admin"}</p>
+            <p className="mt-1 font-semibold text-white">{session.actor}</p>
             <LogoutButton className="mt-3 inline-flex items-center gap-2 text-white/60 hover:text-white">
               <LogOut className="size-3.5" /> Log out
             </LogoutButton>

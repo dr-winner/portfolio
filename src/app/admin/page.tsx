@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { ArrowRight, Briefcase, FolderGit2, MessageSquareQuote, ShieldCheck, Wrench } from "lucide-react";
@@ -21,11 +22,11 @@ async function counts() {
 }
 
 const TILES = [
-  { href: "/admin/projects", label: "Projects", icon: FolderGit2, key: "projects" },
-  { href: "/admin/stack", label: "Stack items", icon: Wrench, key: "stackItems" },
-  { href: "/admin/experience", label: "Experience", icon: Briefcase, key: "experience" },
-  { href: "/admin/certifications", label: "Certifications", icon: ShieldCheck, key: "certifications" },
-  { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote, key: "testimonials" },
+  { href: adminHref("/projects"), label: "Projects", icon: FolderGit2, key: "projects" },
+  { href: adminHref("/stack"), label: "Stack items", icon: Wrench, key: "stackItems" },
+  { href: adminHref("/experience"), label: "Experience", icon: Briefcase, key: "experience" },
+  { href: adminHref("/certifications"), label: "Certifications", icon: ShieldCheck, key: "certifications" },
+  { href: adminHref("/testimonials"), label: "Testimonials", icon: MessageSquareQuote, key: "testimonials" },
 ] as const;
 
 export default async function AdminHomePage() {

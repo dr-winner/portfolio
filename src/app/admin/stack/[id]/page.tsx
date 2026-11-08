@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Trash2 } from "lucide-react";
@@ -35,7 +36,7 @@ export default async function CategoryDetailPage({
         subtitle="Stack"
         title={`Edit: ${category.label}`}
         action={
-          <Link href="/admin/stack" className="text-sm text-white/60 hover:text-white">
+          <Link href={adminHref("/stack")} className="text-sm text-white/60 hover:text-white">
             ← All categories
           </Link>
         }

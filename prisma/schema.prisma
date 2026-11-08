@@ -112,6 +112,46 @@ model RateLimitBucket {
   @@schema("portfolio")
 }
 
+model AdminSession {
+  id        String   @id
+  actor     String
+  expiresAt DateTime
+  idleAt    DateTime
+  createdAt DateTime @default(now())
+  lastSeen  DateTime @default(now())
+  country   String   @default("")
+  uaHash    String   @default("")
+
+  @@schema("portfolio")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  at        DateTime @default(now())
+  actor     String
+  action    String
+  entity    String   @default("")
+  entityId  String   @default("")
+  summary   String   @default("")
+  ipHash    String   @default("")
+  uaHash    String   @default("")
+  sessionId String   @default("")
+
+  @@index([at])
+  @@schema("portfolio")
+}
+
+model CspReport {
+  id           String   @id @default(cuid())
+  at           DateTime @default(now())
+  directive    String
+  blockedHost  String   @default("")
+  documentPath String   @default("")
+
+  @@index([at])
+  @@schema("portfolio")
+}
+
 model WaitlistEntry {
   id        String   @id @default(cuid())
   email     String   @unique

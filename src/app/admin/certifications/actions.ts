@@ -1,9 +1,18 @@
 "use server";
 
+import { adminHref } from "@/lib/admin-href";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/auth";
+import { requireAdmin } from "@/server/auth/session";
+
+function httpsLink(value: string): string | null {
+  if (!value) return null;
+  const url = new URL(value);
+  if (url.protocol !== "https:") throw new Error("Links must use https.");
+  return url.toString();
+}
 
 function splitList(v: FormDataEntryValue | null): string[] {
   if (!v) return [];
@@ -26,39 +35,39 @@ function extract(formData: FormData) {
     description: String(formData.get("description") ?? "").trim(),
     skills: splitList(formData.get("skills")),
     modules: splitList(formData.get("modules")),
-    link: String(formData.get("link") ?? "").trim() || null,
+    link: httpsLink(String(formData.get("link") ?? "").trim()),
     order: Number(formData.get("order") ?? 0) || 0,
   };
 }
 
 function revalidate() {
   revalidatePath("/");
-  revalidatePath("/admin/certifications");
+  revalidatePath(adminHref("/certifications"));
 }
 
 export async function createCertification(formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extract(formData);
   await prisma.certification.create({
     data: { ...f, skills: JSON.stringify(f.skills), modules: JSON.stringify(f.modules) },
   });
   revalidate();
-  redirect("/admin/certifications");
+  redirect(adminHref("/certifications"));
 }
 
 export async function updateCertification(id: string, formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   const f = extract(formData);
   await prisma.certification.update({
     where: { id },
     data: { ...f, skills: JSON.stringify(f.skills), modules: JSON.stringify(f.modules) },
   });
   revalidate();
-  redirect("/admin/certifications");
+  redirect(adminHref("/certifications"));
 }
 
 export async function deleteCertification(id: string) {
-  await requireSession();
+  await requireAdmin();
   await prisma.certification.delete({ where: { id } });
   revalidate();
 }

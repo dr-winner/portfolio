@@ -1,42 +1,14 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === "production";
-
-/*
- * CSP notes:
- * - 'unsafe-inline' in script-src is required by Next.js's inline bootstrap
- *   on statically prerendered pages (no nonce support there).
- * - 'unsafe-inline' in style-src is required by Framer Motion / GSAP.
- * - The blob host serves admin-uploaded project screenshots.
- * - Prod-only: dev needs 'unsafe-eval' for react-refresh.
- */
-const csp = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
-  "font-src 'self'",
-  "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'self'",
-  // upgrade-insecure-requests intentionally omitted: HSTS + Vercel's
-  // https-only serving already cover it, and it breaks production builds
-  // tested over http://localhost.
-].join("; ");
-
 const securityHeaders = [
-  { key: "X-DNS-Prefetch-Control", value: "on" },
+  { key: "X-DNS-Prefetch-Control", value: "off" },
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
-  ...(isProd ? [{ key: "Content-Security-Policy", value: csp }] : []),
-  // HSTS only on the real deployment: sending it from `next start` on
-  // http://localhost makes the browser force-upgrade to https://localhost
-  // and everything breaks with SSL errors.
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), interest-cohort=()" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
   ...(process.env.VERCEL
-    ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]
+    ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]
     : []),
 ];
 
@@ -57,6 +29,7 @@ const nextConfig = {
       { source: "/work/osint-and-network-recon-assessment", destination: "/work/osint-network-recon", permanent: true },
       { source: "/work/cryptanalysis-and-hash-recovery-assessment", destination: "/work/offline-password-recovery", permanent: true },
       { source: "/resume.pdf", destination: "/cv.pdf", permanent: true },
+      { source: "/security.txt", destination: "/.well-known/security.txt", permanent: true },
     ];
   },
   async headers() {
@@ -71,7 +44,12 @@ const nextConfig = {
           { key: "Content-Type", value: "application/pdf" },
           { key: "Content-Disposition", value: 'inline; filename="Richard-Winner-Duvor-AppSec-CV.pdf"' },
           { key: "Cache-Control", value: "public, max-age=3600" },
+          { key: "Cross-Origin-Resource-Policy", value: "cross-origin" },
         ],
+      },
+      {
+        source: "/opengraph-image",
+        headers: [{ key: "Cross-Origin-Resource-Policy", value: "cross-origin" }],
       },
     ];
   },

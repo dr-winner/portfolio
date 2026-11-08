@@ -1,9 +1,11 @@
 "use server";
 
+import { adminHref } from "@/lib/admin-href";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/auth";
+import { requireAdmin } from "@/server/auth/session";
 
 function extract(formData: FormData) {
   return {
@@ -19,25 +21,25 @@ function extract(formData: FormData) {
 
 function revalidate() {
   revalidatePath("/");
-  revalidatePath("/admin/testimonials");
+  revalidatePath(adminHref("/testimonials"));
 }
 
 export async function createTestimonial(formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   await prisma.testimonial.create({ data: extract(formData) });
   revalidate();
-  redirect("/admin/testimonials");
+  redirect(adminHref("/testimonials"));
 }
 
 export async function updateTestimonial(id: string, formData: FormData) {
-  await requireSession();
+  await requireAdmin();
   await prisma.testimonial.update({ where: { id }, data: extract(formData) });
   revalidate();
-  redirect("/admin/testimonials");
+  redirect(adminHref("/testimonials"));
 }
 
 export async function deleteTestimonial(id: string) {
-  await requireSession();
+  await requireAdmin();
   await prisma.testimonial.delete({ where: { id } });
   revalidate();
 }

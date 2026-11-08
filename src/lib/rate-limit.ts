@@ -35,12 +35,7 @@ export function checkRateLimit(
 }
 
 export function clientIpFromHeaders(h: Headers): string {
-  const xff = h.get("x-forwarded-for");
-  if (xff) {
-    const first = xff.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return h.get("x-real-ip") || "0";
+  return h.get("x-real-ip") || h.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() || "0";
 }
 
 /**

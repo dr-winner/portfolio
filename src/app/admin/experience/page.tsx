@@ -1,3 +1,4 @@
+import { adminHref } from "@/lib/admin-href";
 import Link from "next/link";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -13,7 +14,7 @@ export default async function ExperienceAdminPage() {
         title="Experience"
         action={
           <Link
-            href="/admin/experience/new"
+            href={adminHref("/experience/new")}
             className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-sm font-semibold text-ink hover:bg-white/90"
           >
             <Plus className="size-4" /> New entry
@@ -39,7 +40,7 @@ export default async function ExperienceAdminPage() {
             </div>
             <div className="flex items-center gap-2">
               <Link
-                href={`/admin/experience/${e.id}`}
+                href={adminHref(`/experience/${e.id}`)}
                 className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/80 hover:text-white hover:border-ocean-300/40"
               >
                 <Pencil className="size-3.5" /> Edit
