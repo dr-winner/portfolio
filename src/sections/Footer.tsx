@@ -14,8 +14,12 @@ const socials = [
   { label: "GitHub", href: profile.socials.github, icon: GithubIcon },
   { label: "LinkedIn", href: profile.socials.linkedin, icon: LinkedInIcon },
   { label: "X", href: profile.socials.x, icon: XIcon },
-  { label: "Medium", href: profile.socials.medium, icon: MediumIcon },
-  { label: "TikTok", href: profile.socials.tiktok, icon: TikTokIcon },
+  ...(profile.showMedium
+    ? [{ label: "Medium", href: profile.socials.medium, icon: MediumIcon }]
+    : []),
+  ...(profile.showTiktok
+    ? [{ label: "TikTok", href: profile.socials.tiktok, icon: TikTokIcon }]
+    : []),
 ];
 
 export function Footer() {
@@ -36,7 +40,7 @@ export function Footer() {
             &copy; {year ?? ""}{" "}
             <span className="text-gradient-ocean font-semibold">{profile.name}</span>
             {". "}
-            All rights reserved.
+            Built and secured by me.
           </p>
 
           <nav

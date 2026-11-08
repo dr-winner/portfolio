@@ -9,52 +9,56 @@ export type TimelineEntry = {
 
 export const experience: TimelineEntry[] = [
   {
-    period: "Aug 2025 - Present",
-    title: "Frontend Engineering Lead (Application Security)",
+    period: "Feb 2025 to present",
+    title: "Frontend Engineer",
     org: "Synchora Health",
-    description:
-      "Lead frontend architecture and application security in a two-person team building an offline-first clinical PWA used by nurses without internet connectivity. Enforce role-based access control (RBAC) across clinical dashboards, validate EHR API integrations, and secure offline client-side PHI persistence.",
-    tags: ["Application Security", "RBAC", "React.js", "Next.js", "TypeScript"],
+    description: "Frontend development for Synchora Health's products.",
+    tags: [],
     current: true,
   },
   {
-    period: "Sep 2026 - Oct 2026",
-    title: "Cybersecurity Intern (Ethical Hacking & SOC)",
+    period: "Sep 2026 to present",
+    title: "Cybersecurity Intern (Ethical Hacking and SOC tracks)",
     org: "TechBiz Security",
-    description:
-      "Completed an intensive 6-week hands-on lab curriculum executing 30+ offensive and defensive scenarios on TryHackMe covering web exploitation, Linux/Windows privilege escalation, network reconnaissance, and SIEM alert triage.",
-    tags: ["Penetration Testing", "Web Exploitation", "Privilege Escalation", "SIEM", "TryHackMe"],
+    description: "Offensive testing labs and SOC alert triage.",
+    tags: ["Web exploitation", "Privilege escalation", "SIEM"],
+    current: true,
   },
   {
-    period: "Aug 2026 - Sep 2026",
-    title: "Penetration Testing Intern",
+    period: "Aug 2026 to Sep 2026",
+    title: "Cybersecurity Intern",
     org: "NetworkWalks",
     description:
-      "Executed black-box web penetration testing (chaining recon, username enumeration, and SQLi auth bypass), offline RC4 PDF hash cracking via pdf2john and John the Ripper, ExifTool metadata forensics, and multi-tool OSINT/Nmap enumeration. Delivered CVSS v3.1 reports with PHP PDO and Python AES-256 remediation code.",
-    tags: ["Penetration Testing", "SQL Injection", "Cryptanalysis", "OSINT", "Nmap"],
+      "Full web application pentest in a training lab, from recon to report. Chained recon, username enumeration and a SQL injection login bypass on a simulated hospital portal. Training lab, no real client. Scored each finding with CVSS v3.1 and mapped it to the OWASP Top 10, following PTES. Wrote remediation recommendations for each finding in the report. Ran an external OSINT and network recon assessment inside an authorized scope.",
+    tags: ["Web app testing", "SQL injection", "CVSS", "OWASP Top 10", "PTES"],
   },
   {
-    period: "Jul 2025 - Oct 2026",
-    title: "Full-Stack Web Developer & Security Consultant",
-    org: "Freelance",
-    description:
-      "Built, shipped, and hardened full-stack web applications, custom admin backends, inventory systems, and checkout integrations for small businesses. Handled client cloud setup, server patching, access controls, and automated backups.",
-    tags: ["Web Security", "Next.js", "TypeScript", "Node.js", "PostgreSQL"],
+    period: "Jul 2025 to present",
+    title: "Freelance IT Consultant & Web Developer",
+    org: "Self-employed",
+    description: "IT consulting and web projects for small businesses.",
+    tags: [],
+    current: true,
   },
   {
-    period: "Feb 2025 - Oct 2025",
-    title: "Regional Technical Ambassador",
-    org: "ICP HUB Ghana",
-    description:
-      "Led technical workshops and developer training sessions across 8 Ghanaian universities on decentralized application architecture, smart contract security fundamentals, and backend integration.",
-    tags: ["Smart Contract Security", "Web3", "Technical Training", "Backend Architecture"],
+    period: "Oct 2025 to Oct 2026",
+    title: "Frontend Designer",
+    org: "Gigsama",
+    description: "Designed interfaces in Figma and built them in Next.js and React.",
+    tags: [],
   },
   {
-    period: "Aug 2024 - Jan 2025",
-    title: "LLM Operations & Security Researcher",
+    period: "Aug 2024 to Jan 2025",
+    title: "Research Intern, LLM Operations",
     org: "DataMaker",
-    description:
-      "Evaluated large language model outputs for logical reasoning failures and behavioral anomalies. Cleaned, audited, and labeled training datasets to prevent corrupted data from entering model pipelines.",
-    tags: ["LLM Security", "Anomaly Detection", "Data Integrity", "Python"],
+    description: "Evaluated large language model outputs for quality and failure cases.",
+    tags: ["LLM evaluation"],
+  },
+  {
+    period: "Feb 2024 to Dec 2024",
+    title: "Regional Ambassador",
+    org: "ICP Ghana",
+    description: "Community and developer outreach for ICP in Ghana.",
+    tags: ["Community"],
   },
 ];

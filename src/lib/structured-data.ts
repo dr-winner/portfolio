@@ -23,8 +23,8 @@ export function personSchema() {
     givenName: "Richard",
     additionalName: "Winner",
     familyName: "Duvor",
-    jobTitle: profile.role,
-    description: profile.tagline,
+    description:
+      "Application security: web, API and AI/LLM app security. Based in Accra, Ghana.",
     url: BASE_URL,
     image: {
       "@type": "ImageObject",
@@ -40,43 +40,37 @@ export function personSchema() {
       addressCountry: "GH",
       addressRegion: "Greater Accra",
     },
-    sameAs: [
-      profile.socials.github,
-      profile.socials.linkedin,
-      profile.socials.x,
-      profile.socials.medium,
-      profile.socials.tiktok,
-    ],
-    knowsAbout: [
-      "Ethical Hacking",
-      "Penetration Testing",
-      "Red Teaming",
-      "Web Application Security",
-      "API Security Testing",
-      "Network Penetration Testing",
-      "Application Security",
-      "OWASP Top 10",
-      "Python Security Tooling",
-      "Vulnerability Assessment",
-      "Python",
-    ],
-    hasOccupation: {
-      "@type": "Occupation",
-      name: profile.role,
-      description:
-        "Focused on authorized ethical hacking and penetration testing across web applications and networks, with red-team practice and application security.",
-      skills:
-        "Ethical hacking, penetration testing, web application security, API security, network testing, red teaming, Python security tooling",
-      occupationLocation: {
-        "@type": "Country",
-        name: "Ghana",
-      },
+    email: `mailto:${profile.email}`,
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: profile.education.school,
     },
+    sameAs: [profile.socials.github, profile.socials.linkedin, profile.socials.x],
+    knowsAbout: [
+      "Application security",
+      "API security",
+      "LLM application security",
+      "Prompt injection",
+      "Web application testing",
+      "Threat modeling",
+      "Detection as code",
+      "AWS security",
+    ],
+    hasCredential: [
+      {
+        "@type": "EducationalOccupationalCredential",
+        name: "AWS Certified Cloud Practitioner",
+        credentialCategory: "certification",
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        name: "Google Cybersecurity Professional Certificate",
+        credentialCategory: "certificate",
+      },
+    ],
     seeks: {
       "@type": "Demand",
-      name: "Ethical Hacking, Penetration Testing, Red Team, or Application Security roles",
-      description:
-        "Open to ethical hacking, penetration testing, red-team, and application security roles, plus select authorized assessments with clearly defined scope.",
+      name: "Application security and product security roles",
     },
   };
 }
@@ -88,8 +82,9 @@ export function webSiteSchema() {
     "@type": "WebSite",
     "@id": `${BASE_URL}/#website`,
     url: BASE_URL,
-    name: `${profile.name} | ${profile.role}`,
-    description: profile.tagline,
+    name: `${profile.name} | ${profile.headline}`,
+    description:
+      "Application security in Accra, Ghana. Web, API and AI/LLM app security, a training-lab pentest and AWS detection as code.",
     inLanguage: "en-GH",
     author: { "@id": `${BASE_URL}/#person` },
     publisher: { "@id": `${BASE_URL}/#person` },
@@ -105,8 +100,9 @@ export function profilePageSchema() {
     "@type": "ProfilePage",
     "@id": `${BASE_URL}/#profilepage`,
     url: BASE_URL,
-    name: `${profile.name} | ${profile.role}`,
-    description: profile.tagline,
+    name: `${profile.name} | ${profile.headline}`,
+    description:
+      "Application security in Accra, Ghana. Web, API and AI/LLM app security, a training-lab pentest and AWS detection as code.",
     inLanguage: "en-GH",
     isPartOf: { "@id": `${BASE_URL}/#website` },
     about: { "@id": `${BASE_URL}/#person` },

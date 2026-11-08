@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowUpRight, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, Mail, Sparkles } from "lucide-react";
 import { profile } from "@/content/profile";
 import { Card } from "@/components/Card";
 import { track } from "@/lib/telemetry.client";
@@ -76,11 +76,7 @@ function GrainLayer() {
 // ─── Section ──────────────────────────────────────────────────────────────
 
 export function Contact() {
-  function mailto(e: React.MouseEvent<HTMLButtonElement>) {
-    addRipple(e);
-    track("contact_button", { path: "/#contact" });
-    window.location.href = `mailto:${profile.email}?subject=Let%27s%20build%20something&body=Hi%20Richard%2C%20`;
-  }
+  const mailtoHref = `mailto:${profile.email}?subject=${encodeURIComponent(profile.emailSubject)}`;
 
   return (
     <section id="contact" className="relative py-20 md:py-28 lg:py-32">
@@ -98,34 +94,30 @@ export function Contact() {
               </span>
 
               <h2 className="mt-4 font-display text-3xl tracking-tight text-slate-900 md:text-5xl dark:text-white">
-                <WordReveal text="Have a system that needs building, or" />
-                <span className="text-gradient-ocean">
-                  <WordReveal text="defending?" />
-                </span>
+                <WordReveal text="Hiring for application security? Let's talk." />
               </h2>
 
               <p className="mt-4 max-w-xl text-slate-600 md:text-lg dark:text-white/85">
-                I&apos;m focused on ethical hacking, penetration testing, red-team,
-                and application security roles, plus select authorized assessments
-                with clear scope. The fastest way in is email.
+                I&apos;m open to application security and product security roles in Ghana, across Africa and with remote teams. Email is the best way to reach me.
               </p>
 
               <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <MagneticButton strength={0.25}>
-                  <button
-                    type="button"
-                    onClick={mailto}
+                  <a
+                    href={mailtoHref}
+                    onClick={() => track("contact_button", { path: "/#contact" })}
                     className="relative group inline-flex overflow-hidden min-w-0 w-full max-w-full items-center justify-start gap-2 rounded-xl bg-gradient-to-r from-ocean-300 to-signal-300 px-4 py-3 text-left text-sm font-semibold text-ink shadow-glow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 sm:w-auto sm:max-w-none sm:px-5"
-                    title={`Email ${profile.name}`}
-                    aria-label="Send email (opens your mail app)"
                   >
                     <Mail className="size-4 shrink-0" />
                     <span className="min-w-0 flex-1 break-words sm:break-normal">
-                      {profile.emailObfuscated}
+                      Email me
                     </span>
                     <ArrowUpRight className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </button>
+                  </a>
                 </MagneticButton>
+                <a href={mailtoHref} className="text-sm text-slate-700 underline-offset-4 hover:underline dark:text-white/80">
+                  {profile.email}
+                </a>
 
                 <MagneticButton strength={0.25}>
                   <a
@@ -149,22 +141,15 @@ export function Contact() {
               </div>
               <ul className="mt-3 space-y-2 text-slate-700 dark:text-white/75">
                 <li>
-                  ▸ <span className="text-ocean-700 dark:text-ocean-300">role</span> or brief
+                  ▸ <span className="text-ocean-700 dark:text-ocean-300">role</span>
                 </li>
                 <li>
-                  ▸ <span className="text-ocean-700 dark:text-ocean-300">timeline</span> and urgency
+                  ▸ <span className="text-ocean-700 dark:text-ocean-300">where the team is based</span>, and whether it is remote
                 </li>
                 <li>
-                  ▸ <span className="text-ocean-700 dark:text-ocean-300">stack</span> / environment
-                </li>
-                <li>
-                  ▸ <span className="text-ocean-700 dark:text-ocean-300">risk model</span> (if any)
+                  ▸ <span className="text-ocean-700 dark:text-ocean-300">what the work involves</span>
                 </li>
               </ul>
-              <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4 text-[11px] text-slate-500 dark:border-white/10 dark:text-white/65">
-                <ShieldCheck className="size-3.5 text-ok-400" />
-                <span>Response within 24h. PGP on request.</span>
-              </div>
             </div>
           </div>
         </Card>

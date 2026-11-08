@@ -2,17 +2,13 @@
 
 import { motion } from "framer-motion";
 import Balancer from "react-wrap-balancer";
-import { Brain, Coffee, Mountain, Music, Terminal } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { profile } from "@/content/profile";
 import { Card } from "@/components/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 
 const signals = [
-  { icon: Terminal, label: "Run CLI over GUI whenever possible" },
-  { icon: Brain, label: "Curious about how adversaries really think" },
-  { icon: Mountain, label: "Long walks when a problem refuses to solve" },
-  { icon: Music, label: "Deep-focus music while hunting logs" },
-  { icon: Coffee, label: "Coffee-driven development, lightly caffeinated" },
+  { icon: Terminal, label: `${profile.education.degree}, ${profile.education.school}, ${profile.education.period}` },
 ];
 
 export function About() {
@@ -20,9 +16,8 @@ export function About() {
     <section id="about" className="relative py-20 md:py-28 lg:py-32">
       <div className="container">
         <SectionHeader
-          eyebrow="About"
-          title="Who I am"
-          description="No fluff. Just what I do and why."
+            eyebrow="About"
+            title="About"
         />
 
         <div className="mt-14 grid gap-6 md:grid-cols-5">
@@ -45,10 +40,6 @@ export function About() {
                     <Balancer>{p}</Balancer>
                   </p>
                 ))}
-                <p className="text-slate-600 dark:text-white/75">
-                  Need an authorized web, API, or network assessment with clear scope,
-                  reproducible findings, and practical remediation? Let&apos;s talk.
-                </p>
               </div>
             </Card>
           </motion.div>
@@ -62,10 +53,10 @@ export function About() {
           >
             <Card className="h-full p-6 md:p-8">
               <span className="chip-ocean font-mono text-[10px] uppercase tracking-[0.2em]">
-                signals.txt
+                education
               </span>
               <h3 className="mt-5 font-display text-xl tracking-tight text-slate-900 dark:text-white">
-                How I work
+                Education
               </h3>
               <ul className="mt-5 space-y-3">
                 {signals.map(({ icon: Icon, label }) => (

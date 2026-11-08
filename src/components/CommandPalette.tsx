@@ -120,7 +120,7 @@ export function CommandPalette({
     } else if (a.kind === "link") {
       window.open(a.href, "_blank", "noopener,noreferrer");
     } else if (a.kind === "email") {
-      window.location.href = `mailto:${a.to}?subject=Hello%20Richard`;
+      window.location.href = `mailto:${a.to}?subject=${encodeURIComponent(profile.emailSubject)}`;
     }
   }
 

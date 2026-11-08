@@ -20,6 +20,7 @@ import {
   getTestimonials,
 } from "@/lib/content";
 import { projectsListSchema } from "@/lib/structured-data";
+import { profile } from "@/content/profile";
 
 export const revalidate = 60;
 
@@ -29,7 +30,7 @@ export default async function Home() {
     getStackCategories(),
     getExperience(),
     getCertifications(),
-    getTestimonials(),
+    profile.showTestimonials ? getTestimonials() : Promise.resolve([]),
   ]);
 
   return (
@@ -63,7 +64,7 @@ export default async function Home() {
         <HorizontalProjects items={projects} />
         <Experience items={experience} />
         <Certifications items={certs} />
-        <Testimonials items={testimonials} />
+        {profile.showTestimonials ? <Testimonials items={testimonials} /> : null}
         <About />
         <GitHubActivity />
         <Contact />

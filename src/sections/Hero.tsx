@@ -44,15 +44,15 @@ export function Hero() {
           <div className="relative z-10 flex min-w-0 flex-col items-start gap-7 text-left">
             <HeroAnimation>
               <h1 className="max-w-full font-display text-display-xl tracking-tight">
-                <CharSplit text="Ethical Hacker" className="block whitespace-nowrap font-bold text-display-etched" />
-                <span className="block text-[0.75em]">
-                  <CharSplit text="Penetration Tester" className="whitespace-nowrap tracking-tight" charClassName="text-gradient-ocean" />
+                <CharSplit text={profile.headline} className="block font-bold text-display-etched" />
+                <span className="mt-2 block text-[0.42em] font-medium leading-snug text-slate-600 dark:text-white/70">
+                  {profile.headlineSub}
                 </span>
               </h1>
             </HeroAnimation>
 
-            <p className="min-w-0 w-full max-w-lg text-lg text-slate-600 dark:text-white/85">
-              Focused on authorized web and network penetration testing, red-team practice, and application security.
+            <p className="min-w-0 w-full max-w-xl text-lg text-slate-600 dark:text-white/85">
+              I test web applications and APIs for security flaws and write CVSS-scored findings that engineering teams can act on. I build frontends for a living, so I read an app from the <em>inside</em> before I test it from the outside.
             </p>
 
             <div className="flex w-full max-w-md flex-col gap-3 font-sans sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center">
@@ -60,30 +60,34 @@ export function Hero() {
                 onClick={() => go("projects")}
                 className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-ocean-300 to-signal-300 px-5 py-3.5 text-sm font-semibold text-ink shadow-glow-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 sm:min-h-0 sm:w-auto sm:py-3"
               >
-                Explore my work
+                View my work
                 <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
               </button>
               <MagneticButton strength={0.4} className="w-full sm:w-auto">
-                <button
-                  onClick={() => go("contact")}
+                <a
+                  href={`mailto:${profile.email}?subject=${encodeURIComponent(profile.emailSubject)}`}
                   className="group inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300/90 bg-white/90 px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-300 hover:border-ocean-400/45 hover:bg-white dark:border-white/15 dark:bg-white/[0.03] dark:text-white/90 dark:shadow-none dark:hover:border-ocean-300/40 dark:hover:bg-white/[0.05] dark:hover:text-white sm:min-h-0 sm:w-auto sm:py-3"
                 >
-                  Let&apos;s talk
+                  Email me
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </button>
+                </a>
               </MagneticButton>
             </div>
+
+            <p className="flex items-center gap-2 text-sm text-slate-500 dark:text-white/60">
+              <span className="size-1.5 rounded-full bg-ok-400" />
+              {profile.availability.short}
+            </p>
 
             {/* Specialty chips */}
             <div className="mt-1 w-full border-t border-slate-200/80 pt-6 dark:border-white/10">
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label: "Web App Pentesting", accent: "threat" },
-                  { label: "Network Testing",    accent: "threat" },
-                  { label: "Red Teaming",        accent: "signal" },
-                  { label: "Application Security", accent: "cyber" },
-                  { label: "Authorized Scope",   accent: "signal" },
-                  { label: "Python Tooling",     accent: "cyber"  },
+                  { label: "Web and API testing", accent: "threat" },
+                  { label: "CVSS v3.1", accent: "signal" },
+                  { label: "Training labs", accent: "cyber" },
+                  { label: "AWS detections", accent: "cyber" },
+                  { label: "AI and LLM security", accent: "signal" },
                 ].map(({ label, accent }) => (
                   <span
                     key={label}
@@ -125,7 +129,7 @@ export function Hero() {
                   <span className="size-2.5 rounded-full bg-ok-400/80" />
                 </div>
                 <span className="min-w-0 truncate text-center font-mono text-[10px] tracking-tight text-slate-600 sm:text-[11px] dark:text-white/65">
-                  ~ /web-pentest - zsh
+                  ~ /appsec
                 </span>
                 <div className="flex shrink-0 items-center justify-end gap-1 text-[10px] text-slate-600 sm:text-[11px] dark:text-white/65">
                   <Shield className="size-3 shrink-0 text-ocean-500 dark:text-ocean-300" />
@@ -153,23 +157,19 @@ export function Hero() {
                       className: "text-ocean-700 dark:text-ocean-200",
                     },
                     {
-                      text: "$ ls ~/specializations/",
+                      text: "$ cat ~/focus.txt",
                       className: "text-slate-500 dark:text-white/75",
                     },
                     {
-                      text: "web-apps/  network-pentest/  appsec/",
+                      text: profile.headlineSub,
                       className: "text-emerald-600 dark:text-ok-400",
                     },
                     {
-                      text: "ethical-hacking/  red-team/  api-security/",
-                      className: "text-emerald-600 dark:text-ok-400",
-                    },
-                    {
-                      text: "$ status --now",
+                      text: "$ cat ~/availability.txt",
                       className: "text-slate-500 dark:text-white/75",
                     },
                     {
-                      text: "◆ available · open to new roles",
+                      text: profile.availability.short,
                       className: "text-amber-600 dark:text-signal-300",
                     },
                   ]}
@@ -181,10 +181,7 @@ export function Hero() {
                   <div className="flex items-center gap-2">
                     <span className="size-2 rounded-full bg-ok-400 animate-pulse-soft" />
                     <span>
-                      agent runtime:{" "}
-                      <span className="text-slate-800 dark:text-white/80">
-                        online
-                      </span>
+                      {profile.location}
                     </span>
                   </div>
                   <span className="font-mono text-slate-400 sm:ml-auto dark:text-white/55">

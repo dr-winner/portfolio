@@ -8,9 +8,7 @@ import { signalWords } from "@/content/keywords";
 import { track } from "@/lib/telemetry.client";
 
 const GH = profile.socials.github;
-const MAIL_SUBJECT = encodeURIComponent("Hello");
-const MAIL_BODY = encodeURIComponent("Hi Richard,\n\n");
-const mailtoHref = `mailto:${profile.email}?subject=${MAIL_SUBJECT}&body=${MAIL_BODY}`;
+const mailtoHref = `mailto:${profile.email}?subject=${encodeURIComponent(profile.emailSubject)}`;
 
 const STORAGE_KEY = "portfolio-tty";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -75,9 +73,9 @@ function splitOut(text: string): string[] {
 
 function buildStatusLines(): string[] {
   return [
-    `${profile.handle}@portfolio  ·  ${profile.role}`,
-    profile.tagline,
-    `availability: ${profile.availability.label}  ·  ${GH.replace("https://", "")}`,
+    `${profile.handle}@portfolio  ·  ${profile.headline}`,
+    profile.headlineSub,
+    `availability: ${profile.availability.short}  ·  ${GH.replace("https://", "")}`,
   ];
 }
 
@@ -85,7 +83,7 @@ function helpLines(): string[] {
   return [
     "in english: just ask; we answer from the same public info as the rest of the site",
     "local cmds: whoami  id  date  hostinfo  links  env  cat profile  tags  go <section>  help",
-    "open:  github  tiktok  |  go contact  (scrolls the page)  |  other lines: remote log reply",
+    "open:  github  |  go contact  (scrolls the page)  |  other lines: remote log reply",
   ];
 }
 
@@ -118,9 +116,7 @@ function runLocal(t: string): string[] | null {
       "GITHUB   " + profile.socials.github,
       "LINKEDIN " + profile.socials.linkedin,
       "X        " + profile.socials.x,
-      "MEDIUM   " + profile.socials.medium,
-      "TIKTOK   " + profile.socials.tiktok,
-      "EMAIL    use `Email` in title bar (opens your mail app)",
+      "EMAIL    " + profile.email,
     ];
   }
 
@@ -141,9 +137,6 @@ function runLocal(t: string): string[] | null {
 
   if (lower === "github") {
     return ["__OPEN_GH__"];
-  }
-  if (lower === "tiktok") {
-    return ["__OPEN_TT__"];
   }
 
   if (cmd === "env") {
@@ -298,11 +291,6 @@ export function TerminalDock({
           if (local[0] === "__OPEN_GH__") {
             window.open(GH, "_blank", "noopener,noreferrer");
             setLines((p) => [...p, { kind: "out", text: "[ok] github opened" }]);
-            return;
-          }
-          if (local[0] === "__OPEN_TT__") {
-            window.open(profile.socials.tiktok, "_blank", "noopener,noreferrer");
-            setLines((p) => [...p, { kind: "out", text: "[ok] tiktok opened" }]);
             return;
           }
           setLines((prev) => [...prev, ...local.map((x) => ({ kind: "out" as const, text: x }))]);

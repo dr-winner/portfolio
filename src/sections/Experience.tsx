@@ -23,9 +23,9 @@ export function Experience({ items }: { items?: TimelineEntry[] } = {}) {
       <div className="container">
         <ScrollReveal>
           <SectionHeader
-            eyebrow="Trajectory"
-            title="From building systems to testing how they break."
-            description="My software engineering background shapes my focus on ethical hacking and application security."
+            eyebrow="Experience"
+            title="Where I have worked."
+            description="Security work is listed with the current role. Dates are the ones on the CV."
           />
         </ScrollReveal>
 
