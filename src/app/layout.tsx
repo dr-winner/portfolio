@@ -57,27 +57,11 @@ export const metadata: Metadata = {
   generator: "Next.js",
 
   title: {
-    default: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+    default: `${profile.name} | ${profile.headline}`,
     template: `%s | ${profile.name}`,
   },
   description:
-    "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
-
-  keywords: [
-    "Ethical Hacker",
-    "Penetration Tester",
-    "Web Application Penetration Testing",
-    "API Security Testing",
-    "Network Penetration Testing",
-    "Red Teaming",
-    "Application Security",
-    "OWASP Top 10",
-    "Burp Suite",
-    "Nmap",
-    "Authorized Security Testing",
-    "Python Security Tooling",
-    profile.name,
-  ],
+    "Application security in Accra, Ghana. Web, API and AI/LLM app security, a training-lab pentest and AWS detection as code. Case studies and CV.",
 
   authors: [{ name: profile.name }],
   creator: profile.name,
@@ -90,9 +74,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url,
-    title: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+    title: `${profile.name} | ${profile.headline}`,
     description:
-      "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
+      "Application security in Accra, Ghana. Web, API and AI/LLM app security, a training-lab pentest and AWS detection as code. Case studies and CV.",
     siteName: profile.name,
     locale: "en_GH",
     images: [
@@ -100,16 +84,16 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+        alt: `${profile.name} | ${profile.headline}`,
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
+    title: `${profile.name} | ${profile.headline}`,
     description:
-      "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
+      "Application security in Accra, Ghana. Web, API and AI/LLM app security, a training-lab pentest and AWS detection as code. Case studies and CV.",
     creator: `@${xHandle}`,
     images: [ogImage],
   },

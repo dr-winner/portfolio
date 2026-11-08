@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import clsx from "clsx";
 import {
   capabilities,
-  capabilityPreamble,
   type Capability,
 } from "@/content/capabilities";
 import { Card } from "@/components/Card";
@@ -39,19 +38,6 @@ const accentRing: Record<Capability["accent"], string> = {
     "shadow-[inset_0_0_0_1px_rgba(255,82,119,0.18)] hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.45)] dark:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.06)] dark:hover:shadow-[inset_0_0_0_1px_rgba(255,82,119,0.14)]",
 };
 
-const accentBar: Record<Capability["accent"], string> = {
-  ocean: "bg-ocean-400 dark:bg-ocean-300",
-  signal: "bg-amber-500 dark:bg-signal-300",
-  ok: "bg-emerald-500 dark:bg-ok-400",
-  threat: "bg-rose-500 dark:bg-threat-400",
-};
-
-const levelLabel: Record<Capability["level"], string> = {
-  core: "core",
-  working: "working",
-  exploring: "exploring",
-};
-
 export function Capabilities() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -61,19 +47,11 @@ export function Capabilities() {
         <ScrollReveal>
           <SectionHeader
             eyebrow="What I do"
-            title="Ethical hacking. Practical security."
-            description="I focus on authorized web, API, and network testing, with red-team practice and application security at the center. My software engineering background helps me turn findings into fixes teams can use."
+            title="I look for what breaks, and I explain how to fix it."
           />
         </ScrollReveal>
 
-        <div className="mt-12 space-y-6 text-[15px] leading-[1.75] text-slate-700 md:mt-20 md:space-y-0 md:grid md:gap-10 md:text-[16px] lg:mt-24 lg:gap-14 lg:grid-cols-2 dark:text-slate-200">
-          <p className="prose-measure md:max-w-none">{capabilityPreamble[0]}</p>
-          <p className="prose-measure border-t border-slate-200/90 pt-6 text-slate-700 md:max-w-none md:border-t-0 md:border-l md:border-slate-200/90 md:pl-8 md:pt-0 dark:border-white/12 dark:text-slate-200">
-            {capabilityPreamble[1]}
-          </p>
-        </div>
-
-        <div className="mt-16 grid gap-8 md:mt-20 md:gap-10 lg:mt-24 lg:grid-cols-2">
+        <div className="mt-16 grid gap-8 md:mt-20 md:gap-10 lg:mt-24 lg:grid-cols-3">
           {capabilities.map((cap, i) => {
             const Icon = cap.icon;
             return (
@@ -117,10 +95,9 @@ export function Capabilities() {
                     {cap.description}
                   </p>
 
-                  <div className="my-8 divider-hair" />
-
-                  <ul className="space-y-3.5 text-[14px] md:text-[15px]">
-                    {cap.bullets.map((b) => (
+                  {cap.bullets.filter(Boolean).length > 0 && (
+                  <ul className="mt-8 space-y-3.5 text-[14px] md:text-[15px]">
+                    {cap.bullets.filter(Boolean).map((b) => (
                       <li
                         key={b}
                         className="flex items-start gap-3 text-slate-700 dark:text-slate-100"
@@ -137,27 +114,8 @@ export function Capabilities() {
                       </li>
                     ))}
                   </ul>
+                  )}
 
-                  {/* Proficiency bar */}
-                  <div className="mt-auto pt-8">
-                    <div className="mb-1.5 flex items-center justify-between">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 dark:text-white/50">
-                        Proficiency
-                      </span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-white/50">
-                        {levelLabel[cap.level]}
-                      </span>
-                    </div>
-                    <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-white/[0.08]">
-                      <motion.div
-                        className={clsx("h-full rounded-full", accentBar[cap.accent])}
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${cap.proficiency}%` }}
-                        viewport={{ once: true, margin: "-10% 0%" }}
-                        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                      />
-                    </div>
-                  </div>
                 </Card>
               </motion.div>
             );

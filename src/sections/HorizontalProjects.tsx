@@ -96,8 +96,7 @@ function TerminalAuditPreview({ project }: { project: Project }) {
 
       {/* Terminal footer */}
       <div className="flex items-center justify-between border-t border-white/[0.08] pt-2.5 text-[10px] font-mono text-slate-400 dark:text-white/50">
-        <span className="truncate">Status: All exploit chains &amp; patches verified</span>
-        <span className="shrink-0 text-ok-400">● 100% PASS</span>
+        <span className="truncate">Training labs are marked as training labs.</span>
       </div>
     </div>
   );
@@ -407,7 +406,7 @@ export function HorizontalProjects({ items }: { items?: Project[] }) {
               },
             });
           } else {
-            // Cards 2–N: unified entry → linger → exit timeline.
+            // Cards after the first: unified entry, linger, then exit timeline.
             // start = card just entering viewport from the right
             // end   = card fully off-screen to the left
             const tl = gsap.timeline({

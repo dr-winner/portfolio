@@ -2,24 +2,36 @@ export const profile = {
   name: "Richard Winner Duvor",
   handle: "dr-winner",
   initials: "RW",
-  role: "Ethical Hacker | Web & Cloud Penetration Tester",
+  headline: "Application Security",
+  headlineSub: "Web, API & AI/LLM App Security",
+  /** Field, not a job title. */
+  role: "Application Security",
   tagline:
-    "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
-  /** Optional - not shown in public UI */
+    "I test web applications and APIs for security flaws and write CVSS-scored findings that engineering teams can act on. I build frontends for a living, so I read an app from the inside before I test it from the outside.",
   location: "Accra, Ghana",
   timezone: "GMT+0",
   email: "duvorrichardwinner@gmail.com",
-  /** Shown in contact; full address is revealed only in mailto */
-  emailObfuscated: "duvorrichardwinner ···@gmail.com",
+  emailSubject: "AppSec role",
   availability: {
     status: "available",
-    label: "Open to ethical hacking · penetration testing · red team · AppSec roles",
+    label:
+      "Open to application security and product security roles in Ghana, across Africa and with remote teams.",
+    short: "Open to AppSec and product security roles.",
   },
   bio: [
-    "My focus is authorized ethical hacking and penetration testing across web applications, APIs, and networks, with red-team practice and application security at the center.",
-    "I bring a builder's perspective from full-stack applications and smart contracts. That helps me understand how software behaves and communicate findings as practical fixes.",
-    "I value clear scope, careful validation, reproducible evidence, and reports that help teams improve security.",
+    "I'm Richard Winner Duvor. I work on application security in Accra, Ghana, with a focus on web apps, APIs and AI/LLM features.",
+    "During my cybersecurity internship at NetworkWalks, I ran a full web application pentest in a training lab, from recon to a SQL injection login bypass, and wrote a CVSS v3.1 report with remediation recommendations. At TechBiz Security I trained on the ethical hacking and SOC tracks. On my own, I built an AWS threat detection lab with six detections written in Terraform, mapped to MITRE ATT&CK and scanned by Checkov in CI.",
+    "By day I'm a frontend engineer at Synchora Health. That work keeps me close to how real applications are built, and it shapes how I test them.",
+    "I hold the AWS Certified Cloud Practitioner and the Google Cybersecurity Professional Certificate, and I'm working through Cisco Ethical Hacker and the PortSwigger Web Security Academy. I'm open to application security and product security roles in Ghana, across Africa and with remote teams.",
   ],
+  education: {
+    degree: "BSc Information Technology Management",
+    school: "University of Professional Studies, Accra (UPSA)",
+    period: "2022 to 2025",
+  },
+  showTestimonials: false,
+  showMedium: false,
+  showTiktok: false,
   socials: {
     github: "https://github.com/dr-winner",
     linkedin: "https://www.linkedin.com/in/richard-winner-duvor/",

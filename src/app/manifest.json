@@ -1,7 +1,7 @@
 {
-  "name": "Richard Winner Duvor | Ethical Hacker & Web Penetration Tester",
-  "short_name": "Richard Duvor",
-  "description": "Web application and network penetration tester with a production full-stack engineering background (React, Next.js, TypeScript). Portfolio of offensive security assessments, cryptanalysis, and cloud threat detection.",
+  "name": "Richard Winner Duvor | Application Security",
+  "short_name": "Richard · AppSec",
+  "description": "Application security in Accra, Ghana. Web, API and AI/LLM app security.",
   "start_url": "/",
   "scope": "/",
   "icons": [

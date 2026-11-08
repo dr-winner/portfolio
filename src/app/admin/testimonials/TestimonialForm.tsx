@@ -18,7 +18,7 @@ export function TestimonialForm({
         <Field label="Position / title">
           <Input name="position" defaultValue={testimonial?.position} />
         </Field>
-        <Field label="Initials" hint="1–3 characters for the avatar">
+        <Field label="Initials" hint="1 to 3 characters for the avatar">
           <Input name="initials" defaultValue={testimonial?.initials} maxLength={3} />
         </Field>
         <Field label="Accent color">

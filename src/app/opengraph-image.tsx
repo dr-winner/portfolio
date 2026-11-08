@@ -1,10 +1,10 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/content/profile";
 
-export const alt = `${profile.name} | ${profile.role}`;
+export const alt = `${profile.name} | ${profile.headline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-const roleLines = profile.role.split("|").map((role) => role.trim());
+const roleLines = [profile.headline, profile.headlineSub];
 
 export default async function Image() {
   return new ImageResponse(
@@ -59,8 +59,8 @@ export default async function Image() {
               <div key={role}>{role}</div>
             ))}
           </div>
-          <div style={{ fontSize: 32, color: "#c4cde0", maxWidth: 900 }}>
-            {profile.tagline}
+          <div style={{ fontSize: 28, color: "#c4cde0", maxWidth: 900 }}>
+            {profile.location}
           </div>
         </div>
 
@@ -74,11 +74,9 @@ export default async function Image() {
             textTransform: "uppercase",
           }}
         >
-          <div>Web & API Security</div>
+          <div>duvorrichardwinner.me</div>
           <div>•</div>
-          <div>Network Pentesting</div>
-          <div>•</div>
-          <div>Red Teaming</div>
+          <div>{profile.location}</div>
         </div>
       </div>
     ),

@@ -1,8 +1,6 @@
 # Richard Winner Duvor | Portfolio
 
-Personal portfolio site for **Richard Winner Duvor**, focused on ethical hacking,
-penetration testing, red-team assessments, and application security. His software
-engineering background supports that work.
+Personal portfolio site for **Richard Winner Duvor**. The site is about application security: web, API and AI/LLM app security. He is a frontend engineer at Synchora Health, and that work is described as frontend work only.
 
 Built with Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS and
 Framer Motion. Ships with a lightweight admin CMS backed by Prisma + PostgreSQL (Neon) so
