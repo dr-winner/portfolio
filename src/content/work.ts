@@ -1,10 +1,27 @@
 export type WorkKind = "case-study" | "lab" | "archive";
 export type WorkFilter = "web" | "cloud" | "threat" | "labs";
 
+export type Finding = {
+  id: string;
+  title: string;
+  cwe: string;
+  score: string;
+  vector: string;
+  severity: "Critical" | "High" | "Medium" | "Low" | "Info";
+};
+
 export type WorkSection = {
   id: string;
   heading: string;
   paragraphs: string[];
+  list?: string[];
+};
+
+export type ChainNode = {
+  id: string;
+  label: string;
+  score?: string;
+  severity?: Finding["severity"];
 };
 
 export type WorkItem = {
@@ -25,6 +42,9 @@ export type WorkItem = {
   stack?: string[];
   outcome?: string;
   scope?: string;
+  quote?: string;
+  findings?: Finding[];
+  chain?: ChainNode[];
   sections: WorkSection[];
 };
 
@@ -49,26 +69,136 @@ export const work: WorkItem[] = [
       "Login bypass found and documented. CVSS v3.1 report with remediation recommendations delivered.",
     scope:
       'This was a training lab, not a real engagement. I did it during my cybersecurity internship at NetworkWalks. "Mediroza General Hospital" is a made-up organisation the lab uses. No real hospital, patient or client was involved, and all my testing stayed inside the lab.',
+    quote: "I scored each finding with CVSS v3.1 and wrote recommendations for fixing each one.",
+    chain: [
+      { id: "recon", label: "Recon", score: "0.0", severity: "Info" },
+      { id: "enumeration", label: "Username enumeration", score: "3.7", severity: "Low" },
+      { id: "injection", label: "SQL injection login bypass", score: "9.8", severity: "Critical" },
+      { id: "documents", label: "Document access", score: "8.6", severity: "High" },
+      { id: "cracking", label: "Offline password cracking", score: "7.5", severity: "High" },
+      { id: "metadata", label: "Metadata review", score: "5.3", severity: "Medium" },
+    ],
+    findings: [
+      {
+        id: "MED-VULN-01",
+        title: "SQL injection authentication bypass on the patient portal",
+        cwe: "CWE-89",
+        score: "9.8",
+        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        severity: "Critical",
+      },
+      {
+        id: "MED-VULN-02",
+        title: "Public exposure of an internal file",
+        cwe: "CWE-538",
+        score: "8.6",
+        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        severity: "High",
+      },
+      {
+        id: "MED-VULN-03",
+        title: "Weak document encryption and a weak password",
+        cwe: "CWE-326",
+        score: "7.5",
+        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        severity: "High",
+      },
+      {
+        id: "MED-VULN-04",
+        title: "Sensitive metadata left in a document",
+        cwe: "CWE-200",
+        score: "5.3",
+        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        severity: "Medium",
+      },
+      {
+        id: "MED-VULN-05",
+        title: "Sensitive paths disclosed in robots.txt",
+        cwe: "Not listed",
+        score: "0.0",
+        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        severity: "Info",
+      },
+      {
+        id: "MED-VULN-06",
+        title: "Username enumeration via different login responses",
+        cwe: "CWE-204",
+        score: "3.7",
+        vector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        severity: "Low",
+      },
+    ],
     sections: [
       {
         id: "summary",
         heading: "Summary",
         paragraphs: [
           "I tested a simulated hospital portal from the outside, the way an attacker would. I found a way to tell real usernames apart, got past the login with SQL injection, and then reached documents I should not have been able to open. I scored each finding with CVSS v3.1 and wrote recommendations for fixing each one.",
+          "I followed PTES and the OWASP WSTG, and mapped every finding to the OWASP Top 10.",
         ],
       },
       {
-        id: "method",
-        heading: "Method",
+        id: "recon",
+        heading: "Recon",
         paragraphs: [
-          "I started with recon, moved to username enumeration, then got past the login with SQL injection. From there I pulled documents, cracked their passwords offline with John the Ripper and checked their metadata with ExifTool. I followed PTES and the OWASP WSTG, and mapped every finding to the OWASP Top 10.",
+          "I started with recon on the lab portal. A robots.txt file named paths that should not have been advertised.",
+        ],
+      },
+      {
+        id: "enumeration",
+        heading: "Username enumeration",
+        paragraphs: [
+          "The login page answered differently for a real username and a made up one, so I could tell which accounts existed.",
+        ],
+      },
+      {
+        id: "injection",
+        heading: "SQL injection login bypass",
+        paragraphs: [
+          "I got past the login with SQL injection. The report scores that finding at CVSS 9.8.",
+        ],
+      },
+      {
+        id: "documents",
+        heading: "Document access",
+        paragraphs: [
+          "From the portal I reached documents I should not have been able to open, including a file that was left on a public path.",
+        ],
+      },
+      {
+        id: "cracking",
+        heading: "Offline password cracking",
+        paragraphs: [
+          "I cracked the passwords on those lab documents offline with John the Ripper. The documents used weak encryption and weak passwords.",
+        ],
+      },
+      {
+        id: "metadata",
+        heading: "Metadata review",
+        paragraphs: [
+          "I checked the documents with ExifTool. The metadata still held names and notes that should have been removed.",
+        ],
+      },
+      {
+        id: "findings",
+        heading: "Findings",
+        paragraphs: [
+          "Scores below are CVSS v3.1, copied from the lab report. I did not change them.",
         ],
       },
       {
         id: "recommendations",
         heading: "Recommendations",
         paragraphs: [
-          "The report gives a remediation recommendation for each finding. One example is to use parameterized queries for the login query. These are recommendations in the report. I did not write or ship the code fixes.",
+          "The report gives a remediation recommendation for each finding. These are recommendations in the report. I did not write or ship the code fixes.",
+        ],
+        list: [
+          "MED-VULN-01. Use parameterized queries for the login query, and return one message for a bad username and a bad password.",
+          "MED-VULN-02. Do not leave internal files on a public path.",
+          "MED-VULN-03. Use modern document encryption, and passphrases that are not common words.",
+          "MED-VULN-04. Strip names and comments from documents before they are stored where a tester can read them.",
+          "MED-VULN-05. Do not list private paths in robots.txt.",
+          "MED-VULN-06. Return the same response for an unknown username and a wrong password.",
         ],
       },
     ],
@@ -91,6 +221,15 @@ export const work: WorkItem[] = [
     stack: ["Terraform", "CloudTrail", "GuardDuty", "EventBridge", "Lambda", "Checkov"],
     outcome: "Six detections defined in Terraform and scanned in CI.",
     scope: "An own project, built and tested in my own AWS account.",
+    quote: "This is a starter set, not full coverage.",
+    chain: [
+      { id: "root-account-activity", label: "root-account-activity", score: "T1078.004" },
+      { id: "console-login-no-mfa", label: "console-login-no-mfa", score: "T1078" },
+      { id: "cloudtrail-tampering", label: "cloudtrail-tampering", score: "T1562.008" },
+      { id: "iam-persistence", label: "iam-persistence", score: "T1136.003" },
+      { id: "security-group-exposure", label: "security-group-exposure", score: "T1562.007" },
+      { id: "guardduty-findings", label: "guardduty-findings", score: "varies" },
+    ],
     sections: [
       {
         id: "summary",
@@ -100,16 +239,34 @@ export const work: WorkItem[] = [
         ],
       },
       {
-        id: "detections",
-        heading: "Detections",
-        paragraphs: [
-          "root-account-activity, T1078.004. Any use of the root account, which should never happen day to day.",
-          "console-login-no-mfa, T1078. A console sign-in without MFA, which is what a phished password looks like.",
-          "cloudtrail-tampering, T1562.008. Stopping, deleting or changing the trail. Attackers blind the logs first.",
-          "iam-persistence, T1136.003 and T1098. New IAM users, access keys, login profiles or attached policies: the classic backdoor.",
-          "security-group-exposure, T1562.007. Ingress opened to 0.0.0.0/0, whether by accident or on purpose.",
-          "guardduty-findings. GuardDuty's managed findings at or above the configured severity.",
-        ],
+        id: "root-account-activity",
+        heading: "root-account-activity",
+        paragraphs: ["T1078.004. Any use of the root account, which should never happen day to day."],
+      },
+      {
+        id: "console-login-no-mfa",
+        heading: "console-login-no-mfa",
+        paragraphs: ["T1078. A console sign-in without MFA, which is what a phished password looks like."],
+      },
+      {
+        id: "cloudtrail-tampering",
+        heading: "cloudtrail-tampering",
+        paragraphs: ["T1562.008. Stopping, deleting or changing the trail. Attackers blind the logs first."],
+      },
+      {
+        id: "iam-persistence",
+        heading: "iam-persistence",
+        paragraphs: ["T1136.003 and T1098. New IAM users, access keys, login profiles or attached policies: the classic backdoor."],
+      },
+      {
+        id: "security-group-exposure",
+        heading: "security-group-exposure",
+        paragraphs: ["T1562.007. Ingress opened to 0.0.0.0/0, whether by accident or on purpose."],
+      },
+      {
+        id: "guardduty-findings",
+        heading: "guardduty-findings",
+        paragraphs: ["GuardDuty's managed findings at or above the configured severity."],
       },
       {
         id: "coverage",
@@ -138,12 +295,58 @@ export const work: WorkItem[] = [
     stack: ["Threat modeling"],
     outcome: "A threat model of the protocol design.",
     scope: "An own project. The threat model covers the protocol design, not a production deployment.",
+    quote: "The merchant can check that a token is valid and unspent, and cannot link it to the payment.",
     sections: [
       {
         id: "summary",
         heading: "Summary",
         paragraphs: [
-          "Ghostpass is a way to pay for an API and use it without requests being linked back to the payment. The threat model looks at timing correlation, replay and metadata leaks. The mitigations live in the repository.",
+          "Ghostpass is a way to pay for an API and use it without requests being linked back to the payment. A subscriber pays once and receives a batch of blind-signed access tokens. Each call spends one token. The merchant can check that a token is valid and unspent, and cannot link it to the payment or to the other tokens.",
+        ],
+      },
+      {
+        id: "assets",
+        heading: "Assets",
+        paragraphs: [
+          "The things worth protecting are the payment, the access tokens, and the link between who paid and who called the API. There is no account, email, or password in the design.",
+        ],
+      },
+      {
+        id: "actors",
+        heading: "Actors",
+        paragraphs: [
+          "The subscriber pays and later spends tokens. The merchant takes the payment and checks tokens. Anyone watching the network can see timing and addresses. The model treats the merchant as honest about the published key, and checks that assumption.",
+        ],
+      },
+      {
+        id: "boundaries",
+        heading: "Trust boundaries",
+        paragraphs: [
+          "Payment and redemption sit on opposite sides of the design. The merchant database has no column that ties a payment to a spent token. Once tokens are issued, the payment's transaction ids are deleted. A request carries one unblinded token, and the server records only a hash of that token as spent.",
+        ],
+      },
+      {
+        id: "threats",
+        heading: "Threats",
+        paragraphs: [
+          "Timing correlation. With few subscribers, the gap between a payment and the first use can tie the two together.",
+          "Replay. A token copied from one request can be sent again.",
+          "Metadata leaks. Request logs, a stored link between payment and use, or a different signing key per subscriber would undo the unlinkability.",
+        ],
+      },
+      {
+        id: "mitigations",
+        heading: "Mitigations",
+        paragraphs: [
+          "The mitigations live in the repository. Blind signatures mean the signer does not see the token it signs. A random delay before a new pass is first used makes the payment and the first call harder to pair. The server stores a hash of each spent token and rejects a second use. There is no request logging, and spent token hashes are deleted when the redeem window for that period closes.",
+          "Key consistency is checked in the browser. Before it asks for signatures, the browser fetches the public key log and refuses a key that is not the one published for that merchant and month. A merchant who handed each subscriber a different key could recognise them later. The log is there to catch that.",
+        ],
+      },
+      {
+        id: "limits",
+        heading: "Honest limits",
+        paragraphs: [
+          "A small set of subscribers makes timing correlation easier. Tokens are bearer tokens, so anyone who copies one from the browser can use it. The page itself is served by the merchant, so the check is only as strong as the code the browser actually runs. The model covers the protocol design, not a production deployment.",
         ],
       },
     ],
@@ -194,12 +397,36 @@ export const work: WorkItem[] = [
     repo: "https://github.com/dr-winner/cryptanalysis-and-hash-recovery-assessment",
     context: "Training lab",
     scope: "Lab sample PDFs only. No customer data.",
+    quote: "The password met a length rule and still fell, because it was a keyboard walk.",
+    stack: ["John the Ripper", "MCP"],
     sections: [
+      {
+        id: "summary",
+        heading: "Summary",
+        paragraphs: [
+          "I recovered passwords from lab sample PDFs with John the Ripper, and I tried an AI-assisted workflow over MCP to see why the password fell so quickly. The samples were two locked PDFs. No customer data.",
+        ],
+      },
       {
         id: "method",
         heading: "Method",
         paragraphs: [
-          "I recovered passwords from lab sample PDFs with John the Ripper and tried an AI-assisted workflow over MCP.",
+          "I extracted the PDF encryption hash from the sample on the client, then recovered it offline with John the Ripper, using Johnny, the GUI. The same hash also matched a short dictionary run. After the password came back, I asked an AI assistant over MCP to look at the pattern, not to attack anything else.",
+        ],
+      },
+      {
+        id: "results",
+        heading: "What I found",
+        paragraphs: [
+          "The password was 1qaz2wsx. It is a keyboard walk down the first two columns of a QWERTY keyboard: 1, q, a, z, then 2, w, s, x. It is eight characters with letters and numbers, which is enough to pass a naive length rule, and it is already in wordlists that know keyboard walks.",
+          "The samples used legacy 128-bit PDF encryption, so an offline dictionary attack was enough. The same password opened the second sample. One crack exposed both files.",
+        ],
+      },
+      {
+        id: "learned",
+        heading: "What I learned",
+        paragraphs: [
+          "A password can meet a length rule and still be a pattern a wordlist already contains. Unique secrets per document stop one recovery from opening the next file. The AI pass over MCP was useful for naming the pattern. The recovery itself was John the Ripper.",
         ],
       },
     ],

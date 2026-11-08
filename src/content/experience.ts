@@ -34,7 +34,7 @@ export const experience: TimelineEntry[] = [
   },
   {
     period: "Jul 2025 to present",
-    title: "Freelance IT Consultant & Web Developer",
+    title: "IT Consultant",
     org: "Self-employed",
     description: "IT consulting and web projects for small businesses.",
     tags: [],

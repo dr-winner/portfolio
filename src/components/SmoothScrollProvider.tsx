@@ -27,6 +27,7 @@ export function SmoothScrollProvider({
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     let lenis: LenisInstance;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

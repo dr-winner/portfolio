@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cvDownloadName, cvHref, mailto, site } from "@/content/site";
+import { cvHref, mailto, site } from "@/content/site";
 
 const links = [
   { href: mailto, label: "Email" },
@@ -21,7 +21,7 @@ export function SiteFooter() {
           {links.map((link) => (
             <li key={link.label}>
               {link.href.startsWith("/") ? (
-                <Link href={link.href} download={link.download ? cvDownloadName : undefined} className="text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+                <Link href={link.href} className="text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
                   {link.label}
                 </Link>
               ) : (

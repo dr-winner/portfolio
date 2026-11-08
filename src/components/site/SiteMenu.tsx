@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { cvDownloadName, cvHref, mailto, site } from "@/content/site";
+import { cvHref, mailto, site } from "@/content/site";
 
 const links = [
   { href: "/work", label: "Work" },
@@ -44,7 +44,6 @@ export function SiteMenu({ onClose }: { onClose: () => void }) {
               ) : (
                 <Link
                   href={link.href}
-                  download={link.download ? cvDownloadName : undefined}
                   className="text-[length:var(--step-4)] text-[var(--fg)] no-underline"
                   onClick={onClose}
                 >

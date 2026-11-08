@@ -59,6 +59,12 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("x-pathname", pathname);
 
+  if (pathname === "/CV.pdf") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/cv.pdf";
+    return NextResponse.redirect(url, 308);
+  }
+
   if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/studio" || pathname.startsWith("/studio/")) {
     return notFound();
   }

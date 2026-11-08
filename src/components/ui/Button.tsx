@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { cvDownloadName, cvHref } from "@/content/site";
 
 const styles = {
   primary:
@@ -14,15 +13,13 @@ export function Button({
   href,
   children,
   variant = "primary",
-  download = false,
 }: {
   href: string;
   children: ReactNode;
   variant?: keyof typeof styles;
   download?: boolean;
 }) {
-  const className = `inline-flex h-11 items-center justify-center rounded-[6px] px-5 text-[length:var(--step-0)] font-medium no-underline ${styles[variant]}`;
-  const isCv = download || href === cvHref;
+  const className = `inline-flex h-11 items-center justify-center rounded-[6px] px-5 text-[length:var(--step-0)] font-medium no-underline transition-[transform,filter,border-color] duration-200 ${styles[variant]}`;
   if (href.startsWith("mailto:") || href.startsWith("http")) {
     return (
       <a className={className} href={href} {...(href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
@@ -31,7 +28,7 @@ export function Button({
     );
   }
   return (
-    <Link className={className} href={href} {...(isCv ? { download: cvDownloadName } : {})}>
+    <Link className={className} href={href}>
       {children}
     </Link>
   );

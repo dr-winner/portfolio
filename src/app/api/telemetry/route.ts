@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { assertSameOriginOrMissing } from "@/lib/allow-same-site";
-import { checkRateLimit, clientIpFromHeaders } from "@/lib/rate-limit";
+import { originAllowed } from "@/lib/allow-same-site";
+import { checkRateLimitDurable, clientIpFromHeaders } from "@/lib/rate-limit";
 import { deviceClass, uaFromHeaders } from "@/lib/ua-hints";
 import { visitKeyFromIp } from "@/lib/visit-fingerprint";
 
@@ -27,12 +27,12 @@ function refererT(r: string | null): string {
 }
 
 export async function POST(req: NextRequest) {
-  if (!req.headers.get("origin") || !assertSameOriginOrMissing(req)) {
+  if (!originAllowed(req.headers)) {
     return NextResponse.json({ ok: false }, { status: 403 });
   }
 
   const ip = clientIpFromHeaders(req.headers);
-  const rl = checkRateLimit(`tel:${ip}`, 120, 60_000);
+  const rl = await checkRateLimitDurable(`tel:${ip}`, 120, 60_000);
   if (!rl.ok) {
     return NextResponse.json({ ok: false }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
   }

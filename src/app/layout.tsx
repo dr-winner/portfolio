@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif } from "next/font/google";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import clsx from "clsx";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
@@ -10,15 +9,7 @@ import { Providers } from "@/components/Providers";
 import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
 
-const serif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: "italic",
-  variable: "--font-instrument-serif",
-  display: "swap",
-  adjustFontFallback: true,
-  preload: false,
-});
+const themeBoot = `(function(){try{var c=document.cookie.match(/(?:^|; )theme=(dark|light)/);var stored=null;try{stored=localStorage.getItem("theme")}catch(e){}var t=c?c[1]:(stored==="dark"||stored==="light"?stored:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"));if(c){try{localStorage.setItem("theme",c[1])}catch(e){}}var d=document.documentElement;d.classList.remove("light","dark");d.classList.add(t);d.style.colorScheme=t;}catch(e){}})();`;
 
 /* ─── Site constants ──────────────────────────────────────────────────────── */
 
@@ -71,7 +62,6 @@ export const metadata: Metadata = {
     description:
       "Application security in Accra, Ghana. Web, API and AI/LLM app security, a training-lab pentest and AWS detection as code. Case studies and CV.",
     creator: `@${xHandle}`,
-    images: [ogImage],
   },
 
   robots: { index: true, follow: true },
@@ -111,16 +101,18 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const theme = (await cookies()).get("theme")?.value;
   const themeClass = theme === "light" || theme === "dark" ? theme : undefined;
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   return (
     <html
       lang="en"
       suppressHydrationWarning
-      className={clsx(GeistSans.variable, GeistMono.variable, serif.variable, themeClass)}
+      className={clsx(GeistSans.variable, GeistMono.variable, themeClass)}
       style={{ ["--font-sans" as string]: "var(--font-geist-sans)", ["--font-mono" as string]: "var(--font-geist-mono)", ["--font-display" as string]: "var(--font-geist-sans)" }}
     >
       <body className="font-sans antialiased overflow-x-hidden">
-        <Providers>{children}</Providers>
+        {nonce ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeBoot }} /> : null}
+        <Providers nonce={nonce}>{children}</Providers>
         <Analytics />
       </body>
     </html>

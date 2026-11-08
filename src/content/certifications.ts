@@ -33,14 +33,14 @@ export const certifications: Cert[] = [
     name: "Cisco Ethical Hacker",
     issuer: "Cisco Networking Academy",
     status: "in-progress",
-    description: "In progress. This is the name of the course.",
+    description: "In progress, Cisco Networking Academy",
     link: "https://www.netacad.com/courses/ethical-hacker",
   },
   {
     name: "PortSwigger Web Security Academy",
     issuer: "PortSwigger",
     status: "in-progress",
-    description: "In progress. Training, not a credential.",
+    description: "In progress, PortSwigger Web Security Academy",
     link: "https://portswigger.net/web-security",
   },
 ];

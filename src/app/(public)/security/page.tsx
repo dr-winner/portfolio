@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "Headers",
-    text: "Responses send a Content Security Policy, HSTS on the public host, nosniff, a referrer policy, and framing limits. Per-request script nonces are the next hardening step, so the policy still allows the framework's inline bootstrap.",
+    text: "A strict Content Security Policy uses a per-request script nonce and strict-dynamic. Inline scripts without that nonce do not run. Only style-src still allows unsafe-inline. Responses also send HSTS with preload, nosniff, a referrer policy, and isolation headers that stop the site being framed.",
   },
   {
     title: "No secrets in the browser",
@@ -37,7 +37,7 @@ const sections = [
 
 export default function SecurityPage() {
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)]">
+    <div className="band">
       <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">Security</p>
       <h1 className="mt-3 max-w-[16ch] text-balance text-[length:var(--step-5)] leading-[var(--leading-tight)]">How this site is secured</h1>
       <p className="mt-6 max-w-[68ch] text-pretty text-[length:var(--step-1)] leading-[var(--leading-body)]">

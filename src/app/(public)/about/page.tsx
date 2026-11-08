@@ -17,7 +17,7 @@ export default function AboutPage() {
   const progress = certifications.filter((item) => item.status !== "earned");
 
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)]">
+    <div className="band">
       <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">About</p>
       <h1 className="mt-3 text-[length:var(--step-5)] leading-[var(--leading-tight)]">About</h1>
       <div className="mt-8 flex max-w-[68ch] flex-col gap-5 text-[length:var(--step-0)] leading-[var(--leading-body)]">
@@ -55,7 +55,9 @@ export default function AboutPage() {
           {earned.map((item) => (
             <li key={item.name}>
               {item.link ? <a href={item.link} className="text-[var(--signal)]">{item.name}</a> : item.name}
-              <span className="block text-[var(--fg-muted)]">{item.issuer}. {item.description}</span>
+              <span className="block text-[var(--fg-muted)]">
+                {item.status === "earned" ? `${item.issuer}. ${item.description}` : item.description}
+              </span>
             </li>
           ))}
         </ul>
@@ -64,7 +66,9 @@ export default function AboutPage() {
           {progress.map((item) => (
             <li key={item.name}>
               {item.link ? <a href={item.link} className="text-[var(--signal)]">{item.name}</a> : item.name}
-              <span className="block text-[var(--fg-muted)]">{item.issuer}. {item.description}</span>
+              <span className="block text-[var(--fg-muted)]">
+                {item.status === "earned" ? `${item.issuer}. ${item.description}` : item.description}
+              </span>
             </li>
           ))}
         </ul>

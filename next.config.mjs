@@ -40,12 +40,7 @@ const nextConfig = {
       },
       {
         source: "/cv.pdf",
-        headers: [
-          { key: "Content-Type", value: "application/pdf" },
-          { key: "Content-Disposition", value: 'inline; filename="Richard-Winner-Duvor-AppSec-CV.pdf"' },
-          { key: "Cache-Control", value: "public, max-age=3600" },
-          { key: "Cross-Origin-Resource-Policy", value: "cross-origin" },
-        ],
+        headers: [{ key: "Cross-Origin-Resource-Policy", value: "cross-origin" }],
       },
       {
         source: "/opengraph-image",

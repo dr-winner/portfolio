@@ -20,6 +20,11 @@ export function ThemeToggle() {
     document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(next);
     document.cookie = `theme=${next}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* storage can be blocked; the cookie still drives the next server render */
+    }
     setTheme(next);
   }
 
