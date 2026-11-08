@@ -61,11 +61,11 @@ export async function checkRateLimitDurable(
     const { prisma } = await import("@/lib/prisma");
     const resetAt = new Date(Date.now() + windowMs);
     const rows = await prisma.$queryRaw<{ count: number; resetAt: Date }[]>`
-      INSERT INTO "RateLimitBucket" ("key", "count", "resetAt")
+      INSERT INTO "portfolio"."RateLimitBucket" ("key", "count", "resetAt")
       VALUES (${key}, 1, ${resetAt})
       ON CONFLICT ("key") DO UPDATE SET
-        "count"   = CASE WHEN "RateLimitBucket"."resetAt" < now() THEN 1 ELSE "RateLimitBucket"."count" + 1 END,
-        "resetAt" = CASE WHEN "RateLimitBucket"."resetAt" < now() THEN ${resetAt} ELSE "RateLimitBucket"."resetAt" END
+        "count"   = CASE WHEN "portfolio"."RateLimitBucket"."resetAt" < now() THEN 1 ELSE "portfolio"."RateLimitBucket"."count" + 1 END,
+        "resetAt" = CASE WHEN "portfolio"."RateLimitBucket"."resetAt" < now() THEN ${resetAt} ELSE "portfolio"."RateLimitBucket"."resetAt" END
       RETURNING "count", "resetAt"
     `;
     const row = rows[0];

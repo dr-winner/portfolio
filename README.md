@@ -16,7 +16,7 @@ npm install
 cp .env.example .env
 # generate a session secret (32+ chars, required)
 node -e "console.log('SESSION_SECRET=\"' + require('crypto').randomBytes(48).toString('hex') + '\"')"
-# pick an admin password (12+ chars) and set ADMIN_PASSWORD in .env
+# pick an admin password (24+ chars) and set ADMIN_PASSWORD in .env
 ```
 
 Paste the generated values into `.env`, then:
