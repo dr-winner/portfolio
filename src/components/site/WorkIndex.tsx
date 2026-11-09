@@ -8,6 +8,7 @@ import { work, type WorkFilter } from "@/content/work";
 const chips: { id: "all" | WorkFilter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "web", label: "Web and API" },
+  { id: "ai", label: "AI and LLM" },
   { id: "cloud", label: "Cloud" },
   { id: "threat", label: "Threat modeling" },
   { id: "labs", label: "Labs" },

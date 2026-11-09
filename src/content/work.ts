@@ -1,5 +1,5 @@
 export type WorkKind = "case-study" | "lab" | "archive";
-export type WorkFilter = "web" | "cloud" | "threat" | "labs";
+export type WorkFilter = "web" | "ai" | "cloud" | "threat" | "labs";
 
 export type WorkSection = {
   id: string;
@@ -29,6 +29,72 @@ export type WorkItem = {
 };
 
 export const work: WorkItem[] = [
+  {
+    slug: "llm-agent-security-lab",
+    title: "LLM & Tool-Using Agent Security Lab",
+    documentTitle: "LLM & Tool-Using Agent Security Lab",
+    description:
+      "An own-built AI/LLM security lab testing indirect prompt injection, cross-tenant RAG retrieval leaks, BOLA tool calls, webhook SSRF and unsafe output handling against deterministic TypeScript controls.",
+    year: "2026",
+    kind: "case-study",
+    badges: ["Own project", "AI/LLM security", "2026"],
+    card: "I built a vulnerable-vs-hardened RAG and tool-calling support agent in TypeScript to test five OWASP LLM Top 10 (2025) attack paths and verify the controls in CI.",
+    tags: [
+      "OWASP LLM Top 10",
+      "Indirect prompt injection",
+      "Excessive agency",
+      "RAG ACLs",
+      "Zod policy gates",
+    ],
+    filters: ["ai", "web", "threat"],
+    repo: "https://github.com/dr-winner/portfolio/tree/main/src/lab/llm-agent-security",
+    context: "Own project (self-built lab)",
+    role: "Author and security engineer",
+    stack: ["TypeScript", "Zod", "Node.js test runner", "OWASP LLM Top 10 (2025)"],
+    outcome:
+      "Five repeatable LLM/agent attack paths reproduced in vulnerable mode and blocked by deterministic controls in CI.",
+    scope:
+      "Self-built, deterministic security lab inside this portfolio repository (src/lab/llm-agent-security). All tenants (tenant-acme, tenant-globex), invoices, and support tickets are synthetic fixtures created to test trust boundaries safely.",
+    sections: [
+      {
+        id: "summary",
+        heading: "Summary",
+        paragraphs: [
+          "LLM features fail when applications treat model outputs or retrieved documents as trusted instructions. I built a multi-tenant support and billing triage agent pipeline with four explicit trust boundaries: RAG retrieval, prompt context assembly, tool execution, and browser output rendering.",
+          "The lab pairs a deliberately vulnerable baseline with a hardened reference implementation and runs an automated regression suite against five attack scenarios mapped to the OWASP Top 10 for LLM Applications (2025).",
+        ],
+      },
+      {
+        id: "threat-model",
+        heading: "Threat model and trust boundaries",
+        paragraphs: [
+          "Boundary 1 — Authenticated Session to Retriever (LLM08 / LLM02): Similarity search must never run globally across tenants and rely on the prompt to hide other tenants' records. Pre-retrieval ACL filtering must happen in the data query.",
+          "Boundary 2 — Untrusted Data to Prompt Context (LLM01): External support tickets and community notes are untrusted input. Concatenating them directly into system instructions lets an attacker plant [SYSTEM OVERRIDE] directives that hijack downstream tool calls.",
+          "Boundary 3 — Model Output to Tool Executor (LLM06 / API1): The model is not an authorization layer. State-changing tools (issue_refund), cross-tenant reads (lookup_invoice), and network egress tools (send_webhook_summary) must be gated by server-side session checks, Zod schemas, host allowlists, and human-in-the-loop confirmation tokens.",
+          "Boundary 4 — Model Output to DOM Renderer (LLM05): Model responses can carry attacker-controlled HTML or markdown image beacons from retrieved chunks and must be sanitized before rendering.",
+        ],
+      },
+      {
+        id: "findings-and-controls",
+        heading: "Attack paths and enforced controls",
+        paragraphs: [
+          "01. Indirect Prompt Injection to Unauthorized Refund (CVSS 8.1 High, LLM01 / LLM06): Inbound ticket #409 instructs the model to call issue_refund for $450. The hardened pipeline isolates retrieved text inside <untrusted_data> tags and enforces role === 'support_agent' plus a human confirmation token at the tool gate.",
+          "02. Cross-Tenant Vector Retrieval Leak (CVSS 7.5 High, LLM08 / LLM02): A tenant-acme query matches a confidential tenant-globex renewal memo. The hardened retriever filters chunks by chunk.tenantId === session.tenantId || chunk.tenantId === 'public' before scoring.",
+          "03. Model-Supplied Tenant Parameter BOLA (CVSS 7.5 High, LLM06 / API1): A user asks the model to call lookup_invoice with tenantId: 'tenant-globex'. The hardened tool gate validates arguments with Zod and asserts args.tenantId === session.tenantId.",
+          "04. Unconstrained Webhook Tool Exfiltration (CVSS 8.6 High, LLM06 / LLM02): An injected directive points send_webhook_summary at collector.attacker.example. The hardened tool gate parses the URL and restricts egress to https://hooks.internal.example.",
+          "05. Poisoned Chunk Output XSS and Beacon (CVSS 7.3 High, LLM05): A poisoned note injects <img src=x onerror=...> and an external markdown tracking image. The hardened output sanitizer strips executable HTML tags, blocks javascript:/data: schemes, and strips external image beacons.",
+        ],
+      },
+      {
+        id: "limitations",
+        heading: "Verification and known limitations",
+        paragraphs: [
+          "Every attack scenario and positive authorization check is asserted in src/lab/llm-agent-security/engine.test.ts and runs on every push in GitHub Actions (npm test).",
+          "Known limitation: Delimiters (<untrusted_data>) and regex stripping reduce prompt-injection compliance, but no prompt-level filter can guarantee a probabilistic model will never emit a malicious tool call. That is why the security boundary in this lab is placed outside the model—at the pre-retrieval query filter, the deterministic tool policy gate, and the output sanitizer.",
+        ],
+      },
+    ],
+  },
   {
     slug: "healthcare-portal-pentest-lab",
     title: "Healthcare Portal Pentest (NetworkWalks Training Lab)",

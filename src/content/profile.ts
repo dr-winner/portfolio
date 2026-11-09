@@ -20,7 +20,7 @@ export const profile = {
   },
   bio: [
     "I'm Richard Winner Duvor. I work on application security in Accra, Ghana, with a focus on web apps, APIs and AI/LLM features.",
-    "During my cybersecurity internship at NetworkWalks, I ran a full web application pentest in a training lab, from recon to a SQL injection login bypass, and wrote a CVSS v3.1 report with remediation recommendations. At TechBiz Security I trained on the ethical hacking and SOC tracks. On my own, I built an AWS threat detection lab with six detections written in Terraform, mapped to MITRE ATT&CK and scanned by Checkov in CI.",
+    "During my cybersecurity internship at NetworkWalks, I ran a full web application pentest in a training lab, from recon to a SQL injection login bypass, and wrote a CVSS v3.1 report with remediation recommendations. At TechBiz Security I trained on the ethical hacking and SOC tracks. On my own, I built an LLM and tool-using agent security lab in TypeScript covering five OWASP LLM Top 10 attack paths, and an AWS threat detection lab with six detections written in Terraform, mapped to MITRE ATT&CK and scanned by Checkov in CI.",
     "By day I'm a frontend engineer at Synchora Health. That work keeps me close to how real applications are built, and it shapes how I test them.",
     "I hold the AWS Certified Cloud Practitioner and the Google Cybersecurity Professional Certificate, and I'm working through Cisco Ethical Hacker and the PortSwigger Web Security Academy. I'm open to application security and product security roles in Ghana, across Africa and with remote teams.",
   ],

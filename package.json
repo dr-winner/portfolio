@@ -6,7 +6,8 @@
     "dev": "NEXT_TURBOPACK=0 next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --no-warnings --test src/lab/llm-agent-security/engine.test.ts"
   },
   "overrides": {
     "@vercel/oidc": "4.0.7",

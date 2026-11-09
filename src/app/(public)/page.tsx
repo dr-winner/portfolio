@@ -11,18 +11,18 @@ import { personSchema, profilePageSchema, webSiteSchema } from "@/lib/structured
 const proof = [
   {
     index: "01",
+    text: "An AI/LLM agent security lab testing indirect prompt injection, cross-tenant RAG leaks, and excessive agency across five OWASP LLM Top 10 attack paths, verified in CI.",
+    href: "/work/llm-agent-security-lab",
+  },
+  {
+    index: "02",
     text: "A full web app pentest in a NetworkWalks training lab: SQL injection login bypass and a CVSS v3.1 report with remediation recommendations.",
     href: "/work/healthcare-portal-pentest-lab",
   },
   {
-    index: "02",
+    index: "03",
     text: "Six AWS threat detections written in Terraform, mapped to MITRE ATT&CK and checked by Checkov in CI.",
     href: "/work/aws-threat-detection-as-code",
-  },
-  {
-    index: "03",
-    text: "Cybersecurity intern at TechBiz Security on the ethical hacking and SOC tracks.",
-    href: "/about#experience",
   },
 ];
 
@@ -131,7 +131,7 @@ export default async function HomePage() {
       <section className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] pb-[var(--space-2xl)]">
         <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">Selected work</p>
         <h2 className="mt-3 text-[length:var(--step-4)] leading-[var(--leading-tight)]">Case studies</h2>
-        <ul className="mt-8 grid gap-4 xl:grid-cols-3">
+        <ul className="mt-8 grid gap-4 md:grid-cols-2">
           {featured.map((item) => (
             <li key={item.slug}>
               <Link href={`/work/${item.slug}`} className="flex h-full flex-col rounded-[12px] border border-[var(--line)] bg-[var(--surface)] p-5 no-underline shadow-[var(--shadow)]">

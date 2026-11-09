@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
+import { LlmAgentLabInspector } from "@/components/site/LlmAgentLabInspector";
 import { getWork, publishedWork } from "@/content/work";
 
 type Params = { slug: string };
@@ -57,6 +58,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
         {item.stack ? <div><dt className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">Stack</dt><dd className="mt-1">{item.stack.join(", ")}</dd></div> : null}
         {item.outcome ? <div><dt className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">Outcome</dt><dd className="mt-1">{item.outcome}</dd></div> : null}
       </dl>
+      {item.slug === "llm-agent-security-lab" ? <LlmAgentLabInspector /> : null}
       <div className="mt-10 flex max-w-[68ch] flex-col gap-8">
         {item.sections.map((section) => (
           <section key={section.id} id={section.id}>

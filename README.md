@@ -21,6 +21,7 @@ Open `http://localhost:3000`.
 | `npm run build` | Production build (`next build`). |
 | `npm run start` | Production server after a build. |
 | `npm run lint` | Runs `next lint`. |
+| `npm test` | Runs the OWASP LLM Top 10 security regression test suite (`src/lab/llm-agent-security/engine.test.ts`). |
 
 ## Content structure
 
@@ -33,6 +34,7 @@ Public content is versioned directly in [`src/content/`](./src/content):
 - [`src/content/certifications.ts`](./src/content/certifications.ts) — earned certifications and active training.
 - [`src/content/skills.ts`](./src/content/skills.ts) — grouped AppSec, AI/LLM security, cloud detection, and tooling skills.
 - [`src/content/writeups.ts`](./src/content/writeups.ts) — write-ups index (unpublished while all entries are marked `draft: true`).
+- [`src/lab/llm-agent-security/`](./src/lab/llm-agent-security) — deterministic RAG & tool-using agent security lab engine and OWASP LLM Top 10 regression test suite.
 - [`public/cv.pdf`](./public/cv.pdf) — downloadable CV served with `Content-Disposition: inline; filename="Richard-Winner-Duvor-AppSec-CV.pdf"`.
 
 ## Security posture
