@@ -26,7 +26,7 @@ export function LlmAgentLabInspector() {
   return (
     <section
       aria-labelledby="lab-inspector-heading"
-      className="mt-12 max-w-[88ch] rounded-[12px] border border-[var(--line-strong)] bg-[var(--surface)] p-5 sm:p-7"
+      className="fx-corner console-card relative mt-12 max-w-[88ch] rounded-[12px] border border-[var(--line-strong)] bg-[var(--surface)] p-5 sm:p-7"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-[var(--line)] pb-5">
         <div>

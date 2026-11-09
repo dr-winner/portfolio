@@ -4,10 +4,11 @@ import { cvDownloadName, cvHref } from "@/content/site";
 
 const styles = {
   primary:
-    "bg-[var(--signal)] text-[var(--on-signal)] border border-transparent hover:brightness-110",
+    "btn-sweep border border-transparent bg-[var(--signal)] font-medium text-[var(--on-signal)] hover:brightness-110",
   secondary:
-    "bg-transparent text-[var(--fg)] border border-[var(--line-strong)] hover:border-[var(--signal)]",
-  ghost: "bg-transparent text-[var(--fg)] border border-transparent hover:text-[var(--signal)]",
+    "border border-[var(--line-strong)] font-medium text-[var(--fg)] hover:border-[var(--signal)] hover:text-[var(--signal)] active:translate-y-px",
+  ghost:
+    "text-[var(--fg-muted)] hover:text-[var(--signal)] active:translate-y-px",
 } as const;
 
 export function Button({
@@ -21,7 +22,7 @@ export function Button({
   variant?: keyof typeof styles;
   download?: boolean;
 }) {
-  const className = `inline-flex h-11 items-center justify-center rounded-[6px] px-5 text-[length:var(--step-0)] font-medium no-underline ${styles[variant]}`;
+  const className = `inline-flex h-11 items-center justify-center gap-2 rounded-[6px] px-5 text-[length:var(--step-0)] no-underline ${styles[variant]}`;
   const isCv = download || href === cvHref;
   if (href.startsWith("mailto:") || href.startsWith("http")) {
     return (

@@ -7,12 +7,14 @@
 @layer base {
   :root {
     --ring-color: rgba(14, 165, 233, 0.5);
+    --reveal-y: 18px;
   }
 
   html {
     scroll-behavior: smooth;
+    background-color: var(--bg);
     /* Section anchors clear the fixed header + iOS status inset */
-    scroll-padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+    scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
     overflow-x: hidden;
   }
 
@@ -33,18 +35,34 @@
   }
 
   ::selection {
-    background: rgba(56, 189, 248, 0.4);
-    color: #ffffff;
-  }
-
-  html.light ::selection {
-    background: rgba(14, 165, 233, 0.3);
-    color: #0a1628;
+    background: color-mix(in srgb, var(--signal) 30%, transparent);
+    color: var(--fg);
   }
 
   *:focus-visible {
     outline: 2px solid var(--signal);
     outline-offset: 3px;
+  }
+
+  /* Quiet, os-styled scrollbar so the instrument-panel look isn't broken by a
+     fat default bar on desktop. */
+  @media (pointer: fine) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    *::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    *::-webkit-scrollbar-thumb {
+      background: var(--line-strong);
+      border-radius: 999px;
+      border: 3px solid var(--bg);
+    }
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
   }
 
   .work-filters {
@@ -58,6 +76,243 @@
   }
 }
 
+@layer utilities {
+  /* ── Pattern generators ────────────────────────────────────────────────── */
+
+  /* Fine blueprint grid. Size controlled by --grid-size. */
+  .fx-gridline {
+    background-image:
+      linear-gradient(to right, var(--grid-line, var(--line)) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line, var(--line)) 1px, transparent 1px);
+    background-size: var(--grid-size, 44px) var(--grid-size, 44px);
+  }
+
+  /* Terminal dot matrix. */
+  .fx-dots {
+    background-image: radial-gradient(circle, var(--dot-color, var(--line)) 1px, transparent 1.5px);
+    background-size: var(--dot-size, 18px) var(--dot-size, 18px);
+  }
+
+  /* CRT scan lines, only legible on dark surfaces by design. */
+  .fx-scan {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.025) 0px,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  }
+  html.light .fx-scan {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(11, 15, 20, 0.022) 0px,
+      rgba(11, 15, 20, 0.022) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  }
+
+  /* Ghost numeral watermark behind cards. */
+  .fx-ghost-index {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line-strong);
+    user-select: none;
+  }
+
+  /* ── Corner brackets (instrument bezels) ──────────────────────────────── */
+
+  .fx-corner {
+    --fx-corner: var(--line-strong);
+    /* Eight hairline layers paint an L-bracket in each corner. */
+    background-image:
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner)),
+      linear-gradient(var(--fx-corner), var(--fx-corner));
+    background-repeat: no-repeat;
+    background-size:
+      10px 1.5px, 1.5px 10px,
+      10px 1.5px, 1.5px 10px,
+      10px 1.5px, 1.5px 10px,
+      10px 1.5px, 1.5px 10px;
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom left, bottom left,
+      bottom right, bottom right;
+  }
+  .group:hover > .fx-corner,
+  .group:focus-within > .fx-corner {
+    --fx-corner: var(--signal);
+  }
+
+  /* ── Reveal system (scroll-staged), armed only when JS is present ─────── */
+
+  [data-reveal] {
+    transition:
+      opacity var(--dur-3) var(--ease-out) var(--reveal-delay, 0ms),
+      transform var(--dur-4) var(--ease-out) var(--reveal-delay, 0ms);
+  }
+  @media (scripting: enabled) {
+    html.reveal-armed [data-reveal]:not(.is-in) {
+      opacity: 0;
+      transform: translateY(var(--reveal-y));
+    }
+  }
+  html.reveal-armed [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Link & arrow micro-interactions ──────────────────────────────────── */
+
+  .link-sweep {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size var(--dur-2) var(--ease-out), color var(--dur-1) linear;
+  }
+  .link-sweep:hover,
+  .link-sweep:focus-visible {
+    background-size: 100% 1px;
+  }
+  .link-sweep.is-active {
+    background-size: 100% 1px;
+  }
+
+  .arrow-shift {
+    transition: transform var(--dur-2) var(--ease-spring);
+  }
+  .group:hover .arrow-shift,
+  .group:focus-within .arrow-shift {
+    transform: translateX(4px);
+  }
+
+  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+
+  .console-card {
+    transition:
+      border-color var(--dur-2) var(--ease-out),
+      transform var(--dur-2) var(--ease-out),
+      box-shadow var(--dur-3) var(--ease-out);
+  }
+  @media (pointer: fine) {
+    .group:hover > .console-card,
+    .console-card.console-card-hover:hover {
+      transform: translateY(-3px);
+      border-color: var(--line-strong);
+      box-shadow:
+        0 0 0 1px var(--line-strong),
+        0 18px 48px -24px var(--glow-signal),
+        0 24px 64px -48px var(--glow-ai),
+        var(--highlight);
+    }
+  }
+  .console-card:active {
+    transform: translateY(-1px);
+  }
+
+  /* Primary button sheen sweep. */
+  .btn-sweep {
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--dur-1) var(--ease-spring), filter var(--dur-1) linear;
+  }
+  .btn-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 36%;
+    pointer-events: none;
+    transform: translateX(-130%) skewX(-18deg);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transition: transform var(--dur-3) var(--ease-inout);
+  }
+  .btn-sweep:hover::after,
+  .btn-sweep:focus-visible::after {
+    transform: translateX(320%) skewX(-18deg);
+  }
+  .btn-sweep:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Ambient motion ───────────────────────────────────────────────────── */
+
+  .fx-pulse {
+    position: relative;
+  }
+  .fx-pulse::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    animation: fx-pulse 2.4s var(--ease-inout) infinite;
+  }
+
+  @keyframes fx-pulse {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.5); }
+  }
+
+  .fx-caret::after {
+    content: "▍";
+    margin-left: 2px;
+    color: var(--signal);
+    animation: fx-blink 1.1s steps(2, start) infinite;
+  }
+  @keyframes fx-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  .fx-drift {
+    animation: fx-drift 26s var(--ease-inout) infinite alternate;
+  }
+  @keyframes fx-drift {
+    from { transform: translate3d(-8px, -6px, 0); }
+    to { transform: translate3d(10px, 8px, 0); }
+  }
+
+  .fx-cue {
+    animation: fx-cue 2.2s var(--ease-inout) infinite;
+  }
+  @keyframes fx-cue {
+    0%, 100% { transform: translateY(0); opacity: 0.9; }
+    50% { transform: translateY(6px); opacity: 0.4; }
+  }
+
+  .fx-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: fx-marquee var(--marquee-duration, 46s) linear infinite;
+  }
+  .fx-marquee:hover .fx-marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes fx-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── Interior rules that grow on reveal-in ─────────────────────────────── */
+
+  .fx-rule {
+    transform-origin: left;
+    transition: transform var(--dur-4) var(--ease-inout);
+  }
+  html.reveal-armed [data-reveal]:not(.is-in) .fx-rule {
+    transform: scaleX(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -66,5 +321,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  html.reveal-armed [data-reveal],
+  html.reveal-armed [data-reveal]:not(.is-in) {
+    opacity: 1;
+    transform: none;
   }
 }
