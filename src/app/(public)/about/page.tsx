@@ -67,28 +67,38 @@ export default function AboutPage() {
         </Reveal>
       </div>
 
-      {/* ── Experience: hairline vertical timeline (dates exactly as data) ── */}
-      <section id="experience" className="mt-24">
-        <Reveal>
-          <h2 className="font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Experience</h2>
-        </Reveal>
-        <ol className="relative mt-8 max-w-[62ch] border-l border-[var(--line)] pl-6">
-          {experience.map((item, i) => (
-            <Reveal key={`${item.org}-${item.title}`} as="li" delay={i * 60} className="relative pb-10 last:pb-0">
-              <span
-                aria-hidden
-                className="absolute -left-[27px] top-[7px] h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--bg)] transition-colors duration-[var(--dur-2)]"
-              />
-              <p className="font-mono text-[12px] uppercase tracking-[0.1em] text-[var(--fg-subtle)] tabular-nums">
-                {item.period}
-              </p>
-              <h3 className="mt-1.5 text-[length:var(--step-1)] leading-[var(--leading-snug)]">{item.title}</h3>
-              <p className="mt-0.5 text-[var(--fg-muted)]">{item.org}</p>
-              <p className="mt-2 leading-[var(--leading-body)] text-[var(--fg-muted)]">{item.description}</p>
-            </Reveal>
-          ))}
-        </ol>
-      </section>
+      {/* ── Experience: two hairline timelines, security first, then
+          engineering, each entry worded as public/cv.pdf ─────────────────── */}
+      {(
+        [
+          { group: "security", heading: "Security experience", id: "experience", className: "mt-24" },
+          { group: "engineering", heading: "Engineering experience", id: "engineering-experience", className: "mt-16" },
+        ] as const
+      ).map((block) => (
+        <section key={block.group} id={block.id} className={block.className}>
+          <Reveal>
+            <h2 className="font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">{block.heading}</h2>
+          </Reveal>
+          <ol className="relative mt-8 max-w-[62ch] border-l border-[var(--line)] pl-6">
+            {experience
+              .filter((item) => item.group === block.group)
+              .map((item, i) => (
+                <Reveal key={`${item.org}-${item.title}`} as="li" delay={i * 60} className="relative pb-10 last:pb-0">
+                  <span
+                    aria-hidden
+                    className="absolute -left-[27px] top-[7px] h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--bg)] transition-colors duration-[var(--dur-2)]"
+                  />
+                  <p className="font-mono text-[12px] uppercase tracking-[0.1em] text-[var(--fg-subtle)] tabular-nums">
+                    {item.period}
+                  </p>
+                  <h3 className="mt-1.5 text-[length:var(--step-1)] leading-[var(--leading-snug)]">{item.title}</h3>
+                  <p className="mt-0.5 text-[var(--fg-muted)]">{item.org}</p>
+                  <p className="mt-2 leading-[var(--leading-body)] text-[var(--fg-muted)]">{item.description}</p>
+                </Reveal>
+              ))}
+          </ol>
+        </section>
+      ))}
 
       {/* ── Education card ───────────────────────────────────────────────── */}
       <section className="mt-4 max-w-[62ch]">
