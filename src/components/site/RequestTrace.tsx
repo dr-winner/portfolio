@@ -90,6 +90,7 @@ export function RequestTrace() {
   const [done, setDone] = useState(false);
   const [swept, setSwept] = useState(false);
   const timers = useRef<number[]>([]);
+  const traceRef = useRef<HTMLElement | null>(null);
 
   function clearTimers() {
     timers.current.forEach((id) => window.clearTimeout(id));
@@ -100,30 +101,58 @@ export function RequestTrace() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     clearTimers();
 
-    if (reduced) {
+    /* Lazy playback: offscreen cards (below the fold at 360 to 430px) show
+       the completed trace at rest, and the staggered playback kicks in only
+       when the card actually enters the viewport. */
+    function showFinal() {
       setPlaying(false);
       setDone(true);
       setSwept(true);
+    }
+    function play() {
+      // Restart: flip to hidden, then reveal on the next frames so the
+      // transition (with per-line delays) actually runs from zero.
+      setPlaying(false);
+      setDone(false);
+      setSwept(false);
+      timers.current.push(
+        window.setTimeout(() => {
+          setPlaying(true);
+          timers.current.push(
+            window.setTimeout(() => {
+              setDone(true);
+              setSwept(true);
+            }, traces[active].lines.length * STEP_MS + LINE_MS),
+          );
+        }, 60),
+      );
+    }
+
+    if (reduced) {
+      showFinal();
       return undefined;
     }
 
-    // Restart: flip to hidden, then reveal on the next frames so the
-    // transition (with per-line delays) actually runs from zero.
-    setPlaying(false);
-    setDone(false);
-    setSwept(false);
-    timers.current.push(
-      window.setTimeout(() => {
-        setPlaying(true);
-        timers.current.push(
-          window.setTimeout(() => {
-            setDone(true);
-            setSwept(true);
-          }, traces[active].lines.length * STEP_MS + LINE_MS),
-        );
-      }, 60),
-    );
+    const element = traceRef.current;
+    if (element && typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            clearTimers();
+            if (entry.isIntersecting) play();
+            else showFinal();
+          }
+        },
+        { threshold: 0.35 },
+      );
+      observer.observe(element);
+      return () => {
+        clearTimers();
+        observer.disconnect();
+      };
+    }
 
+    play();
     return () => clearTimers();
   }, [active]);
 
@@ -144,7 +173,7 @@ export function RequestTrace() {
   const trace = traces[active];
 
   return (
-    <figure className="trace-card relative m-0 flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)]">
+    <figure ref={traceRef} className="trace-card relative m-0 flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)]">
       {/* Card label bar */}
       <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2.5">
         <figcaption className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
