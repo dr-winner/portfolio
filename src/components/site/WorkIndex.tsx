@@ -169,11 +169,11 @@ export function WorkIndex() {
                 >
                   <Link
                     href={`/work/${item.slug}`}
-                    className={`group grid grid-cols-1 items-center gap-6 py-7 no-underline lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10 ${
+                    className={`group grid grid-cols-1 items-stretch gap-6 py-7 no-underline lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10 lg:min-h-[272px] ${
                       i % 2 === 1 ? "lg:grid-cols-[300px_minmax(0,1fr)]" : ""
                     }`}
                   >
-                    <div className={`${i % 2 === 1 ? "lg:order-2" : ""} min-w-0`}>
+                    <div className={`${i % 2 === 1 ? "lg:order-2" : ""} min-w-0 lg:flex lg:flex-col`}>
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge>{item.badges[1] ?? item.badges[0]}</Badge>
                         <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
@@ -181,20 +181,20 @@ export function WorkIndex() {
                       <h3 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-tight)] tracking-[-0.01em] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
                         {item.title}
                       </h3>
-                      <p className="mt-2 max-w-[62ch] text-pretty text-[length:var(--step--1)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
+                      <p className="mt-2 line-clamp-3 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
                         {item.outcome ?? item.card}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {item.tags.slice(0, 4).map((t) => (
                           <span
                             key={t}
-                            className="inline-flex h-6 items-center rounded-full border border-[var(--line)] px-2.5 text-[11px] text-[var(--fg-subtle)]"
+                            className="inline-flex h-6 items-center rounded-full border border-[var(--line)] px-2.5 text-[12px] text-[var(--fg-subtle)]"
                           >
                             {t}
                           </span>
                         ))}
                       </div>
-                      <span className="mt-4 inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.08em] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                      <span className="mt-4 inline-flex items-center gap-1.5 font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)] lg:mt-auto lg:pt-4">
                         Read
                         <span aria-hidden className="arrow-shift">
                           →
@@ -202,7 +202,7 @@ export function WorkIndex() {
                       </span>
                     </div>
                     <div
-                      className={`card-diagram-wrap min-w-0 rounded-[10px] bg-[var(--surface-2)] p-4 ${
+                      className={`card-diagram-wrap flex min-w-0 items-center rounded-[10px] bg-[var(--surface-2)] p-4 ${
                         i % 2 === 1 ? "lg:order-1" : ""
                       }`}
                     >
@@ -238,7 +238,7 @@ export function WorkIndex() {
                     <h3 className="mt-3 text-[length:var(--step-1)] font-medium leading-[var(--leading-tight)] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--amber)]">
                       {item.title}
                     </h3>
-                    <p className="mt-2 text-pretty text-[length:var(--step--1)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
+                    <p className="mt-2 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
                       {item.card}
                     </p>
                   </Link>
@@ -261,11 +261,11 @@ export function WorkIndex() {
                     <h3 className="text-[length:var(--step-0)] font-medium text-[var(--fg)]">{item.title}</h3>
                     <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
                   </div>
-                  <p className="mt-2 text-pretty text-[length:var(--step--1)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
+                  <p className="mt-2 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
                     {item.card}
                   </p>
                   {item.link ? (
-                    <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.06em] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                    <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-[12px] tracking-[0.06em] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
                       Live demo
                       <span aria-hidden className="arrow-shift">
                         ↗
