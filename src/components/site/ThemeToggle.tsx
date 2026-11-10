@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+/* The site's only default is dark. Light exists solely as the html.light
+   class set by this toggle (plus its cookie), so class presence is the
+   whole truth; the OS preference never answers for the site. */
 function currentTheme() {
   if (document.documentElement.classList.contains("light")) return "light";
-  if (document.documentElement.classList.contains("dark")) return "dark";
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  return "dark";
 }
 
 export function ThemeToggle() {

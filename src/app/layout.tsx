@@ -82,11 +82,10 @@ export const metadata: Metadata = {
 /* ─── Viewport ────────────────────────────────────────────────────────────── */
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F4F6F8" },
-    { media: "(prefers-color-scheme: dark)", color: "#070A0F" },
-  ],
-  colorScheme: "dark light",
+  /* Dark is the only default. The status bar color follows the site default,
+     not the OS preference; toggling to light restyles the page via html.light. */
+  themeColor: "#070A0F",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

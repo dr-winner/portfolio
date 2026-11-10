@@ -58,31 +58,9 @@
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not(.dark) {
-    --bg: #f4f6f8;
-    --bg-raised: #eaeef2;
-    --surface: #ffffff;
-    --surface-2: #f0f3f6;
-    --line: rgba(45, 62, 80, 0.12);
-    --line-strong: rgba(45, 62, 80, 0.2);
-    --fg: #0b0f14;
-    --fg-muted: #465261;
-    --fg-subtle: #5f6b7a;
-    --signal: #0d9488;
-    --on-signal: #ffffff;
-    --ai: #5a7290;
-    --amber: #a16207;
-    --danger: #b42318;
-    --info: #3e6c9e;
-    --glow-signal: rgba(13, 148, 136, 0.1);
-    --glow-ai: rgba(45, 62, 80, 0.06);
-    --highlight: none;
-    --shadow: 0 1px 2px rgba(11, 15, 20, 0.06), 0 8px 24px rgba(11, 15, 20, 0.06);
-    color-scheme: light;
-  }
-}
-
+/* Dark is the only default. Light mode exists only through the html.light
+   class, which the theme toggle sets with its own cookie. No OS-level
+   light switching: prefers-color-scheme never answers for the site. */
 html.light {
   --bg: #f4f6f8;
   --bg-raised: #eaeef2;
@@ -93,7 +71,10 @@ html.light {
   --fg: #0b0f14;
   --fg-muted: #465261;
   --fg-subtle: #5f6b7a;
-  --signal: #0d9488;
+  /* Teal darkened for small text: #0f766e measures 5.5:1 on white and
+     5.1:1 on the page background, over the 4.5:1 requirement. #0d9488
+     sat below it (3.75:1 on white). */
+  --signal: #0f766e;
   --on-signal: #ffffff;
   --ai: #5a7290;
   --amber: #a16207;
