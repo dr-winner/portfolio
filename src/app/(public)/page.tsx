@@ -72,21 +72,24 @@ export default async function HomePage() {
             <Reveal delay={0} y={10}>
               <StatusDot label={site.availabilityShort} />
             </Reveal>
+            <Reveal delay={40} y={10}>
+              <p className="mt-6 font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">Richard Winner Duvor</p>
+            </Reveal>
             <Reveal delay={80} y={0} variant="mask">
-              <h1 className="mt-6 text-[length:var(--step-6)] font-medium leading-[var(--leading-tight)] tracking-[-0.035em]">
+              <h1 className="mt-3 text-[length:var(--step-6)] font-medium leading-[var(--leading-tight)] tracking-[-0.035em]">
                 Application Security
               </h1>
             </Reveal>
             <Reveal delay={160} y={12}>
               <p className="mt-6 text-[length:var(--step-1)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
-                Web, API and AI/LLM application security
+                Web, API and AI/LLM application security. Penetration testing.
               </p>
             </Reveal>
             <Reveal delay={240} y={14}>
               <p className="mt-5 max-w-[52ch] text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
                 I test web applications and APIs for security flaws and write CVSS-scored findings that engineering teams
-                can act on. I build frontends for a living, so I read an app from the inside before I test it from the
-                outside.
+                can act on. A software engineering background lets me read an app from the inside before I test it from
+                the outside.
               </p>
             </Reveal>
             <Reveal delay={320} y={12}>
