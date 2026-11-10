@@ -12,8 +12,19 @@ const securityHeaders = [
     : []),
 ];
 
+/* Serve the full <head> on every response. Next otherwise streams page
+   metadata after </head>, and measured on this site the streamed title,
+   description and canonical land as DOM nodes outside <head> (28 body-level
+   metas, none inserted into head), while crawlers without JS and Lighthouse
+   only read <head>. A catch-all disables the stream for every user agent;
+   page metadata here resolves synchronously, so the blocking render is
+   free and matches brief section 8: title, meta description, canonical and
+   OG tags in the initial <head>, never streamed late. */
+const htmlLimitedBots = /.*/;
+
 const nextConfig = {
   poweredByHeader: false,
+  htmlLimitedBots,
   async redirects() {
     return [
       {

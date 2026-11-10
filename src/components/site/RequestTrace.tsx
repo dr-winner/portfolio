@@ -155,6 +155,9 @@ export function RequestTrace() {
 
       {/* Trace lines — 13px mono, line numbers in text-3 */}
       <div
+        id="trace-panel-0"
+        role="tabpanel"
+        aria-label="Request trace lines"
         data-playing={playing ? "true" : "false"}
         data-done={done ? "true" : "false"}
         className="trace-play relative flex flex-col px-4 py-3"

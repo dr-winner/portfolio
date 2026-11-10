@@ -44,7 +44,7 @@
   --line-strong: rgba(148, 163, 184, 0.18);
   --fg: #e6edf5;
   --fg-muted: #a9b4c2;
-  --fg-subtle: #6b7787;
+  --fg-subtle: #7a8798;
   --signal: #2dd4bf;
   --on-signal: #062622;
   --ai: #8fa9c4;
@@ -115,7 +115,7 @@ html.dark {
   --line-strong: rgba(148, 163, 184, 0.18);
   --fg: #e6edf5;
   --fg-muted: #a9b4c2;
-  --fg-subtle: #6b7787;
+  --fg-subtle: #7a8798;
   --signal: #2dd4bf;
   --on-signal: #062622;
   --ai: #8fa9c4;

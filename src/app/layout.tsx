@@ -109,7 +109,9 @@ export default async function RootLayout({
     >
       <body className="font-sans antialiased overflow-x-hidden">
         {children}
-        <Analytics />
+        {/* Vercel Analytics only where the edge actually serves its script:
+            locally the 404 fetch painted console errors (bp audit). */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );

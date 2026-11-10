@@ -70,7 +70,7 @@ export default function AboutPage() {
       {/* ── Experience: hairline vertical timeline (dates exactly as data) ── */}
       <section id="experience" className="mt-24">
         <Reveal>
-          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Experience</p>
+          <h2 className="font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Experience</h2>
         </Reveal>
         <ol className="relative mt-8 max-w-[62ch] border-l border-[var(--line)] pl-6">
           {experience.map((item, i) => (
@@ -93,7 +93,7 @@ export default function AboutPage() {
       {/* ── Education card ───────────────────────────────────────────────── */}
       <section className="mt-4 max-w-[62ch]">
         <Reveal>
-          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Education</p>
+          <h2 className="font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Education</h2>
         </Reveal>
         <Reveal delay={80}>
           <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-6">
@@ -109,7 +109,7 @@ export default function AboutPage() {
       {/* ── Certifications: the same component as the home page ─────────── */}
       <section id="certifications" className="mt-24">
         <Reveal>
-          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Certifications</p>
+          <h2 className="font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Certifications</h2>
         </Reveal>
         <Reveal delay={80} y={14}>
           <CertificationCard />

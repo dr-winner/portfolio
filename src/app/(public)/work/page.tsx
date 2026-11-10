@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionLabel } from "@/components/site/SectionLabel";
@@ -28,9 +27,7 @@ export default function WorkPage() {
       <Reveal delay={240} y={16}>
         <div className="fx-rule mt-8 h-px w-full bg-[var(--line)]" />
         <div className="mt-10">
-          <Suspense>
-            <WorkIndex />
-          </Suspense>
+          <WorkIndex />
         </div>
       </Reveal>
     </div>

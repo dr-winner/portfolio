@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useLayoutEffect, useRef, type MouseEvent } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import { CaseDiagram, type CaseDiagramVariant } from "@/components/site/CaseDiagram";
 import { Badge } from "@/components/ui/Badge";
 import { work, type WorkFilter } from "@/content/work";
@@ -19,10 +19,13 @@ const chips: { id: "all" | WorkFilter; label: string }[] = [
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 export function WorkIndex() {
-  const params = useSearchParams();
   const router = useRouter();
-  const tag = params.get("tag");
-  const active = chips.some((chip) => chip.id === tag) ? (tag as WorkFilter) : "all";
+  /* Filter state lives here, not in useSearchParams(): that hook suspends
+     the prerender, so the whole index only mounted after hydration and
+     shoved the footer down late (the one layout shift on this page). A
+     mount effect reads the search string directly and honours a shareable
+     ?tag= link without making the page stream. */
+  const [active, setActive] = useState<"all" | WorkFilter>("all");
 
   const rootRef = useRef<HTMLDivElement | null>(null);
   const chipsRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +62,15 @@ export function WorkIndex() {
     }
   }, []);
 
+  /* Deep link support: honour a shareable ?tag= on arrival. Runs after
+     hydration, so the prerendered page stays complete and static. */
+  useEffect(() => {
+    const tag = new URLSearchParams(window.location.search).get("tag");
+    if (tag && chips.some((chip) => chip.id === tag)) setActive(tag as WorkFilter);
+  }, []);
+
+  /* Pill position is measured pre-paint (useLayoutEffect) so the highlight
+     never paints unpositioned or flashes at the top-left corner. */
   useLayoutEffect(() => {
     placePill();
     window.addEventListener("resize", placePill);
@@ -79,6 +91,7 @@ export function WorkIndex() {
       lastRects.current = map;
     }
     router.replace(id === "all" ? "/work" : `/work?tag=${id}`, { scroll: false });
+    setActive(id);
   }
 
   useLayoutEffect(() => {
@@ -142,9 +155,9 @@ export function WorkIndex() {
 
       {featured.some((item) => visible(item.filters)) ? (
         <section>
-          <p className="mb-4 font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+          <h2 className="mb-4 font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Featured case studies
-          </p>
+          </h2>
           <ul className="flex flex-col">
             {featured
               .filter((item) => visible(item.filters))
@@ -207,9 +220,9 @@ export function WorkIndex() {
 
       {labs.some((item) => visible(item.filters)) ? (
         <section>
-          <p className="mb-4 font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+          <h2 className="mb-4 font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Training labs
-          </p>
+          </h2>
           <ul className="grid gap-4 md:grid-cols-2">
             {labs
               .filter((item) => visible(item.filters))
@@ -237,9 +250,9 @@ export function WorkIndex() {
 
       {active === "all" ? (
         <section>
-          <p className="mb-4 font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+          <h2 className="mb-4 font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Archive
-          </p>
+          </h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {archive.map((item) => {
               const inner = (
