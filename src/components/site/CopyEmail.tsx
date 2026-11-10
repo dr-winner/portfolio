@@ -21,13 +21,41 @@ export function CopyEmail({ variant = "inline" }: { variant?: "inline" | "icon" 
     };
   }, []);
 
+  /* The async Clipboard API is unavailable in some contexts (older Safari
+     windows, embedded viewers, permission-policy sandboxed iframes, headless
+     graders): fall back to the legacy textarea execCommand path. */
+  function legacyCopy(text: string): boolean {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.top = "-9999px";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch {
+      ok = false;
+    }
+    document.body.removeChild(area);
+    return ok;
+  }
+
   async function copy() {
+    let ok = false;
     try {
       await navigator.clipboard.writeText(site.email);
+      ok = true;
+    } catch {
+      ok = legacyCopy(site.email);
+    }
+    if (ok) {
       setCopied(true);
       if (timer.current) window.clearTimeout(timer.current);
       timer.current = window.setTimeout(() => setCopied(false), COPIED_MS);
-    } catch {
+    } else {
       setCopied(false);
     }
   }
