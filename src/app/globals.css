@@ -274,6 +274,19 @@
       transition: none;
     }
   }
+  /* Payload lanes inside the request trace: own horizontal scroll, clipped
+     scrollbar on touch screens (same recipe as .findings-scroll). */
+  .t-scroll {
+    scrollbar-width: thin;
+  }
+  @media (pointer: coarse) {
+    .t-scroll {
+      scrollbar-width: none;
+    }
+    .t-scroll::-webkit-scrollbar {
+      display: none;
+    }
+  }
   .trace-sweep {
     transform: scaleX(0);
     transform-origin: left;

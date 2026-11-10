@@ -5,12 +5,14 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 type Tone = "plain" | "muted" | "signal" | "danger";
 type Part = { t: string; tone?: Tone };
 type TraceLine = { n: string; parts: Part[]; pill?: "HIGH" };
-type Trace = { id: string; label: string; lines: TraceLine[] };
+/* label: full name (aria), short: visible one-line tab text on small screens */
+type Trace = { id: string; label: string; short: string; lines: TraceLine[] };
 
 const traces: Trace[] = [
   {
     id: "sqli",
     label: "SQL injection",
+    short: "SQLi",
     lines: [
       { n: "01", parts: [{ t: "POST /api/v1/login HTTP/1.1" }] },
       { n: "02", parts: [{ t: "Content-Type: application/json", tone: "muted" }] },
@@ -29,16 +31,15 @@ const traces: Trace[] = [
   {
     id: "idor",
     label: "IDOR",
+    short: "IDOR",
     lines: [
       { n: "01", parts: [{ t: "GET /api/v1/invoices/4821 HTTP/1.1" }] },
       { n: "02", parts: [{ t: "Authorization: Bearer (session tenant: acme)", tone: "muted" }] },
       {
         n: "03",
         parts: [
-          { t: "{ " },
-          { t: "requestedTenant", tone: "muted" },
-          { t: ": " },
-          { t: "globex", tone: "signal" },
+          { t: "{ requestedTenant: " },
+          { t: "\u0022globex\u0022", tone: "signal" },
           { t: " }" },
         ],
       },
@@ -49,6 +50,7 @@ const traces: Trace[] = [
   {
     id: "pinjection",
     label: "Prompt injection",
+    short: "Prompt inj",
     lines: [
       { n: "01", parts: [{ t: "POST /api/v1/assistant HTTP/1.1" }] },
       {
@@ -160,7 +162,7 @@ export function RequestTrace() {
         aria-label="Request trace lines"
         data-playing={playing ? "true" : "false"}
         data-done={done ? "true" : "false"}
-        className="trace-play relative flex flex-col px-4 py-3"
+        className="trace-play relative flex min-h-[160px] flex-col px-4 py-3"
       >
         {trace.lines.map((line, i) => (
             <div
@@ -170,16 +172,21 @@ export function RequestTrace() {
               }`}
               style={{ transitionDelay: `${i * STEP_MS}ms` }}
             >
-              <span aria-hidden className="select-none text-[var(--fg-subtle)]">
+              <span aria-hidden className="shrink-0 select-none text-[var(--fg-subtle)]">
                 {line.n}
               </span>
-              <code className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1 font-mono">
-                {line.parts.map((part, j) => (
-                  <span key={j} className={part.tone ? toneClass[part.tone] : toneClass.plain}>
-                    {part.t}
-                  </span>
-                ))}
-              </code>
+              {/* The payload may be wider than the card on small screens: it
+                  scrolls horizontally inside its own clipped lane and never
+                  wraps mid-token. */}
+              <div className="t-scroll min-w-0 flex-1 overflow-x-auto">
+                <code className="whitespace-pre font-mono">
+                  {line.parts.map((part, j) => (
+                    <span key={j} className={part.tone ? toneClass[part.tone] : toneClass.plain}>
+                      {part.t}
+                    </span>
+                  ))}
+                </code>
+              </div>
               {line.pill ? (
                 <span
                   aria-live="polite"
@@ -213,15 +220,16 @@ export function RequestTrace() {
             type="button"
             aria-selected={i === active}
             aria-controls="trace-panel-0"
+            aria-label={`${t.label} trace`}
             tabIndex={i === active ? 0 : -1}
             onClick={() => setActive(i)}
-            className={`h-9 rounded-[8px] px-3 font-mono text-[12px] tracking-[0.02em] transition-colors duration-[var(--dur-1)] ${
+            className={`h-9 whitespace-nowrap rounded-[8px] px-3 font-mono text-[12px] tracking-[0.02em] transition-colors duration-[var(--dur-1)] ${
               i === active
                 ? "bg-[var(--surface-2)] text-[var(--fg)]"
                 : "text-[var(--fg-subtle)] hover:bg-[var(--surface-2)]/60 hover:text-[var(--fg-muted)]"
             }`}
           >
-            {t.label}
+            {t.short}
           </button>
         ))}
       </div>
