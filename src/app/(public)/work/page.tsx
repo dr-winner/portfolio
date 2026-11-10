@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)]">
+    <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
       <Reveal y={10}>
         <SectionLabel title="Work index" />
       </Reveal>

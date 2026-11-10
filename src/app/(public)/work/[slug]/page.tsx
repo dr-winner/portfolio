@@ -40,14 +40,14 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
   ].filter(Boolean) as { label: string; value: string }[];
 
   return (
-    <article className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)]">
+    <article className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
       <Reveal y={10}>
-        <p className="font-mono text-[12px] tracking-[0.14em] text-[var(--fg-subtle)]">
+        <p className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">
           <Link href="/work" className="link-sweep text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
-            [ WORK ]
+            Work
           </Link>
           <span aria-hidden> / </span>
-          <span className="text-[var(--signal)]">/{item.slug}</span>
+          <span className="text-[var(--signal)]">{item.title}</span>
         </p>
       </Reveal>
       <Reveal delay={80} y={20}>
@@ -66,12 +66,11 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
         <div className="min-w-0">
           {item.scope ? (
             <Reveal delay={200}>
-              <aside className="fx-corner console-card relative overflow-hidden rounded-[12px] border border-[var(--amber)]/50 bg-[var(--surface)] p-5">
-                <div aria-hidden className="absolute inset-0 fx-dots opacity-30" />
-                <p className="relative font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--amber)]">
-                  [ {item.context === "Training lab" ? "SCOPE & AUTHORIZATION" : "SCOPE"} ]
+              <aside className="console-card relative overflow-hidden rounded-[12px] border border-[var(--line)] bg-[var(--bg-raised)] p-5">
+                <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--amber)]">
+                  {item.context === "Training lab" ? "Scope and authorization" : "Scope"}
                 </p>
-                <p className="relative mt-3 text-[length:var(--step-0)] leading-[var(--leading-body)]">{item.scope}</p>
+                <p className="mt-3 text-pretty text-[length:var(--step-0)] leading-[var(--leading-body)]">{item.scope}</p>
               </aside>
             </Reveal>
           ) : null}
@@ -98,8 +97,8 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
           <div className="mt-12 flex max-w-[68ch] flex-col gap-10">
             {item.sections.map((section, i) => (
               <Reveal key={section.id} as="section" id={section.id} delay={Math.min(i * 60, 240)} className="scroll-mt-28">
-                <p className="font-mono text-[12px] tracking-[0.14em] text-[var(--fg-subtle)]">
-                  [ {String(i + 1).padStart(2, "0")} ]
+                <p aria-hidden className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">
+                  {String(i + 1).padStart(2, "0")}
                 </p>
                 <h2 className="mt-2 text-[length:var(--step-2)] leading-[var(--leading-snug)]">{section.heading}</h2>
                 {section.paragraphs.map((paragraph) => (
@@ -115,7 +114,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
         {/* Side rail — prev / next navigation */}
         <aside className="lg:sticky lg:top-28 lg:w-[260px]">
           <Reveal delay={320}>
-            <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">[ NAV ]</p>
+            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Navigate</p>
             <ul className="mt-4 flex flex-col gap-3 lg:flex-col">
               {previous ? (
                 <li>

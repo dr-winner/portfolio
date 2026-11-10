@@ -93,6 +93,12 @@
     background-size: var(--dot-size, 18px) var(--dot-size, 18px);
   }
 
+  /* Long mono tokens (CVSS vectors, code) may not widen a grid track. */
+  .overflow-wrap-anywhere {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
   /* ── Reveal system (scroll-staged), armed only when JS is present ─────── */
 
   [data-reveal] {
@@ -189,6 +195,16 @@
     0% { transform: scaleX(0); opacity: 1; }
     70% { opacity: 1; }
     100% { transform: scaleX(1); opacity: 0; }
+  }
+
+  /* Slide-measured pill for the work index filter chips: transitions only
+     after the first measured placement, and never under reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-pill][data-armed="true"] {
+      transition:
+        transform var(--dur-2) var(--ease-out),
+        width var(--dur-2) var(--ease-out);
+    }
   }
 
   .console-card {

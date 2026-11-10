@@ -1,4 +1,10 @@
-import { z } from "zod";
+import { config, z } from "zod";
+
+// Zod's eval-capability probe (`new Function("")`) trips this site's strict CSP
+// as a `securitypolicyviolation`, even though zod swallows the throw. `jitless`
+// skips the probe entirely and runs the plain runtime, which is all the lab's
+// policy gates need.
+config({ jitless: true });
 
 export type SecurityMode = "vulnerable" | "hardened";
 

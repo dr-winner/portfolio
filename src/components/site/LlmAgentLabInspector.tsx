@@ -26,51 +26,51 @@ export function LlmAgentLabInspector() {
   return (
     <section
       aria-labelledby="lab-inspector-heading"
-      className="fx-corner console-card relative mt-12 max-w-[88ch] rounded-[12px] border border-[var(--line-strong)] bg-[var(--surface)] p-5 sm:p-7"
+      className="console-card relative mt-12 rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-5 sm:p-7"
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-[var(--line)] pb-5">
-        <div>
-          <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--signal)]">
-            Interactive Lab Verifier · Deterministic Engine
+      <div className="border-b border-[var(--line)] pb-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+            Interactive lab verifier
           </p>
-          <h2 id="lab-inspector-heading" className="mt-2 text-[length:var(--step-2)]">
-            Step through the 5 attack paths and controls
-          </h2>
-          <p className="mt-2 max-w-[64ch] text-[length:var(--step--1)] text-[var(--fg-muted)]">
-            Select an attack scenario below and toggle between the vulnerable baseline and the hardened pipeline to inspect how each trust boundary behaves.
-          </p>
-        </div>
-
-        <div
-          role="group"
-          aria-label="Pipeline security mode"
-          className="inline-flex rounded-[6px] border border-[var(--line-strong)] bg-[var(--bg)] p-1"
-        >
-          <button
-            type="button"
-            aria-pressed={mode === "vulnerable"}
-            onClick={() => setMode("vulnerable")}
-            className={`rounded-[4px] px-3 py-1.5 font-mono text-[12px] uppercase tracking-[0.12em] ${
-              mode === "vulnerable"
-                ? "bg-[var(--danger)] text-[#07090c] font-semibold"
-                : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
-            }`}
+          <div
+            role="group"
+            aria-label="Pipeline security mode"
+            className="inline-flex rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--bg)] p-1"
           >
-            Vulnerable
-          </button>
-          <button
-            type="button"
-            aria-pressed={mode === "hardened"}
-            onClick={() => setMode("hardened")}
-            className={`rounded-[4px] px-3 py-1.5 font-mono text-[12px] uppercase tracking-[0.12em] ${
-              mode === "hardened"
-                ? "bg-[var(--signal)] text-[var(--on-signal)] font-semibold"
-                : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
-            }`}
-          >
-            Hardened
-          </button>
+            <button
+              type="button"
+              aria-pressed={mode === "vulnerable"}
+              onClick={() => setMode("vulnerable")}
+              className={`min-h-[36px] rounded-[8px] px-3.5 font-mono text-[12px] uppercase tracking-[0.06em] ${
+                mode === "vulnerable"
+                  ? "bg-[var(--danger)] font-semibold text-[color:var(--bg)]"
+                  : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              }`}
+            >
+              Vulnerable
+            </button>
+            <button
+              type="button"
+              aria-pressed={mode === "hardened"}
+              onClick={() => setMode("hardened")}
+              className={`min-h-[36px] rounded-[8px] px-3.5 font-mono text-[12px] uppercase tracking-[0.06em] ${
+                mode === "hardened"
+                  ? "bg-[var(--signal)] font-semibold text-[var(--on-signal)]"
+                  : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
+              }`}
+            >
+              Hardened
+            </button>
+          </div>
         </div>
+        <h2 id="lab-inspector-heading" className="mt-2 text-[length:var(--step-2)]">
+          Step through the 5 attack paths and controls
+        </h2>
+        <p className="mt-2 max-w-[64ch] text-[length:var(--step--1)] text-[var(--fg-muted)]">
+          Select an attack scenario and toggle between the vulnerable baseline and
+          the hardened pipeline to inspect how each trust boundary behaves.
+        </p>
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Attack scenarios">
@@ -83,22 +83,23 @@ export function LlmAgentLabInspector() {
               role="tab"
               aria-selected={active}
               onClick={() => setScenarioId(item.id)}
-              className={`rounded-[6px] border px-3 py-2 text-left font-mono text-[12px] transition-colors ${
+              className={`min-h-[36px] whitespace-nowrap rounded-[8px] border px-3 py-2 text-left font-mono text-[12px] transition-colors ${
                 active
-                  ? "border-[var(--signal)] bg-[var(--raised)] text-[var(--fg)]"
+                  ? "border-[var(--signal)] bg-[var(--surface-2)] text-[var(--fg)]"
                   : "border-[var(--line)] bg-[var(--bg)] text-[var(--fg-muted)] hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
               }`}
             >
-              <span className="text-[var(--signal)]">{item.index}</span> · {item.title.split("→")[0].trim()}
+              <span className="text-[var(--signal)]">{item.index}</span> ·{" "}
+              {item.title.split("→")[0].trim()}
             </button>
           );
         })}
       </div>
 
-      <div className="mt-6 rounded-[8px] border border-[var(--line)] bg-[var(--bg)] p-4 sm:p-5">
+      <div className="mt-6 rounded-[10px] border border-[var(--line)] bg-[var(--bg)] p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">
+          <div className="min-w-0">
+            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               {scenario.owaspRef}
             </p>
             <h3 className="mt-1 text-[length:var(--step-1)] text-[var(--fg)]">
@@ -106,7 +107,7 @@ export function LlmAgentLabInspector() {
             </h3>
           </div>
           <span
-            className={`inline-flex items-center rounded-full border px-3 py-1 font-mono text-[12px] uppercase tracking-[0.12em] ${
+            className={`inline-flex items-center rounded-full border px-3 py-1 font-mono text-[12px] uppercase tracking-[0.06em] ${
               result.outcome === "EXPLOITED"
                 ? "border-[var(--danger)] text-[var(--danger)]"
                 : "border-[var(--signal)] text-[var(--signal)]"
@@ -116,35 +117,35 @@ export function LlmAgentLabInspector() {
           </span>
         </div>
 
-        <p className="mt-3 text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
+        <p className="mt-3 text-pretty text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
           {scenario.summary}
         </p>
 
         <dl className="mt-4 grid gap-3 border-t border-[var(--line)] pt-4 text-[length:var(--step--1)] sm:grid-cols-3">
-          <div>
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
+          <div className="min-w-0">
+            <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               Trust boundary
             </dt>
-            <dd className="mt-1 text-[var(--fg)]">{scenario.boundary}</dd>
+            <dd className="mt-1 break-words text-[var(--fg)]">{scenario.boundary}</dd>
           </div>
-          <div>
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
+          <div className="min-w-0">
+            <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               Lab CVSS v3.1
             </dt>
             <dd className="mt-1 font-mono text-[var(--amber)]">{scenario.cvssScore}</dd>
           </div>
-          <div>
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
+          <div className="min-w-0">
+            <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               Caller session
             </dt>
-            <dd className="mt-1 font-mono text-[var(--fg)]">
+            <dd className="mt-1 break-words font-mono text-[var(--fg)]">
               {scenario.session.tenantId} · role={scenario.session.role}
             </dd>
           </div>
         </dl>
 
         <div className="mt-5">
-          <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Trust-boundary execution trace ({mode} mode)
           </p>
           <ol className="mt-3 grid gap-2.5">
@@ -158,19 +159,19 @@ export function LlmAgentLabInspector() {
               return (
                 <li
                   key={step.stage}
-                  className="rounded-[6px] border border-[var(--line)] bg-[var(--surface)] p-3"
+                  className="rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-mono text-[12px] text-[var(--fg)]">
                       {STAGE_LABELS[step.stage]}
                     </span>
                     <span
-                      className={`inline-flex rounded-full border px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] ${badgeStyle}`}
+                      className={`inline-flex rounded-full border px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.06em] ${badgeStyle}`}
                     >
                       {step.status}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[length:var(--step--1)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
+                  <p className="mt-1.5 text-pretty text-[length:var(--step--1)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
                     {step.detail}
                   </p>
                 </li>
@@ -179,24 +180,24 @@ export function LlmAgentLabInspector() {
           </ol>
         </div>
 
-        <div className="mt-5 grid gap-4 border-t border-[var(--line)] pt-4 lg:grid-cols-2">
-          <div>
-            <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">
+        <div className="mt-5 grid min-w-0 gap-4 border-t border-[var(--line)] pt-4">
+          <div className="min-w-0">
+            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               {mode === "vulnerable" ? "Why the vulnerable pipeline fails" : "How the hardened control stops it"}
             </p>
-            <p className="mt-2 text-[length:var(--step--1)] leading-[var(--leading-body)] text-[var(--fg)]">
+            <p className="mt-2 break-words text-pretty text-[length:var(--step--1)] leading-[var(--leading-body)] text-[var(--fg)]">
               {mode === "vulnerable" ? scenario.vulnerableExplanation : scenario.hardenedControl}
             </p>
-            <p className="mt-3 font-mono text-[11px] text-[var(--fg-subtle)]">
+            <p className="mt-3 overflow-wrap-anywhere font-mono text-[11px] text-[var(--fg-subtle)]">
               Vector: {scenario.cvssVector}
             </p>
           </div>
-          <div>
-            <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--fg-muted)]">
-              Enforced control (`src/lab/llm-agent-security/engine.ts`)
+          <div className="min-w-0">
+            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+              Enforced control (src/lab/llm-agent-security/engine.ts)
             </p>
-            <pre className="mt-2 overflow-x-auto rounded-[6px] border border-[var(--line)] bg-[var(--surface)] p-3 font-mono text-[12px] leading-relaxed text-[var(--fg)]">
-              <code>{scenario.controlSnippet}</code>
+            <pre className="mt-2 max-w-full overflow-x-auto rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-3 font-mono text-[12px] leading-relaxed text-[var(--fg)]">
+              <code className="overflow-wrap-anywhere">{scenario.controlSnippet}</code>
             </pre>
           </div>
         </div>
