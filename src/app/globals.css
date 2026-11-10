@@ -223,6 +223,30 @@
     }
   }
 
+  /* ── Header trigger visibility: MENU button below md and on md+ coarse
+     pointers; the Cmd K button only on md+ fine pointers (section 5.8). ── */
+  .menu-trigger-btn {
+    display: inline-flex;
+  }
+  .menu-trigger-fine {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .menu-trigger-btn {
+      display: none;
+    }
+  }
+  @media (min-width: 768px) and (pointer: coarse) {
+    .menu-trigger-btn {
+      display: inline-flex;
+    }
+  }
+  @media (min-width: 768px) and (pointer: fine) {
+    .menu-trigger-fine {
+      display: inline-flex;
+    }
+  }
+
   /* ── Shiki (build time only): dual themes switch on the html class ───── */
   .shiki-host {
     position: relative;

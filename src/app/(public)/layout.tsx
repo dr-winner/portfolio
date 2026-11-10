@@ -6,12 +6,12 @@ import { BackgroundFx } from "@/components/site/BackgroundFx";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen text-[var(--fg)]">
+    <div className="relative flex min-h-screen flex-col text-[var(--fg)]">
       <BackgroundFx />
       <SiteHeader />
       <CommandHotkey />
       <HashRedirect />
-      <main>{children}</main>
+      <main className="grow">{children}</main>
       <SiteFooter />
     </div>
   );

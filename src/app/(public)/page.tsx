@@ -4,11 +4,11 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { CaseDiagram, type CaseDiagramVariant } from "@/components/site/CaseDiagram";
+import { CertificationCard } from "@/components/site/CertificationCard";
 import { CopyEmail } from "@/components/site/CopyEmail";
 import { SectionLabel } from "@/components/site/SectionLabel";
 import { StatusDot } from "@/components/site/StatusDot";
 import { RequestTrace } from "@/components/site/RequestTrace";
-import { certifications } from "@/content/certifications";
 import { cvHref, mailto, site } from "@/content/site";
 import { skills } from "@/content/skills";
 import { work } from "@/content/work";
@@ -58,8 +58,6 @@ export default async function HomePage() {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   const featured = work.filter((item) => item.kind === "case-study");
   const [head, ...restFeatured] = featured;
-  const earned = certifications.filter((item) => item.status === "earned");
-  const progress = certifications.filter((item) => item.status !== "earned");
 
   return (
     <>
@@ -237,52 +235,9 @@ export default async function HomePage() {
         <Reveal>
           <SectionLabel title="Credentials" />
         </Reveal>
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        <div className="mt-8">
           <Reveal delay={100} y={12}>
-            <div className="h-full rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-6">
-              <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Earned</p>
-              <ul className="mt-4 flex flex-col gap-4">
-                {earned.map((item) => (
-                  <li key={item.name} className="flex items-baseline justify-between gap-4">
-                    <span className="min-w-0">
-                      {item.link ? (
-                        <a href={item.link} target="_blank" rel="noreferrer" className="link-sweep text-[var(--fg)] no-underline hover:text-[var(--signal)]">
-                          {item.name}
-                        </a>
-                      ) : (
-                        <span className="text-[var(--fg)]">{item.name}</span>
-                      )}
-                      <span className="block text-[length:var(--step--1)] text-[var(--fg-subtle)]">{item.issuer}</span>
-                    </span>
-                    <span className="shrink-0 font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-          <Reveal delay={180} y={12}>
-            <div className="h-full rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-6">
-              <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">In progress</p>
-              <ul className="mt-4 flex flex-col gap-4">
-                {progress.map((item) => (
-                  <li key={item.name} className="flex items-baseline justify-between gap-4">
-                    <span className="min-w-0">
-                      {item.link ? (
-                        <a href={item.link} target="_blank" rel="noreferrer" className="link-sweep text-[var(--fg)] no-underline hover:text-[var(--signal)]">
-                          {item.name}
-                        </a>
-                      ) : (
-                        <span className="text-[var(--fg)]">{item.name}</span>
-                      )}
-                      <span className="block text-[length:var(--step--1)] text-[var(--fg-subtle)]">{item.issuer}</span>
-                    </span>
-                    <span className="shrink-0 rounded-full border border-[var(--line-strong)] px-2 py-0.5 font-mono text-[11px] text-[var(--fg-subtle)]">
-                      In progress
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <CertificationCard />
           </Reveal>
         </div>
         <Reveal delay={260} y={10}>

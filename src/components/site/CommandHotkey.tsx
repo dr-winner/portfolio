@@ -13,8 +13,17 @@ export function CommandHotkey() {
         setOpen((value) => !value);
       }
     }
+    /* The header's Cmd K button toggles through this event so only one
+       palette instance ever mounts, even though two components listen. */
+    function onPaletteToggle() {
+      setOpen((value) => !value);
+    }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("palette:toggle", onPaletteToggle as EventListener);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("palette:toggle", onPaletteToggle as EventListener);
+    };
   }, []);
 
   if (!open) return null;

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 import { CopyEmail } from "@/components/site/CopyEmail";
 import { Reveal } from "@/components/motion/Reveal";
-import { SectionLabel } from "@/components/site/SectionLabel";
+import { LinkCard } from "@/components/site/LinkCard";
 import { StatusDot } from "@/components/site/StatusDot";
 import { cvHref, mailto, site } from "@/content/site";
 
@@ -13,70 +12,72 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-const socials = [
-  { href: site.links.linkedin, label: "LinkedIn" },
-  { href: site.links.github, label: "GitHub" },
-  { href: site.links.x, label: "X" },
+const links = [
+  { href: site.links.linkedin, label: "LinkedIn", handle: site.links.linkedin.replace("https://www.linkedin.com/in/", "in/") },
+  { href: site.links.github, label: "GitHub", handle: `@${site.handle}` },
+  { href: site.links.x, label: "X", handle: `@dr_winner6` },
+  { href: cvHref, label: "CV", handle: "cv.pdf" },
 ];
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)]">
-      <Reveal y={10}>
-        <SectionLabel title="Contact" />
-      </Reveal>
-      <Reveal delay={80} y={20}>
-        <h1 className="mt-6 max-w-[14ch] text-balance text-[length:var(--step-5)] leading-[var(--leading-tight)]">Get in touch</h1>
-      </Reveal>
-      <Reveal delay={160} y={16}>
-        <p className="mt-6 max-w-[68ch] text-pretty text-[length:var(--step-1)] leading-[var(--leading-body)]">
-          I&apos;m open to application security and product security roles in Ghana, across Africa and with remote teams. Email is the best way to reach me.
-        </p>
-        <p className="mt-4 max-w-[68ch] text-[var(--fg-muted)]">
-          Please include the role, where the team&apos;s based, whether it&apos;s remote, and what the work involves.
-        </p>
-      </Reveal>
-
-      <Reveal delay={240}>
-        <div className="fx-corner console-card relative mt-12 overflow-hidden rounded-[20px] border border-[var(--line-strong)] bg-[var(--surface)]">
-          <div aria-hidden className="absolute inset-0 fx-dots opacity-40" />
-          <div aria-hidden className="absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-90" style={{ background: "radial-gradient(closest-side, var(--glow-ai), transparent 75%)" }} />
-          <div className="relative flex flex-col gap-8 p-[clamp(28px,5vw,56px)]">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <StatusDot label={site.availabilityShort} />
-              <p className="font-mono text-[12px] tracking-[0.16em] text-[var(--fg-subtle)]">[ ACCRA · GHANA · GMT ]</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-4">
-              <Button href={mailto}>Email me</Button>
+    <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
+      <div className="grid gap-12 min-[1100px]:grid-cols-[minmax(0,1fr)_330px] min-[1100px]:gap-16">
+        {/* ── Left: heading, short line, email once, in large type ───────── */}
+        <div className="min-w-0">
+          <Reveal y={10}>
+            <p className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">Contact</p>
+          </Reveal>
+          <Reveal delay={80} y={20}>
+            <h1 className="mt-6 text-balance text-[length:var(--step-4)] font-medium leading-[var(--leading-tight)] tracking-[-0.02em]">
+              Get in touch
+            </h1>
+          </Reveal>
+          <Reveal delay={160} y={16}>
+            <p className="mt-6 max-w-[60ch] text-pretty text-[length:var(--step-1)] leading-[var(--leading-body)]">
+              I&apos;m open to application security and product security roles in Ghana, across Africa and with remote teams. Email is the best way to reach me.
+            </p>
+            <p className="mt-4 max-w-[60ch] text-[var(--fg-muted)]">
+              Please include the role, where the team&apos;s based, whether it&apos;s remote, and what the work involves.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <a
+                href={mailto}
+                className="text-[length:var(--step-2)] leading-[var(--leading-snug)] text-[var(--fg)] underline decoration-[var(--signal)]/60 decoration-2 underline-offset-4 transition-colors duration-[var(--dur-1)] hover:text-[var(--signal)]"
+              >
+                {site.email}
+              </a>
               <CopyEmail />
             </div>
-            <ul className="flex flex-wrap gap-x-6 gap-y-2">
-              {socials.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} target="_blank" rel="noreferrer" className="link-sweep text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
-                    {link.label} ↗
-                  </a>
-                </li>
-              ))}
-              <li>
-                <Link href={cvHref} download="Richard-Winner-Duvor-AppSec-CV.pdf" className="link-sweep text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
-                  CV ↓
+            <Reveal delay={220} y={10}>
+              <p className="mt-12 flex flex-wrap items-center gap-2 font-mono text-[12px] text-[var(--fg-muted)]">
+                <span aria-hidden className="mr-1 text-[var(--amber)]">&gt;</span>
+                Found a security issue on this site?
+                <Link href="/security#report" className="link-sweep text-[var(--fg)] no-underline">
+                  How to report it
                 </Link>
-              </li>
-            </ul>
-          </div>
+              </p>
+            </Reveal>
+          </Reveal>
         </div>
-      </Reveal>
 
-      <Reveal delay={320} y={12}>
-        <p className="mt-10 flex flex-wrap items-baseline gap-2 font-mono text-[13px] text-[var(--fg-muted)]">
-          <span className="text-[var(--amber)]">[ REPORT ]</span>
-          Found a security issue on this site?
-          <Link href="/security#report" className="link-sweep is-active text-[var(--fg)] no-underline">
-            Here&apos;s how to report it →
-          </Link>
-        </p>
-      </Reveal>
+        {/* ── Right: quiet link cards with icon, label, handle ────────────── */}
+        <Reveal delay={200} y={14} className="min-w-0">
+          <aside className="flex flex-col gap-4 self-start min-[1100px]:sticky min-[1100px]:top-28">
+            <Reveal delay={200} y={10}>
+              <StatusDot label={site.availabilityShort} />
+            </Reveal>
+            {links.map((link, i) => (
+              <Reveal key={link.label} delay={240 + i * 60} y={10}>
+                <LinkCard href={link.href} label={link.label} handle={link.handle} />
+              </Reveal>
+            ))}
+            <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+              Accra, Ghana
+            </p>
+          </aside>
+        </Reveal>
+      </div>
     </div>
   );
 }
