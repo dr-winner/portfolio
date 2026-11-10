@@ -169,19 +169,24 @@ export function WorkIndex() {
                 >
                   <Link
                     href={`/work/${item.slug}`}
-                    className={`group grid grid-cols-1 items-stretch gap-6 py-7 no-underline lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10 lg:min-h-[272px] ${
-                      i % 2 === 1 ? "lg:grid-cols-[300px_minmax(0,1fr)]" : ""
+                    /* Alternation happens with flex-row-reverse, not with two
+                       grid-template-columns values: identical Tailwind column
+                       templates on the same element resolve by stylesheet
+                       order, which silently gave odd rows a 300px text
+                       column. Flex is deterministic. */
+                    className={`group grid grid-cols-1 items-stretch gap-6 py-7 no-underline lg:flex lg:flex-row lg:items-stretch lg:gap-10 lg:min-h-[276px] ${
+                      i % 2 === 1 ? "lg:flex-row-reverse" : ""
                     }`}
                   >
-                    <div className={`${i % 2 === 1 ? "lg:order-2" : ""} min-w-0 lg:flex lg:flex-col`}>
+                    <div className="min-w-0 lg:flex lg:flex-1 lg:flex-col">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge>{item.badges[1] ?? item.badges[0]}</Badge>
                         <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
                       </div>
-                      <h3 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-tight)] tracking-[-0.01em] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                      <h3 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-tight)] tracking-[-0.01em] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)] lg:min-h-[2em]">
                         {item.title}
                       </h3>
-                      <p className="mt-2 line-clamp-3 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
+                      <p className="mt-2 line-clamp-2 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)] lg:min-h-[2.5em]">
                         {item.outcome ?? item.card}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -202,9 +207,7 @@ export function WorkIndex() {
                       </span>
                     </div>
                     <div
-                      className={`card-diagram-wrap flex min-w-0 items-center rounded-[10px] bg-[var(--surface-2)] p-4 ${
-                        i % 2 === 1 ? "lg:order-1" : ""
-                      }`}
+                      className={`card-diagram-wrap flex min-w-0 items-center rounded-[10px] bg-[var(--surface-2)] p-4 lg:w-[300px] lg:shrink-0`}
                     >
                       <CaseDiagram
                         variant={item.slug as CaseDiagramVariant}
