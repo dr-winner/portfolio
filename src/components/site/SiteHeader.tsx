@@ -27,9 +27,14 @@ export function SiteHeader() {
       setScrolled(window.scrollY > 8);
       const doc = document.documentElement;
       const max = doc.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.max(0.002, Math.min(1, window.scrollY / max)) : 0;
+      const p = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
       const bar = progressRef.current;
-      if (bar) bar.style.transform = `scaleX(${p})`;
+      if (bar) {
+        // Zero width must be invisible: at the very top the hairline hides
+        // instead of showing its 0.002 floor tick.
+        bar.style.transform = `scaleX(${p})`;
+        bar.style.visibility = p > 0 ? "visible" : "hidden";
+      }
     };
     onScroll();
     let raf = 0;
@@ -99,12 +104,8 @@ export function SiteHeader() {
       />
       <div className="relative mx-auto flex h-full w-full max-w-[1200px] items-center gap-3 px-[clamp(24px,4vw,40px)]">
         <Link href="/" aria-label="drWinner, home" className="group mr-auto flex items-baseline gap-2.5 no-underline">
-          <span className="relative text-[17px] font-medium tracking-[-0.02em] text-[var(--fg)]">
+          <span className="text-[17px] font-medium tracking-[-0.02em] text-[var(--fg)]">
             dr<span className="text-[var(--fg-muted)]">Winner</span>
-            <span
-              aria-hidden
-              className="absolute -left-3 top-1/2 h-3 w-px -translate-y-1/2 bg-[var(--line-strong)] transition-colors duration-[var(--dur-1)] group-hover:bg-[var(--signal)]"
-            />
           </span>
         </Link>
         <nav aria-label="Primary" className="relative hidden items-center gap-7 md:flex" ref={navRef}>
