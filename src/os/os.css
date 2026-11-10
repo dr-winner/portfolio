@@ -400,3 +400,55 @@
   outline: 2px solid rgba(var(--wos-accent-rgb), 0.55);
   outline-offset: 2px;
 }
+
+/* --- Skip link, brief 3.2. First focusable on the page, a 40px pill that
+   sits above the fold and swings in on keyboard focus. --- */
+.wos-skip {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  z-index: var(--wos-z-toasts);
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--wos-border-strong);
+  background: var(--wos-glass-solid);
+  color: var(--wos-text);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(-64px);
+  transition: transform var(--wos-dur-micro) var(--wos-ease-micro);
+}
+.wos-skip:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid rgba(var(--wos-accent-rgb), 0.55);
+  outline-offset: 2px;
+}
+
+/* The noscript notice on the desktop, brief 7.1. */
+.wos-noscript {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  z-index: var(--wos-z-toasts);
+  max-width: min(92vw, 560px);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--wos-border-strong);
+  background: var(--wos-glass-solid);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--wos-text-2);
+}
+.wos-noscript a {
+  color: var(--wos-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

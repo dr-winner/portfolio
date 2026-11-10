@@ -2,20 +2,27 @@ import Link from "next/link";
 import { cvHref, mailto, site } from "@/content/site";
 import { StatusDot } from "@/components/site/StatusDot";
 
-const nav = [
-  { href: "/work", label: "Work" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-  { href: "/security", label: "Security" },
-];
-
 const links = [
   { href: site.links.github, label: "GitHub" },
   { href: site.links.linkedin, label: "LinkedIn" },
   { href: site.links.x, label: "X" },
 ];
 
-export function SiteFooter() {
+export function SiteFooter({ param }: { param?: string }) {
+  /* When a frame passes param (the classic view keeps ?view=classic on
+     internal links, brief 7.1) append it to every internal nav link so
+     visitors browsing in one stay in it. External and contact links are
+     untouched. */
+  const classic = param
+    ? (href: string) => (href.startsWith("/") ? (href.includes("?") ? `${href}&${param}` : `${href}?${param}`) : href)
+    : (href: string) => href;
+  const nav = [
+    { href: "/work", label: "Work" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+    { href: "/security", label: "Security" },
+  ];
+
   return (
     <footer className="border-t border-[var(--line)]">
       <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-14">
@@ -36,7 +43,7 @@ export function SiteFooter() {
             <ul className="mt-3 flex flex-col gap-2.5">
               {nav.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+                  <Link href={classic(link.href)} className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
                     {link.label}
                   </Link>
                 </li>

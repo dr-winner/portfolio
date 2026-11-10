@@ -62,6 +62,14 @@ export function middleware(req: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("x-pathname", pathname);
 
+  // Internal view switch, brief 7.1: the ?view=classic param and the
+  // /classic path map to an x-view request header so pages pick their frame
+  // server side. No response header changes, the CSP byte stream is
+  // identical for both views.
+  if (req.nextUrl.searchParams.get("view") === "classic" || pathname === "/classic" || pathname.startsWith("/classic/")) {
+    requestHeaders.set("x-view", "classic");
+  }
+
   // Normalize a mistyped uppercase CV path to the real file.
   if (pathname === "/CV.pdf") {
     return NextResponse.redirect(new URL("/cv.pdf", req.nextUrl), 308);
