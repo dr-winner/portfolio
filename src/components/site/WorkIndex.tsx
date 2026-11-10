@@ -158,14 +158,14 @@ export function WorkIndex() {
           <h2 className="mb-4 font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Featured case studies
           </h2>
-          <ul className="flex flex-col">
+          <ul className="flex flex-col border-b border-[var(--line)]">
             {featured
               .filter((item) => visible(item.filters))
               .map((item, i) => (
                 <li
                   key={item.slug}
                   data-flip={`case-${item.slug}`}
-                  className="border-t border-[var(--line)] last:border-b"
+                  className="border-t border-[var(--line)]"
                 >
                   <Link
                     href={`/work/${item.slug}`}
