@@ -115,6 +115,7 @@ export function Wallpaper({ name = "navy-light" }: { name?: WallpaperName }) {
 
   return (
     <div className="wos-wallpaper" data-wos-wallpaper={name}>
+      <div className="wos-wall-bloom" />
       <div ref={tintRef} className="wos-wall-tint" />
       <div ref={lightRef} className="wos-cursor-light" style={{ opacity: 0 }} />
     </div>

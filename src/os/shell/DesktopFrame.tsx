@@ -9,6 +9,7 @@ import { SkipLink } from "./SkipLink";
 import { MenuBar } from "./MenuBar";
 import { Dock } from "./Dock";
 import { DesktopIcons } from "./DesktopIcons";
+import { Boot } from "./Boot";
 import "../os.css";
 
 export function DesktopFrame({
@@ -16,12 +17,15 @@ export function DesktopFrame({
   accent = "teal",
   wallpaper = "navy-light",
   classicHref,
+  boot = false,
   children,
 }: {
   theme?: "dark" | "daylight";
   accent?: "teal" | "blue" | "graphite";
   wallpaper?: WallpaperName;
   classicHref: string;
+  /** Boot plays for the / route only, brief 2.1. */
+  boot?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -32,6 +36,7 @@ export function DesktopFrame({
     >
       <Wallpaper name={wallpaper} />
       <SkipLink variant="to-classic" href={classicHref} />
+      {boot ? <Boot /> : null}
       <noscript>
         <p className="wos-noscript">
           winnerOS needs JavaScript.{" "}

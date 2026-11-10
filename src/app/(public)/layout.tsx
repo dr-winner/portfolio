@@ -21,7 +21,7 @@ export default async function PublicLayout({ children }: { children: React.React
     );
   }
   return (
-    <DesktopFrame classicHref={classicHref(pathname)}>
+    <DesktopFrame classicHref={classicHref(pathname)} boot={pathname === "/"}>
       <HashRedirect />
       {children}
     </DesktopFrame>
