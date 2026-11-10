@@ -126,9 +126,11 @@
   --wos-on-accent: #ffffff;
 }
 
-/* --- Wallpaper, brief 6.4. Pure CSS, no images, no canvas. The element
-   carries the soft radial layers, the ::before layer carries the line
-   pattern with its own mask, because mask applies per element. --- */
+/* --- Wallpaper, brief 6.4. Pure CSS, no images, no canvas. Structure: the
+   element keeps the base colour and the masked line pattern on ::before,
+   while the soft radial layers sit on a child .wos-wall-tint so the cursor
+   parallax can move them with a transform (background-position would be a
+   paint-shifting property, banned by 6.10). --- */
 .wos-wallpaper {
   position: absolute;
   inset: 0;
@@ -136,7 +138,12 @@
   pointer-events: none;
   background-color: var(--wos-bg);
 }
-.wos-wallpaper[data-wos-wallpaper="navy-light"] {
+.wos-wall-tint {
+  position: absolute;
+  inset: -24px;
+  will-change: transform;
+}
+.wos-wallpaper[data-wos-wallpaper="navy-light"] .wos-wall-tint {
   background-image:
     radial-gradient(900px 700px at 72% 38%, rgba(45, 212, 191, 0.2), transparent 60%),
     radial-gradient(1100px 800px at 12% 8%, rgba(30, 58, 138, 0.3), transparent 65%),
@@ -156,8 +163,10 @@
   mask-image: radial-gradient(ellipse at 60% 40%, black 30%, transparent 75%);
 }
 .wos-wallpaper[data-wos-wallpaper="contour"] {
-  background-image: radial-gradient(800px 600px at 30% 75%, rgba(45, 212, 191, 0.15), transparent 65%);
   background-color: #06090d;
+}
+.wos-wallpaper[data-wos-wallpaper="contour"] .wos-wall-tint {
+  background-image: radial-gradient(800px 600px at 30% 75%, rgba(45, 212, 191, 0.15), transparent 65%);
 }
 /* The repeating contour rings fade out from their centre, so they live on
    the ::before layer to get their own mask. */
@@ -168,6 +177,8 @@
 }
 .wos-wallpaper[data-wos-wallpaper="deep-field"] {
   background-color: #05070a;
+}
+.wos-wallpaper[data-wos-wallpaper="deep-field"] .wos-wall-tint {
   background-image:
     conic-gradient(from 210deg at 60% 50%, transparent, rgba(45, 212, 191, 0.06), transparent 30%),
     radial-gradient(1000px 750px at 25% 25%, rgba(45, 212, 191, 0.14), transparent 65%),
@@ -177,8 +188,13 @@
   background-color: #0b0e13;
   background-image: radial-gradient(1200px 600px at 50% -10%, rgba(255, 255, 255, 0.06), transparent 70%);
 }
+.wos-wallpaper[data-wos-wallpaper="graphite"]::before {
+  content: none;
+}
 /* Cursor light is a 600px radial that the pointer loop moves around, brief
-   6.4. transform only. */
+   6.4. It follows the pointer with a lerp of 0.08 per frame inside one rAF
+   loop for the whole desktop. Fine pointers only, never under reduced
+   motion, and it stays dormant until the first pointer move. */
 .wos-cursor-light {
   position: absolute;
   top: 0;
@@ -189,6 +205,15 @@
   background: radial-gradient(circle, rgba(45, 212, 191, 0.07), transparent 70%);
   will-change: transform;
   pointer-events: none;
+  display: none;
+}
+@media (pointer: fine) {
+  .wos-cursor-light {
+    display: block;
+  }
+}
+[data-wos-motion="reduce"] .wos-cursor-light {
+  display: none;
 }
 
 /* --- Role labels and small utilities --- */
