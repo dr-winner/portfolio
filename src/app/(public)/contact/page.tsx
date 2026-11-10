@@ -23,7 +23,7 @@ export default function ContactPage() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)]">
       <Reveal y={10}>
-        <SectionLabel title="Contact" tone="ai" />
+        <SectionLabel title="Contact" />
       </Reveal>
       <Reveal delay={80} y={20}>
         <h1 className="mt-6 max-w-[14ch] text-balance text-[length:var(--step-5)] leading-[var(--leading-tight)]">Get in touch</h1>

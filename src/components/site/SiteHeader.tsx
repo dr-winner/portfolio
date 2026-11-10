@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { cvDownloadName, cvHref, site } from "@/content/site";
+import { cvDownloadName, cvHref } from "@/content/site";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
 import { SiteMenu } from "@/components/site/SiteMenu";
 
@@ -25,9 +25,9 @@ export function SiteHeader() {
       setScrolled(window.scrollY > 8);
       const doc = document.documentElement;
       const max = doc.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      const p = max > 0 ? Math.max(0.002, Math.min(1, window.scrollY / max)) : 0;
       const bar = progressRef.current;
-      if (bar) bar.style.transform = `scaleX(${Math.max(0.002, p)})`;
+      if (bar) bar.style.transform = `scaleX(${p})`;
     };
     onScroll();
     let raf = 0;
@@ -55,12 +55,12 @@ export function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-40 h-14 border-b border-transparent transition-colors duration-[var(--dur-2)] md:h-16">
+    <header className="sticky top-0 z-40 h-16 border-b border-transparent transition-colors duration-[var(--dur-2)]">
       <div
         aria-hidden
         className={`absolute inset-0 transition-[background-color,backdrop-filter] duration-[var(--dur-2)] ${
           scrolled
-            ? "bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] backdrop-blur-[14px] backdrop-saturate-[140%]"
+            ? "bg-[color-mix(in_srgb,var(--bg)_78%,transparent)] backdrop-blur-[12px] backdrop-saturate-[140%]"
             : "bg-transparent"
         }`}
       />
@@ -68,18 +68,17 @@ export function SiteHeader() {
       <span
         ref={progressRef}
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-1px] h-px origin-left scale-x-0 bg-gradient-to-r from-[var(--signal)] via-[var(--info)] to-[var(--ai)]"
+        className="pointer-events-none absolute inset-x-0 bottom-[-1px] h-px origin-left scale-x-0 bg-gradient-to-r from-[var(--signal)] to-transparent opacity-60"
       />
-      <div className="relative mx-auto flex h-full w-full max-w-[1280px] items-center gap-3 px-[clamp(20px,5vw,64px)]">
-        <Link href="/" aria-label={`${site.name}, home`} className="group mr-auto flex items-baseline gap-3 no-underline">
-          <span className="relative font-mono text-[12px] font-semibold tracking-[0.18em] text-[var(--signal)]">
-            RWD
+      <div className="relative mx-auto flex h-full w-full max-w-[1200px] items-center gap-3 px-[clamp(24px,4vw,40px)]">
+        <Link href="/" aria-label="drWinner, home" className="group mr-auto flex items-baseline gap-2.5 no-underline">
+          <span className="relative text-[17px] font-medium tracking-[-0.02em] text-[var(--fg)]">
+            dr<span className="text-[var(--fg-muted)]">Winner</span>
             <span
               aria-hidden
-              className="absolute -left-2.5 top-1/2 h-3 w-px -translate-y-1/2 bg-[var(--signal)] opacity-40 transition-opacity duration-[var(--dur-1)] group-hover:opacity-100"
+              className="absolute -left-3 top-1/2 h-3 w-px -translate-y-1/2 bg-[var(--line-strong)] transition-colors duration-[var(--dur-1)] group-hover:bg-[var(--signal)]"
             />
           </span>
-          <span className="hidden text-[length:var(--step-0)] text-[var(--fg)] sm:inline">{site.name}</span>
         </Link>
         <nav aria-label="Primary" className="hidden items-center gap-7 md:flex">
           {links.map((link) => {
@@ -114,13 +113,13 @@ export function SiteHeader() {
           {menuLabel}
         </button>
         <ThemeToggle />
-        <Link
+        <a
           href={cvHref}
           download={cvDownloadName}
-          className="btn-sweep hidden h-10 items-center rounded-[6px] bg-[var(--signal)] px-4 font-mono text-[12px] font-semibold tracking-[0.1em] text-[var(--on-signal)] no-underline lg:inline-flex"
+          className="hidden h-10 items-center rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-4 font-mono text-[12px] font-medium tracking-[0.06em] text-[var(--fg)] no-underline transition-colors duration-[var(--dur-1)] hover:border-[var(--signal)] hover:text-[var(--signal)] lg:inline-flex"
         >
-          CV.PDF
-        </Link>
+          CV
+        </a>
       </div>
       {open ? <SiteMenu onClose={() => setOpen(false)} /> : null}
     </header>

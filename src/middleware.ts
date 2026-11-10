@@ -62,6 +62,11 @@ export function middleware(req: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("x-pathname", pathname);
 
+  // Normalize a mistyped uppercase CV path to the real file.
+  if (pathname === "/CV.pdf") {
+    return NextResponse.redirect(new URL("/cv.pdf", req.nextUrl), 308);
+  }
+
   if (
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||

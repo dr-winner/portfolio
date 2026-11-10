@@ -40,7 +40,7 @@ export default function AboutPage() {
 
       <section id="experience" className="mt-20">
         <Reveal>
-          <SectionLabel index="01" title="Experience" tone="muted" />
+          <SectionLabel title="Experience" />
         </Reveal>
         <ol className="relative mt-8 max-w-[68ch] border-l border-[var(--line-strong)] pl-0">
           {experience.map((item, i) => (
@@ -60,7 +60,7 @@ export default function AboutPage() {
 
       <section className="mt-4 max-w-[68ch]">
         <Reveal>
-          <SectionLabel index="02" title="Education" tone="muted" />
+          <SectionLabel title="Education" />
         </Reveal>
         <Reveal delay={80}>
           <div className="console-card mt-8 rounded-[12px] border border-[var(--line)] bg-[var(--surface)] p-6">
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
       <section id="certifications" className="mt-20">
         <Reveal>
-          <SectionLabel index="03" title="Certifications" />
+          <SectionLabel title="Certifications" />
         </Reveal>
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
           <Reveal delay={100} className="group">
@@ -123,7 +123,7 @@ export default function AboutPage() {
 
       <section id="skills" className="mt-20">
         <Reveal>
-          <SectionLabel index="04" title="Skills" tone="muted" />
+          <SectionLabel title="Skills" />
         </Reveal>
         <ul className="mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {skills.map((group, i) => (

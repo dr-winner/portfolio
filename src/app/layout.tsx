@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif } from "next/font/google";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import { cookies } from "next/headers";
@@ -8,16 +7,6 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";
-
-const serif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: "italic",
-  variable: "--font-instrument-serif",
-  display: "swap",
-  adjustFontFallback: true,
-  preload: false,
-});
 
 /* ─── Site constants ──────────────────────────────────────────────────────── */
 
@@ -94,8 +83,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6F5F1" },
-    { media: "(prefers-color-scheme: dark)", color: "#07090C" },
+    { media: "(prefers-color-scheme: light)", color: "#F4F6F8" },
+    { media: "(prefers-color-scheme: dark)", color: "#070A0F" },
   ],
   colorScheme: "dark light",
   width: "device-width",
@@ -115,7 +104,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={clsx(GeistSans.variable, GeistMono.variable, serif.variable, themeClass)}
+      className={clsx(GeistSans.variable, GeistMono.variable, themeClass)}
       style={{ ["--font-sans" as string]: "var(--font-geist-sans)", ["--font-mono" as string]: "var(--font-geist-mono)", ["--font-display" as string]: "var(--font-geist-sans)" }}
     >
       <body className="font-sans antialiased overflow-x-hidden">

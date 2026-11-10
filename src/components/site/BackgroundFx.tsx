@@ -1,44 +1,16 @@
 /**
- * Fixed ambient backdrop: blueprint grid, terminal dot matrix and two
- * low-frequency glows on dark. Pure CSS, zero script, painted once.
+ * Fixed ambient backdrop: near-flat navy with one very soft teal light.
+ * Nothing moves behind the text; pure CSS, painted once, zero script.
  */
 export function BackgroundFx() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Blueprint grid, fading toward the bottom of the viewport */}
+      {/* Very soft signal light, upper right, at about five percent */}
       <div
-        className="absolute inset-0 fx-gridline"
+        className="absolute -top-[10%] right-[-6%] h-[55vh] w-[48vw] rounded-full"
         style={{
-          ["--grid-size" as string]: "44px",
-          maskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 92%)",
-          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 92%)",
-          opacity: 0.5,
-        }}
-      />
-      {/* Dot matrix on top of the grid for texture near the top */}
-      <div
-        className="absolute inset-0 fx-dots"
-        style={{
-          ["--dot-size" as string]: "22px",
-          maskImage: "radial-gradient(120% 70% at 50% 0%, black, transparent 78%)",
-          WebkitMaskImage: "radial-gradient(120% 70% at 50% 0%, black, transparent 78%)",
-          opacity: 0.35,
-        }}
-      />
-      {/* Signal glow — top right */}
-      <div
-        className="absolute -top-[20%] right-[-10%] h-[60vh] w-[55vw] rounded-full"
-        style={{
-          background: "radial-gradient(closest-side, var(--glow-signal), transparent 78%)",
+          background: "radial-gradient(closest-side, var(--glow-signal), transparent 76%)",
           filter: "blur(24px)",
-        }}
-      />
-      {/* AI accent glow — bottom left */}
-      <div
-        className="absolute bottom-[-25%] left-[-12%] h-[55vh] w-[50vw] rounded-full"
-        style={{
-          background: "radial-gradient(closest-side, var(--glow-ai), transparent 80%)",
-          filter: "blur(28px)",
         }}
       />
     </div>

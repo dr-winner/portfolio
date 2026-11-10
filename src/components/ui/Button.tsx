@@ -22,17 +22,18 @@ export function Button({
   variant?: keyof typeof styles;
   download?: boolean;
 }) {
-  const className = `inline-flex h-11 items-center justify-center gap-2 rounded-[6px] px-5 text-[length:var(--step-0)] no-underline ${styles[variant]}`;
+  const className = `inline-flex h-11 items-center justify-center gap-2 rounded-[var(--radius-control)] px-5 text-[length:var(--step-0)] no-underline ${styles[variant]}`;
   const isCv = download || href === cvHref;
-  if (href.startsWith("mailto:") || href.startsWith("http")) {
+  if (href.startsWith("mailto:") || href.startsWith("http") || isCv) {
+    // The CV is a plain anchor: no router prefetch, so no /cv.pdf?_rsc 404s.
     return (
-      <a className={className} href={href} {...(href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
+      <a className={className} href={href} {...(isCv ? { download: cvDownloadName } : {})} {...(href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
         {children}
       </a>
     );
   }
   return (
-    <Link className={className} href={href} {...(isCv ? { download: cvDownloadName } : {})}>
+    <Link className={className} href={href}>
       {children}
     </Link>
   );

@@ -93,64 +93,6 @@
     background-size: var(--dot-size, 18px) var(--dot-size, 18px);
   }
 
-  /* CRT scan lines, only legible on dark surfaces by design. */
-  .fx-scan {
-    background-image: repeating-linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.025) 0px,
-      rgba(255, 255, 255, 0.025) 1px,
-      transparent 1px,
-      transparent 4px
-    );
-  }
-  html.light .fx-scan {
-    background-image: repeating-linear-gradient(
-      to bottom,
-      rgba(11, 15, 20, 0.022) 0px,
-      rgba(11, 15, 20, 0.022) 1px,
-      transparent 1px,
-      transparent 4px
-    );
-  }
-
-  /* Ghost numeral watermark behind cards. */
-  .fx-ghost-index {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--line-strong);
-    user-select: none;
-  }
-
-  /* ── Corner brackets (instrument bezels) ──────────────────────────────── */
-
-  .fx-corner {
-    --fx-corner: var(--line-strong);
-    /* Eight hairline layers paint an L-bracket in each corner. */
-    background-image:
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner)),
-      linear-gradient(var(--fx-corner), var(--fx-corner));
-    background-repeat: no-repeat;
-    background-size:
-      10px 1.5px, 1.5px 10px,
-      10px 1.5px, 1.5px 10px,
-      10px 1.5px, 1.5px 10px,
-      10px 1.5px, 1.5px 10px;
-    background-position:
-      top left, top left,
-      top right, top right,
-      bottom left, bottom left,
-      bottom right, bottom right;
-  }
-  .group:hover > .fx-corner,
-  .group:focus-within > .fx-corner {
-    --fx-corner: var(--signal);
-  }
-
   /* ── Reveal system (scroll-staged), armed only when JS is present ─────── */
 
   [data-reveal] {
@@ -180,45 +122,6 @@
     to { clip-path: inset(0 0 0 0); }
   }
 
-  /* ── Boot sequence: one-shot scanline + self-typing terminal line ─────── */
-
-  .fx-boot-sweep {
-    pointer-events: none;
-    opacity: 0;
-    transform: translateY(-14vh);
-  }
-  html.reveal-armed .fx-boot-sweep {
-    animation: fx-boot 1.35s var(--ease-inout) 0.18s 1 both;
-  }
-  @keyframes fx-boot {
-    0% { transform: translateY(-14vh); opacity: 0; }
-    10% { opacity: 0.9; }
-    85% { opacity: 0.5; }
-    100% { transform: translateY(106vh); opacity: 0; }
-  }
-
-  .fx-type {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    vertical-align: bottom;
-  }
-  html.reveal-armed .fx-type {
-    width: 0;
-    animation: fx-type 1s steps(57, end) var(--type-delay, 0.8s) forwards;
-  }
-  @keyframes fx-type {
-    to { width: var(--type-w, 57ch); }
-  }
-  /* The line overflows a phone viewport — show it plainly there */
-  @media (max-width: 700px) {
-    html.reveal-armed .fx-type {
-      width: auto;
-      animation: none;
-      white-space: normal;
-    }
-  }
-
   /* ── Link & arrow micro-interactions ──────────────────────────────────── */
 
   .link-sweep {
@@ -244,7 +147,49 @@
     transform: translateX(4px);
   }
 
+  /* Case diagrams nudge up 4px while their card is hovered. */
+  .group:hover > .card-diagram,
+  .group:hover .card-diagram-wrap .card-diagram {
+    transform: translateY(-4px);
+  }
+
   /* ── Surfaces ─────────────────────────────────────────────────────────── */
+
+  /* RequestTrace playback: server renders the full trace; when scripting
+     is on and motion is allowed, the browser hides it at first paint and
+     restarts it as a staggered playback. Without scripting, or with
+     reduced motion, the lines simply stay visible. */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .trace-play .t-line {
+      opacity: 0;
+      transform: translateY(3px);
+      transition:
+        opacity var(--dur-2) var(--ease-out),
+        transform var(--dur-2) var(--ease-out);
+    }
+    .trace-play[data-playing="true"] .t-line {
+      opacity: 1;
+      transform: none;
+    }
+    .trace-play[data-done="true"] .t-line {
+      transition: none;
+    }
+  }
+  .trace-sweep {
+    transform: scaleX(0);
+    transform-origin: left;
+    opacity: 0;
+    background: var(--signal);
+    box-shadow: 0 0 10px var(--glow-signal), 0 0 3px var(--glow-signal);
+  }
+  .trace-sweep[data-on="true"] {
+    animation: trace-sweep 700ms var(--ease-inout) 1 both;
+  }
+  @keyframes trace-sweep {
+    0% { transform: scaleX(0); opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: scaleX(1); opacity: 0; }
+  }
 
   .console-card {
     transition:
@@ -310,46 +255,6 @@
   @keyframes fx-pulse {
     0%, 100% { opacity: 0; transform: scale(1); }
     50% { opacity: 0.35; transform: scale(1.5); }
-  }
-
-  .fx-caret::after {
-    content: "▍";
-    margin-left: 2px;
-    color: var(--signal);
-    animation: fx-blink 1.1s steps(2, start) infinite;
-  }
-  @keyframes fx-blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
-  }
-
-  .fx-drift {
-    animation: fx-drift 26s var(--ease-inout) infinite alternate;
-  }
-  @keyframes fx-drift {
-    from { transform: translate3d(-8px, -6px, 0); }
-    to { transform: translate3d(10px, 8px, 0); }
-  }
-
-  .fx-cue {
-    animation: fx-cue 2.2s var(--ease-inout) infinite;
-  }
-  @keyframes fx-cue {
-    0%, 100% { transform: translateY(0); opacity: 0.9; }
-    50% { transform: translateY(6px); opacity: 0.4; }
-  }
-
-  .fx-marquee-track {
-    display: flex;
-    width: max-content;
-    animation: fx-marquee var(--marquee-duration, 46s) linear infinite;
-  }
-  .fx-marquee:hover .fx-marquee-track {
-    animation-play-state: paused;
-  }
-  @keyframes fx-marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
   }
 
   /* ── Interior rules that grow on reveal-in ─────────────────────────────── */
