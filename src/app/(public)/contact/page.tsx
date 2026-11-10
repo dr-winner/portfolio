@@ -47,7 +47,7 @@ export default function ContactPage() {
               >
                 {site.email}
               </a>
-              <CopyEmail />
+              <CopyEmail variant="icon" />
             </div>
             <Reveal delay={220} y={10}>
               <p className="mt-12 flex flex-wrap items-center gap-2 font-mono text-[12px] text-[var(--fg-muted)]">

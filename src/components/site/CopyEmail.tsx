@@ -3,7 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 
-export function CopyEmail() {
+const COPIED_MS = 2000;
+
+/**
+ * Copy button for the email address. "inline" shows the address itself and
+ * flips to a copied state; "icon" pairs with a visible mailto link (the
+ * address stays on the page exactly once) and reads Copy, then Copied for
+ * two seconds after a successful copy.
+ */
+export function CopyEmail({ variant = "inline" }: { variant?: "inline" | "icon" }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -18,10 +26,28 @@ export function CopyEmail() {
       await navigator.clipboard.writeText(site.email);
       setCopied(true);
       if (timer.current) window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => setCopied(false), 1600);
+      timer.current = window.setTimeout(() => setCopied(false), COPIED_MS);
     } catch {
       setCopied(false);
     }
+  }
+
+  if (variant === "icon") {
+    return (
+      <button
+        type="button"
+        onClick={copy}
+        className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--line-strong)] py-1.5 pl-2.5 pr-3 font-mono text-[13px] transition-colors duration-[var(--dur-2)] hover:border-[var(--signal)]"
+      >
+        <span aria-hidden className={copied ? "text-[var(--signal)]" : "text-[var(--fg-muted)]"}>
+          {copied ? "✓" : "⧉"}
+        </span>
+        <span aria-live="polite" className={copied ? "text-[var(--signal)]" : "text-[var(--fg-muted)]"}>
+          {copied ? "Copied" : "Copy"}
+        </span>
+        <span className="sr-only">, copy email address</span>
+      </button>
+    );
   }
 
   return (
