@@ -401,6 +401,202 @@
   outline-offset: 2px;
 }
 
+/* --- Title bar internals, brief 6.6 --- */
+.wos-titlebar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+.wos-controls {
+  justify-self: start;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+}
+.wos-control {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--wos-text-3);
+  cursor: pointer;
+}
+.wos-controls:hover .wos-control {
+  color: var(--wos-text-2);
+}
+.wos-controls .wos-control:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--wos-text-2);
+}
+.wos-controls .wos-control-close:hover {
+  background: rgba(248, 113, 113, 0.16);
+  color: #f87171;
+}
+[data-wos-theme="daylight"] .wos-controls .wos-control:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+.wos-titleblock {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.wos-title-icon {
+  display: inline-grid;
+  place-items: center;
+  color: var(--wos-text-2);
+}
+.wos-window-title {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--wos-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40ch;
+}
+.wos-window[data-state="blur"] .wos-titlebar .wos-window-title {
+  color: var(--wos-text-3);
+}
+.wos-titlefill {
+  justify-self: end;
+  width: 77px;
+  height: 1px;
+}
+.wos-window-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Snap preview, brief 3.7 --- */
+.wos-snap-preview {
+  position: absolute;
+  z-index: 99;
+  border-radius: 14px;
+  background: rgba(45, 212, 191, 0.08);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  opacity: 0;
+  transition: opacity var(--wos-dur-menu) var(--wos-ease-micro);
+  pointer-events: none;
+}
+.wos-snap-preview[data-active="true"] {
+  opacity: 1;
+}
+
+/* --- Window switcher, brief 3.9 --- */
+.wos-switcher-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: var(--wos-z-switcher);
+  display: grid;
+  place-items: center;
+}
+.wos-switcher {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 20px;
+  background: var(--wos-glass);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--wos-highlight);
+  box-shadow: var(--wos-shadow-focus);
+  animation: wos-switch-in var(--wos-dur-menu) var(--wos-ease-micro);
+  max-width: calc(100vw - 48px);
+  overflow-x: auto;
+}
+@keyframes wos-switch-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.wos-switcher-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 88px;
+  padding: 10px 6px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--wos-text);
+  cursor: pointer;
+}
+.wos-switcher-item .wos-switcher-title {
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+  max-width: 84px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wos-switcher-item[data-selected="true"] {
+  outline: 2px solid var(--wos-accent);
+  outline-offset: -2px;
+  background: rgba(45, 212, 191, 0.1);
+}
+.wos-switcher-item[data-minimized="true"] {
+  opacity: 0.55;
+}
+
+/* --- Toasts --- */
+.wos-toasts {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--wos-dock-reserve, 88px) + 12px);
+  transform: translateX(-50%);
+  z-index: var(--wos-z-toasts);
+  pointer-events: none;
+}
+.wos-toast {
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--wos-border-strong);
+  background: var(--wos-glass-solid);
+  color: var(--wos-text);
+  font-size: 13px;
+  line-height: 1;
+  box-shadow: var(--wos-shadow-blur);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--wos-dur-micro) var(--wos-ease-micro), transform var(--wos-dur-micro) var(--wos-ease-micro);
+  white-space: nowrap;
+}
+.wos-toast[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Dragging flag from the window adapter drives the cursor and body lock,
+   brief 3.3. */
+[data-wos-dragging="true"] {
+  cursor: grabbing;
+  user-select: none;
+}
+[data-wos-dragging="true"] * {
+  cursor: grabbing;
+}
+
 /* --- Skip link, brief 3.2. First focusable on the page, a 40px pill that
    sits above the fold and swings in on keyboard focus. --- */
 .wos-skip {
