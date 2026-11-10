@@ -1,4 +1,14 @@
 /** @type {import('next').NextConfig} */
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+// Brief 7.6: report bundle number changes every phase. Opt in via ANALYZE=1 so
+// regular builds stay byte identical, writes one JSON report with gzip sizes.
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "1",
+  analyzerMode: "json",
+  openAnalyzer: false,
+});
+
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "off" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -66,4 +76,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
