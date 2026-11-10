@@ -165,11 +165,13 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
             <Badge key={badge}>{badge}</Badge>
           ))}
         </div>
-        <dl className="mt-8 flex flex-wrap items-baseline gap-x-10 gap-y-3 border-y border-[var(--line)] py-4">
+        {/* One entry per line on mobile so long stack and scope values never
+            break mid-word; horizontal wrap from sm up. */}
+        <dl className="mt-8 grid grid-cols-1 gap-y-3 border-y border-[var(--line)] py-4 sm:flex sm:flex-wrap sm:items-baseline sm:gap-x-10 sm:gap-y-3">
           {meta.map((entry) => (
             <div key={entry.label} className="min-w-0">
               <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">{entry.label}</dt>
-              <dd className="mt-1 break-words text-[13.5px] text-[var(--fg-muted)]">{entry.value}</dd>
+              <dd className="mt-1 text-[13.5px] text-[var(--fg-muted)]">{entry.value}</dd>
             </div>
           ))}
         </dl>
@@ -183,7 +185,11 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
       {/* ── Two-column reading layout: sticky TOC + body (section 5.3) ──── */}
       <div className="mt-14 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[230px_minmax(0,1fr)] min-[1100px]:gap-14">
         <aside className="min-w-0 self-start min-[1100px]:sticky min-[1100px]:top-28">
-          <CaseToc sections={item.sections.map((section) => ({ id: section.id, heading: section.heading }))} />
+          {/* The TOC is a desktop reading aid: it stays out of the narrow
+              flow below 1100px. */}
+          <div className="hidden min-[1100px]:block">
+            <CaseToc sections={item.sections.map((section) => ({ id: section.id, heading: section.heading }))} />
+          </div>
           {item.repo ? (
             <a
               href={item.repo}
@@ -192,8 +198,8 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
               className="group mt-8 block rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-4 no-underline"
             >
               <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Repository</span>
-              <span className="mt-1 block text-[13.5px] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
-                {new URL(item.repo).host}
+              <span className="mt-1 block break-all font-mono text-[13px] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                {new URL(item.repo).pathname.split("/").filter(Boolean).slice(0, 2).join("/")}
                 <span aria-hidden className="arrow-shift ml-1.5 inline-block">↗</span>
               </span>
             </a>
