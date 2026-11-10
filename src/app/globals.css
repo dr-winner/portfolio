@@ -168,6 +168,56 @@
     opacity: 1;
     transform: none;
   }
+  /* Mask variant: wipe-bloom on the way in. The clip lives ONLY in the
+     incoming animation — never in the hidden state, because a zero-area
+     clip-path removes the element from IntersectionObserver geometry and
+     the reveal would deadlock before it started. */
+  html.reveal-armed [data-reveal="mask"].is-in {
+    animation: fx-mask var(--dur-4) var(--ease-inout) var(--reveal-delay, 0ms) both;
+  }
+  @keyframes fx-mask {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  /* ── Boot sequence: one-shot scanline + self-typing terminal line ─────── */
+
+  .fx-boot-sweep {
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-14vh);
+  }
+  html.reveal-armed .fx-boot-sweep {
+    animation: fx-boot 1.35s var(--ease-inout) 0.18s 1 both;
+  }
+  @keyframes fx-boot {
+    0% { transform: translateY(-14vh); opacity: 0; }
+    10% { opacity: 0.9; }
+    85% { opacity: 0.5; }
+    100% { transform: translateY(106vh); opacity: 0; }
+  }
+
+  .fx-type {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+  html.reveal-armed .fx-type {
+    width: 0;
+    animation: fx-type 1s steps(57, end) var(--type-delay, 0.8s) forwards;
+  }
+  @keyframes fx-type {
+    to { width: var(--type-w, 57ch); }
+  }
+  /* The line overflows a phone viewport — show it plainly there */
+  @media (max-width: 700px) {
+    html.reveal-armed .fx-type {
+      width: auto;
+      animation: none;
+      white-space: normal;
+    }
+  }
 
   /* ── Link & arrow micro-interactions ──────────────────────────────────── */
 

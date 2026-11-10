@@ -3,10 +3,12 @@ import { headers } from "next/headers";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
+import { CountUp } from "@/components/motion/CountUp";
 import { CopyEmail } from "@/components/site/CopyEmail";
 import { SectionLabel } from "@/components/site/SectionLabel";
 import { StatusDot } from "@/components/site/StatusDot";
 import { Ticker } from "@/components/site/Ticker";
+import { ThreatMap } from "@/components/site/ThreatMap";
 import { certifications } from "@/content/certifications";
 import { cvHref, mailto, site } from "@/content/site";
 import { skills } from "@/content/skills";
@@ -70,36 +72,6 @@ const tickerItems = [
   "DETECTION AS CODE",
 ];
 
-/* Decorative constellation — a sparse node map that slowly drifts. */
-function Constellation() {
-  return (
-    <svg
-      aria-hidden
-      className="fx-drift absolute right-[-8%] top-[8%] hidden h-[74%] w-[62%] opacity-[0.5] lg:block"
-      viewBox="0 0 620 520"
-      fill="none"
-    >
-      <g stroke="var(--line-strong)" strokeWidth="1">
-        <path d="M70 400L210 300L330 350L470 220L560 260" />
-        <path d="M210 300L250 170L470 220" />
-        <path d="M250 170L400 90L560 260" />
-        <path d="M70 400L160 470L330 350" />
-      </g>
-      <g fill="var(--signal)" opacity="0.7">
-        <circle cx="70" cy="400" r="3" />
-        <circle cx="330" cy="350" r="2.5" />
-        <circle cx="470" cy="220" r="3.5" />
-        <circle cx="400" cy="90" r="2.5" />
-        <circle cx="160" cy="470" r="2" />
-      </g>
-      <g fill="var(--ai)" opacity="0.55">
-        <circle cx="210" cy="300" r="3" />
-        <circle cx="250" cy="170" r="2.5" />
-        <circle cx="560" cy="260" r="3" />
-      </g>
-    </svg>
-  );
-}
 
 export default async function HomePage() {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
@@ -115,24 +87,34 @@ export default async function HomePage() {
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden px-[clamp(20px,5vw,64px)] pb-10 pt-28">
-        <Constellation />
+        <ThreatMap className="z-0" />
         {/* Corner registration ticks */}
         <span aria-hidden className="absolute left-[clamp(8px,1.5vw,20px)] top-[clamp(70px,8vh,96px)] h-4 w-4 border-l border-t border-[var(--line-strong)]" />
         <span aria-hidden className="absolute right-[clamp(8px,1.5vw,20px)] top-[clamp(70px,8vh,96px)] h-4 w-4 border-r border-t border-[var(--line-strong)]" />
         <span aria-hidden className="absolute bottom-[clamp(8px,1.5vh,20px)] left-[clamp(8px,1.5vw,20px)] h-4 w-4 border-b border-l border-[var(--line-strong)]" />
         <span aria-hidden className="absolute bottom-[clamp(8px,1.5vh,20px)] right-[clamp(8px,1.5vw,20px)] h-4 w-4 border-b border-r border-[var(--line-strong)]" />
+        {/* Boot scanline — sweeps the console once on arrival */}
+        <span
+          aria-hidden
+          className="fx-boot-sweep absolute inset-x-0 top-0 z-[5] h-[76px]"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent, color-mix(in srgb, var(--signal) 10%, transparent) 46%, transparent)",
+            filter: "blur(1px)",
+          }}
+        />
 
-        <div className="mx-auto w-full max-w-[1280px] flex-1">
+        <div className="relative z-10 mx-auto w-full max-w-[1280px] flex-1">
           <Reveal delay={0} y={10}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="font-mono text-[12px] tracking-[0.16em] text-[var(--fg-muted)]">
-                [ {site.location.toUpperCase()} · {new Date().getFullYear()} ]
+              <p className="font-mono text-[12px] uppercase tracking-[0.16em] text-[var(--fg-muted)]">
+                [ 5.5560° N · 0.1969° W — Accra, GH · {new Date().getFullYear()} ]
               </p>
               <StatusDot label={site.availabilityShort} />
             </div>
           </Reveal>
 
-          <Reveal delay={90} y={22}>
+          <Reveal delay={90} y={0} variant="mask">
             <h1 className="mt-8 text-balance text-[length:var(--step-6)] font-medium leading-[var(--leading-tight)] tracking-[-0.035em]">
               Application
               <br />
@@ -167,20 +149,31 @@ export default async function HomePage() {
               </Button>
             </div>
           </Reveal>
+
+          <Reveal delay={480} y={12}>
+            <p className="mt-7 font-mono text-[13px] text-[var(--fg-muted)]">
+              <span aria-hidden className="fx-type" style={{ [("--type-w" as string)]: "57ch", [("--type-delay" as string)]: "0.85s" }}>
+                &gt; finds what breaks · explains the fix · ships guardrails
+              </span>
+            </p>
+          </Reveal>
         </div>
 
         {/* Hero foot: stat rail + scroll cue */}
-        <div className="mx-auto mt-14 w-full max-w-[1280px]">
+        <div className="relative z-10 mx-auto mt-14 w-full max-w-[1280px]">
           <Reveal delay={520} y={12}>
             <ol className="grid grid-cols-1 gap-px border-t border-[var(--line)] sm:grid-cols-3">
               {[
-                ["05+", "OWASP LLM attack paths tested"],
-                ["06", "AWS detections mapped to ATT&CK"],
-                ["3.1", "CVSS scoring on every finding"],
-              ].map(([num, label]) => (
-                <li key={label} className="flex items-baseline gap-3 border-t border-[var(--line)] py-4 sm:border-t-0">
-                  <span className="font-mono text-[length:var(--step-2)] leading-none text-[var(--signal)]">{num}</span>
-                  <span className="max-w-[24ch] text-[length:var(--step--1)] leading-snug text-[var(--fg-muted)]">{label}</span>
+                { value: 5, suffix: "+", decimals: 0, pad: true, label: "OWASP LLM attack paths tested" },
+                { value: 6, suffix: "", decimals: 0, pad: true, label: "AWS detections mapped to ATT&CK" },
+                { value: 3.1, suffix: "", decimals: 1, pad: false, label: "CVSS scoring on every finding" },
+              ].map((stat) => (
+                <li key={stat.label} className="flex items-baseline gap-3 border-t border-[var(--line)] py-4 sm:border-t-0">
+                  <span className="font-mono text-[length:var(--step-2)] leading-none text-[var(--signal)] tabular-nums">
+                    <CountUp to={stat.value} decimals={stat.decimals} pad={stat.pad} />
+                    {stat.suffix ? <span aria-hidden>{stat.suffix}</span> : null}
+                  </span>
+                  <span className="max-w-[24ch] text-[length:var(--step--1)] leading-snug text-[var(--fg-muted)]">{stat.label}</span>
                 </li>
               ))}
             </ol>
@@ -230,7 +223,7 @@ export default async function HomePage() {
         <Reveal>
           <SectionLabel index="02" title="Practice" tone="muted" />
         </Reveal>
-        <Reveal delay={80}>
+        <Reveal delay={80} y={0} variant="mask">
           <h2 className="mt-6 max-w-[18ch] text-balance text-[length:var(--step-4)] leading-[var(--leading-tight)] tracking-[-0.02em]">
             I look for what breaks, and I explain how to fix it.
           </h2>
@@ -256,7 +249,7 @@ export default async function HomePage() {
         <Reveal>
           <SectionLabel index="03" title="Selected Work" />
         </Reveal>
-        <Reveal delay={80}>
+        <Reveal delay={80} y={0} variant="mask">
           <h2 className="mt-6 text-[length:var(--step-4)] leading-[var(--leading-tight)]">Case studies</h2>
         </Reveal>
         <ul className="mt-10 grid gap-4 md:grid-cols-2">
@@ -379,7 +372,7 @@ export default async function HomePage() {
             <div aria-hidden className="absolute -bottom-24 -left-16 h-64 w-64 rounded-full opacity-90" style={{ background: "radial-gradient(closest-side, var(--glow-ai), transparent 80%)" }} />
             <div className="relative flex flex-col gap-6 p-[clamp(28px,6vw,72px)]">
               <SectionLabel index="05" title="Contact" tone="ai" />
-              <Reveal delay={80} y={16}>
+              <Reveal delay={80} y={0} variant="mask">
                 <h2 className="max-w-[16ch] text-balance text-[length:var(--step-5)] leading-[var(--leading-tight)]">
                   Hiring for application security? Let&apos;s talk.
                 </h2>

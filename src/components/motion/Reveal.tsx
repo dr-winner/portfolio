@@ -10,6 +10,8 @@ type RevealProps = {
   delay?: number;
   /** Travel distance in px on the way in. */
   y?: number;
+  /** "mask" blooms by wipe; default "rise" fades up. */
+  variant?: "rise" | "mask";
   as?: RevealTag;
   className?: string;
   id?: string;
@@ -22,7 +24,7 @@ type RevealProps = {
  * JS then arms the hidden state only for elements outside the viewport, so
  * users without scripting (or with reduced-motion) never see missing content.
  */
-export function Reveal({ children, delay = 0, y = 18, as: Tag = "div", className, id, style, ...aria }: RevealProps) {
+export function Reveal({ children, delay = 0, y = 18, variant, as: Tag = "div", className, id, style, ...aria }: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -55,7 +57,7 @@ export function Reveal({ children, delay = 0, y = 18, as: Tag = "div", className
             }
           }
         },
-        { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+        { rootMargin: "0px 0px -8% 0px" },
       );
       observer.observe(node);
     }
@@ -64,7 +66,7 @@ export function Reveal({ children, delay = 0, y = 18, as: Tag = "div", className
   }, [delay, y]);
 
   return (
-    <Tag ref={ref as never} data-reveal className={className} id={id} style={style} {...aria}>
+    <Tag ref={ref as never} data-reveal={variant ? variant : true} className={className} id={id} style={style} {...aria}>
       {children}
     </Tag>
   );
