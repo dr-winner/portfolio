@@ -159,6 +159,97 @@
     transform: translateY(-4px);
   }
 
+  /* ── Case figure: draw-on-scroll choreography (section 5.3) ────────────
+     Revealed only under the same arming rule as everything else: scripting
+     on, motion allowed (html.reveal-armed). Otherwise the diagram is simply
+     visible, complete. One-shot: it plays once and stays. */
+  @media (prefers-reduced-motion: no-preference) {
+    html.reveal-armed .case-figure [data-draw] path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 900ms var(--ease-inout) calc(var(--d, 0) * 110ms);
+    }
+    html.reveal-armed .case-figure [data-node] {
+      opacity: 0;
+      transform: translateY(5px);
+      transition:
+        opacity 380ms var(--ease-out) calc(var(--d, 0) * 110ms + 160ms),
+        transform 380ms var(--ease-out) calc(var(--d, 0) * 110ms + 160ms);
+    }
+    html.reveal-armed .case-figure.is-in [data-draw] path {
+      stroke-dashoffset: 0;
+    }
+    html.reveal-armed .case-figure.is-in [data-node] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Wide and vertical variants switch purely in CSS (same ownership block,
+     so no utility-layer fight): vertical below md, wide from md up. */
+  .case-figure svg[data-wide] {
+    display: none;
+  }
+  .case-figure svg[data-vertical] {
+    display: block;
+  }
+  @media (min-width: 768px) {
+    .case-figure svg[data-wide] {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .case-figure svg[data-vertical] {
+      display: none;
+    }
+  }
+
+  /* ── Findings table: its own scroll container on mobile (section 5.3) ── */
+  .findings-scroll {
+    min-width: 0;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    scrollbar-width: thin;
+  }
+  @media (max-width: 700px) {
+    .findings-scroll {
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .findings-scroll::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* ── Shiki (build time only): dual themes switch on the html class ───── */
+  .shiki-host {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--bg);
+  }
+  .shiki-host pre {
+    margin: 0;
+    padding: 14px 16px;
+    background: transparent !important;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+  .shiki-host code {
+    font-family: var(--font-geist-mono), monospace;
+  }
+  /* defaultColor: false -> shiki emits both color vars; the site's default
+     scheme is dark, so dark vars are the base rule and html.light overrides. */
+  .shiki-host pre code span {
+    color: var(--shiki-dark);
+  }
+  html.light .shiki-host pre code span {
+    color: var(--shiki-light);
+  }
+
   /* ── Surfaces ─────────────────────────────────────────────────────────── */
 
   /* RequestTrace playback: server renders the full trace; when scripting

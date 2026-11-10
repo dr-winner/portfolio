@@ -1,15 +1,90 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { codeToHtml } from "shiki";
 import { Badge } from "@/components/ui/Badge";
+import { CaseFigure } from "@/components/site/CaseFigure";
+import { CaseToc } from "@/components/site/CaseToc";
 import { LlmAgentLabInspector } from "@/components/site/LlmAgentLabInspector";
 import { Reveal } from "@/components/motion/Reveal";
+import { ATTACK_SCENARIOS } from "@/lab/llm-agent-security/engine";
 import { getWork, publishedWork } from "@/content/work";
 
 type Params = { slug: string };
 
 export function generateStaticParams() {
   return publishedWork.map((item) => ({ slug: item.slug }));
+}
+
+/* Titles may carry a bracketed qualifier, e.g. "Healthcare Portal Pentest
+   (NetworkWalks Training Lab)". The qualifier becomes the hero subtitle. */
+function splitTitle(title: string): { main: string; sub: string | null } {
+  const match = /^(.*?)\s*\((.+)\)\s*$/.exec(title);
+  return match ? { main: match[1], sub: match[2] } : { main: title, sub: null };
+}
+
+/* The attack-paths section is written as five numbered paragraphs:
+   "01. Title (CVSS 8.1 High, LLM01 / LLM06): detail". Parse them into table
+   rows at build time; if a paragraph does not fit the shape, fall back to
+   prose so no fact is ever dropped. */
+type Finding = { id: string; title: string; cvss: string; severity: string; refs: string; detail: string };
+const FINDING_RE = /^(\d{2})\. (.+?) \(CVSS ([\d.]+) (\w+), (.+?)\): ([\s\S]+)$/;
+
+function parseFindings(paragraphs: string[]): Finding[] | null {
+  const rows: Finding[] = [];
+  for (const paragraph of paragraphs) {
+    const match = FINDING_RE.exec(paragraph.trim());
+    if (!match) return null;
+    rows.push({ id: match[1], title: match[2], cvss: match[3], severity: match[4], refs: match[5], detail: match[6] });
+  }
+  return rows.length > 0 ? rows : null;
+}
+
+function FindingsTable({ findings }: { findings: Finding[] }) {
+  return (
+    <div className="findings-scroll mt-6">
+      <table className="w-full min-w-[680px] border-collapse text-left">
+        <thead>
+          <tr className="border-b border-[var(--line)]">
+            {["ID", "Finding", "Severity", "CVSS v3.1", "Status"].map((h) => (
+              <th key={h} scope="col" className="whitespace-nowrap px-4 py-3 font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {findings.map((finding) => (
+            <tr key={finding.id} className="border-b border-[var(--line)] last:border-b-0 align-top">
+              <td className="px-4 py-4 font-mono text-[12px] text-[var(--fg-subtle)]">{finding.id}</td>
+              <td className="min-w-[260px] px-4 py-4">
+                <p className="text-[13.5px] font-medium leading-[var(--leading-snug)] text-[var(--fg)]">{finding.title}</p>
+                <p className="mt-1.5 max-w-[52ch] text-[12.5px] leading-[var(--leading-body)] text-[var(--fg-muted)]">{finding.detail}</p>
+                <p className="mt-1.5 font-mono text-[11px] text-[var(--fg-subtle)]">{finding.refs}</p>
+              </td>
+              <td className="px-4 py-4">
+                <span
+                  className={`inline-flex whitespace-nowrap rounded-full border px-2.5 py-0.5 font-mono text-[11px] ${
+                    finding.severity === "High"
+                      ? "border-[var(--amber)]/60 text-[var(--amber)]"
+                      : "border-[var(--line-strong)] text-[var(--fg-muted)]"
+                  }`}
+                >
+                  {finding.severity}
+                </span>
+              </td>
+              <td className="whitespace-nowrap px-4 py-4 font-mono text-[12px] text-[var(--fg)]">{finding.cvss}</td>
+              <td className="px-4 py-4">
+                <span className="inline-flex whitespace-nowrap rounded-full border border-[var(--signal)]/50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--signal)]">
+                  Blocked in CI
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -24,49 +99,110 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
+/* Build-time syntax highlighting for the lab verifier's enforced-control
+   snippets (shiki, section 2 + 5.3). Runs during static generation only. */
+async function highlightedSnippets() {
+  const entries = await Promise.all(
+    ATTACK_SCENARIOS.map(async (scenario) => {
+      try {
+        return [
+          scenario.id,
+          await codeToHtml(scenario.controlSnippet, {
+            lang: "ts",
+            themes: { light: "vitesse-light", dark: "vitesse-dark" },
+            defaultColor: false,
+          }),
+        ] as const;
+      } catch {
+        return [scenario.id, ""] as const;
+      }
+    }),
+  );
+  return Object.fromEntries(entries);
+}
+
 export default async function WorkCasePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
   const item = getWork(slug);
   if (!item) notFound();
+
   const index = publishedWork.findIndex((entry) => entry.slug === item.slug);
   const previous = publishedWork[index - 1];
   const next = publishedWork[index + 1];
 
-  const facts = [
-    item.role ? { label: "Role", value: item.role } : null,
-    { label: "Engagement", value: item.context },
-    item.stack ? { label: "Stack", value: item.stack.join(", ") } : null,
-    item.outcome ? { label: "Outcome", value: item.outcome } : null,
-  ].filter(Boolean) as { label: string; value: string }[];
+  const { main, sub } = splitTitle(item.title);
+  const highlights = item.slug === "llm-agent-security-lab" ? await highlightedSnippets() : undefined;
+
+  const meta = [
+    { label: "Role", value: item.role },
+    { label: "Scope", value: item.context },
+    { label: "Stack", value: item.stack?.join(" · ") },
+    { label: "Year", value: item.year },
+  ].filter((entry): entry is { label: string; value: string } => Boolean(entry.value));
 
   return (
     <article className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
+      {/* ── Hero: breadcrumb, two-line title, tags, one meta bar ─────────── */}
       <Reveal y={10}>
-        <p className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">
-          <Link href="/work" className="link-sweep text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+        <p className="flex items-baseline gap-1.5 font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">
+          <Link href="/work" className="link-sweep shrink-0 text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
             Work
           </Link>
-          <span aria-hidden> / </span>
-          <span className="text-[var(--signal)]">{item.title}</span>
+          <span aria-hidden className="shrink-0">/</span>
+          <span className="min-w-0 truncate">{item.title}</span>
         </p>
       </Reveal>
       <Reveal delay={80} y={20}>
-        <h1 className="mt-6 max-w-[18ch] text-balance text-[length:var(--step-4)] leading-[var(--leading-tight)]">{item.title}</h1>
+        <h1 className="mt-6 max-w-[24ch] text-balance text-[length:var(--step-4)] font-medium leading-[var(--leading-tight)] tracking-[-0.02em]">
+          {main}
+        </h1>
+        {sub ? <p className="mt-3 text-[length:var(--step-1)] text-[var(--fg-muted)]">{sub}</p> : null}
       </Reveal>
-      <Reveal delay={160} y={14}>
+      <Reveal delay={160} y={12}>
         <div className="mt-5 flex flex-wrap gap-2">
           {item.badges.map((badge) => (
             <Badge key={badge}>{badge}</Badge>
           ))}
         </div>
-        <div className="fx-rule mt-8 h-px w-full bg-[var(--line)]" />
+        <dl className="mt-8 flex flex-wrap items-baseline gap-x-10 gap-y-3 border-y border-[var(--line)] py-4">
+          {meta.map((entry) => (
+            <div key={entry.label} className="min-w-0">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">{entry.label}</dt>
+              <dd className="mt-1 break-words text-[13.5px] text-[var(--fg-muted)]">{entry.value}</dd>
+            </div>
+          ))}
+        </dl>
       </Reveal>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,68ch)_1fr] lg:items-start">
+      {/* ── Large per-case diagram, drawn on scroll ─────────────────────── */}
+      <Reveal as="div" delay={200} y={0} className="case-figure mt-10">
+        <CaseFigure slug={item.slug} />
+      </Reveal>
+
+      {/* ── Two-column reading layout: sticky TOC + body (section 5.3) ──── */}
+      <div className="mt-14 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[230px_minmax(0,1fr)] min-[1100px]:gap-14">
+        <aside className="min-w-0 self-start min-[1100px]:sticky min-[1100px]:top-28">
+          <CaseToc sections={item.sections.map((section) => ({ id: section.id, heading: section.heading }))} />
+          {item.repo ? (
+            <a
+              href={item.repo}
+              target="_blank"
+              rel="noreferrer"
+              className="group mt-8 block rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-4 no-underline"
+            >
+              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Repository</span>
+              <span className="mt-1 block text-[13.5px] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                {new URL(item.repo).host}
+                <span aria-hidden className="arrow-shift ml-1.5 inline-block">↗</span>
+              </span>
+            </a>
+          ) : null}
+        </aside>
+
         <div className="min-w-0">
           {item.scope ? (
-            <Reveal delay={200}>
-              <aside className="console-card relative overflow-hidden rounded-[12px] border border-[var(--line)] bg-[var(--bg-raised)] p-5">
+            <Reveal delay={240} y={10}>
+              <aside className="rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--bg-raised)] p-5">
                 <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--amber)]">
                   {item.context === "Training lab" ? "Scope and authorization" : "Scope"}
                 </p>
@@ -75,91 +211,74 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
             </Reveal>
           ) : null}
 
-          <Reveal delay={260}>
-            <dl className={`grid gap-4 border-y border-[var(--line)] py-5 sm:grid-cols-2 ${item.scope ? "mt-6" : ""}`}>
-              {facts.map((fact) => (
-                <div key={fact.label}>
-                  <dt className="font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">{fact.label}</dt>
-                  <dd className="mt-1 text-[var(--fg-muted)]">{fact.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-
           {item.slug === "llm-agent-security-lab" ? (
-            <Reveal delay={300}>
-              <div className="mt-8">
-                <LlmAgentLabInspector />
-              </div>
+            <Reveal delay={280} y={10} className="mt-10">
+              <LlmAgentLabInspector highlighted={highlights} />
             </Reveal>
           ) : null}
 
-          <div className="mt-12 flex max-w-[68ch] flex-col gap-10">
-            {item.sections.map((section, i) => (
-              <Reveal key={section.id} as="section" id={section.id} delay={Math.min(i * 60, 240)} className="scroll-mt-28">
-                <p aria-hidden className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">
-                  {String(i + 1).padStart(2, "0")}
-                </p>
-                <h2 className="mt-2 text-[length:var(--step-2)] leading-[var(--leading-snug)]">{section.heading}</h2>
-                {section.paragraphs.map((paragraph) => (
-                  <p key={paragraph} className="mt-3 text-pretty text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
-                    {paragraph}
+          <Reveal as="div" delay={300} y={0} className="mt-10 flex max-w-[74ch] flex-col gap-10">
+            {item.sections.map((section, i) => {
+              const findings = item.slug === "llm-agent-security-lab" && section.id === "findings-and-controls"
+                ? parseFindings(section.paragraphs)
+                : null;
+              return (
+                <section key={section.id} id={section.id} className="scroll-mt-32">
+                  <p aria-hidden className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">
+                    {String(i + 1).padStart(2, "0")}
                   </p>
-                ))}
-              </Reveal>
-            ))}
-          </div>
-        </div>
-
-        {/* Side rail — prev / next navigation */}
-        <aside className="lg:sticky lg:top-28 lg:w-[260px]">
-          <Reveal delay={320}>
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Navigate</p>
-            <ul className="mt-4 flex flex-col gap-3 lg:flex-col">
-              {previous ? (
-                <li>
-                  <Link
-                    href={`/work/${previous.slug}`}
-                    className="console-card group block rounded-[10px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] p-4 no-underline"
-                  >
-                    <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">← Previous</span>
-                    <span className="mt-1 block text-[length:var(--step-0)] text-[var(--fg)] transition-colors group-hover:text-[var(--signal)]">
-                      {previous.title}
-                    </span>
-                  </Link>
-                </li>
-              ) : null}
-              {next ? (
-                <li>
-                  <Link
-                    href={`/work/${next.slug}`}
-                    className="console-card group block rounded-[10px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] p-4 no-underline"
-                  >
-                    <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Next →</span>
-                    <span className="mt-1 block text-[length:var(--step-0)] text-[var(--fg)] transition-colors group-hover:text-[var(--signal)]">
-                      {next.title}
-                    </span>
-                  </Link>
-                </li>
-              ) : null}
-              {item.repo ? (
-                <li>
-                  <a
-                    href={item.repo}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="console-card group block rounded-[10px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] p-4 no-underline"
-                  >
-                    <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">External</span>
-                    <span className="mt-1 inline-flex items-center gap-2 text-[length:var(--step-0)] text-[var(--fg)] transition-colors group-hover:text-[var(--signal)]">
-                      Repository <span aria-hidden className="arrow-shift">↗</span>
-                    </span>
-                  </a>
-                </li>
-              ) : null}
-            </ul>
+                  <h2 className="mt-2 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.01em]">
+                    {section.heading}
+                  </h2>
+                  {findings ? (
+                    <FindingsTable findings={findings} />
+                  ) : (
+                    section.paragraphs.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="mt-3 text-pretty text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)]"
+                      >
+                        {paragraph}
+                      </p>
+                    ))
+                  )}
+                </section>
+              );
+            })}
           </Reveal>
-        </aside>
+
+          {/* ── Prev / next case-study cards at the end of the body ───────── */}
+          <Reveal delay={60} y={12}>
+            <nav aria-label="More case studies" className="mt-16 grid gap-4 border-t border-[var(--line)] pt-8 sm:grid-cols-2">
+              {previous ? (
+                <Link
+                  href={`/work/${previous.slug}`}
+                  className="group rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-5 no-underline"
+                >
+                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Previous</span>
+                  <span className="mt-2 block text-[length:var(--step-0)] font-medium text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                    {previous.title}
+                  </span>
+                </Link>
+              ) : (
+                <span aria-hidden className="hidden sm:block" />
+              )}
+              {next ? (
+                <Link
+                  href={`/work/${next.slug}`}
+                  className={`group rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-5 no-underline sm:text-right ${
+                    previous ? "" : "sm:col-span-2"
+                  }`}
+                >
+                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Next</span>
+                  <span className="mt-2 block text-[length:var(--step-0)] font-medium text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+                    {next.title}
+                  </span>
+                </Link>
+              ) : null}
+            </nav>
+          </Reveal>
+        </div>
       </div>
     </article>
   );

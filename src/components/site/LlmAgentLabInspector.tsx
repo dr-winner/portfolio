@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CopyButton } from "@/components/site/CopyButton";
 import {
   ATTACK_SCENARIOS,
   runScenario,
@@ -15,13 +16,18 @@ const STAGE_LABELS: Record<TraceStep["stage"], string> = {
   output_handling: "4. Output Sanitizer",
 };
 
-export function LlmAgentLabInspector() {
+export function LlmAgentLabInspector({
+  highlighted = {},
+}: {
+  highlighted?: Record<string, string>;
+}) {
   const [scenarioId, setScenarioId] = useState<string>(ATTACK_SCENARIOS[0].id);
   const [mode, setMode] = useState<SecurityMode>("hardened");
 
   const scenario =
     ATTACK_SCENARIOS.find((item) => item.id === scenarioId) ?? ATTACK_SCENARIOS[0];
   const result = runScenario(scenario, mode);
+  const scenarioCode = highlighted[scenario.id];
 
   return (
     <section
@@ -196,9 +202,18 @@ export function LlmAgentLabInspector() {
             <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               Enforced control (src/lab/llm-agent-security/engine.ts)
             </p>
-            <pre className="mt-2 max-w-full overflow-x-auto rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-3 font-mono text-[12px] leading-relaxed text-[var(--fg)]">
-              <code className="overflow-wrap-anywhere">{scenario.controlSnippet}</code>
-            </pre>
+            {scenarioCode ? (
+              <div className="shiki-host mt-2">
+                <div className="absolute right-2.5 top-2.5 z-10">
+                  <CopyButton value={scenario.controlSnippet} />
+                </div>
+                <div dangerouslySetInnerHTML={{ __html: scenarioCode }} />
+              </div>
+            ) : (
+              <pre className="mt-2 max-w-full overflow-x-auto rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-3 font-mono text-[12px] leading-relaxed text-[var(--fg)]">
+                <code className="overflow-wrap-anywhere">{scenario.controlSnippet}</code>
+              </pre>
+            )}
           </div>
         </div>
       </div>
