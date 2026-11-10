@@ -6,7 +6,7 @@ import {
   runScenario,
 } from "./engine.ts";
 
-describe("LLM & Agent Security Lab — OWASP LLM Top 10 (2025) Regression Suite", () => {
+describe("LLM & Agent Security Lab, OWASP LLM Top 10 (2025) Regression Suite", () => {
   for (const scenario of ATTACK_SCENARIOS) {
     it(`[${scenario.index}] ${scenario.id}: vulnerable pipeline is EXPLOITED and hardened pipeline is BLOCKED`, () => {
       const vulnResult = runScenario(scenario, "vulnerable");

@@ -314,7 +314,7 @@ const variants: Record<string, { wide: () => React.ReactElement; steps: string[]
     notes: { 1: "ATTACK PATH 02", 2: "ATTACK PATH 01", 4: "ATTACK PATHS 03 · 04", 5: "ATTACK PATH 05" },
     caption: "Agent pipeline: user, retriever, prompt assembly, model, tool executor and renderer.",
     figcaption:
-      "The five tested attack paths cross the pipeline: 02 at the retriever boundary, 01 riding untrusted data into the prompt, 03 and 04 at the tool gate, 05 at the renderer. Wide layouts draw dashed trust boundaries with teal markers; small screens label the stages directly.",
+      "The five tested attack paths cross the pipeline: 02 at the retriever boundary, 01 riding untrusted data into the prompt, 03 and 04 at the tool gate, 05 at the renderer. Wide layouts draw dashed trust boundaries with teal markers, and small screens label the stages directly.",
   },
   "healthcare-portal-pentest-lab": {
     wide: PentestWide,

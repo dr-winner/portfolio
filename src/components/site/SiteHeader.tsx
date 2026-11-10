@@ -91,7 +91,7 @@ export function SiteHeader() {
           scrolled ? "bg-[color-mix(in_srgb,var(--bg)_78%,transparent)]" : "bg-transparent"
         }`}
       />
-      {/* Read progress hairline — driven by rAF-throttled scroll updates */}
+      {/* Read progress hairline, driven by rAF-throttled scroll updates */}
       <span
         ref={progressRef}
         aria-hidden

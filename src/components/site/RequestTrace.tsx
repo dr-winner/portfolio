@@ -153,7 +153,7 @@ export function RequestTrace() {
         </span>
       </div>
 
-      {/* Trace lines — 13px mono, line numbers in text-3 */}
+      {/* Trace lines, 13px mono, line numbers in text-3 */}
       <div
         id="trace-panel-0"
         role="tabpanel"

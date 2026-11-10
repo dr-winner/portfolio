@@ -6,7 +6,7 @@ type RevealTag = "div" | "section" | "article" | "li" | "ul" | "ol" | "h1" | "h2
 
 type RevealProps = {
   children: ReactNode;
-  /** Stage delay in ms — combine with sibling reveals for a cascade. */
+  /** Stage delay in ms, combine with sibling reveals for a cascade. */
   delay?: number;
   /** Travel distance in px on the way in. */
   y?: number;
@@ -20,7 +20,7 @@ type RevealProps = {
 };
 
 /**
- * Scroll-staged entrance. Renders server-side as plain, fully visible markup —
+ * Scroll-staged entrance. Renders server-side as plain, fully visible markup,
  * JS then arms the hidden state only for elements outside the viewport, so
  * users without scripting (or with reduced-motion) never see missing content.
  */

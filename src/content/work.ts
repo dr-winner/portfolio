@@ -68,10 +68,10 @@ export const work: WorkItem[] = [
         id: "threat-model",
         heading: "Threat model and trust boundaries",
         paragraphs: [
-          "Boundary 1 — Authenticated Session to Retriever (LLM08 / LLM02): Similarity search must never run globally across tenants and rely on the prompt to hide other tenants' records. Pre-retrieval ACL filtering must happen in the data query.",
-          "Boundary 2 — Untrusted Data to Prompt Context (LLM01): External support tickets and community notes are untrusted input. Concatenating them directly into system instructions lets an attacker plant [SYSTEM OVERRIDE] directives that hijack downstream tool calls.",
-          "Boundary 3 — Model Output to Tool Executor (LLM06 / API1): The model is not an authorization layer. State-changing tools (issue_refund), cross-tenant reads (lookup_invoice), and network egress tools (send_webhook_summary) must be gated by server-side session checks, Zod schemas, host allowlists, and human-in-the-loop confirmation tokens.",
-          "Boundary 4 — Model Output to DOM Renderer (LLM05): Model responses can carry attacker-controlled HTML or markdown image beacons from retrieved chunks and must be sanitized before rendering.",
+          "Boundary 1, Authenticated Session to Retriever (LLM08 / LLM02): Similarity search must never run globally across tenants and rely on the prompt to hide other tenants' records. Pre-retrieval ACL filtering must happen in the data query.",
+          "Boundary 2, Untrusted Data to Prompt Context (LLM01): External support tickets and community notes are untrusted input. Concatenating them directly into system instructions lets an attacker plant [SYSTEM OVERRIDE] directives that hijack downstream tool calls.",
+          "Boundary 3, Model Output to Tool Executor (LLM06 / API1): The model is not an authorization layer. State-changing tools (issue_refund), cross-tenant reads (lookup_invoice), and network egress tools (send_webhook_summary) must be gated by server-side session checks, Zod schemas, host allowlists, and human-in-the-loop confirmation tokens.",
+          "Boundary 4, Model Output to DOM Renderer (LLM05): Model responses can carry attacker-controlled HTML or markdown image beacons from retrieved chunks and must be sanitized before rendering.",
         ],
       },
       {
@@ -90,7 +90,7 @@ export const work: WorkItem[] = [
         heading: "Verification and known limitations",
         paragraphs: [
           "Every attack scenario and positive authorization check is asserted in src/lab/llm-agent-security/engine.test.ts and runs on every push in GitHub Actions (npm test).",
-          "Known limitation: Delimiters (<untrusted_data>) and regex stripping reduce prompt-injection compliance, but no prompt-level filter can guarantee a probabilistic model will never emit a malicious tool call. That is why the security boundary in this lab is placed outside the model—at the pre-retrieval query filter, the deterministic tool policy gate, and the output sanitizer.",
+          "Known limitation: Delimiters (<untrusted_data>) and regex stripping reduce prompt-injection compliance, but no prompt-level filter can guarantee a probabilistic model will never emit a malicious tool call. That is why the security boundary in this lab is placed outside the model, at the pre-retrieval query filter, the deterministic tool policy gate, and the output sanitizer.",
         ],
       },
     ],
