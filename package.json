@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --no-warnings --test src/lab/llm-agent-security/engine.test.ts"
+    "test": "node --no-warnings --test src/lab/llm-agent-security/engine.test.ts src/os/wm/reducer.test.ts"
   },
   "overrides": {
     "@humanfs/node": "0.16.8",
