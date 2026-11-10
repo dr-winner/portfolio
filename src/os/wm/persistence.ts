@@ -10,7 +10,7 @@ import { reduce, initialWmState, type WinState, type WMState } from "./reducer.t
 import { computeWorkArea, clampPosition, DEFAULT_SIZES } from "./geometry.ts";
 import type { AppId } from "../types";
 
-export const WM_STORAGE_KEY = "wos:v1:wm";
+export { WM_STORAGE_KEY } from "./store.ts";
 
 const appSchema = z.enum([
   "welcome",

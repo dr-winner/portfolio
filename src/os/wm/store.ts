@@ -9,6 +9,10 @@ import { createStore } from "zustand/vanilla";
 import { useSyncExternalStore } from "react";
 import { reduce, initialWmState, type WmAction, type WMState } from "./reducer.ts";
 
+/* sessionStorage key for the window session, brief 3.11. Exported here so
+   the shell chrome can clear it without importing persistence (zod). */
+export const WM_STORAGE_KEY = "wos:v1:wm";
+
 export const wmStore = createStore<WMState>(() => initialWmState());
 
 export function dispatchWm(action: WmAction): void {

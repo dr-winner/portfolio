@@ -377,12 +377,20 @@
   border-bottom: 1px solid var(--wos-border);
 }
 .wos-dock {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--wos-z-dock);
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: calc(100vw - 24px);
   background: var(--wos-glass);
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
   border: 1px solid var(--wos-highlight);
   border-radius: 20px;
-  position: relative;
   padding: 8px;
 }
 .wos-dock::before {
@@ -647,4 +655,326 @@
   color: var(--wos-text);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* --- Menu bar, brief 6.9. 32px tall glass on the menubar layer with the
+   mark, the system menu, the focused app name, the right side quick
+   actions and a fixed width clock placeholder. --- */
+.wos-menubar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  z-index: var(--wos-z-menubar);
+}
+.wos-menubar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 100%;
+  padding: 0 10px 0 6px;
+}
+.wos-menubar-left {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.wos-menubar-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.wos-menubar-brand {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  border: 0;
+  padding: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--wos-text);
+  cursor: pointer;
+}
+.wos-menubar-brand:hover {
+  background: var(--wos-highlight);
+}
+.wos-menubar-brand[data-open="true"] {
+  background: var(--wos-accent-dim);
+  color: var(--wos-accent);
+}
+.wos-menubar-app {
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--wos-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 32ch;
+}
+.wos-menubar-quick {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  border: 0;
+  padding: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--wos-text-2);
+  cursor: pointer;
+  text-decoration: none;
+}
+.wos-menubar-quick:hover {
+  background: var(--wos-highlight);
+  color: var(--wos-text);
+}
+.wos-menubar-clock {
+  min-width: 86px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+  border-radius: 7px;
+  color: var(--wos-text-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  cursor: default;
+  white-space: nowrap;
+}
+.wos-menubar-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  margin-left: 2px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--wos-border-strong);
+  background: transparent;
+  color: var(--wos-text);
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+}
+.wos-menubar-pill:hover {
+  border-color: rgba(var(--wos-accent-rgb), 0.5);
+  color: var(--wos-accent);
+}
+.wos-menubar-pill-accent {
+  background: var(--wos-accent-dim);
+  border-color: rgba(var(--wos-accent-rgb), 0.3);
+  color: var(--wos-accent);
+}
+.wos-menubar-pill-accent:hover {
+  color: var(--wos-accent);
+}
+
+/* The system menu dropdown, brief 6.9: opens in 120ms with opacity and a
+   4px drop. Sits on the menus layer above every window. */
+.wos-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: var(--wos-z-menus);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 220px;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--wos-border-strong);
+  background: var(--wos-glass-solid);
+  box-shadow: var(--wos-shadow-focus);
+  animation: wos-menu-in var(--wos-dur-menu) var(--wos-ease-micro);
+}
+@keyframes wos-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.wos-menu-item {
+  appearance: none;
+  border: 0;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--wos-text);
+  font-size: 13px;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+.wos-menu-item:hover {
+  background: var(--wos-highlight);
+}
+
+.wos-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- Dock internals, brief 6.7 and 6.8. The item width is set by the
+   magnifier while it is live, the icon scales from the bottom centre so
+   the bar baseline never moves. --- */
+.wos-dock-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 52px;
+  padding-top: 2px;
+  border-radius: 10px;
+  text-decoration: none;
+}
+.wos-dock-icon {
+  display: block;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+.wos-dock-icon .wos-tile {
+  width: 52px;
+  height: 52px;
+}
+.wos-dock-dot {
+  width: 4px;
+  height: 4px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: transparent;
+}
+.wos-dock-dot[data-state="focused"] {
+  background: var(--wos-accent);
+}
+.wos-dock-dot[data-state="running"] {
+  background: var(--wos-text-3);
+}
+.wos-dock-item:hover .wos-dock-icon .wos-tile {
+  border-color: rgba(var(--wos-accent-rgb), 0.35);
+}
+.wos-dock-divider {
+  align-self: center;
+  width: 1px;
+  height: 44px;
+  margin: 0 3px;
+  background: var(--wos-border-strong);
+}
+.wos-dock-item[data-wos-minimized="true"] {
+  opacity: 0.85;
+}
+/* Tooltip, brief 6.8: 12px glass pill 10px above the icon after 300ms,
+   shown by the dock component's timer. */
+.wos-dock-tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--wos-z-menus);
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--wos-border-strong);
+  background: var(--wos-glass-solid);
+  color: var(--wos-text);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--wos-dur-menu) var(--wos-ease-micro);
+  pointer-events: none;
+}
+.wos-dock-tip[data-show="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+/* First launch bounce, brief 6.8: translateY 0 to -10px and back over
+   420ms. Keyframe transform replaces the inline magnification on that one
+   item for the duration, which is fine for a first launch. */
+.wos-dock-item[data-bounce="true"] .wos-dock-icon {
+  animation: wos-dock-bounce 420ms cubic-bezier(0.3, 1.4, 0.45, 1) 1;
+}
+@keyframes wos-dock-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* --- Desktop icons, brief line 101: a top right column of 88px cells with
+   12px labels of 2 lines max. Hover and focus bring a quiet scrim so the
+   label stays legible over any wallpaper. --- */
+.wos-icons {
+  position: absolute;
+  top: 44px;
+  right: 12px;
+  z-index: var(--wos-z-icons);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wos-icons li {
+  width: 88px;
+  height: 88px;
+}
+.wos-icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  color: var(--wos-text);
+  text-decoration: none;
+}
+.wos-icon:hover,
+.wos-icon:focus-visible {
+  background: var(--wos-highlight);
+}
+.wos-icon:focus-visible {
+  outline: 2px solid rgba(var(--wos-accent-rgb), 0.55);
+  outline-offset: -2px;
+}
+.wos-icon .wos-tile {
+  width: 44px;
+  height: 44px;
+}
+.wos-icon-label {
+  max-width: 84px;
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: break-word;
+  color: var(--wos-text);
+  /* Legibility over any wallpaper, dark or daylight. */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 0 8px rgba(0, 0, 0, 0.25);
+}
+[data-wos-theme="daylight"] .wos-icon-label {
+  text-shadow: none;
 }
