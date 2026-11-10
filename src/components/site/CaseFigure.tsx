@@ -136,23 +136,23 @@ function PentestWide() {
   const tools: Record<number, string> = { 2: "Burp Suite", 4: "John the Ripper", 5: "ExifTool" };
   const xs = [16, 140, 266, 390, 515, 640];
   return (
-    <svg viewBox="0 0 760 192" role="img" aria-label="Attack chain from recon to username enumeration, SQL injection bypass, document access, offline cracking and metadata review" data-wide>
+    <svg viewBox="0 0 760 164" role="img" aria-label="Attack chain from recon to username enumeration, SQL injection bypass, document access, offline cracking and metadata review" data-wide>
       {ns.map((n, i) => (
-        <N key={n} d={i} x={xs[i]} y={46} w={104} h={34} hl={i === 2}>
+        <N key={n} d={i} x={xs[i]} y={18} w={104} h={34} hl={i === 2}>
           {n}
         </N>
       ))}
       {[140, 264, 390, 515, 640].map((to, i) => (
-        <A key={to} d={7 + i} x={xs[i] + 104 + 2} y={63} to={to} />
+        <A key={to} d={7 + i} x={xs[i] + 104 + 2} y={35} to={to} />
       ))}
       {Object.entries(tools).map(([k, t], i) => (
         <g key={k} data-node style={styleVar(13 + i)}>
-          <text x={xs[Number(k)] + 52} y={114} textAnchor="middle" fontSize="9" fontFamily={M} fill="var(--amber)">
+          <text x={xs[Number(k)] + 52} y={86} textAnchor="middle" fontSize="9" fontFamily={M} fill="var(--amber)">
             {t}
           </text>
         </g>
       ))}
-      <text data-node style={styleVar(16)} x={380} y={158} textAnchor="middle" fontSize="8.5" fontFamily={M} fill="var(--fg-subtle)">
+      <text data-node style={styleVar(16)} x={380} y={130} textAnchor="middle" fontSize="8.5" fontFamily={M} fill="var(--fg-subtle)">
         PTES · OWASP WSTG METHODOLOGY · CVSS V3.1 REPORT
       </text>
     </svg>
