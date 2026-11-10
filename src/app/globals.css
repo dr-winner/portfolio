@@ -103,30 +103,24 @@
     overflow-wrap: anywhere;
   }
 
-  /* ── Reveal system (scroll-staged), armed only when JS is present ─────── */
-
-  [data-reveal] {
-    transition:
-      opacity var(--dur-3) var(--ease-out) var(--reveal-delay, 0ms),
-      transform var(--dur-4) var(--ease-out) var(--reveal-delay, 0ms);
-  }
-  @media (scripting: enabled) {
-    html.reveal-armed [data-reveal]:not(.is-in) {
-      opacity: 0;
-      transform: translateY(var(--reveal-y));
-    }
-  }
+  /* ── Reveal system (section 6): content is visible without scrolling ──
+     Server output is complete and static. JS arms the page only for motion;
+     the shared observer adds is-in to elements that begin inside the
+     initial viewport, which plays a one-shot entrance (staggered by the
+     per-element --reveal-delay). Elements below the fold are never marked
+     and simply stay visible. reduced motion: no arming, no animation. */
   html.reveal-armed [data-reveal].is-in {
-    opacity: 1;
-    transform: none;
+    animation: fx-rise var(--dur-4) var(--ease-out) var(--reveal-delay, 0ms) backwards;
   }
-  /* Mask variant: wipe-bloom on the way in. The clip lives ONLY in the
-     incoming animation — never in the hidden state, because a zero-area
-     clip-path removes the element from IntersectionObserver geometry and
-     the reveal would deadlock before it started. */
   html.reveal-armed [data-reveal="mask"].is-in {
     animation: fx-mask var(--dur-4) var(--ease-inout) var(--reveal-delay, 0ms) both;
   }
+  @keyframes fx-rise {
+    from { opacity: 0; transform: translateY(var(--reveal-y, 12px)); }
+    to { opacity: 1; transform: none; }
+  }
+  /* Mask variant: wipe-bloom on the way in. The clip lives ONLY in the
+     incoming animation — never in a persistent hidden state. */
   @keyframes fx-mask {
     from { clip-path: inset(0 100% 0 0); }
     to { clip-path: inset(0 0 0 0); }
@@ -163,31 +157,11 @@
     transform: translateY(-4px);
   }
 
-  /* ── Case figure: draw-on-scroll choreography (section 5.3) ────────────
-     Revealed only under the same arming rule as everything else: scripting
-     on, motion allowed (html.reveal-armed). Otherwise the diagram is simply
-     visible, complete. One-shot: it plays once and stays. */
-  @media (prefers-reduced-motion: no-preference) {
-    html.reveal-armed .case-figure [data-draw] path {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      transition: stroke-dashoffset 900ms var(--ease-inout) calc(var(--d, 0) * 110ms);
-    }
-    html.reveal-armed .case-figure [data-node] {
-      opacity: 0;
-      transform: translateY(5px);
-      transition:
-        opacity 380ms var(--ease-out) calc(var(--d, 0) * 110ms + 160ms),
-        transform 380ms var(--ease-out) calc(var(--d, 0) * 110ms + 160ms);
-    }
-    html.reveal-armed .case-figure.is-in [data-draw] path {
-      stroke-dashoffset: 0;
-    }
-    html.reveal-armed .case-figure.is-in [data-node] {
-      opacity: 1;
-      transform: none;
-    }
-  }
+  /* Per-case figures render as their final diagram, statically: the draw
+     choreography was removed so the figure is never blank before a scroll
+     (full-page screenshots and reduced motion show the complete node and
+     arrow layout). svg[data-draw] / g[data-node] attributes remain in the
+     markup for any future re-enable. */
 
   /* Wide and vertical variants switch purely in CSS (same ownership block,
      so no utility-layer fight): vertical below md, wide from md up. */
@@ -392,14 +366,17 @@
     50% { opacity: 0.35; transform: scale(1.5); }
   }
 
-  /* ── Interior rules that grow on reveal-in ─────────────────────────────── */
+  /* ── Interior rules that grow once the owning reveal enters ───────────── */
 
   .fx-rule {
     transform-origin: left;
-    transition: transform var(--dur-4) var(--ease-inout);
   }
-  html.reveal-armed [data-reveal]:not(.is-in) .fx-rule {
-    transform: scaleX(0);
+  html.reveal-armed [data-reveal].is-in .fx-rule {
+    animation: fx-rule-grow var(--dur-4) var(--ease-inout) var(--reveal-delay, 0ms) backwards;
+  }
+  @keyframes fx-rule-grow {
+    from { transform: scaleX(0); }
+    to { transform: none; }
   }
 }
 
@@ -413,8 +390,7 @@
     scroll-behavior: auto !important;
   }
   html.reveal-armed [data-reveal],
-  html.reveal-armed [data-reveal]:not(.is-in) {
-    opacity: 1;
-    transform: none;
+  html.reveal-armed [data-reveal].is-in {
+    animation: none;
   }
 }

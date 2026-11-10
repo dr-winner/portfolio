@@ -3,10 +3,9 @@ import type { CSSProperties } from "react";
 /**
  * Large per-case-study figures (section 5.3). Each variant ships two layouts:
  * the wide composed diagram for md and up, and a simplified vertical pipeline
- * for small screens (section 6). Strokes marked [data-draw] and node groups
- * marked [data-node] carry a --d stage index; CSS draws them in sequence once
- * the figure enters the viewport. Scripting off or reduced motion: the CSS
- * guard never hides them, so the final diagram is simply visible.
+ * for small screens (section 6). Figures render statically as the final
+ * diagram: no draw choreography, so the section is complete before any
+ * scroll and under reduced motion or with scripting off.
  */
 
 const M = "var(--font-geist-mono), monospace";

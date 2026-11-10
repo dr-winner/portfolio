@@ -175,10 +175,10 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
         </dl>
       </Reveal>
 
-      {/* ── Large per-case diagram, drawn on scroll ─────────────────────── */}
-      <Reveal as="div" delay={200} y={0} className="case-figure mt-10">
+      {/* ── Large per-case diagram, always the final static drawing ─────── */}
+      <div className="case-figure mt-10">
         <CaseFigure slug={item.slug} />
-      </Reveal>
+      </div>
 
       {/* ── Two-column reading layout: sticky TOC + body (section 5.3) ──── */}
       <div className="mt-14 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[230px_minmax(0,1fr)] min-[1100px]:gap-14">

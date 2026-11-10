@@ -8,9 +8,9 @@ type RevealProps = {
   children: ReactNode;
   /** Stage delay in ms, combine with sibling reveals for a cascade. */
   delay?: number;
-  /** Travel distance in px on the way in. */
+  /** Travel distance in px on the way in (viewport enters only). */
   y?: number;
-  /** "mask" blooms by wipe; default "rise" fades up. */
+  /** "mask" blooms by wipe; default rises in. */
   variant?: "rise" | "mask";
   as?: RevealTag;
   className?: string;
@@ -20,49 +20,43 @@ type RevealProps = {
 };
 
 /**
- * Scroll-staged entrance. Renders server-side as plain, fully visible markup,
- * JS then arms the hidden state only for elements outside the viewport, so
- * users without scripting (or with reduced-motion) never see missing content.
+ * Staged entrance with a hard rule: content is visible without scrolling.
+ * Server output is plain, fully visible markup. One shared Intersection
+ * Observer checks each node once during hydration: elements that begin
+ * inside the initial viewport play their entrance (rise or mask, cascaded
+ * with delay); elements that begin below the fold are left untouched, so
+ * nothing ever sits hidden waiting for a scroll and a full-page screenshot
+ * without scrolling shows every section. Scripting off or reduced motion:
+ * no arming at all, the page is simply static.
  */
-export function Reveal({ children, delay = 0, y = 18, variant, as: Tag = "div", className, id, style, ...aria }: RevealProps) {
-  const ref = useRef<HTMLDivElement | null>(null);
+
+let sharedObserver: IntersectionObserver | null = null;
+
+function io(): IntersectionObserver {
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) entry.target.classList.add("is-in");
+        sharedObserver?.unobserve(entry.target);
+      }
+    });
+  }
+  return sharedObserver;
+}
+
+export function Reveal({ children, delay = 0, y = 12, variant, as: Tag = "div", className, id, style, ...aria }: RevealProps) {
+  const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const root = document.documentElement;
     const node = ref.current;
     if (!node) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduce.matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    root.classList.add("reveal-armed");
-
-    const style = node.style;
-    style.setProperty("--reveal-delay", `${delay}ms`);
-    style.setProperty("--reveal-y", `${y}px`);
-
-    const rect = node.getBoundingClientRect();
-    const inFirstFrame = rect.top < window.innerHeight * 0.94 && rect.bottom > -40;
-
-    let observer: IntersectionObserver | null = null;
-    if (inFirstFrame) {
-      // Above the fold: enter immediately (runs the load-in cascade).
-      node.classList.add("is-in");
-    } else {
-      observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-in");
-              observer?.unobserve(entry.target);
-            }
-          }
-        },
-        { rootMargin: "0px 0px -8% 0px" },
-      );
-      observer.observe(node);
-    }
-
-    return () => observer?.disconnect();
+    document.documentElement.classList.add("reveal-armed");
+    node.style.setProperty("--reveal-delay", `${delay}ms`);
+    node.style.setProperty("--reveal-y", `${y}px`);
+    io().observe(node);
+    return () => sharedObserver?.unobserve(node);
   }, [delay, y]);
 
   return (
