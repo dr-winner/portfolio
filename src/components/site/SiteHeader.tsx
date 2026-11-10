@@ -87,10 +87,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 h-16 border-b border-transparent transition-colors duration-[var(--dur-2)]">
       <div
         aria-hidden
-        className={`absolute inset-0 transition-[background-color,backdrop-filter] duration-[var(--dur-2)] ${
-          scrolled
-            ? "bg-[color-mix(in_srgb,var(--bg)_78%,transparent)] backdrop-blur-[12px] backdrop-saturate-[140%]"
-            : "bg-transparent"
+        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[140%] transition-[background-color] duration-[var(--dur-2)] ${
+          scrolled ? "bg-[color-mix(in_srgb,var(--bg)_78%,transparent)]" : "bg-transparent"
         }`}
       />
       {/* Read progress hairline — driven by rAF-throttled scroll updates */}

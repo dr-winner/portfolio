@@ -107,7 +107,7 @@ export default async function RootLayout({
       className={clsx(GeistSans.variable, GeistMono.variable, themeClass)}
       style={{ ["--font-sans" as string]: "var(--font-geist-sans)", ["--font-mono" as string]: "var(--font-geist-mono)", ["--font-display" as string]: "var(--font-geist-sans)" }}
     >
-      <body className="font-sans antialiased overflow-x-hidden">
+      <body className="font-sans antialiased overflow-x-clip">
         {children}
         {/* Vercel Analytics only where the edge actually serves its script:
             locally the 404 fetch painted console errors (bp audit). */}

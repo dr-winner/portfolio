@@ -15,7 +15,11 @@
     background-color: var(--bg);
     /* Section anchors clear the fixed header + iOS status inset */
     scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
-    overflow-x: hidden;
+    /* clip instead of hidden: hidden computes overflow-y to auto, which makes
+       html a scroll container and breaks position: sticky (the sticky header
+       and the case-study TOC scrolled away with the page). clip clips without
+       creating a scroll container. */
+    overflow-x: clip;
   }
 
   html.light {
