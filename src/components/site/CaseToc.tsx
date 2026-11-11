@@ -64,7 +64,7 @@ export function CaseToc({ sections }: { sections: TocSection[] }) {
                 <span aria-hidden className={`font-mono text-[11px] ${isActive ? "text-[var(--signal)]" : "text-[var(--fg-subtle)]"}`}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="min-w-0 truncate">{section.heading}</span>
+                <span className="min-w-0 whitespace-normal break-words">{section.heading}</span>
               </a>
             </li>
           );

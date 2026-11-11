@@ -26,7 +26,6 @@ export function FigurePlay({ slug, children }: { slug: string; children: ReactNo
   return (
     <div ref={ref} className={`relative ${play ? "figure-play" : ""}`} style={{ viewTransitionName: `work-${slug}` }}>
       {children}
-      <span aria-hidden className="figure-packet" />
     </div>
   );
 }

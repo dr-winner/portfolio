@@ -151,7 +151,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
             Work
           </Link>
           <span aria-hidden className="shrink-0">/</span>
-          <span className="min-w-0 truncate">{item.title}</span>
+          <span className="min-w-0 break-words">{item.title}</span>
         </p>
       </Reveal>
       <Reveal delay={80} y={20}>
@@ -189,7 +189,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
       </div>
 
       {/* ── Two-column reading layout: sticky TOC + body (section 5.3) ──── */}
-      <div className="mt-14 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[230px_minmax(0,1fr)] min-[1100px]:gap-14">
+      <div className="mt-14 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[280px_minmax(0,1fr)] min-[1100px]:gap-14">
         <aside className="min-w-0 self-start min-[1100px]:sticky min-[1100px]:top-28">
           {/* The TOC is a desktop reading aid: it stays out of the narrow
               flow below 1100px. */}
@@ -204,7 +204,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
               className="group mt-8 block rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-4 no-underline"
             >
               <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Repository</span>
-              <span className="mt-1 block break-all font-mono text-[13px] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
+              <span className="mt-1 block overflow-x-auto whitespace-nowrap font-mono text-[13px] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
                 {new URL(item.repo).pathname.split("/").filter(Boolean).slice(0, 2).join("/")}
                 <span aria-hidden className="arrow-shift ml-1.5 inline-block">↗</span>
               </span>

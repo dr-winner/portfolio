@@ -3,7 +3,6 @@ import Link from "next/link";
 import { CopyEmail } from "@/components/site/CopyEmail";
 import { Reveal } from "@/components/motion/Reveal";
 import { LinkCard } from "@/components/site/LinkCard";
-import { StatusDot } from "@/components/site/StatusDot";
 import { cvHref, mailto, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -64,9 +63,6 @@ export default function ContactPage() {
         {/* ── Right: quiet link cards with icon, label, handle ────────────── */}
         <Reveal delay={200} y={14} className="min-w-0">
           <aside className="flex flex-col gap-4 self-start min-[1100px]:sticky min-[1100px]:top-28">
-            <Reveal delay={200} y={10}>
-              <StatusDot label={site.availabilityShort} />
-            </Reveal>
             {links.map((link, i) => (
               <Reveal key={link.label} delay={240 + i * 60} y={10}>
                 <LinkCard href={link.href} label={link.label} handle={link.handle} />

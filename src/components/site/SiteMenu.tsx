@@ -18,9 +18,19 @@ export function SiteMenu({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setEntered(true));
-    const previous = document.body.style.overflow;
+    const html = document.documentElement;
+    const previousHtml = html.style.overflow;
+    const previousBody = document.body.style.overflow;
+    const previousPosition = document.body.style.position;
+    const previousTop = document.body.style.top;
+    const previousWidth = document.body.style.width;
+    const scrollY = window.scrollY;
+    html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector("a")?.focus();
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    panelRef.current?.querySelector<HTMLElement>("[data-close]")?.focus();
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
       if (event.key === "Tab" && panelRef.current) {
@@ -40,7 +50,12 @@ export function SiteMenu({ onClose }: { onClose: () => void }) {
     window.addEventListener("keydown", onKey);
     return () => {
       cancelAnimationFrame(frame);
-      document.body.style.overflow = previous;
+      html.style.overflow = previousHtml;
+      document.body.style.overflow = previousBody;
+      document.body.style.position = previousPosition;
+      document.body.style.top = previousTop;
+      document.body.style.width = previousWidth;
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", onKey);
     };
   }, [onClose]);
@@ -76,9 +91,14 @@ export function SiteMenu({ onClose }: { onClose: () => void }) {
           if (dy > 80) onClose();
         }}
       >
-        <button type="button" data-handle="true" className="mx-auto mb-6 h-11 w-16" aria-label="Close menu" onClick={onClose}>
-          <span aria-hidden className="mx-auto block h-1 w-10 rounded-full bg-[var(--line-strong)]" />
-        </button>
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <button type="button" data-handle="true" className="h-11 w-16" aria-label="Drag to close" onClick={onClose}>
+            <span aria-hidden className="mx-auto block h-1 w-10 rounded-full bg-[var(--line-strong)]" />
+          </button>
+          <button type="button" data-close="" onClick={onClose} className="inline-flex h-11 items-center rounded-[8px] border border-[var(--line-strong)] px-4 font-mono text-[13px] text-[var(--fg)]">
+            Close
+          </button>
+        </div>
         <nav aria-label="Mobile">
           {links.map((link, index) => (
             <Link key={link.href} href={link.href} onClick={onClose} className="sheet-link" style={{ animationDelay: `${index * 40}ms` }}>

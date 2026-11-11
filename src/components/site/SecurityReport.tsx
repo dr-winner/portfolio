@@ -52,7 +52,7 @@ export function SecurityReport({ variant = "chip" }: { variant?: "chip" | "panel
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 items-center gap-2 rounded-full border border-[var(--line-strong)] px-3 font-mono text-[12px] text-[var(--fg)]"
+        className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full border border-[var(--line-strong)] px-3 font-mono text-[12px] text-[var(--fg)]"
       >
         <span aria-hidden className="h-2 w-2 rounded-full bg-[var(--signal)]" />
         Checked in your browser
