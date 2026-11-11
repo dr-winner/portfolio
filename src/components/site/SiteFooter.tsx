@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cvHref, mailto, site } from "@/content/site";
-import { StatusDot } from "@/components/site/StatusDot";
 import { SecurityReport } from "@/components/site/SecurityReport";
 
 const nav = [
@@ -28,9 +27,6 @@ export function SiteFooter() {
             <p className="mt-3 max-w-[36ch] text-[length:var(--step--1)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
               {site.headline}. {site.location}.
             </p>
-            <div className="mt-4">
-              <StatusDot label={site.availabilityShort} />
-            </div>
           </div>
           <nav aria-label="Footer">
             <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Site</p>

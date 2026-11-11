@@ -24,57 +24,27 @@ function shortTitle(title: string) {
 export function AgentLabDemo() {
   const [mode, setMode] = useState<SecurityMode>("vulnerable");
   const [scenarioId, setScenarioId] = useState(ATTACK_SCENARIOS[0].id);
-  const [step, setStep] = useState(0);
-  const [chars, setChars] = useState(0);
+  const [step, setStep] = useState(8);
   const [runKey, setRunKey] = useState(0);
 
   const scenario = ATTACK_SCENARIOS.find((item) => item.id === scenarioId) ?? ATTACK_SCENARIOS[0];
   const result = runScenario(scenario, mode);
   const chunks = KNOWLEDGE_CHUNKS.filter((chunk) => result.retrievedChunkIds.includes(chunk.id));
   const reply = result.sanitizedOutput || scenario.simulatedRawModelOutput;
-  const stream = mode === "vulnerable";
 
   useEffect(() => {
     const current = ATTACK_SCENARIOS.find((item) => item.id === scenarioId) ?? ATTACK_SCENARIOS[0];
     const evaluation = runScenario(current, mode);
-    const text = evaluation.sanitizedOutput || current.simulatedRawModelOutput;
-    const streaming = mode === "vulnerable";
-    const reduced = prefersReducedMotion();
-    if (reduced) {
+    if (prefersReducedMotion()) {
       setStep(8);
-      setChars(text.length);
       return undefined;
     }
-    setStep(0);
-    setChars(0);
-    const timers: number[] = [];
-    timers.push(window.setTimeout(() => setStep(1), 160));
-    timers.push(window.setTimeout(() => setStep(2), 480));
-    timers.push(window.setTimeout(() => setStep(3), 780));
-    const streamMs = streaming ? Math.min(text.length, 280) * 18 : 0;
-    timers.push(window.setTimeout(() => setStep(4), 860 + streamMs));
-    evaluation.trace.forEach((_, index) => {
-      timers.push(window.setTimeout(() => setStep(5 + index), 980 + streamMs + index * 300));
-    });
+    setStep(4);
+    const timers = evaluation.trace.map((_, index) =>
+      window.setTimeout(() => setStep(5 + index), 200 + index * 300),
+    );
     return () => timers.forEach((id) => window.clearTimeout(id));
   }, [mode, scenarioId, runKey]);
-
-  useEffect(() => {
-    if (step < 3 || prefersReducedMotion()) return undefined;
-    if (!stream) {
-      setChars(reply.length);
-      return undefined;
-    }
-    if (step !== 3) return undefined;
-    let count = 0;
-    const limit = Math.min(reply.length, 280);
-    const timer = window.setInterval(() => {
-      count += 1;
-      setChars(count >= limit ? reply.length : count);
-      if (count >= limit) window.clearInterval(timer);
-    }, 18);
-    return () => window.clearInterval(timer);
-  }, [step, stream, reply]);
 
   useEffect(() => {
     if (step < 8) return;
@@ -95,7 +65,6 @@ export function AgentLabDemo() {
   }
 
   const ids = scenario.owaspRef.match(/LLM\d+|API\d+/g) ?? [];
-  const shownReply = stream && step >= 3 ? reply.slice(0, chars) : step >= 4 || !stream ? reply : "";
 
   return (
     <div className="lab-panel">
@@ -136,17 +105,17 @@ export function AgentLabDemo() {
 
       <div className="mt-4 grid gap-4 min-[1024px]:grid-cols-[minmax(0,1fr)_210px]">
         <div className="min-w-0 rounded-[12px] border border-[var(--line)] bg-[var(--bg-deep)] p-4">
-          <p className={`font-mono text-[13px] leading-[1.55] text-[var(--fg)] ${step >= 1 ? "result-in" : "opacity-0"}`}>
+          <p className="font-mono text-[13px] leading-[1.55] text-[var(--fg)]">
             {scenario.userPrompt}
           </p>
-          <div className={`mt-3 space-y-2 ${step >= 2 ? "result-in" : "opacity-0"}`}>
+          <div className="mt-3 space-y-2">
             {chunks.map((chunk) => (
               <p key={chunk.id} className="font-mono text-[13px] leading-[1.55] text-[var(--fg-muted)]">
                 {highlightOverride(chunk.content)}
               </p>
             ))}
           </div>
-          <p className="mt-3 min-h-[3.2em] font-mono text-[13px] leading-[1.55] text-[var(--fg)]">{shownReply}</p>
+          <p className="mt-3 min-h-[3.2em] font-mono text-[13px] leading-[1.55] text-[var(--fg)]">{reply}</p>
           {step >= 4 && result.executedTools.length > 0 ? (
             <p className="mt-3 rounded-[8px] border border-[color-mix(in_srgb,var(--danger)_45%,transparent)] bg-[color-mix(in_srgb,var(--danger)_12%,transparent)] px-3 py-2 font-mono text-[13px] text-[var(--danger)]">
               {result.executedTools[0]} ran
@@ -178,7 +147,7 @@ export function AgentLabDemo() {
         </ol>
       </div>
 
-      <div className={`mt-4 min-h-[52px] ${step >= 8 ? "result-in" : "opacity-0"}`}>
+      <div className="mt-4 min-h-[52px]">
         <p className="flex flex-wrap items-center gap-2 font-mono text-[13px] text-[var(--fg)]">
           <span>{ids.join(" / ")}</span>
           <span className="sev sev-high">{scenario.cvssScore.includes("High") ? "High" : scenario.cvssScore}</span>

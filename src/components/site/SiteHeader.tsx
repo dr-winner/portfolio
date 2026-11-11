@@ -144,7 +144,6 @@ export function SiteHeader() {
         <button
           type="button"
           data-magnet=""
-          aria-label={`Search. ${shortcut}`}
           onMouseEnter={() => window.dispatchEvent(new Event("palette:preload"))}
           onFocus={() => window.dispatchEvent(new Event("palette:preload"))}
           onClick={() => window.dispatchEvent(new Event("palette:open"))}

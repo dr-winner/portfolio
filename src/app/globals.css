@@ -538,35 +538,10 @@ html.light .hero-cursor {
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    .hero-scroll-card {
-      animation: hero-card-out linear both;
-      animation-timeline: view();
-      animation-range: exit 0% exit 80%;
-    }
     .hero-lights {
       animation: hero-light-out linear both;
       animation-timeline: view();
       animation-range: exit 0% exit 80%;
-    }
-    .heading-reveal {
-      animation: heading-mask 520ms var(--ease-enter) both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 35%;
-    }
-    .statement-word {
-      animation: word-in linear both;
-      animation-timeline: view();
-      animation-range: cover calc(30% + (var(--i) * 1.5%)) cover calc(55% + (var(--i) * 1.5%));
-    }
-    .trust-rail {
-      animation: rail-draw linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 90%;
-    }
-    .work-node {
-      animation: node-light linear both;
-      animation-timeline: view();
-      animation-range: cover 35% cover 65%;
     }
   }
 }

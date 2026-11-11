@@ -94,7 +94,10 @@ export default async function HomePage() {
 
       <section id="work" className="selected-work mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] pb-[var(--space-2xl)] pt-[var(--space-2xl)]">
         <span aria-hidden className="trust-rail" />
-        <SectionLabel title="Selected work" />
+        <h2 className="flex items-center gap-3 font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+          Selected work
+          <span aria-hidden className="h-px flex-1 bg-[var(--line)]" />
+        </h2>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {featured.map((item) => (
             <div key={item.slug} className="relative">

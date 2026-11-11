@@ -151,7 +151,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
             Work
           </Link>
           <span aria-hidden className="shrink-0">/</span>
-          <span className="min-w-0 truncate">{item.title}</span>
+          <span className="min-w-0">{item.title}</span>
         </p>
       </Reveal>
       <Reveal delay={80} y={20}>
