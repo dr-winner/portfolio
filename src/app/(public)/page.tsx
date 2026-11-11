@@ -63,8 +63,8 @@ export default async function HomePage() {
           <div className="hero-grid" />
           <div className="hero-cursor" />
         </div>
-        <div className="relative z-[1] mx-auto grid w-full max-w-[1200px] flex-1 items-center gap-8 pb-8 lg:min-h-[inherit] lg:grid-cols-12 lg:pb-16">
-          <div className="lg:col-span-6">
+        <div className="relative z-[1] mx-auto grid w-full max-w-[1200px] items-center gap-8 pb-2 min-[960px]:grid-cols-12">
+          <div className="min-[960px]:col-span-6">
             <div className="enter-up" style={{ ["--enter-y" as string]: "8px" }}>
               <StatusDot pulse label={site.availabilityShort} />
             </div>
@@ -91,7 +91,7 @@ export default async function HomePage() {
               </Button>
             </div>
           </div>
-          <div className="hero-scroll-card lg:col-span-6 lg:-mb-12">
+          <div className="hero-scroll-card min-[960px]:col-span-6">
             <RequestTrace />
           </div>
         </div>

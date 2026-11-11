@@ -67,7 +67,7 @@ export function WorkCard({ item, className = "" }: { item: WorkItem; className?:
       <div className="flex min-w-0 flex-1 flex-col p-5">
         <div className="flex flex-wrap items-center gap-2">
           <Badge>{category}</Badge>
-          {item.badges.includes("Training lab") ? <Badge>Training lab</Badge> : null}
+          {item.slug === "healthcare-portal-pentest-lab" ? <Badge>Training lab</Badge> : null}
           <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
         </div>
         <h3

@@ -114,15 +114,16 @@ export function AgentLabDemo() {
         </div>
       </div>
 
-      <div className="mt-4 flex gap-2 overflow-x-auto" role="tablist" aria-label="Lab scenarios">
+      <div className="chip-scroll mt-4" role="tablist" aria-label="Lab scenarios">
         {ATTACK_SCENARIOS.map((item) => (
           <button
             key={item.id}
             type="button"
             role="tab"
             aria-selected={item.id === scenario.id}
+            aria-label={`${item.index} ${item.title}`}
             onClick={() => replay(mode, item.id)}
-            className={`h-11 shrink-0 rounded-[8px] border px-3 font-mono text-[12px] ${
+            className={`h-11 shrink-0 whitespace-nowrap rounded-[8px] border px-3 font-mono text-[12px] ${
               item.id === scenario.id
                 ? "border-[var(--signal)] text-[var(--fg)]"
                 : "border-[var(--line)] text-[var(--fg-muted)]"

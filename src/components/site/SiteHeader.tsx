@@ -144,14 +144,21 @@ export function SiteHeader() {
         <button
           type="button"
           data-magnet=""
-          aria-label="Open command palette"
+          aria-label={`Search. ${shortcut}`}
           onMouseEnter={() => window.dispatchEvent(new Event("palette:preload"))}
           onFocus={() => window.dispatchEvent(new Event("palette:preload"))}
           onClick={() => window.dispatchEvent(new Event("palette:open"))}
-          className="inline-flex h-11 w-[76px] items-center justify-center rounded-[6px] border border-[var(--line)] font-mono text-[12px] tracking-[0.08em] text-[var(--fg-muted)]"
+          className="inline-flex h-11 items-center gap-2 rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-2.5 text-[var(--fg)]"
         >
+          <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <circle cx="7" cy="7" r="4.2" />
+            <path d="M10.2 10.2 L13 13" strokeLinecap="round" />
+          </svg>
           <span className="magnet-visual">
-            <span className="magnet-label">{shortcut}</span>
+            <span className="magnet-label font-mono text-[13px]">
+              <span className="hidden sm:inline">Search</span>
+              <span className="ml-0 text-[var(--fg-muted)] sm:ml-2">{shortcut}</span>
+            </span>
           </span>
         </button>
         <ThemeToggle />
