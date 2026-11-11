@@ -62,7 +62,7 @@ function startUi(preset: PresetId, value: string): Ui {
   return {
     preset,
     value,
-    typed: 0,
+    typed: 999,
     dim: false,
     stages: ["wait", "wait", "wait"],
     burst: false,
@@ -356,10 +356,7 @@ export function RequestTrace() {
 
   const lines = requestLines(ui.preset, ui.value);
   const result: TraceResult = resultFor(ui.preset, ui.value);
-  const shownLines = lines.map((line) => {
-    if (!line.typed || ui.typed >= line.text.length) return line.text;
-    return line.text.slice(0, ui.typed);
-  });
+  const shownLines = lines.map((line) => line.text);
 
   return (
     <figure

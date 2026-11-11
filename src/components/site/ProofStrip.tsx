@@ -42,7 +42,7 @@ export function ProofStrip({ items }: { items: { value: string; label: string }[
   }, [items]);
 
   return (
-    <section ref={ref} className="relative z-0 border-y border-[var(--line)]">
+    <section ref={ref} className="relative z-[3] border-y border-[var(--line)] bg-[var(--bg)]">
       <div className="mx-auto grid w-full max-w-[1200px] grid-cols-1 px-[clamp(24px,4vw,40px)] md:grid-cols-3">
         {items.map((item, index) => (
           <div key={item.label} className="relative flex items-baseline gap-4 py-6 md:px-6">

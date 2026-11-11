@@ -422,8 +422,9 @@
 .hero-frame {
   position: relative;
   isolation: isolate;
+  overflow: clip;
+  padding-bottom: 0;
 }
-.hero-frame { padding-bottom: 8px; }
 .hero-lights {
   position: absolute;
   inset: 0;
@@ -598,10 +599,10 @@ html.light .hero-cursor {
 html.light .trace-card { border-color: var(--line-strong); background: var(--glass); }
 .trace-shadow {
   position: absolute;
-  inset: 10px -8px -28px;
+  inset: 16px 8px 28px;
   z-index: -1;
   border-radius: inherit;
-  box-shadow: 0 40px 120px -20px rgba(45, 212, 191, 0.25);
+  box-shadow: 0 28px 70px -28px rgba(45, 212, 191, 0.28);
   pointer-events: none;
 }
 .edge-light {
