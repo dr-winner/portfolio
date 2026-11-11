@@ -45,7 +45,7 @@ export function CertificationCard() {
                 )}
                 <span className="block text-[length:var(--step--1)] text-[var(--fg-subtle)]">{item.issuer}</span>
               </span>
-              <span className="shrink-0 rounded-full border border-[var(--line-strong)] px-2 py-0.5 font-mono text-[11px] text-[var(--fg-subtle)]">
+              <span className="shimmer-pill shrink-0 rounded-full border border-[var(--line-strong)] px-2 py-0.5 font-mono text-[12px] text-[var(--fg-subtle)]">
                 In progress
               </span>
             </li>

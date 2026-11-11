@@ -39,33 +39,12 @@ export function LlmAgentLabInspector({
           <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Interactive lab verifier
           </p>
-          <div
-            role="group"
-            aria-label="Pipeline security mode"
-            className="inline-flex rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--bg)] p-1"
-          >
-            <button
-              type="button"
-              aria-pressed={mode === "vulnerable"}
-              onClick={() => setMode("vulnerable")}
-              className={`min-h-[36px] rounded-[8px] px-3.5 font-mono text-[12px] uppercase tracking-[0.06em] ${
-                mode === "vulnerable"
-                  ? "bg-[var(--danger)] font-semibold text-[color:var(--bg)]"
-                  : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              }`}
-            >
+          <div role="group" aria-label="Pipeline security mode" className="mode-toggle" data-mode={mode}>
+            <span aria-hidden className="mode-thumb" />
+            <button type="button" aria-pressed={mode === "vulnerable"} onClick={() => setMode("vulnerable")}>
               Vulnerable
             </button>
-            <button
-              type="button"
-              aria-pressed={mode === "hardened"}
-              onClick={() => setMode("hardened")}
-              className={`min-h-[36px] rounded-[8px] px-3.5 font-mono text-[12px] uppercase tracking-[0.06em] ${
-                mode === "hardened"
-                  ? "bg-[var(--signal)] font-semibold text-[var(--on-signal)]"
-                  : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
-              }`}
-            >
+            <button type="button" aria-pressed={mode === "hardened"} onClick={() => setMode("hardened")}>
               Hardened
             </button>
           </div>
@@ -127,12 +106,12 @@ export function LlmAgentLabInspector({
           {scenario.summary}
         </p>
 
-        <dl className="mt-4 grid gap-3 border-t border-[var(--line)] pt-4 text-[length:var(--step--1)] sm:grid-cols-3">
+        <dl className="lab-meta mt-4 grid grid-cols-1 gap-3 border-t border-[var(--line)] pt-4 text-[16px] min-[640px]:grid-cols-3">
           <div className="min-w-0">
             <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               Trust boundary
             </dt>
-            <dd className="mt-1 break-words text-[var(--fg)]">{scenario.boundary}</dd>
+            <dd className="mt-1 text-[var(--fg)] [overflow-wrap:normal] [word-break:normal]">{scenario.boundary}</dd>
           </div>
           <div className="min-w-0">
             <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
@@ -144,7 +123,7 @@ export function LlmAgentLabInspector({
             <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
               Caller session
             </dt>
-            <dd className="mt-1 break-words font-mono text-[var(--fg)]">
+            <dd className="mt-1 font-mono text-[var(--fg)] [overflow-wrap:normal] [word-break:normal]">
               {scenario.session.tenantId} · role={scenario.session.role}
             </dd>
           </div>
@@ -171,10 +150,8 @@ export function LlmAgentLabInspector({
                     <span className="font-mono text-[12px] text-[var(--fg)]">
                       {STAGE_LABELS[step.stage]}
                     </span>
-                    <span
-                      className={`inline-flex rounded-full border px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.06em] ${badgeStyle}`}
-                    >
-                      {step.status}
+                    <span className={`inline-flex rounded-full border px-2 py-0.5 font-mono text-[12px] uppercase tracking-[0.06em] ${badgeStyle} ${step.status === "blocked" ? "badge-pop" : ""}`}>
+                      {step.status === "blocked" ? "BLOCKED" : step.status}
                     </span>
                   </div>
                   <p className="mt-1.5 text-pretty text-[length:var(--step--1)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
@@ -194,8 +171,8 @@ export function LlmAgentLabInspector({
             <p className="mt-2 break-words text-pretty text-[length:var(--step--1)] leading-[var(--leading-body)] text-[var(--fg)]">
               {mode === "vulnerable" ? scenario.vulnerableExplanation : scenario.hardenedControl}
             </p>
-            <p className="mt-3 overflow-wrap-anywhere font-mono text-[11px] text-[var(--fg-subtle)]">
-              Vector: {scenario.cvssVector}
+            <p className="mt-3 max-w-full overflow-x-auto font-mono text-[12px] text-[var(--fg-subtle)] [overflow-wrap:normal] [word-break:normal]">
+              <span className="whitespace-nowrap">Vector: {scenario.cvssVector}</span>
             </p>
           </div>
           <div className="min-w-0">

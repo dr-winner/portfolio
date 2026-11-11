@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cvHref, mailto, site } from "@/content/site";
 import { StatusDot } from "@/components/site/StatusDot";
+import { SecurityReport } from "@/components/site/SecurityReport";
 
 const nav = [
   { href: "/work", label: "Work" },
@@ -76,7 +77,8 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex flex-row items-center justify-between gap-4 border-t border-[var(--line)] pt-5">
+        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-[var(--line)] pt-5 sm:flex-row sm:items-center">
+          <SecurityReport />
           <p className="font-mono text-[12px] text-[var(--fg-subtle)]">
             © {new Date().getFullYear()} drWinner
           </p>

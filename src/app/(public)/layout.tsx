@@ -3,11 +3,13 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { CommandHotkey } from "@/components/site/CommandHotkey";
 import { HashRedirect } from "@/components/site/HashRedirect";
 import { BackgroundFx } from "@/components/site/BackgroundFx";
+import { ClientRuntime } from "@/components/site/ClientRuntime";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col text-[var(--fg)]">
       <BackgroundFx />
+      <ClientRuntime />
       <SiteHeader />
       <CommandHotkey />
       <HashRedirect />
