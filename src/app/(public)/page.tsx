@@ -62,8 +62,8 @@ export default async function HomePage() {
           <div className="hero-grid" />
           <div className="hero-cursor" />
         </div>
-        <div className="relative z-[1] mx-auto grid w-full max-w-[1200px] items-start gap-8 pb-2 min-[960px]:grid-cols-12">
-          <div className="min-[960px]:col-span-6">
+        <div className="relative z-[1] mx-auto grid w-full min-w-0 max-w-[1200px] grid-cols-[minmax(0,1fr)] items-start gap-8 pb-2 min-[960px]:grid-cols-12">
+          <div className="min-w-0 min-[960px]:col-span-6">
             <h1 className="hero-title text-[var(--fg-strong)]">
               Application
               <br />
@@ -84,7 +84,7 @@ export default async function HomePage() {
               </Button>
             </div>
           </div>
-          <div className="hero-scroll-card min-[960px]:col-span-6">
+          <div className="hero-scroll-card min-w-0 min-[960px]:col-span-6">
             <RequestTrace />
           </div>
         </div>

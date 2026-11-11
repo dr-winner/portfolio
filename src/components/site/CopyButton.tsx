@@ -31,7 +31,7 @@ export function CopyButton({ value }: { value: string }) {
     <button
       type="button"
       onClick={copy}
-      className="inline-flex h-7 items-center rounded-[6px] border border-[var(--line)] px-2.5 font-mono text-[11px] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
+      className="inline-flex h-11 items-center rounded-[6px] border border-[var(--line)] px-3 font-mono text-[12px] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
     >
       {copied ? "Copied" : "Copy"}
     </button>

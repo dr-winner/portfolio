@@ -141,7 +141,7 @@ export function WorkIndex() {
               aria-pressed={selected}
               data-chip={chip.id}
               onClick={onChipClick}
-              className={`relative z-10 inline-flex h-9 items-center gap-2 rounded-full border px-3.5 font-mono text-[12px] uppercase tracking-[0.06em] transition-colors duration-[var(--dur-2)] ${
+              className={`relative z-10 inline-flex h-11 items-center gap-2 rounded-full border px-3.5 font-mono text-[12px] uppercase tracking-[0.06em] transition-colors duration-[var(--dur-2)] ${
                 selected
                   ? "border-[var(--signal)] text-[var(--signal)]"
                   : "border-transparent text-[var(--fg-muted)] hover:text-[var(--fg)]"
@@ -158,14 +158,15 @@ export function WorkIndex() {
           <h2 className="mb-4 font-mono text-[12px] font-normal uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
             Featured case studies
           </h2>
-          <ul className="flex flex-col border-b border-[var(--line)]">
+          <ul className="flex flex-col gap-4">
             {featured
               .filter((item) => visible(item.filters))
-              .map((item, i) => (
+              .map((item, i) => {
+                const badge = item.badges.find((entry) => !item.title.toLowerCase().includes(entry.toLowerCase())) ?? item.badges[0];
+                return (
                 <li
                   key={item.slug}
                   data-flip={`case-${item.slug}`}
-                  className="border-t border-[var(--line)]"
                 >
                   <Link
                     href={`/work/${item.slug}`}
@@ -176,7 +177,7 @@ export function WorkIndex() {
                   >
                     <div className="min-w-0 lg:flex lg:flex-1 lg:flex-col">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge>{item.badges[1] ?? item.badges[0]}</Badge>
+                        <Badge>{badge}</Badge>
                         <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
                       </div>
                       <h3
@@ -205,12 +206,13 @@ export function WorkIndex() {
                         </span>
                       </span>
                     </div>
-                    <div className="depth-visual aspect-[16/10] min-h-[200px] overflow-hidden rounded-[12px] bg-[var(--bg-deep)] lg:w-[340px] lg:shrink-0" style={{ viewTransitionName: `work-${item.slug}` }}>
+                    <div className="depth-visual overflow-visible rounded-[12px] bg-[var(--bg-deep)] lg:w-[340px] lg:shrink-0" style={{ viewTransitionName: `work-${item.slug}` }}>
                       <ProjectVisual slug={item.slug} />
                     </div>
                   </Link>
                 </li>
-              ))}
+                );
+              })}
           </ul>
         </section>
       ) : null}
@@ -230,11 +232,14 @@ export function WorkIndex() {
                     data-tilt=""
                     className="tilt-row group flex h-full flex-col rounded-[16px] border border-[var(--line)] bg-[var(--surface)] p-5 no-underline"
                   >
-                    <div className="depth-visual mb-4 aspect-[16/10] overflow-hidden rounded-[12px] bg-[var(--bg-deep)]" style={{ viewTransitionName: `work-${item.slug}` }}>
+                    <div className="depth-visual mb-4 overflow-visible rounded-[12px] bg-[var(--bg-deep)]" style={{ viewTransitionName: `work-${item.slug}` }}>
                       <ProjectVisual slug={item.slug} />
                     </div>
-                    <span className="inline-flex h-6 w-fit items-center rounded-full border border-[var(--amber)]/60 px-2.5 font-mono text-[12px] uppercase tracking-[0.06em] text-[var(--amber)]">
-                      Training lab
+                    <span className="inline-flex items-center gap-2">
+                      <span className="inline-flex h-6 items-center rounded-full border border-[var(--amber)]/60 px-2.5 font-mono text-[12px] uppercase tracking-[0.06em] text-[var(--amber)]">
+                        Training lab
+                      </span>
+                      <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
                     </span>
                     <h3 className="mt-3 text-[length:var(--step-1)] font-medium leading-[var(--leading-tight)] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--amber)]">
                       {item.title}

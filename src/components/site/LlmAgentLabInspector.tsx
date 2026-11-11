@@ -68,7 +68,7 @@ export function LlmAgentLabInspector({
               role="tab"
               aria-selected={active}
               onClick={() => setScenarioId(item.id)}
-              className={`min-h-[36px] whitespace-nowrap rounded-[8px] border px-3 py-2 text-left font-mono text-[12px] transition-colors ${
+              className={`min-h-11 whitespace-nowrap rounded-[8px] border px-3 py-2 text-left font-mono text-[12px] transition-colors ${
                 active
                   ? "border-[var(--signal)] bg-[var(--surface-2)] text-[var(--fg)]"
                   : "border-[var(--line)] bg-[var(--bg)] text-[var(--fg-muted)] hover:border-[var(--line-strong)] hover:text-[var(--fg)]"

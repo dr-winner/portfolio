@@ -39,7 +39,7 @@ export function ThemeToggle() {
       aria-checked={checked}
       aria-label={checked ? "Switch to dark theme" : "Switch to light theme"}
       onClick={toggle}
-      className="group inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-[6px] border border-[var(--line)] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
+      className="group inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-[6px] border border-[var(--line)] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
     >
       {/* Sun / moon crossfade + rotation; neutral dial paint until theme is known */}
       <span aria-hidden className="relative block h-4 w-4">

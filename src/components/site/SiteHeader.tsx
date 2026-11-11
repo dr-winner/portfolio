@@ -90,13 +90,11 @@ export function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header className="site-header sticky top-0 z-40 h-16">
-      <div
-        aria-hidden
-        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[140%] transition-[background-color] duration-[var(--dur-2)] ${
-          scrolled ? "bg-[color-mix(in_srgb,var(--bg)_78%,transparent)]" : "bg-transparent"
-        }`}
-      />
+    <header
+      className={`site-header sticky top-0 z-40 h-16 border-b border-[var(--line)] backdrop-blur-[16px] backdrop-saturate-[140%] ${
+        scrolled ? "bg-[var(--bg)]" : "bg-[color-mix(in_srgb,var(--bg)_92%,transparent)]"
+      }`}
+    >
       {/* Read progress hairline, driven by rAF-throttled scroll updates */}
       <span
         ref={progressRef}
@@ -104,7 +102,7 @@ export function SiteHeader() {
         className="pointer-events-none absolute inset-x-0 bottom-[-1px] h-px origin-left scale-x-0 bg-gradient-to-r from-[var(--signal)] to-transparent opacity-60"
       />
       <div className="relative mx-auto flex h-full w-full max-w-[1200px] items-center gap-3 px-[clamp(24px,4vw,40px)]">
-        <Link href="/" aria-label="drWinner, home" className="group mr-auto flex items-baseline gap-2.5 no-underline">
+        <Link href="/" aria-label="drWinner, home" className="group mr-auto inline-flex min-h-11 items-center gap-2.5 no-underline">
           <span className="text-[17px] font-medium tracking-[-0.02em] text-[var(--fg)]">
             dr<span className="text-[var(--fg-muted)]">Winner</span>
           </span>
@@ -143,28 +141,24 @@ export function SiteHeader() {
         </button>
         <button
           type="button"
-          data-magnet=""
           onMouseEnter={() => window.dispatchEvent(new Event("palette:preload"))}
           onFocus={() => window.dispatchEvent(new Event("palette:preload"))}
           onClick={() => window.dispatchEvent(new Event("palette:open"))}
-          className="inline-flex h-11 items-center gap-2 rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-2.5 text-[var(--fg)]"
+          data-search-trigger=""
+          className="inline-flex h-11 w-11 items-center justify-center gap-2 rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-2.5 text-[var(--fg)] md:w-auto"
         >
           <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6">
             <circle cx="7" cy="7" r="4.2" />
             <path d="M10.2 10.2 L13 13" strokeLinecap="round" />
           </svg>
-          <span className="magnet-visual">
-            <span className="magnet-label font-mono text-[13px]">
-              <span className="hidden sm:inline">Search</span>
-              <span className="ml-0 text-[var(--fg-muted)] sm:ml-2">{shortcut}</span>
-            </span>
-          </span>
+          <span className="sr-only md:hidden">Search {shortcut}</span>
+          <span className="magnet-visual hidden whitespace-nowrap font-mono text-[13px] md:inline">Search {shortcut}</span>
         </button>
         <ThemeToggle />
         <a
           href={cvHref}
           download={cvDownloadName}
-          className="hidden h-10 items-center rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-4 font-mono text-[12px] font-medium tracking-[0.06em] text-[var(--fg)] no-underline transition-colors duration-[var(--dur-1)] hover:border-[var(--signal)] hover:text-[var(--signal)] lg:inline-flex"
+          className="hidden h-11 items-center rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-4 font-mono text-[12px] font-medium tracking-[0.06em] text-[var(--fg)] no-underline transition-colors duration-[var(--dur-1)] hover:border-[var(--signal)] hover:text-[var(--signal)] lg:inline-flex"
         >
           CV
         </a>

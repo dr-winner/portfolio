@@ -90,12 +90,10 @@ export function DetectionsStream() {
           {paused ? "Play" : "Pause"}
         </button>
       </div>
-      <div className="det-rail mt-3" aria-hidden>
-        <span className={`det-dot-html ${dot ? "is-on" : ""}`} />
-        {["CloudTrail", "GuardDuty", "Rules", "Lambda", "Alerts"].map((label) => (
-          <span key={label}>{label}</span>
-        ))}
-      </div>
+      <p className="det-path mt-3">
+        <span className={`det-dot-html ${dot ? "is-on" : ""}`} aria-hidden />
+        <span>Event path: CloudTrail, GuardDuty, Rules, Lambda, Alerts</span>
+      </p>
       <div role="log" aria-live="off" aria-relevant="additions" className="det-log">
         {rows.map((row) => (
           <p key={row.id} className={`log-line ${row.hot ? "is-hot" : ""}`}>
@@ -116,25 +114,6 @@ export function DetectionsStream() {
           Read the case study
         </Link>
       </p>
-    </div>
-  );
-}
-
-export function DetectionsStatic() {
-  return (
-    <div className="det-panel">
-      <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Synthetic events. Not from a real AWS account.</p>
-      <div role="log" aria-live="off" className="det-log mt-3">
-        {STATIC_ROWS.map((row) => (
-          <p key={row.id} className={`log-line ${row.hot ? "is-hot" : ""}`}>
-            {row.body}
-          </p>
-        ))}
-      </div>
-      <p className="mt-3 rounded-[10px] border border-[color-mix(in_srgb,var(--danger)_40%,transparent)] px-3 py-2 font-mono text-[13px]">
-        cloudtrail-tampering, T1562.008, trail logging stopped
-      </p>
-      <p className="mt-3 font-mono text-[12px] text-[var(--fg-subtle)]">This is a starter set, not full coverage.</p>
     </div>
   );
 }

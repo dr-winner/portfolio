@@ -35,6 +35,8 @@ strict-transport-security: max-age=63072000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: DENY
 referrer-policy: strict-origin-when-cross-origin
+permissions-policy: camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), interest-cohort=()
+x-dns-prefetch-control: off
 cross-origin-opener-policy: same-origin
 cross-origin-resource-policy: same-origin`;
 }

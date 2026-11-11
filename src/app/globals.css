@@ -246,10 +246,10 @@
   /* defaultColor: false -> shiki emits both color vars; the site's default
      scheme is dark, so dark vars are the base rule and html.light overrides. */
   .shiki-host pre code span {
-    color: var(--shiki-dark);
+    color: rgb(from color-mix(in srgb, var(--shiki-dark) 45%, var(--fg)) r g b);
   }
   html.light .shiki-host pre code span {
-    color: var(--shiki-light);
+    color: rgb(from color-mix(in srgb, var(--shiki-light) 35%, var(--fg)) r g b);
   }
 
   /* ── Surfaces ─────────────────────────────────────────────────────────── */
@@ -564,6 +564,9 @@ html.light .hero-cursor {
 .trace-card {
   position: relative;
   display: flex;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -571,6 +574,7 @@ html.light .hero-cursor {
   backdrop-filter: blur(12px);
   z-index: 2;
 }
+.trace-card > * { min-width: 0; max-width: 100%; }
 html.light .trace-card { border-color: var(--line-strong); background: var(--glass); }
 .trace-shadow {
   position: absolute;
@@ -609,9 +613,9 @@ html.light .trace-card { border-color: var(--line-strong); background: var(--gla
   transition: transform var(--dur-snappy) var(--ease-snappy);
 }
 .req-scroll {
+  min-width: 0;
   max-width: 100%;
   overflow-x: auto;
-  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
 }
 .rail {
   position: relative;
@@ -747,6 +751,10 @@ html.light .trace-card { border-color: var(--line-strong); background: var(--gla
   transform: translate(var(--mag-x, 0px), var(--mag-y, 0px));
   transition: transform var(--dur-lift) var(--ease-lift);
 }
+[data-search-trigger] .magnet-visual { display: none; }
+@media (min-width: 768px) {
+  [data-search-trigger] .magnet-visual { display: inline-flex; }
+}
 [data-magnet] .magnet-label {
   display: inline-flex;
   transform: translate(calc(var(--mag-x, 0px) * 0.5), calc(var(--mag-y, 0px) * 0.5));
@@ -841,7 +849,9 @@ html.light .trace-card { border-color: var(--line-strong); background: var(--gla
 [data-tilt].is-hot .depth-spot { opacity: 1; }
 .depth-visual {
   position: relative;
-  aspect-ratio: 16 / 10;
+  height: auto;
+  min-height: 180px;
+  overflow: visible;
   background: var(--bg-deep);
   transform: translate3d(var(--shift-x, 0px), var(--shift-y, 0px), 0);
 }
@@ -1053,6 +1063,7 @@ html.reveal-armed .is-in .shimmer-pill::after {
 .lab-rail.is-open { box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.25); }
 .det-log {
   margin-top: 8px;
+  height: 220px;
   max-height: 220px;
   overflow: hidden;
   border-radius: 10px;
@@ -1071,18 +1082,14 @@ html.reveal-armed .is-in .shimmer-pill::after {
   .see-grid[data-panel="agent"] .det-panel { display: none; }
   .see-grid[data-panel="detections"] .lab-panel { display: none; }
 }
-.det-rail {
+.det-path {
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  gap: 4px;
+  margin: 0;
   border-top: 1px solid rgba(var(--signal-rgb), 0.45);
   padding-top: 12px;
-}
-.det-rail span {
   font-family: var(--font-mono), monospace;
   font-size: 12px;
-  line-height: 1.2;
+  line-height: 1.4;
   color: var(--fg-muted);
 }
 .det-dot-html {
@@ -1110,8 +1117,8 @@ html.reveal-armed .is-in .shimmer-pill::after {
 .det-dot { fill: var(--signal); opacity: 0; }
 .det-dot.is-on { animation: det-run 700ms var(--ease-enter); }
 @keyframes det-run {
-  from { opacity: 1; transform: translateX(16px); }
-  to { opacity: 1; transform: translateX(480px); }
+  from { opacity: 1; left: 8px; }
+  to { opacity: 1; left: calc(100% - 16px); }
 }
 
 .palette-root {
@@ -1130,8 +1137,8 @@ html.reveal-armed .is-in .shimmer-pill::after {
   flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px 16px 0 0;
-  background: var(--glass);
-  backdrop-filter: blur(20px);
+  background: var(--bg);
+  backdrop-filter: none;
   padding-bottom: env(safe-area-inset-bottom);
   transform: translateY(16px);
   opacity: 0;
@@ -1217,17 +1224,15 @@ html.reveal-armed .is-in .shimmer-pill::after {
   color: var(--signal);
 }
 .security-pop-wrap {
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 8px);
-  z-index: 5;
-  width: min(320px, 80vw);
+  position: static;
+  width: min(320px, 100%);
+  margin-top: 8px;
 }
 .security-pop {
   border: 1px solid var(--line-strong);
   border-radius: 12px;
-  background: var(--glass);
-  backdrop-filter: blur(16px);
+  background: var(--surface);
+  backdrop-filter: none;
   padding: 12px;
   font-family: var(--font-mono), monospace;
   font-size: 13px;
@@ -1293,19 +1298,22 @@ html.reveal-armed .is-in .shimmer-pill::after {
   100% { opacity: 0; transform: scale(2.2); }
 }
 .figure-play svg path { stroke-dasharray: 900; stroke-dashoffset: 900; animation: draw-path 800ms var(--ease-draw) forwards; }
-.figure-packet {
+.statement-word { color: var(--fg-strong); opacity: 1; }
+.skip-link {
   position: absolute;
-  top: 46%;
-  left: 8%;
-  width: 8px;
-  height: 8px;
-  border-radius: 99px;
+  left: 12px;
+  top: 12px;
+  z-index: 80;
+  transform: translateY(-160%);
+  border-radius: 8px;
   background: var(--signal);
-  box-shadow: 0 0 16px rgba(45, 212, 191, 0.8);
-  opacity: 0;
+  padding: 10px 14px;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  color: var(--on-signal);
+  text-decoration: none;
 }
-.figure-play .figure-packet { animation: figure-packet 900ms var(--ease-enter) 800ms both; }
-@keyframes figure-packet { from { opacity: 1; transform: translateX(0); } to { opacity: 1; transform: translateX(70cqi); } }
+.skip-link:focus { transform: none; }
 .toc-mark {
   position: absolute;
   left: 0;
@@ -1321,8 +1329,8 @@ html.reveal-armed .is-in .shimmer-pill::after {
 .pv-board {
   display: flex;
   width: 100%;
-  height: 100%;
-  min-height: 0;
+  height: auto;
+  min-height: 180px;
   flex-direction: column;
   gap: 8px;
   padding: 12px;

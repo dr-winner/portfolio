@@ -28,6 +28,7 @@ export const certifications: Cert[] = [
     status: "earned",
     year: "2026",
     description: "Earned in 2026.",
+    link: "https://www.coursera.org/professional-certificates/google-cybersecurity",
   },
   {
     name: "Cisco Ethical Hacker",

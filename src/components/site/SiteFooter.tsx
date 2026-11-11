@@ -33,7 +33,7 @@ export function SiteFooter() {
             <ul className="mt-3 flex flex-col gap-2.5">
               {nav.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+                  <Link href={link.href} className="link-sweep inline-flex min-h-10 min-w-10 items-center text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
                     {link.label}
                   </Link>
                 </li>
@@ -49,7 +49,7 @@ export function SiteFooter() {
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]"
+                    className="link-sweep inline-flex min-h-10 min-w-10 items-center text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]"
                   >
                     {link.label}
                   </a>
@@ -61,19 +61,19 @@ export function SiteFooter() {
             <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Reach</p>
             <ul className="mt-3 flex flex-col gap-2.5">
               <li>
-                <a href={mailto} className="link-sweep break-all text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+                <a href={mailto} className="link-sweep inline-flex min-h-10 items-center break-words text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
                   {site.email}
                 </a>
               </li>
               <li>
-                <a href={cvHref} download className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+                <a href={cvHref} download className="link-sweep inline-flex min-h-10 items-center text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
                   CV (PDF)
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-[var(--line)] pt-5 sm:flex-row sm:items-center">
+        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-[var(--line)] pt-5 md:flex-row md:items-center">
           <SecurityReport />
           <p className="font-mono text-[12px] text-[var(--fg-subtle)]">
             © {new Date().getFullYear()} drWinner

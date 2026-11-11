@@ -111,7 +111,7 @@ export function RequestTrace() {
     window.setTimeout(() => hero.removeAttribute("data-flash"), 1200);
   }
 
-  function run(preset: PresetId, value: string) {
+  function run(preset: PresetId, value: string, interactive = false) {
     const id = ++runId.current;
     const reduced = prefersReducedMotion();
     const result = resultFor(preset, value);
@@ -156,10 +156,11 @@ export function RequestTrace() {
 
     function frame(now: number) {
       if (runId.current !== id || finished) return;
-      const hidden = document.visibilityState !== "visible" || !inView.current;
+      const hidden = document.visibilityState !== "visible";
+      const stalled = hidden || (!interactive && (paused.current || !inView.current));
       const dt = Math.min(40, now - last);
       last = now;
-      if (!paused.current && !hidden) acc += dt;
+      if (!stalled) acc += dt;
 
       const typedNow =
         typeDur > 0
@@ -250,7 +251,7 @@ export function RequestTrace() {
       const preset = presetById(id);
       const index = PRESETS.findIndex((item) => item.id === id);
       setActive(index < 0 ? 0 : index);
-      run(preset.id, preset.value);
+      run(preset.id, preset.value, true);
       document.getElementById("hero")?.scrollIntoView();
     }
     window.addEventListener("trace:run", onExternal);
@@ -332,7 +333,7 @@ export function RequestTrace() {
     retire();
     const preset = PRESETS[index];
     setActive(index);
-    run(preset.id, preset.value);
+    run(preset.id, preset.value, true);
   }
 
   function onTabsKey(event: KeyboardEvent<HTMLDivElement>) {
@@ -351,7 +352,7 @@ export function RequestTrace() {
 
   function send() {
     retire();
-    run(uiRef.current.preset, uiRef.current.value);
+    run(uiRef.current.preset, uiRef.current.value, true);
   }
 
   const lines = requestLines(ui.preset, ui.value);
@@ -380,10 +381,11 @@ export function RequestTrace() {
       <span aria-hidden className="trace-shadow" />
       <span aria-hidden className="edge-light" />
       <span aria-hidden className={`trace-flash ${ui.flash ? "is-on" : ""}`} />
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
         <figcaption className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Request trace</figcaption>
         <span className="rounded-full border border-[var(--line-strong)] px-2 py-0.5 font-mono text-[12px] text-[var(--fg-subtle)]">
-          Simulation. Runs in your browser.
+          <span className="md:hidden">Simulation</span>
+          <span className="hidden md:inline">Simulation. Runs in your browser.</span>
         </span>
       </div>
 
@@ -391,7 +393,7 @@ export function RequestTrace() {
         role="tablist"
         aria-label="Attack presets"
         onKeyDown={onTabsKey}
-        className="relative mx-3 flex border-b border-[var(--line)]"
+        className="relative mx-3 flex min-w-0 overflow-x-auto border-b border-[var(--line)]"
       >
         <span aria-hidden className="tab-thumb" style={{ transform: `translateX(${active * 100}%)` }} />
         {PRESETS.map((preset, index) => (
@@ -408,8 +410,8 @@ export function RequestTrace() {
               index === 2 ? "flex-[1.45]" : "flex-1"
             } ${index === active ? "text-[var(--fg-strong)]" : "text-[var(--fg-subtle)]"}`}
           >
-            <span className="max-[399px]:hidden">{preset.label}</span>
-            <span className="hidden max-[399px]:inline">{preset.short}</span>
+            <span className="hidden min-[700px]:inline">{preset.label}</span>
+            <span className="min-[700px]:hidden">{preset.id === "prompt" ? "Prompt" : preset.short}</span>
           </button>
         ))}
       </div>
@@ -448,7 +450,7 @@ export function RequestTrace() {
               retire();
               patch({ value: event.target.value.slice(0, 200) });
             }}
-            className="h-12 w-full rounded-[10px] border border-[var(--line-strong)] bg-[var(--bg-deep)] px-3 font-mono text-[16px] text-[var(--fg)] outline-none"
+            className="h-12 w-full min-w-0 max-w-full rounded-[10px] border border-[var(--line-strong)] bg-[var(--bg-deep)] px-3 font-mono text-[16px] text-[var(--fg)] outline-none"
           />
         </label>
         <button

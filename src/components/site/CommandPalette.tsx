@@ -12,6 +12,7 @@ type Row = {
   group: string;
   label: string;
   hint?: string;
+  keywords?: string;
   severity?: string;
   cvss?: string;
   run: () => void;
@@ -95,7 +96,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       return [
         {
           id: "egg-who",
-          group: "Blocked",
+          group: "Result",
           label: "drWinner. Application Security. Accra, Ghana.",
           run: () => undefined,
         },
@@ -144,6 +145,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         id: `find-${item.index}`,
         group: "Findings",
         label: `${item.index} ${item.title}`,
+        keywords: "cvss",
         severity: item.severity,
         cvss: item.cvss,
         run: () => go(item.href),
@@ -152,6 +154,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         id: "find-sqli",
         group: "Findings",
         label: sqliFinding.title,
+        keywords: "sqli sql injection cvss",
         severity: sqliFinding.severity,
         cvss: sqliFinding.cvss,
         run: () => go(sqliFinding.href),
@@ -169,25 +172,23 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       { id: "act-cv", group: "Actions", label: "Download CV", run: () => go(cvHref) },
       { id: "act-mail", group: "Actions", label: copied ? "Copied" : "Copy email", run: () => void copyEmail() },
       { id: "act-email", group: "Actions", label: "Email me", run: () => go(mailto) },
-      { id: "act-sqli", group: "Actions", label: "Run the SQL injection trace", run: () => runTrace("sqli") },
-      { id: "act-idor", group: "Actions", label: "Run the IDOR trace", run: () => runTrace("idor") },
-      { id: "act-prompt", group: "Actions", label: "Run the prompt injection trace", run: () => runTrace("prompt") },
+      { id: "act-sqli", group: "Actions", label: "Run the SQL injection trace", keywords: "sqli sql", run: () => runTrace("sqli") },
+      { id: "act-idor", group: "Actions", label: "Run the IDOR trace", keywords: "idor", run: () => runTrace("idor") },
+      { id: "act-prompt", group: "Actions", label: "Run the prompt injection trace", keywords: "prompt", run: () => runTrace("prompt") },
       { id: "act-theme", group: "Actions", label: "Switch theme", run: () => toggleTheme() },
     ];
 
-    const suggested: Row[] = q
-      ? []
-      : [
-          { id: "sug-work", group: "Suggested", label: "View my work", run: () => go("/work") },
-          { id: "sug-sqli", group: "Suggested", label: "Run the SQL injection trace", run: () => runTrace("sqli") },
-          { id: "sug-lab", group: "Suggested", label: "Open the agent lab", run: () => go("/#see-it-work") },
-          { id: "sug-cv", group: "Suggested", label: "Download CV", run: () => go(cvHref) },
-          { id: "sug-mail", group: "Suggested", label: "Email me", run: () => go(mailto) },
-        ];
+    const suggested: Row[] = [
+      { id: "sug-work", group: "Suggested", label: "View my work", run: () => go("/work") },
+      { id: "sug-sqli", group: "Suggested", label: "Run the SQL injection trace", keywords: "sqli sql", run: () => runTrace("sqli") },
+      { id: "sug-lab", group: "Suggested", label: "Open the agent lab", keywords: "agent lab", run: () => go("/#see-it-work") },
+      { id: "sug-cv", group: "Suggested", label: "Download CV", run: () => go(cvHref) },
+      { id: "sug-mail", group: "Suggested", label: "Email me", run: () => go(mailto) },
+    ];
 
-    const all = [...suggested, ...pages, ...studies, ...findings, ...rules, ...actions];
+    const all: Row[] = [...suggested, ...pages, ...studies, ...findings, ...rules, ...actions];
     if (!q) return all;
-    return all.filter((row) => row.group !== "Suggested" && row.label.toLowerCase().includes(q));
+    return all.filter((row) => `${row.label} ${row.cvss ?? ""} ${row.keywords ?? ""}`.toLowerCase().includes(q));
     // go and runTrace close over router. Recomputed when the query changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, copied, detections]);
@@ -197,14 +198,22 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
   }, [query]);
 
   useEffect(() => {
-    returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    returnFocus.current =
+      previous && previous !== document.body && previous !== document.documentElement
+        ? previous
+        : document.querySelector<HTMLElement>("[data-search-trigger]");
     const frame = requestAnimationFrame(() => setEntered(true));
     inputRef.current?.focus();
-    const previous = document.body.style.overflow;
+    const html = document.documentElement;
+    const previousHtml = html.style.overflow;
+    const previousBody = document.body.style.overflow;
+    html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     return () => {
       cancelAnimationFrame(frame);
-      document.body.style.overflow = previous;
+      html.style.overflow = previousHtml;
+      document.body.style.overflow = previousBody;
       returnFocus.current?.focus();
     };
   }, []);
@@ -312,7 +321,6 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         <div className="palette-foot">
           <span>Enter to open</span>
           <span>Esc to close</span>
-          <span className="ml-auto truncate">{current?.label}</span>
         </div>
       </div>
     </div>
