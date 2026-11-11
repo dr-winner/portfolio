@@ -14,6 +14,7 @@ export { WM_STORAGE_KEY } from "./store.ts";
 
 const appSchema = z.enum([
   "welcome",
+  "hello",
   "files",
   "doc",
   "terminal",
@@ -175,6 +176,7 @@ export function parseDeepLink(
 
 const knownApps = new Set<AppId>([
   "welcome",
+  "hello",
   "files",
   "doc",
   "terminal",

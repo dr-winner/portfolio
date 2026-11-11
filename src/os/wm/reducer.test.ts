@@ -210,6 +210,63 @@ describe("wm reducer", () => {
     assert.ok(win.w >= 420);
     assert.ok(win.h >= 260);
   });
+
+  /* Recency, brief 3.11: a window focused once just now is more recent
+     than one focused three times earlier, so a restored session puts
+     focus on the window that had it last. */
+  it("restores focus to the most recently focused window, not the most focused", () => {
+    let s = open(initialWmState(), { app: "welcome" });
+    s = reduce(s, { type: "focus", payload: { id: "welcome" } });
+    s = reduce(s, { type: "focus", payload: { id: "welcome" } });
+    s = open(s, { app: "hello" });
+    const restored = sessionToState(parseSession(serializeSession(s)), 1440, 900, 88);
+    assert.equal(restored.focused, "hello");
+  });
+
+  /* Adoption geometry, brief 7.1: the shell measures a server rendered
+     window and passes its painted box as at. The store keeps the exact
+     box when it fits the work area, clamps it when it does not, and
+     never moves a window that already exists in the store. */
+  it("opens an adopted window at the exact geometry when it fits", () => {
+    const s = reduce(initialWmState(), {
+      type: "open",
+      payload: { app: "welcome", id: "welcome", title: "Welcome", at: { x: 400, y: 122, w: 640, h: 520 } },
+    });
+    const win = s.windows["welcome"];
+    assert.deepEqual({ x: win.x, y: win.y, w: win.w, h: win.h }, { x: 400, y: 122, w: 640, h: 520 });
+    assert.equal(s.focused, "welcome");
+    assert.equal(win.mode, "normal");
+  });
+
+  it("clamps adopted geometry into the work area and up to app minimums", () => {
+    const s = reduce(initialWmState(), {
+      type: "open",
+      payload: { app: "welcome", id: "welcome", title: "Welcome", at: { x: -500, y: 0, w: 200, h: 150 } },
+    });
+    const win = s.windows["welcome"];
+    /* Size bumps to the app minimum, position clamps with the 120px
+       title bar grab rule. */
+    assert.ok(win.w >= 420);
+    assert.ok(win.h >= 420);
+    assert.ok(win.x + 120 <= win.x + win.w);
+    assert.ok(win.x >= s.workArea.left + 120 - win.w);
+    assert.ok(win.y >= s.workArea.top);
+    assert.ok(win.y + win.h <= s.workArea.top + s.workArea.height);
+  });
+
+  it("ignores at geometry for a window that already exists", () => {
+    let s = reduce(initialWmState(), {
+      type: "open",
+      payload: { app: "welcome", id: "welcome", title: "Welcome", at: { x: 400, y: 122, w: 640, h: 520 } },
+    });
+    s = reduce(s, {
+      type: "open",
+      payload: { app: "welcome", id: "welcome", title: "Welcome", at: { x: 0, y: 0, w: 300, h: 300 } },
+    });
+    const win = s.windows["welcome"];
+    assert.deepEqual({ x: win.x, y: win.y, w: win.w, h: win.h }, { x: 400, y: 122, w: 640, h: 520 });
+    assert.equal(s.focused, "welcome");
+  });
 });
 
 describe("wm persistence and deep links", () => {

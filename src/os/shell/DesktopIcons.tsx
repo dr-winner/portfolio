@@ -68,6 +68,7 @@ export function DesktopIcons() {
               className="wos-icon wos-focusable"
               aria-label={`${icon.label}${icon.ext ?? ""}`}
               onFocus={() => setRoving(index)}
+              {...(index === 0 ? { "data-wos-region-focus": true } : {})}
             >
               <span className="wos-icon-tile wos-tile" aria-hidden>
                 <Icon width={24} height={24} />

@@ -269,7 +269,9 @@ export function Dock() {
             }}
             href={entry.href}
             data-wos-dock-item
+            data-wos-dock-app={entry.app}
             data-wos-index={appIndex}
+            {...(appIndex === 0 ? { "data-wos-region-focus": true } : {})}
             data-bounce={isBouncing ? "true" : "false"}
             className="wos-dock-item wos-focusable"
             aria-label={entry.label}
@@ -302,6 +304,7 @@ export function Dock() {
                 key={win.id}
                 type="button"
                 data-wos-dock-item
+                data-wos-dock-app={win.app}
                 data-wos-minimized="true"
                 className="wos-dock-item wos-focusable"
                 aria-label={`Restore ${win.title}`}

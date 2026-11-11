@@ -113,7 +113,13 @@ export function normalizeZ(order: WindowId[], windows: Record<WindowId, WinState
 function focusWin(state: WMState, id: WindowId, patch: Partial<WinState> = {}): WMState {
   const win = state.windows[id];
   if (!win) return state;
-  let nextWindows = { ...state.windows, [id]: { ...win, ...patch, z: maxZ(state.windows) + 1, focusedAt: (win.focusedAt || 0) + 1 } };
+  /* focusedAt is a per-session monotonic recency counter, brief 3.11: the
+     next value is one past the highest counter in the session, so a
+     window focused once just now sorts above one focused three times an
+     hour ago, and the ordering survives a session restore. */
+  let recency = win.focusedAt || 0;
+  for (const other of Object.keys(state.windows)) recency = Math.max(recency, state.windows[other].focusedAt || 0);
+  let nextWindows = { ...state.windows, [id]: { ...win, ...patch, z: maxZ(state.windows) + 1, focusedAt: recency + 1 } };
   const order = [...state.order.filter((n) => n !== id), id];
   if (nextWindows[id].z > MAX_Z) {
     nextWindows = normalizeZ(order, nextWindows);

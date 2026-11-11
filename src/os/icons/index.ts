@@ -4,6 +4,7 @@
 
 import type { AppId } from "../types";
 import { WelcomeIcon } from "./welcome";
+import { HelloIcon } from "./hello";
 import { FilesIcon } from "./files";
 import { DocIcon } from "./doc";
 import { TerminalIcon } from "./terminal";
@@ -19,6 +20,7 @@ import { SecurityIcon } from "./security";
 
 export const appIcons: Record<AppId, (props: import("./Glyph").GlyphProps) => React.JSX.Element> = {
   welcome: WelcomeIcon,
+  hello: HelloIcon,
   files: FilesIcon,
   doc: DocIcon,
   terminal: TerminalIcon,

@@ -10,6 +10,7 @@ import { MenuBar } from "./MenuBar";
 import { Dock } from "./Dock";
 import { DesktopIcons } from "./DesktopIcons";
 import { Boot } from "./Boot";
+import { DesktopShellBridge } from "./DesktopShellBridge";
 import "../os.css";
 
 export function DesktopFrame({
@@ -59,6 +60,10 @@ export function DesktopFrame({
       </div>
       <DesktopIcons />
       <Dock />
+      {/* The interactive shell, fix 2 of the phase 1 review: adopts the
+          server rendered windows, owns the store sync, keyboard and
+          dialogs. Loads after hydration from its own chunk. */}
+      <DesktopShellBridge />
     </div>
   );
 }

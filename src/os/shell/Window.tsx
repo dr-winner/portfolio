@@ -72,13 +72,14 @@ export function Window({
 }
 
 function inlineGeometry(win: WinState) {
-  const minimized = win.mode === "minimized";
+  /* Minimized visibility is owned by the desktop shell paint, which runs
+     the genie animation before hiding and pauses the paint while a drag
+     or animation is live. React only writes geometry and z order so the
+     two never fight over the same property. */
   return {
     transform: `translate3d(${win.x}px, ${win.y}px, 0)`,
     width: `${win.w}px`,
     height: `${win.h}px`,
     zIndex: win.z,
-    display: minimized ? ("none" as const) : undefined,
-    contentVisibility: minimized ? ("hidden" as const) : undefined,
   };
 }

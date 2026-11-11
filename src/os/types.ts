@@ -4,6 +4,7 @@
 /** One id per app in the OS, brief heading 6.7 (13 tiles). */
 export type AppId =
   | "welcome"
+  | "hello"
   | "files"
   | "doc"
   | "terminal"

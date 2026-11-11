@@ -144,12 +144,15 @@ export function installKeyboard(shell: ShellShortcuts): () => void {
 
 /* F6 moves focus between the four regions, brief 3.8. Regions mark
    themselves with data-wos-region and hold a data-wos-region-focus root
-   to land keyboard focus on. */
+   to land keyboard focus on, either on the region element itself or on a
+   descendant. */
 export function cycleRegions(): void {
   const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   const el = active?.closest<HTMLElement>("[data-wos-region]") ?? null;
   const name = (el?.dataset.wosRegion ?? "") as Region | "";
   const next = name && REGION_ORDER.includes(name) ? REGION_ORDER[(REGION_ORDER.indexOf(name) + 1) % REGION_ORDER.length] : REGION_ORDER[0];
-  const target = document.querySelector<HTMLElement>(`[data-wos-region="${next}"] [data-wos-region-focus]`);
+  const region = document.querySelector<HTMLElement>(`[data-wos-region="${next}"]`);
+  if (!region) return;
+  const target = region.matches("[data-wos-region-focus]") ? region : region.querySelector<HTMLElement>("[data-wos-region-focus]");
   target?.focus();
 }

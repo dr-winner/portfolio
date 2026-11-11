@@ -25,6 +25,9 @@ export const MAXIMIZE_INSET = 8;
    resolves against the work area at open time. */
 export const DEFAULT_SIZES: Record<AppId, { w: number; h: number; minW: number; minH: number; hDynamic?: boolean }> = {
   welcome: { w: 640, h: 520, minW: 420, minH: 420 },
+  /* The temporary Hello proof app, brief Phase 1 item 10. Small by
+     design so three fit overlapping on the smallest desktop. */
+  hello: { w: 440, h: 320, minW: 340, minH: 240 },
   files: { w: 880, h: 560, minW: 520, minH: 360 },
   doc: { w: 860, h: 680, minW: 480, minH: 400 },
   terminal: { w: 720, h: 440, minW: 420, minH: 260 },
@@ -41,6 +44,7 @@ export const DEFAULT_SIZES: Record<AppId, { w: number; h: number; minW: number; 
 
 export const DEFAULT_TITLES: Record<AppId, string> = {
   welcome: "Welcome",
+  hello: "Hello",
   files: "Files",
   doc: "Document",
   terminal: "Terminal",

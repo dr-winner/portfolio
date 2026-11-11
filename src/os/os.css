@@ -510,6 +510,8 @@
   z-index: var(--wos-z-switcher);
   display: grid;
   place-items: center;
+  background: rgba(5, 7, 10, 0.4);
+  animation: wos-search-fade 120ms var(--wos-ease-micro);
 }
 .wos-switcher {
   display: flex;
@@ -1640,4 +1642,215 @@ html:not([data-boot-play="1"]) .wos-wall-bloom {
 }
 .wos-backlink:hover {
   color: var(--signal, inherit);
+}
+
+/* --- Fix 2 of the phase 1 review: app menu triggers in the menu bar,
+   the dropdown under each trigger, and the minimized backstop (the
+   shell paint owns visibility, this covers any store state without a
+   paint yet). --- */
+.wos-menubar-group {
+  position: relative;
+  display: flex;
+}
+.wos-menubar-group .wos-menu {
+  left: 0;
+}
+.wos-menubar-menu {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  border: 0;
+  padding: 0 8px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--wos-text-2);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.wos-menubar-menu:hover {
+  background: var(--wos-highlight);
+  color: var(--wos-text);
+}
+.wos-menubar-menu[data-open="true"] {
+  background: var(--wos-accent-dim);
+  color: var(--wos-accent);
+}
+.wos-window[data-wm-mode="minimized"]:not([data-wos-animating="true"]) {
+  visibility: hidden;
+  content-visibility: hidden;
+}
+
+/* --- Search, brief 3.8 and fix 2: a 640px panel 120px from the top, a
+   52px 17px input, results as a listbox. 140ms scale 0.98 to 1. --- */
+.wos-search-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: var(--wos-z-search);
+  background: rgba(5, 7, 10, 0.4);
+  animation: wos-search-fade 140ms var(--wos-ease-micro);
+}
+.wos-search {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(640px, calc(100vw - 32px));
+  border-radius: 16px;
+  border: 1px solid var(--wos-border-strong);
+  background: var(--wos-glass-solid);
+  box-shadow: var(--wos-shadow-focus);
+  overflow: hidden;
+  animation: wos-search-in 140ms var(--wos-ease-micro);
+}
+@keyframes wos-search-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes wos-search-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+.wos-search-input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-bottom: 1px solid var(--wos-border);
+  padding: 0 20px;
+  background: transparent;
+  color: var(--wos-text);
+  font-size: 17px;
+  line-height: 1;
+  outline: none;
+}
+.wos-search-input::placeholder {
+  color: var(--wos-text-3);
+}
+.wos-search-list {
+  max-height: min(420px, calc(100dvh - 240px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+}
+.wos-search-groupname {
+  margin: 10px 12px 6px;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wos-text-3);
+}
+.wos-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--wos-text);
+  font-size: 14px;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+}
+.wos-search-item[data-selected="true"] {
+  background: var(--wos-accent-dim);
+  color: var(--wos-accent);
+}
+.wos-search-itemlabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wos-search-itemgroup {
+  flex: 0 0 auto;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 11px;
+  color: var(--wos-text-3);
+}
+.wos-search-empty {
+  margin: 16px 12px 20px;
+  font-size: 13.5px;
+  color: var(--wos-text-3);
+}
+
+/* --- Settings, the Hello proof app, and the placeholder app bodies,
+   fix 2. They reuse the shared window primitives above. --- */
+.wos-settings,
+.wos-hello,
+.wos-placeholder,
+.wos-docview {
+  padding: 20px 24px 28px;
+}
+.wos-settingrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+}
+.wos-settingtext {
+  margin: 0;
+  font-size: 14px;
+  color: var(--wos-text);
+}
+.wos-settingnote {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--wos-text-3);
+}
+.wos-hello-line {
+  margin: 0 0 4px;
+  max-width: 52ch;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--wos-text-2);
+}
+.wos-shortcuts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wos-shortcuts li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  color: var(--wos-text-2);
+}
+.wos-shortcuts .wos-kbd {
+  flex: 0 0 auto;
+  min-width: 88px;
+  justify-content: center;
+}
+.wos-docpara {
+  margin: 0 0 12px;
+  max-width: 68ch;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--wos-text-2);
+}
+.wos-docview .wos-window-actions {
+  margin-top: 18px;
 }
