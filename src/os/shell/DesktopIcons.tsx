@@ -3,15 +3,15 @@
 /* Desktop icons, brief line 101 and 814: a top right column of 88px cells
    in this order, Projects (folder), CV.pdf, README.md, Contact, then Agent
    Lab and Proxy as app shortcuts. Labels 12px, 2 lines max, never
-   truncated mid word. Brief 123 gives openings: CV.pdf opens Preview and
-   Contact opens Mail once the desktop shell wires them in phase 9. Until
-   then, and per the interim wiring documented in the phase report, each
-   icon stays a real link to the matching route. The list is a group of
-   links with roving tabindex, arrows move. */
+   truncated mid word. Brief 123 gives openings: CV.pdf opens Preview,
+   Contact opens Mail. Fix 3 of the phase 1 review: each icon carries
+   data-wos-open, so with the shell mounted the document capture listener
+   opens the matching window instead of navigating, README.md opens the
+   README document window and never leaves the site for GitHub, and the
+   href stays as the no JavaScript fallback path. */
 
 import { useRef, useState } from "react";
 import { appIcons, FolderIcon } from "../icons";
-import { site } from "@/content/site";
 import type { AppId } from "../types";
 
 interface DesktopIcon {
@@ -20,15 +20,17 @@ interface DesktopIcon {
   ext?: string;
   href: string;
   app: AppId | "folder";
+  /* The interception target for the shell, fix 3. */
+  open?: string;
 }
 
 const ICONS: DesktopIcon[] = [
-  { label: "Projects", href: "/work", app: "folder" },
-  { label: "CV", ext: ".pdf", href: "/cv.pdf", app: "preview" },
-  { label: "README", ext: ".md", href: site.links.github, app: "doc" },
-  { label: "Contact", href: "/contact", app: "mail" },
-  { label: "Agent Lab", href: "/work/llm-agent-security-lab", app: "agent-lab" },
-  { label: "Proxy", href: "/work/llm-agent-security-lab", app: "proxy" },
+  { label: "Projects", href: "/work", app: "folder", open: "files" },
+  { label: "CV", ext: ".pdf", href: "/cv.pdf", app: "preview", open: "preview" },
+  { label: "README", ext: ".md", href: "/classic", app: "doc", open: "doc:readme" },
+  { label: "Contact", href: "/contact", app: "mail", open: "mail" },
+  { label: "Agent Lab", href: "/classic", app: "agent-lab", open: "agent-lab" },
+  { label: "Proxy", href: "/classic", app: "proxy", open: "proxy" },
 ];
 
 export function DesktopIcons() {
@@ -64,6 +66,7 @@ export function DesktopIcons() {
             <a
               href={icon.href}
               data-wos-icon
+              {...(icon.open ? { "data-wos-open": icon.open } : {})}
               tabIndex={index === roving ? 0 : -1}
               className="wos-icon wos-focusable"
               aria-label={`${icon.label}${icon.ext ?? ""}`}

@@ -9,10 +9,12 @@
    moves. Tooltip 12px glass pill 10px above the icon after 300ms. First
    launch of an app bounces its icon once. role=toolbar with a roving
    tabindex, arrows move, Enter opens. Each open window shows its dot: teal
-   for the focused app, text-3 for running unfocused.
-   Interim wiring, documented in the phase report: until an app window
-   ships, its tile stays a real link to the matching route and the desktop
-   shell will intercept built apps from phase 9 on. */
+   for the focused app, text-3 for running unfocused. Fix 3 of the phase 1
+   review: every tile carries data-wos-open, so with the shell mounted the
+   document capture listener opens the app window instead of navigating,
+   and the href stays as the no JavaScript fallback path. Terminal,
+   Proxy, Agent Lab, Findings, Detections and Settings fall back to the
+   classic view, never to another app's route. */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { appIcons } from "../icons";
@@ -35,16 +37,16 @@ type Entry = AppEntry | { kind: "divider" };
 
 const ENTRIES: Entry[] = [
   { kind: "app", app: "files", label: "Files", href: "/work" },
-  { kind: "app", app: "terminal", label: "Terminal", href: "/writeups" },
-  { kind: "app", app: "proxy", label: "Proxy", href: "/work/llm-agent-security-lab" },
-  { kind: "app", app: "agent-lab", label: "Agent Lab", href: "/work/llm-agent-security-lab" },
-  { kind: "app", app: "findings", label: "Findings", href: "/work/healthcare-portal-pentest-lab" },
-  { kind: "app", app: "detections", label: "Detections", href: "/work/aws-threat-detection-as-code" },
+  { kind: "app", app: "terminal", label: "Terminal", href: "/classic" },
+  { kind: "app", app: "proxy", label: "Proxy", href: "/classic" },
+  { kind: "app", app: "agent-lab", label: "Agent Lab", href: "/classic" },
+  { kind: "app", app: "findings", label: "Findings", href: "/classic" },
+  { kind: "app", app: "detections", label: "Detections", href: "/classic" },
   { kind: "app", app: "about", label: "About", href: "/about" },
   { kind: "app", app: "mail", label: "Mail", href: "/contact" },
   { kind: "divider" },
   { kind: "app", app: "preview", label: "Preview, the CV", href: "/cv.pdf" },
-  { kind: "app", app: "settings", label: "Settings", href: "/security" },
+  { kind: "app", app: "settings", label: "Settings", href: "/classic" },
 ];
 
 const APPS = ENTRIES.filter((entry): entry is AppEntry => entry.kind === "app");
@@ -268,6 +270,7 @@ export function Dock() {
               itemRefs.current[appIndex] = el;
             }}
             href={entry.href}
+            data-wos-open={entry.app}
             data-wos-dock-item
             data-wos-dock-app={entry.app}
             data-wos-index={appIndex}

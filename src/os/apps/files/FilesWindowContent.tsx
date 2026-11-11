@@ -1,10 +1,10 @@
 /* Files window content for the OS view of /work, fix 1 of the phase 1
    review: the work index lives inside a Files window instead of a full
    page behind the chrome. Everything comes from the typed content layer,
-   nothing is invented. Case studies and labs open their document windows
-   (server rendered on /work/<slug>). Archive items: AIX Market Analyzer
-   and Motifi.AI keep their live demo links, Proof9 has no link of any
-   kind and shows exactly its content line. */
+   nothing is invented. Case studies and labs carry data-wos-open, so the
+   shell interception opens their document windows, fix 3. Archive items:
+   AIX Market Analyzer and Motifi.AI keep their live demo links, Proof9 has
+   no link of any kind and shows exactly its content line. */
 
 import { work } from "@/content/work";
 
@@ -23,7 +23,11 @@ export function FilesWindowContent() {
               {item.kind === "archive" ? "◇" : "▸"}
             </span>
             {item.kind !== "archive" || item.link ? (
-              <a href={item.kind === "archive" ? (item.link ?? undefined) : `/work/${item.slug}`} className="wos-fileslink" {...(item.kind === "archive" ? { target: "_blank", rel: "noreferrer" } : {})}>
+              <a
+                href={item.kind === "archive" ? (item.link ?? undefined) : `/work/${item.slug}`}
+                className="wos-fileslink"
+                {...(item.kind === "archive" ? { target: "_blank", rel: "noreferrer" } : { "data-wos-open": `doc:${item.slug}` })}
+              >
                 {item.title}
               </a>
             ) : (

@@ -14,9 +14,10 @@
       installKeyboard, and the shell intents from the chrome,
    5. renders windows the store opens later (the Hello proof app, deep
       link documents) with the content registry below.
-   Interim wiring, documented in the phase report: dock tiles, desktop
-   icons and Welcome buttons stay real links until the link interception
-   pass; the menu bar and this shell already dispatch windows. */
+   Link interception, fix 3 of the phase 1 review: a capture phase
+   document listener turns data-wos-open clicks into window opens, so
+   dock tiles, desktop icons and in window links open windows instead of
+   navigating. Their hrefs stay as the no JavaScript fallbacks. */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { computeWorkArea, DEFAULT_TITLES, DOCK_RESERVE_DEFAULT } from "../wm/geometry";
@@ -101,6 +102,55 @@ function contentFor(win: WinState): React.ReactNode {
 function motionReduced(): boolean {
   if (document.documentElement.dataset.wosMotion === "reduce") return true;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/* ── Link interception, fix 3 of the phase 1 review ──────────────────────
+   Dock tiles, desktop icons and in window links carry data-wos-open. While
+   the shell is mounted, a capture phase document listener turns those
+   clicks into window opens, so a click on Projects or Files opens a window
+   instead of landing on a full page under the chrome. Capture on document
+   runs before the framework root handlers, so stopping there beats the
+   client side navigation of a next/link anchor as well. Anchors without a
+   known target are left alone: external links, the CV file and the classic
+   view routes keep navigating, and with JavaScript disabled the href
+   fallbacks are the only paths. */
+
+/* Every app id a link may open. doc is not here, it needs a slug. */
+const INTERCEPT_APPS: readonly AppId[] = [
+  "welcome",
+  "hello",
+  "files",
+  "terminal",
+  "proxy",
+  "agent-lab",
+  "findings",
+  "detections",
+  "about",
+  "mail",
+  "preview",
+  "settings",
+  "security",
+];
+
+type OpenRequest = { kind: "app"; app: AppId } | { kind: "doc"; slug: string };
+
+export function parseOpenTarget(value: string | null): OpenRequest | null {
+  if (!value) return null;
+  if (value.startsWith("doc:")) {
+    const slug = value.slice(4);
+    return /^[a-z0-9][a-z0-9-]*$/.test(slug) ? { kind: "doc", slug } : null;
+  }
+  return (INTERCEPT_APPS as readonly string[]).includes(value) ? { kind: "app", app: value as AppId } : null;
+}
+
+export function dispatchOpenTarget(request: OpenRequest): void {
+  if (request.kind === "app") {
+    dispatchWm({ type: "open", payload: { app: request.app, id: request.app, title: DEFAULT_TITLES[request.app] } });
+    return;
+  }
+  const item = publishedWork.find((entry) => entry.slug === request.slug);
+  const title = item?.title ?? (request.slug === "readme" ? "README.md" : DEFAULT_TITLES.doc);
+  dispatchWm({ type: "open", payload: { app: "doc", id: `doc:${request.slug}`, title, props: { slug: request.slug } } });
 }
 
 function windowEl(id: string): HTMLElement | null {
@@ -311,6 +361,23 @@ export function DesktopShell() {
         if (before.mode === "minimized" && after.mode !== "minimized") genie(id, after, "restore");
       }
     });
+  }, []);
+
+  /* ── Link interception, fix 3: document capture beats the framework ── */
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const el = (event.target as Element | null)?.closest?.("[data-wos-open]");
+      if (!el) return;
+      const request = parseOpenTarget(el.getAttribute("data-wos-open"));
+      if (!request) return;
+      event.preventDefault();
+      event.stopPropagation();
+      dispatchOpenTarget(request);
+    };
+    document.addEventListener("click", onClick, { capture: true });
+    return () => document.removeEventListener("click", onClick, { capture: true });
   }, []);
 
   /* ── Session persistence, debounced 300ms, brief 3.11 ──────────────── */

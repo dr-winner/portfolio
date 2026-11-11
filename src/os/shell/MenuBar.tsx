@@ -246,7 +246,7 @@ export function MenuBar() {
           <span className="wos-menubar-app">{appTitle}</span>
         </div>
         <div className="wos-menubar-right" role="toolbar" aria-label="Quick actions">
-          <a href="/security" className="wos-menubar-quick" aria-label="Security">
+          <a href="/security" className="wos-menubar-quick" aria-label="Security" data-wos-open="security">
             <ShieldIcon width={16} />
           </a>
           <button type="button" className="wos-menubar-quick" aria-label="Search" onClick={() => emitIntent({ type: "search:open" })}>

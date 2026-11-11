@@ -2,10 +2,8 @@
    server rendered window shell on / and by DesktopShell when it reopens the
    window after a close. Copy is exact, from the review: no invented facts,
    no em dashes, no semicolons. Buttons stay real links so the window works
-   without JavaScript. The shell upgrade (opening Files or Mail windows in
-   place) is wired by DesktopShell through data-wos-open in the link
-   interception pass. */
-
+   without JavaScript. With the shell mounted the link interception, fix 3,
+   opens the Files, Mail and Proxy windows in place from data-wos-open. */
 import Link from "next/link";
 
 import { PlatformHint } from "./PlatformHint";
