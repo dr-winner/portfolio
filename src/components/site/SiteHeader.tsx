@@ -18,6 +18,7 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menuLabel, setMenuLabel] = useState("Menu");
+  const [shortcut, setShortcut] = useState("Ctrl K");
   const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
   const progressRef = useRef<HTMLSpanElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
@@ -47,9 +48,9 @@ export function SiteHeader() {
     };
     window.addEventListener("scroll", throttled, { passive: true });
     window.addEventListener("resize", throttled);
-    const touch = window.matchMedia("(pointer: coarse)").matches;
     const mac = /Mac|iPhone|iPad/.test(navigator.platform);
-    setMenuLabel(touch ? "MENU" : mac ? "⌘K" : "CTRL·K");
+    setMenuLabel("Menu");
+    setShortcut(mac ? "⌘K" : "Ctrl K");
     return () => {
       window.removeEventListener("scroll", throttled);
       window.removeEventListener("resize", throttled);
@@ -89,7 +90,7 @@ export function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-40 h-16 border-b border-transparent transition-colors duration-[var(--dur-2)]">
+    <header className="site-header sticky top-0 z-40 h-16">
       <div
         aria-hidden
         className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[140%] transition-[background-color] duration-[var(--dur-2)] ${
@@ -127,8 +128,8 @@ export function SiteHeader() {
           {indicator ? (
             <span
               aria-hidden
-              className="pointer-events-none absolute h-[2px] bg-[var(--signal)] transition-[left,width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-              style={{ left: indicator.left, width: indicator.width, bottom: -12 }}
+              className="nav-indicator"
+              style={{ transform: `translateX(${indicator.left}px) scaleX(${indicator.width / 100})` }}
             />
           ) : null}
         </nav>
@@ -136,16 +137,29 @@ export function SiteHeader() {
           type="button"
           aria-label="Open menu"
           onClick={() => setOpen(true)}
-          className="menu-trigger-btn inline-flex h-10 items-center rounded-[6px] border border-[var(--line)] px-3 font-mono text-[12px] tracking-[0.14em] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
+          className="menu-trigger-btn inline-flex h-11 items-center rounded-[6px] border border-[var(--line)] px-3 font-mono text-[12px] tracking-[0.14em] text-[var(--fg-muted)]"
         >
-          {menuLabel === "⌘K" || menuLabel === "CTRL·K" ? "MENU" : "Menu"}
+          {menuLabel}
         </button>
         <button
           type="button"
-          onClick={() => window.dispatchEvent(new CustomEvent("palette:toggle"))}
-          className="menu-trigger-fine h-10 items-center rounded-[6px] border border-[var(--line)] px-3 font-mono text-[12px] tracking-[0.14em] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
+          data-magnet=""
+          aria-label={`Search. ${shortcut}`}
+          onMouseEnter={() => window.dispatchEvent(new Event("palette:preload"))}
+          onFocus={() => window.dispatchEvent(new Event("palette:preload"))}
+          onClick={() => window.dispatchEvent(new Event("palette:open"))}
+          className="inline-flex h-11 items-center gap-2 rounded-[8px] border border-[var(--line-strong)] bg-[var(--surface)] px-2.5 text-[var(--fg)]"
         >
-          ⌘K
+          <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <circle cx="7" cy="7" r="4.2" />
+            <path d="M10.2 10.2 L13 13" strokeLinecap="round" />
+          </svg>
+          <span className="magnet-visual">
+            <span className="magnet-label font-mono text-[13px]">
+              <span className="hidden sm:inline">Search</span>
+              <span className="ml-0 text-[var(--fg-muted)] sm:ml-2">{shortcut}</span>
+            </span>
+          </span>
         </button>
         <ThemeToggle />
         <a

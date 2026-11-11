@@ -15,6 +15,11 @@ export function ThemeToggle() {
 
   useEffect(() => {
     setTheme(currentTheme());
+    function sync() {
+      setTheme(currentTheme());
+    }
+    window.addEventListener("theme:changed", sync);
+    return () => window.removeEventListener("theme:changed", sync);
   }, []);
 
   function toggle() {
@@ -44,7 +49,7 @@ export function ThemeToggle() {
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`absolute inset-0 h-full w-full transition-all duration-300 ${
+          className={`absolute inset-0 h-full w-full transition-all duration-200 ${
             known ? "opacity-0 scale-75" : "opacity-100 rotate-0"
           } ${known ? "pointer-events-none" : ""}`}
         >
@@ -58,7 +63,7 @@ export function ThemeToggle() {
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`absolute inset-0 h-full w-full transition-all duration-300 ${
+          className={`absolute inset-0 h-full w-full transition-all duration-200 ${
             known && checked ? "rotate-0 opacity-100" : known ? "-rotate-90 opacity-0" : "opacity-0"
           }`}
         >
@@ -73,7 +78,7 @@ export function ThemeToggle() {
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`absolute inset-0 h-full w-full transition-all duration-300 ${
+          className={`absolute inset-0 h-full w-full transition-all duration-200 ${
             known && !checked ? "rotate-0 opacity-100" : known ? "rotate-90 opacity-0" : "opacity-0"
           }`}
         >

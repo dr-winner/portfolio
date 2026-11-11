@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
 import { CaseToc } from "@/components/site/CaseToc";
 import { CopyButton } from "@/components/site/CopyButton";
+import { SecurityReport } from "@/components/site/SecurityReport";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -77,6 +78,7 @@ export default function SecurityPage() {
           This is a personal site, but I hold it to the standard I&apos;d expect from a product team. Here&apos;s exactly what it sends and what that buys.
         </p>
         <div className="mt-8 h-px w-full bg-[var(--line)]" />
+        <SecurityReport variant="panel" />
       </Reveal>
 
       <div className="mt-12 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[230px_minmax(0,1fr)] min-[1100px]:gap-14">

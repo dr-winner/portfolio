@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
-import { CaseDiagram, type CaseDiagramVariant } from "@/components/site/CaseDiagram";
+import { ProjectVisual } from "@/components/site/ProjectVisual";
 import { Badge } from "@/components/ui/Badge";
 import { work, type WorkFilter } from "@/content/work";
 
@@ -169,12 +169,8 @@ export function WorkIndex() {
                 >
                   <Link
                     href={`/work/${item.slug}`}
-                    /* Alternation happens with flex-row-reverse, not with two
-                       grid-template-columns values: identical Tailwind column
-                       templates on the same element resolve by stylesheet
-                       order, which silently gave odd rows a 300px text
-                       column. Flex is deterministic. */
-                    className={`group grid grid-cols-1 items-stretch gap-6 py-7 no-underline lg:flex lg:flex-row lg:items-stretch lg:gap-10 lg:min-h-[276px] ${
+                    data-tilt=""
+                    className={`tilt-row group grid grid-cols-1 items-stretch gap-6 rounded-[16px] border border-[var(--line)] bg-[var(--surface)] p-4 no-underline lg:flex lg:items-stretch lg:gap-8 ${
                       i % 2 === 1 ? "lg:flex-row-reverse" : ""
                     }`}
                   >
@@ -183,10 +179,13 @@ export function WorkIndex() {
                         <Badge>{item.badges[1] ?? item.badges[0]}</Badge>
                         <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{item.year}</span>
                       </div>
-                      <h3 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-tight)] tracking-[-0.01em] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)] lg:min-h-[2em]">
+                      <h3
+                        className="mt-3 text-[22px] font-semibold leading-[1.25] tracking-[-0.01em] text-[var(--fg-strong)] lg:min-h-[2em]"
+                        style={{ viewTransitionName: `work-title-${item.slug}` }}
+                      >
                         {item.title}
                       </h3>
-                      <p className="mt-2 line-clamp-2 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)] lg:min-h-[2.5em]">
+                      <p className="mt-2 text-pretty text-[14px] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
                         {item.outcome ?? item.card}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -200,19 +199,14 @@ export function WorkIndex() {
                         ))}
                       </div>
                       <span className="mt-4 inline-flex items-center gap-1.5 font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)] lg:mt-auto lg:pt-4">
-                        Read
+                        Read case study
                         <span aria-hidden className="arrow-shift">
                           →
                         </span>
                       </span>
                     </div>
-                    <div
-                      className={`card-diagram-wrap flex min-w-0 items-center rounded-[10px] bg-[var(--surface-2)] p-4 lg:w-[300px] lg:shrink-0`}
-                    >
-                      <CaseDiagram
-                        variant={item.slug as CaseDiagramVariant}
-                        className="card-diagram h-auto w-full transition-transform duration-[var(--dur-2)]"
-                      />
+                    <div className="depth-visual aspect-[16/10] min-h-[200px] overflow-hidden rounded-[12px] bg-[var(--bg-deep)] lg:w-[340px] lg:shrink-0" style={{ viewTransitionName: `work-${item.slug}` }}>
+                      <ProjectVisual slug={item.slug} />
                     </div>
                   </Link>
                 </li>
@@ -233,9 +227,13 @@ export function WorkIndex() {
                 <li key={item.slug} data-flip={`lab-${item.slug}`}>
                   <Link
                     href={`/work/${item.slug}`}
-                    className="group flex h-full flex-col rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-5 no-underline"
+                    data-tilt=""
+                    className="tilt-row group flex h-full flex-col rounded-[16px] border border-[var(--line)] bg-[var(--surface)] p-5 no-underline"
                   >
-                    <span className="inline-flex h-6 w-fit items-center rounded-full border border-[var(--amber)]/60 px-2.5 font-mono text-[11px] uppercase tracking-[0.06em] text-[var(--amber)]">
+                    <div className="depth-visual mb-4 aspect-[16/10] overflow-hidden rounded-[12px] bg-[var(--bg-deep)]" style={{ viewTransitionName: `work-${item.slug}` }}>
+                      <ProjectVisual slug={item.slug} />
+                    </div>
+                    <span className="inline-flex h-6 w-fit items-center rounded-full border border-[var(--amber)]/60 px-2.5 font-mono text-[12px] uppercase tracking-[0.06em] text-[var(--amber)]">
                       Training lab
                     </span>
                     <h3 className="mt-3 text-[length:var(--step-1)] font-medium leading-[var(--leading-tight)] text-[var(--fg)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--amber)]">

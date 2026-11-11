@@ -5,6 +5,7 @@ import { codeToHtml } from "shiki";
 import { Badge } from "@/components/ui/Badge";
 import { CaseFigure } from "@/components/site/CaseFigure";
 import { CaseToc } from "@/components/site/CaseToc";
+import { FigurePlay } from "@/components/site/FigurePlay";
 import { LlmAgentLabInspector } from "@/components/site/LlmAgentLabInspector";
 import { Reveal } from "@/components/motion/Reveal";
 import { ATTACK_SCENARIOS } from "@/lab/llm-agent-security/engine";
@@ -154,7 +155,10 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
         </p>
       </Reveal>
       <Reveal delay={80} y={20}>
-        <h1 className="mt-6 max-w-[24ch] text-balance text-[length:var(--step-4)] font-medium leading-[var(--leading-tight)] tracking-[-0.02em]">
+        <h1
+          className="mt-6 max-w-[24ch] text-balance text-[length:var(--step-4)] font-semibold leading-[1.05] tracking-[-0.03em]"
+          style={{ viewTransitionName: `work-title-${item.slug}` }}
+        >
           {main}
         </h1>
         {sub ? <p className="mt-3 text-[length:var(--step-1)] text-[var(--fg-muted)]">{sub}</p> : null}
@@ -179,7 +183,9 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
 
       {/* ── Large per-case diagram, always the final static drawing ─────── */}
       <div className="case-figure mt-10">
-        <CaseFigure slug={item.slug} />
+        <FigurePlay slug={item.slug}>
+          <CaseFigure slug={item.slug} />
+        </FigurePlay>
       </div>
 
       {/* ── Two-column reading layout: sticky TOC + body (section 5.3) ──── */}

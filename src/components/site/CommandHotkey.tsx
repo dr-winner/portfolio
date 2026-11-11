@@ -1,31 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { SiteMenu } from "@/components/site/SiteMenu";
+import { useEffect, useState, type ComponentType } from "react";
+
+type PaletteProps = { onClose: () => void };
 
 export function CommandHotkey() {
   const [open, setOpen] = useState(false);
+  const [Palette, setPalette] = useState<ComponentType<PaletteProps> | null>(null);
 
   useEffect(() => {
+    let alive = true;
+    function load() {
+      return import("./CommandPalette").then((mod) => {
+        if (alive) setPalette(() => mod.CommandPalette);
+        return mod.CommandPalette;
+      });
+    }
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((value) => !value);
+        void load().then(() => {
+          if (alive) setOpen((value) => !value);
+        });
       }
     }
-    /* The header's Cmd K button toggles through this event so only one
-       palette instance ever mounts, even though two components listen. */
-    function onPaletteToggle() {
-      setOpen((value) => !value);
+    function onOpen() {
+      void load().then(() => {
+        if (alive) setOpen(true);
+      });
+    }
+    function onPreload() {
+      void load();
     }
     window.addEventListener("keydown", onKey);
-    window.addEventListener("palette:toggle", onPaletteToggle as EventListener);
+    window.addEventListener("palette:open", onOpen);
+    window.addEventListener("palette:preload", onPreload);
     return () => {
+      alive = false;
       window.removeEventListener("keydown", onKey);
-      window.removeEventListener("palette:toggle", onPaletteToggle as EventListener);
+      window.removeEventListener("palette:open", onOpen);
+      window.removeEventListener("palette:preload", onPreload);
     };
   }, []);
 
-  if (!open) return null;
-  return <SiteMenu onClose={() => setOpen(false)} />;
+  if (!open || !Palette) return null;
+  return <Palette onClose={() => setOpen(false)} />;
 }
