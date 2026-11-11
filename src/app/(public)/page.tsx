@@ -10,7 +10,6 @@ import { RequestTrace } from "@/components/site/RequestTrace";
 import { SectionLabel } from "@/components/site/SectionLabel";
 import { SeeItWork } from "@/components/site/SeeItWork";
 import { StatementLine } from "@/components/site/StatementLine";
-import { StatusDot } from "@/components/site/StatusDot";
 import { WorkCard } from "@/components/site/WorkCard";
 import { cvHref, mailto, site } from "@/content/site";
 import { skills } from "@/content/skills";
@@ -56,22 +55,16 @@ export default async function HomePage() {
       <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema()) }} />
       <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema()) }} />
 
-      <section id="hero" data-hero className="hero-frame px-[clamp(20px,4vw,40px)] pt-4 lg:pt-6">
+      <section id="hero" data-hero className="hero-frame px-[clamp(20px,4vw,40px)] pt-8 min-[960px]:pt-10">
         <div className="hero-lights" aria-hidden>
           <div className="hero-navy" />
           <div className="hero-teal" />
           <div className="hero-grid" />
           <div className="hero-cursor" />
         </div>
-        <div className="relative z-[1] mx-auto grid w-full max-w-[1200px] items-center gap-8 pb-2 min-[960px]:grid-cols-12">
+        <div className="relative z-[1] mx-auto grid w-full max-w-[1200px] items-start gap-8 pb-2 min-[960px]:grid-cols-12">
           <div className="min-[960px]:col-span-6">
-            <div className="enter-up" style={{ ["--enter-y" as string]: "8px" }}>
-              <StatusDot pulse label={site.availabilityShort} />
-            </div>
-            <p className="enter-up mt-4 font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]" style={{ animationDelay: "40ms", ["--enter-y" as string]: "8px" }}>
-              Richard Winner Duvor
-            </p>
-            <h1 className="hero-title mt-3 text-[var(--fg-strong)]">
+            <h1 className="hero-title text-[var(--fg-strong)]">
               Application
               <br />
               <span className="hero-security">Security</span>
