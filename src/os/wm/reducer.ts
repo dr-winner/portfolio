@@ -52,7 +52,16 @@ export interface WMState {
   toast: string | null;
 }
 
-export type OpenPayload = { app: AppId; id?: WindowId; title?: string; props?: Record<string, string> };
+export type OpenPayload = {
+  app: AppId;
+  id?: WindowId;
+  title?: string;
+  props?: Record<string, string>;
+  /* Explicit opening geometry. The shell passes it when adopting a
+     server rendered window so the store and the paint agree, brief 7.1.
+     Still clamped to the work area and the app minimum sizes. */
+  at?: { x: number; y: number; w: number; h: number };
+};
 
 export type WmAction =
   | { type: "open"; payload: OpenPayload }
@@ -157,22 +166,33 @@ function applyOpen(state: WMState, payload: OpenPayload): WMState {
     };
   }
 
-  const size = openSizeFor(payload.app, next.workArea);
-  /* Cascade, brief 3.2: centred for the first window of a session, then
-     the previous open window plus (32, 28), wrapping at the work area. */
-  const openPrevious = next.order
-    .filter((n) => next.windows[n].mode !== "minimized")
-    .map((n) => next.windows[n])
-    .pop();
-  const rect = cascadeRect(next.workArea, openPrevious ? { x: openPrevious.x, y: openPrevious.y } : null, size.w, size.h);
+  /* Adopted windows take their geometry from the paint, brief 7.1; shell
+     opened windows cascade. Both paths clamp to the work area and the
+     app minimums. */
+  let rect: { x: number; y: number; w: number; h: number };
+  if (payload.at) {
+    const min = DEFAULT_SIZES[payload.app];
+    const w = clampSize(payload.at.w, payload.at.h, min.minW, min.minH, payload.at.x, payload.at.y, next.workArea);
+    const pos = clampPosition(payload.at.x, payload.at.y, w.w, next.workArea);
+    rect = { x: pos.x, y: pos.y, w: w.w, h: w.h };
+  } else {
+    const size = openSizeFor(payload.app, next.workArea);
+    /* Cascade, brief 3.2: centred for the first window of a session, then
+       the previous open window plus (32, 28), wrapping at the work area. */
+    const openPrevious = next.order
+      .filter((n) => next.windows[n].mode !== "minimized")
+      .map((n) => next.windows[n])
+      .pop();
+    rect = cascadeRect(next.workArea, openPrevious ? { x: openPrevious.x, y: openPrevious.y } : null, size.w, size.h);
+  }
   const win: WinState = {
     id,
     app: payload.app,
     title: payload.title ?? DEFAULT_TITLES[payload.app],
     x: rect.x,
     y: rect.y,
-    w: size.w,
-    h: size.h,
+    w: rect.w,
+    h: rect.h,
     z: 0,
     mode: "normal",
     props: payload.props,

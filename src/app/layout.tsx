@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { cookies } from "next/headers";
 import clsx from "clsx";
 import "./globals.css";
+import "@/os/os.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_URL } from "@/config/site";
 import { profile } from "@/content/profile";

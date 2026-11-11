@@ -43,6 +43,11 @@ export function DesktopFrame({
           <a href={classicHref}>The classic view works without it.</a>
         </p>
       </noscript>
+      {/* Fix 6 of the phase 1 review: a visible Classic view text link at
+          the bottom left of the desktop, brief 2.5. 12px, quiet colour. */}
+      <a href={classicHref} className="wos-classiclink">
+        Classic view
+      </a>
       <MenuBar />
       <div
         className="wos-stage absolute inset-0"

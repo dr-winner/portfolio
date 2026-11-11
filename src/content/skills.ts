@@ -2,7 +2,7 @@ export const skills = [
   {
     title: "Application and API security",
     items:
-      "OWASP Top 10, OWASP API Security Top 10, access control and IDOR, authentication and sessions, SQL injection, XSS, SSRF, threat modeling, secure code review",
+      "OWASP Top 10, OWASP API Security Top 10, access control and IDOR, authentication and sessions, SQL injection, threat modeling, secure code review",
   },
   {
     title: "AI and LLM application security",

@@ -37,6 +37,14 @@ export function SiteFooter({ param }: { param?: string }) {
             <div className="mt-4">
               <StatusDot label={site.availabilityShort} />
             </div>
+            {/* Fix 6 of the phase 1 review: a labelled control back to the
+                OS desktop, brief 2.5. The wordmark link alone was not
+                enough. */}
+            <p className="mt-5">
+              <Link href="/" className="wos-backlink">
+                Open winnerOS
+              </Link>
+            </p>
           </div>
           <nav aria-label="Footer">
             <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Site</p>

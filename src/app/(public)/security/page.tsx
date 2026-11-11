@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Reveal } from "@/components/motion/Reveal";
 import { CaseToc } from "@/components/site/CaseToc";
 import { CopyButton } from "@/components/site/CopyButton";
 import { site } from "@/content/site";
+import { WindowShell } from "@/os/shell/WindowShell";
+import { SecurityWindowContent } from "@/os/apps/security/SecurityWindowContent";
 
 export const metadata: Metadata = {
   title: "How this site is secured",
@@ -61,7 +64,20 @@ const protections: { label: string; text: string }[] = [
   },
 ];
 
-export default function SecurityPage() {
+export default async function SecurityPage() {
+  const view = (await headers()).get("x-view");
+
+  /* Fix 1 of the phase 1 review: in the OS frame the security summary
+     lives in a Security window. The full report stays in the classic
+     frame. */
+  if (view !== "classic") {
+    return (
+      <WindowShell id="security" app="security" title="Security">
+        <SecurityWindowContent />
+      </WindowShell>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
       <Reveal y={10}>

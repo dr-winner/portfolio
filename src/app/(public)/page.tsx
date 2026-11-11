@@ -13,6 +13,8 @@ import { cvHref, mailto, site } from "@/content/site";
 import { skills } from "@/content/skills";
 import { work } from "@/content/work";
 import { personSchema, profilePageSchema, webSiteSchema } from "@/lib/structured-data";
+import { WindowShell } from "@/os/shell/WindowShell";
+import { WelcomeContent } from "@/os/apps/welcome/WelcomeContent";
 
 /* ── Home page copy blocks (data untouched: reads from src/content) ───────── */
 
@@ -55,15 +57,38 @@ const domainTags: Record<string, string> = {
 /* ── Page ──────────────────────────────────────────────────────────────────── */
 
 export default async function HomePage() {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const h = await headers();
+  const nonce = h.get("x-nonce") ?? undefined;
+  const view = h.get("x-view");
   const featured = work.filter((item) => item.kind === "case-study");
   const [head, ...restFeatured] = featured;
 
-  return (
+  const jsonLd = (
     <>
       <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema()) }} />
       <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema()) }} />
       <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema()) }} />
+    </>
+  );
+
+  /* Fix 1 of the phase 1 review: the OS view of / is the Welcome window
+     only, brief 2.2 and 2.3. The marketing document stays on the classic
+     view below. One h1 in each render: the Welcome name here, the hero
+     headline in the classic document. */
+  if (view !== "classic") {
+    return (
+      <>
+        {jsonLd}
+        <WindowShell id="welcome" app="welcome" title="Welcome">
+          <WelcomeContent />
+        </WindowShell>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {jsonLd}
 
       {/* ── Hero: static type left, request trace right ───────────────────── */}
       <section className="px-[clamp(24px,4vw,40px)] pt-[clamp(72px,9vh,96px)]">

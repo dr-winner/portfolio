@@ -1260,3 +1260,384 @@ html:not([data-boot-play="1"]) .wos-wall-bloom {
   opacity: 0.55;
   transform: none;
 }
+
+/* --- Desktop layout, fix 1 of the phase 1 review: the OS desktop fills
+   the viewport and never scrolls as a document. Windows and the stage
+   scroll inside themselves. --- */
+.wos-desktop {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+.wos-stage {
+  overflow: hidden;
+}
+
+/* Visible Classic view link at the bottom left of the desktop, brief 2.5
+   and fix 6: 12px, quiet colour, hover lifts. Sits clear of the dock. */
+.wos-classiclink {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  z-index: 1005;
+  color: var(--wos-text-3);
+  font-size: 12px;
+  line-height: 1.2;
+  text-decoration: none;
+}
+.wos-classiclink:hover,
+.wos-classiclink:focus-visible {
+  color: var(--wos-text-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --- Static window shells, brief 7.1 and fix 1: route content inside a
+   real window. Base state stretches into the work area for narrow
+   viewports; from 1024px up each shell takes its designed size, centred
+   in the work area (menu bar 32px, dock reserve 88px), the Welcome
+   window 40px above centre, brief 2.2. DesktopShell measures and adopts
+   these exact boxes on load, no layout shift. --- */
+.wos-window-static {
+  top: 44px;
+  left: 12px;
+  right: 12px;
+  bottom: 96px;
+  width: auto;
+  height: auto;
+}
+.wos-window-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.wos-window-body > * {
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .wos-window-static[data-wm-window="welcome"] {
+    top: calc(50% - 328px);
+    left: calc(50% - 320px);
+    width: 640px;
+    height: 520px;
+  }
+  /* Doc windows centre in the work area at their default 860x680. */
+  .wos-window-static[data-wm-window^="doc:"] {
+    top: calc(50% - 368px);
+    left: calc(50% - 430px);
+    width: 860px;
+    height: 680px;
+  }
+  .wos-window-static[data-wm-window="files"] {
+    top: calc(50% - 308px);
+    left: calc(50% - 440px);
+    width: 880px;
+    height: 560px;
+  }
+  .wos-window-static[data-wm-window="about"] {
+    top: calc(50% - 348px);
+    left: calc(50% - 390px);
+    width: 780px;
+    height: 640px;
+  }
+  .wos-window-static[data-wm-window="mail"] {
+    top: calc(50% - 298px);
+    left: calc(50% - 310px);
+    width: 620px;
+    height: 540px;
+  }
+  .wos-window-static[data-wm-window="security"] {
+    top: calc(50% - 338px);
+    left: calc(50% - 420px);
+    width: 840px;
+    height: 620px;
+  }
+}
+
+/* --- Buttons inside windows, brief 2.3: 40px tall, primary teal, ghost
+   bordered. --- */
+.wos-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color var(--wos-dur-ui, 140ms) var(--wos-ease-micro),
+    color var(--wos-dur-ui, 140ms) var(--wos-ease-micro),
+    background-color var(--wos-dur-ui, 140ms) var(--wos-ease-micro);
+}
+.wos-btn-primary {
+  background: var(--wos-accent);
+  color: #05070a;
+}
+.wos-btn-primary:hover {
+  background: color-mix(in srgb, var(--wos-accent) 86%, white);
+}
+.wos-btn-ghost {
+  border: 1px solid var(--wos-border-strong);
+  background: transparent;
+  color: var(--wos-text);
+}
+.wos-btn-ghost:hover {
+  border-color: rgba(var(--wos-accent-rgb), 0.5);
+  color: var(--wos-accent);
+}
+
+/* --- Welcome window content, brief 2.3, exact copy in
+   WelcomeContent.tsx. --- */
+.wos-welcome {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 32px;
+  overflow-y: auto;
+}
+.wos-welcome-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  height: 28px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--wos-text-2);
+}
+.wos-welcome-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--wos-accent);
+  box-shadow: 0 0 0 2px rgba(var(--wos-accent-rgb), 0.25);
+}
+.wos-welcome-name {
+  margin: 18px 0 0;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #f5f7fa;
+}
+.wos-welcome-headline {
+  margin: 10px 0 0;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #a9b4c2;
+}
+.wos-nowrap {
+  white-space: nowrap;
+}
+.wos-pipe {
+  margin: 0 8px;
+  color: #6b7787;
+}
+.wos-welcome-intro {
+  margin: 16px 0 0;
+  max-width: 58ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #a9b4c2;
+}
+.wos-welcome-proof {
+  display: flex;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.wos-welcome-proof li {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.wos-welcome-proof li:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.wos-welcome-proofnum {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--wos-text);
+}
+.wos-welcome-prooflabel {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #6b7787;
+}
+.wos-welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.wos-welcome-hint {
+  margin: auto 0 0;
+  padding-top: 18px;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b7787;
+}
+.wos-welcome .wos-kbd {
+  margin: 0 2px;
+}
+
+/* --- Window body content shared by the Files, About, Mail and Security
+   shells, fix 1. Headings start at h3 because the window title is the
+   page heading. --- */
+.wos-filesview,
+.wos-aboutview,
+.wos-mailview,
+.wos-secview {
+  padding: 20px 24px 24px;
+}
+.wos-window-note {
+  margin: 0 0 14px;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--wos-text-3);
+}
+.wos-listhead {
+  margin: 18px 0 8px;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wos-text-3);
+}
+.wos-fileslist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wos-filesrow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  min-width: 0;
+}
+.wos-filesicon {
+  flex: 0 0 auto;
+  color: var(--wos-text-3);
+  font-size: 11px;
+}
+.wos-fileslink {
+  color: var(--wos-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.4;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.wos-fileslink:hover,
+.wos-fileslink:focus-visible {
+  color: var(--wos-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wos-filesplain {
+  color: var(--wos-text-2);
+  font-size: 13.5px;
+  line-height: 1.4;
+  min-width: 0;
+}
+.wos-filesyear {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--wos-text-3);
+}
+.wos-filesdesc {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--wos-text-3);
+}
+.wos-aboutlist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wos-aboutlist li {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--wos-text-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wos-aboutgroup {
+  padding: 8px 0;
+}
+.wos-abouttitle {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--wos-text);
+}
+.wos-aboutmeta {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--wos-text-3);
+}
+.wos-mailrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.wos-window-actions {
+  margin: 22px 0 0;
+}
+/* The document window keeps the route article readable at window width:
+   drop its page level gutters, the window body already scrolls. */
+.wos-window-body > article {
+  max-width: none;
+  padding: 24px 28px 32px;
+}
+
+/* Icon labels keep the dot of CV.pdf and README.md visible at every
+   width, fix 9 of the phase 1 review: break only after the dot, never
+   before it, and never swallow it. */
+.wos-icon-label {
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+.wos-icon-label .wos-icon-ext {
+  white-space: nowrap;
+}
+
+/* Classic footer back link, fix 6. Lives in the site document styles, so
+   it is styled here because os.css is global since this pass. */
+.wos-backlink {
+  color: var(--fg, inherit);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wos-backlink:hover {
+  color: var(--signal, inherit);
+}

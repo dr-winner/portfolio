@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { CertificationCard } from "@/components/site/CertificationCard";
 import { experience } from "@/content/experience";
 import { profile } from "@/content/profile";
 import { cvHref, mailto } from "@/content/site";
+import { WindowShell } from "@/os/shell/WindowShell";
+import { AboutWindowContent } from "@/os/apps/about/AboutWindowContent";
 import { skills } from "@/content/skills";
 
 export const metadata: Metadata = {
@@ -18,8 +21,19 @@ export const metadata: Metadata = {
    are invented; the card stays factual and small. */
 const focus = skills.slice(0, 2);
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const view = (await headers()).get("x-view");
   const [bioOne, bioTwo] = profile.bio;
+
+  /* Fix 1 of the phase 1 review: in the OS frame the about content lives
+     in an About window. The classic frame keeps the full document. */
+  if (view !== "classic") {
+    return (
+      <WindowShell id="about" app="about" title="About">
+        <AboutWindowContent />
+      </WindowShell>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { CopyEmail } from "@/components/site/CopyEmail";
 import { Reveal } from "@/components/motion/Reveal";
 import { LinkCard } from "@/components/site/LinkCard";
 import { StatusDot } from "@/components/site/StatusDot";
 import { cvHref, mailto, site } from "@/content/site";
+import { WindowShell } from "@/os/shell/WindowShell";
+import { MailWindowContent } from "@/os/apps/mail/MailWindowContent";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -19,7 +22,19 @@ const links = [
   { href: cvHref, label: "CV", handle: "cv.pdf" },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const view = (await headers()).get("x-view");
+
+  /* Fix 1 of the phase 1 review: in the OS frame the contact content lives
+     in a Mail window. The classic frame keeps the full document. */
+  if (view !== "classic") {
+    return (
+      <WindowShell id="mail" app="mail" title="Mail">
+        <MailWindowContent />
+      </WindowShell>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
       <div className="grid gap-12 min-[1100px]:grid-cols-[minmax(0,1fr)_330px] min-[1100px]:gap-16">

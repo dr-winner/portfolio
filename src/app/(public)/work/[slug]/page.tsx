@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { codeToHtml } from "shiki";
 import { Badge } from "@/components/ui/Badge";
@@ -9,6 +10,7 @@ import { LlmAgentLabInspector } from "@/components/site/LlmAgentLabInspector";
 import { Reveal } from "@/components/motion/Reveal";
 import { ATTACK_SCENARIOS } from "@/lab/llm-agent-security/engine";
 import { getWork, publishedWork } from "@/content/work";
+import { WindowShell } from "@/os/shell/WindowShell";
 
 type Params = { slug: string };
 
@@ -126,6 +128,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
   const { slug } = await params;
   const item = getWork(slug);
   if (!item) notFound();
+  const view = (await headers()).get("x-view");
 
   const index = publishedWork.findIndex((entry) => entry.slug === item.slug);
   const previous = publishedWork[index - 1];
@@ -141,7 +144,11 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
     { label: "Year", value: item.year },
   ].filter((entry): entry is { label: string; value: string } => Boolean(entry.value));
 
-  return (
+  /* Fix 1 of the phase 1 review, brief 7.1: in the OS frame the case
+     study is a document window, open and focused, adopted by
+     DesktopShell without remounting. The classic frame keeps the
+     document page. */
+  const article = (
     <article className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
       {/* ── Hero: breadcrumb, two-line title, tags, one meta bar ─────────── */}
       <Reveal y={10}>
@@ -289,4 +296,13 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
       </div>
     </article>
   );
+
+  if (view !== "classic") {
+    return (
+      <WindowShell id={`doc:${item.slug}`} app="doc" title={item.title}>
+        {article}
+      </WindowShell>
+    );
+  }
+  return article;
 }

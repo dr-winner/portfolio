@@ -16,14 +16,16 @@ import type { AppId } from "../types";
 
 interface DesktopIcon {
   label: string;
+  /* The extension stays glued to its dot at every width, fix 9. */
+  ext?: string;
   href: string;
   app: AppId | "folder";
 }
 
 const ICONS: DesktopIcon[] = [
   { label: "Projects", href: "/work", app: "folder" },
-  { label: "CV.pdf", href: "/cv.pdf", app: "preview" },
-  { label: "README.md", href: site.links.github, app: "doc" },
+  { label: "CV", ext: ".pdf", href: "/cv.pdf", app: "preview" },
+  { label: "README", ext: ".md", href: site.links.github, app: "doc" },
   { label: "Contact", href: "/contact", app: "mail" },
   { label: "Agent Lab", href: "/work/llm-agent-security-lab", app: "agent-lab" },
   { label: "Proxy", href: "/work/llm-agent-security-lab", app: "proxy" },
@@ -64,13 +66,16 @@ export function DesktopIcons() {
               data-wos-icon
               tabIndex={index === roving ? 0 : -1}
               className="wos-icon wos-focusable"
-              aria-label={icon.label}
+              aria-label={`${icon.label}${icon.ext ?? ""}`}
               onFocus={() => setRoving(index)}
             >
               <span className="wos-icon-tile wos-tile" aria-hidden>
                 <Icon width={24} height={24} />
               </span>
-              <span className="wos-icon-label">{icon.label}</span>
+              <span className="wos-icon-label">
+                {icon.label}
+                {icon.ext ? <span className="wos-icon-ext">{icon.ext}</span> : null}
+              </span>
             </a>
           </li>
         );

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionLabel } from "@/components/site/SectionLabel";
 import { WorkIndex } from "@/components/site/WorkIndex";
+import { WindowShell } from "@/os/shell/WindowShell";
+import { FilesWindowContent } from "@/os/apps/files/FilesWindowContent";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -10,7 +13,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "/work" },
 };
 
-export default function WorkPage() {
+export default async function WorkPage() {
+  const view = (await headers()).get("x-view");
+
+  /* Fix 1 of the phase 1 review: in the OS frame the work index lives in a
+     Files window, never as a full page behind the dock. The classic frame
+     keeps the document index. */
+  if (view !== "classic") {
+    return (
+      <WindowShell id="files" app="files" title="Files">
+        <FilesWindowContent />
+      </WindowShell>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
       <Reveal y={10}>
