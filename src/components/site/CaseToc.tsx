@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type TocSection = { id: string; heading: string };
 
@@ -11,6 +11,8 @@ type TocSection = { id: string; heading: string };
  */
 export function CaseToc({ sections }: { sections: TocSection[] }) {
   const [active, setActive] = useState<string>(sections[0]?.id ?? "");
+  const listRef = useRef<HTMLOListElement | null>(null);
+  const [mark, setMark] = useState({ y: 0, h: 24 });
 
   useEffect(() => {
     const headings = sections
@@ -31,10 +33,21 @@ export function CaseToc({ sections }: { sections: TocSection[] }) {
     return () => observer.disconnect();
   }, [sections]);
 
+  useEffect(() => {
+    const list = listRef.current;
+    const current = list?.querySelector<HTMLElement>("[aria-current='true']");
+    if (!list || !current) return;
+    const listBox = list.getBoundingClientRect();
+    const box = current.getBoundingClientRect();
+    setMark({ y: box.top - listBox.top, h: box.height });
+  }, [active, sections]);
+
   return (
-    <nav aria-label="On this page">
+    <nav aria-label="On this page" className="hidden min-[1100px]:block">
       <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">On this page</p>
-      <ol className="mt-3 flex flex-col">
+      <div className="relative mt-3">
+        <span aria-hidden className="toc-mark" style={{ transform: `translateY(${mark.y}px)`, height: mark.h }} />
+      <ol ref={listRef} className="flex flex-col">
         {sections.map((section, i) => {
           const isActive = active === section.id;
           return (
@@ -51,12 +64,13 @@ export function CaseToc({ sections }: { sections: TocSection[] }) {
                 <span aria-hidden className={`font-mono text-[11px] ${isActive ? "text-[var(--signal)]" : "text-[var(--fg-subtle)]"}`}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="min-w-0 truncate">{section.heading}</span>
+                <span className="min-w-0 whitespace-normal break-words">{section.heading}</span>
               </a>
             </li>
           );
         })}
       </ol>
+      </div>
     </nav>
   );
 }

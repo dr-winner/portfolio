@@ -123,7 +123,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-1.5 md:ml-2">
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent("palette:toggle"))}
+            onClick={() => window.dispatchEvent(new CustomEvent("palette:open"))}
             className="menu-trigger-fine h-11 items-center gap-2 rounded-lg border border-[var(--line)] px-3 font-mono text-[11px] tracking-[0.12em] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
             aria-label="Open command palette"
           >

@@ -65,11 +65,9 @@ export function CopyEmail({ variant = "inline" }: { variant?: "inline" | "icon" 
       <button
         type="button"
         onClick={copy}
-        className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--line-strong)] py-1.5 pl-2.5 pr-3 font-mono text-[13px] transition-colors duration-[var(--dur-2)] hover:border-[var(--signal)]"
+        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-[var(--line-strong)] px-3 font-mono text-[13px] transition-colors duration-[var(--dur-2)] hover:border-[var(--signal)]"
       >
-        <span aria-hidden className={copied ? "text-[var(--signal)]" : "text-[var(--fg-muted)]"}>
-          {copied ? "✓" : "⧉"}
-        </span>
+        <CopyGlyph copied={copied} />
         <span aria-live="polite" className={copied ? "text-[var(--signal)]" : "text-[var(--fg-muted)]"}>
           {copied ? "Copied" : "Copy"}
         </span>
@@ -82,22 +80,41 @@ export function CopyEmail({ variant = "inline" }: { variant?: "inline" | "icon" 
     <button
       type="button"
       onClick={copy}
-      className="group inline-flex items-center gap-3 font-mono text-[13px] text-[var(--fg)]"
+      className="group inline-flex min-h-11 items-center gap-3 font-mono text-[13px] text-[var(--fg)]"
     >
       <span
         aria-hidden
-        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-[var(--dur-2)] ${
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-[var(--dur-2)] ${
           copied
             ? "border-[var(--signal)] bg-[var(--signal)] text-[var(--on-signal)]"
             : "border-[var(--line-strong)] text-[var(--fg-muted)] group-hover:border-[var(--signal)] group-hover:text-[var(--signal)]"
         }`}
       >
-        {copied ? "✓" : "⧉"}
+        <CopyGlyph copied={copied} />
       </span>
-      <span className={`link-sweep ${copied ? "is-active" : ""}`}>
-        {copied ? "COPIED TO CLIPBOARD" : site.email}
+      <span className="text-left">
+        <span className="link-sweep">{site.email}</span>
+        <span aria-live="polite" className="mt-1 block min-h-[1.2em] text-[12px] tracking-[0.08em] text-[var(--signal)]">
+          {copied ? "Copied" : ""}
+        </span>
       </span>
       <span className="sr-only">{copied ? " copied" : ", copy email address"}</span>
     </button>
+  );
+}
+
+function CopyGlyph({ copied }: { copied: boolean }) {
+  if (copied) {
+    return (
+      <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
+      <path d="M10.5 5.5 V3.5 a1 1 0 0 0 -1 -1 h-6 a1 1 0 0 0 -1 1 v6 a1 1 0 0 0 1 1 h2" />
+    </svg>
   );
 }

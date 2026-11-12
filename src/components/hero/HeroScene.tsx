@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 
 type Scenario = {
   id: string;
@@ -59,6 +59,20 @@ export function HeroScene() {
   const rootRef = useRef<HTMLElement | null>(null);
 
   const scenario = scenarios[active];
+
+  /* The command palette can fire a preset at the hero. Keep the same scene
+     as the one a visitor reaches by clicking the scenario buttons. */
+  useEffect(() => {
+    function onRun(event: Event) {
+      const id = (event as CustomEvent<string>).detail;
+      const index = scenarios.findIndex((item) => item.id === id);
+      if (index < 0) return;
+      setActive(index);
+      setCycle((value) => value + 1);
+    }
+    window.addEventListener("trace:run", onRun as EventListener);
+    return () => window.removeEventListener("trace:run", onRun as EventListener);
+  }, []);
 
   function onPointerMove(event: PointerEvent<HTMLElement>) {
     const root = rootRef.current;

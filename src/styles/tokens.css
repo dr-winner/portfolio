@@ -29,15 +29,35 @@
   --radius-panel: 26px;
   --radius-pill: 999px;
 
+  --hero-size: clamp(56px, 7.2vw, 104px);
+  --h2-size: clamp(32px, 4vw, 52px);
+  --statement-size: clamp(36px, 4.6vw, 64px);
+
   /* Motion vocabulary: quick for UI, longer for entrances. */
   --dur-1: 160ms;
   --dur-2: 240ms;
   --dur-3: 450ms;
   --dur-4: 700ms;
   --dur-5: 1100ms;
+  --dur-snappy: 288ms;
+  --dur-lift: 404ms;
+  --dur-badge: 600ms;
+  --dur-sheet: 356ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-micro: cubic-bezier(0.2, 0, 0, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-snappy: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-snappy: linear(0, 0.0794, 0.2413, 0.4157, 0.5711, 0.6969, 0.7926, 0.8621, 0.9109, 0.944, 0.9659, 0.9799, 0.9887, 0.994, 0.9971, 0.9988, 0.9997);
+  --ease-lift: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-lift: linear(0, 0.1014, 0.3051, 0.5166, 0.6937, 0.8246, 0.9122, 0.9656, 0.9948, 1.0082, 1.0126, 1.0122, 1.0099, 1.0071, 1.0047, 1.0028, 1.0015);
+  --ease-badge: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-badge: linear(0, 0.1613, 0.4779, 0.777, 0.9823, 1.0843, 1.1083, 1.0886, 1.0539, 1.0221, 1.0007, 0.9904, 0.9883, 0.9906, 0.9944, 0.9978, 1);
+  --ease-sheet: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-sheet: linear(0, 0.0722, 0.2228, 0.3895, 0.5421, 0.669, 0.7681, 0.8422, 0.8955, 0.9328, 0.9581, 0.9748, 0.9855, 0.9921, 0.9961, 0.9984, 0.9996);
 
   /* v3 palette: deep navy base, one neon teal accent. */
   --bg: #05080f;
@@ -46,17 +66,23 @@
   --surface: #0b1523;
   --surface-2: #101d2f;
   --surface-3: #17263c;
+  --glass: rgba(12, 17, 24, 0.72);
   --line: rgba(148, 170, 196, 0.12);
   --line-strong: rgba(148, 170, 196, 0.24);
+  --edge-light: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
   --fg: #edf4fb;
+  --fg-strong: #f5f7fa;
   --fg-muted: #a9b9cb;
   --fg-subtle: #78899e;
   --signal: #36e6c4;
+  --signal-rgb: 54 230 196;
   --signal-strong: #7df7df;
   --signal-soft: rgba(54, 230, 196, 0.14);
   --on-signal: #03231d;
+  --navy-light: rgba(30, 58, 138, 0.28);
   --ai: #9db4d2;
   --amber: #f4c45a;
+  --high: #fb923c;
   --danger: #ff8d8d;
   --info: #8ab4e0;
   --glow-signal: rgba(54, 230, 196, 0.16);
@@ -83,18 +109,24 @@ html.light {
   --surface: #ffffff;
   --surface-2: #eef2f6;
   --surface-3: #e3e9f0;
+  --glass: rgba(255, 255, 255, 0.78);
   --line: rgba(38, 54, 74, 0.13);
   --line-strong: rgba(38, 54, 74, 0.24);
+  --edge-light: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
   --fg: #0a111a;
+  --fg-strong: #0b0f14;
   --fg-muted: #435264;
   --fg-subtle: #5d6c7e;
   /* Teal darkened for small text: #0f766e measures 5.5:1 on white. */
   --signal: #0f766e;
+  --signal-rgb: 15 118 110;
   --signal-strong: #0b5f59;
   --signal-soft: rgba(15, 118, 110, 0.1);
   --on-signal: #ffffff;
+  --navy-light: rgba(30, 58, 138, 0.1);
   --ai: #526d8e;
   --amber: #9a5b05;
+  --high: #c2410c;
   --danger: #b42318;
   --info: #35658f;
   --glow-signal: rgba(13, 148, 136, 0.12);

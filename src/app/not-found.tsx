@@ -15,9 +15,10 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="relative flex min-h-screen flex-col text-[var(--fg)]">
+      <a href="#content" className="skip-link">Skip to content</a>
       <BackgroundFx />
       <SiteHeader />
-      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col items-center gap-6 px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)] text-center">
+      <main id="content" className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col items-center gap-6 px-[clamp(20px,5vw,64px)] py-[var(--space-2xl)] text-center">
         <p className="font-mono text-[12px] uppercase tracking-[0.16em] text-[var(--fg-subtle)]">HTTP 404</p>
         <h1 className="text-[length:var(--step-6)] leading-[var(--leading-tight)] tracking-[-0.02em]">404</h1>
         <p className="text-[length:var(--step-2)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">

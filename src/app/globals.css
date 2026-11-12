@@ -768,6 +768,145 @@
   }
 }
 
+.toc-mark {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  background: var(--signal);
+  transition: transform var(--dur-snappy) var(--ease-snappy);
+}
+
+/* ── Command palette ───────────────────────────────────────────────────── */
+
+.palette-root {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(5, 7, 10, 0.55);
+  backdrop-filter: blur(3px);
+}
+.palette-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  max-height: min(78vh, 640px);
+  flex-direction: column;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px 18px 0 0;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-panel);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform var(--dur-sheet) var(--ease-sheet), opacity 160ms var(--ease-enter);
+}
+.palette-root.is-in .palette-panel {
+  transform: none;
+  opacity: 1;
+}
+@media (min-width: 768px) and (pointer: fine) {
+  .palette-panel {
+    top: 120px;
+    bottom: auto;
+    left: 50%;
+    width: 640px;
+    border-radius: 18px;
+    transform: translate(-50%, -8px) scale(0.98);
+  }
+  .palette-root.is-in .palette-panel {
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+.palette-input {
+  height: 52px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 0 16px;
+  font-size: 16px;
+  color: var(--fg);
+  outline: none;
+}
+@media (min-width: 768px) {
+  .palette-input { font-size: 17px; }
+}
+.palette-list {
+  position: relative;
+  overflow: auto;
+  padding: 8px;
+}
+.palette-highlight {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  transition: transform var(--dur-snappy) var(--ease-snappy), height var(--dur-snappy) var(--ease-snappy);
+  pointer-events: none;
+}
+.palette-group {
+  padding: 8px 8px 4px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+.palette-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 14px;
+  color: var(--fg);
+}
+.palette-foot {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding: 10px 14px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  color: var(--fg-subtle);
+}
+
+/* ── Toast and page transitions from the shared runtime ────────────────── */
+
+.site-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 70;
+  translate: -50% 0;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--signal) 40%, transparent);
+  background: var(--surface);
+  padding: 10px 16px;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  color: var(--signal);
+}
+.badge-pop { animation: badge-in var(--dur-badge) var(--ease-badge) both; }
+@keyframes badge-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: vt-out 140ms var(--ease-exit) both; }
+  ::view-transition-new(root) { animation: vt-in 280ms var(--ease-enter) both; }
+}
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
