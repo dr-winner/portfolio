@@ -6,29 +6,22 @@
 
 @layer base {
   :root {
-    --ring-color: rgba(14, 165, 233, 0.5);
+    --ring-color: rgba(54, 230, 196, 0.55);
     --reveal-y: 18px;
+    --header-h: 4.25rem;
   }
 
   html {
     scroll-behavior: smooth;
     background-color: var(--bg);
-    /* Section anchors clear the fixed header + iOS status inset */
-    scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+    scroll-padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
     /* clip instead of hidden: hidden computes overflow-y to auto, which makes
-       html a scroll container and breaks position: sticky (the sticky header
-       and the case-study TOC scrolled away with the page). clip clips without
-       creating a scroll container. */
+       html a scroll container and breaks position: sticky. */
     overflow-x: clip;
   }
 
   html.light {
-    color-scheme: light;
-    --ring-color: rgba(37, 99, 235, 0.5);
-  }
-
-  html.dark {
-    color-scheme: dark;
+    --ring-color: rgba(15, 118, 110, 0.55);
   }
 
   body {
@@ -36,10 +29,11 @@
     color: var(--fg);
     font-size: var(--step-0);
     line-height: var(--leading-body);
+    overflow-x: clip;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--signal) 30%, transparent);
+    background: color-mix(in srgb, var(--signal) 32%, transparent);
     color: var(--fg);
   }
 
@@ -48,8 +42,6 @@
     outline-offset: 3px;
   }
 
-  /* Quiet, os-styled scrollbar so the instrument-panel look isn't broken by a
-     fat default bar on desktop. */
   @media (pointer: fine) {
     * {
       scrollbar-width: thin;
@@ -78,37 +70,134 @@
       display: flex;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }
 
 @layer utilities {
-  /* ── Pattern generators ────────────────────────────────────────────────── */
+  /* ── Structure ──────────────────────────────────────────────────────────── */
 
-  /* Fine blueprint grid. Size controlled by --grid-size. */
+  .shell {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 4vw, 44px);
+  }
+
+  .section-pad {
+    padding-block: clamp(72px, 8vw, 128px);
+  }
+
+  /* ── Pattern generators ─────────────────────────────────────────────────── */
+
   .fx-gridline {
     background-image:
       linear-gradient(to right, var(--grid-line, var(--line)) 1px, transparent 1px),
       linear-gradient(to bottom, var(--grid-line, var(--line)) 1px, transparent 1px);
-    background-size: var(--grid-size, 44px) var(--grid-size, 44px);
+    background-size: var(--grid-size, 56px) var(--grid-size, 56px);
   }
 
-  /* Terminal dot matrix. */
   .fx-dots {
     background-image: radial-gradient(circle, var(--dot-color, var(--line)) 1px, transparent 1.5px);
     background-size: var(--dot-size, 18px) var(--dot-size, 18px);
   }
 
-  /* Long mono tokens (CVSS vectors, code) may not widen a grid track. */
   .overflow-wrap-anywhere {
     min-width: 0;
     overflow-wrap: anywhere;
   }
 
-  /* ── Reveal system (section 6): content is visible without scrolling ──
-     Server output is complete and static. JS arms the page only for motion;
-     the shared observer adds is-in to elements that begin inside the
-     initial viewport, which plays a one-shot entrance (staggered by the
-     per-element --reveal-delay). Elements below the fold are never marked
-     and simply stay visible. reduced motion: no arming, no animation. */
+  .text-gradient {
+    background-image: linear-gradient(104deg, var(--fg) 8%, var(--fg) 42%, var(--signal-strong) 82%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hairline {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, var(--line-strong) 12%, var(--line-strong) 88%, transparent);
+  }
+
+  /* ── Surfaces ───────────────────────────────────────────────────────────── */
+
+  .panel {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--panel-top) 92%, transparent), color-mix(in srgb, var(--panel-bottom) 96%, transparent));
+    box-shadow: var(--highlight), var(--shadow-card);
+  }
+
+  .panel-quiet {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+  }
+
+  .edge-glow::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--signal) 10%, transparent);
+    opacity: 0.7;
+  }
+
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .spotlight-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out);
+    background: radial-gradient(360px circle at var(--mx, 70%) var(--my, 0%), var(--spot), transparent 68%);
+  }
+
+  .spotlight:hover .spotlight-layer,
+  .spotlight:focus-within .spotlight-layer {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .spotlight-layer {
+      display: none;
+    }
+  }
+
+  .console-card {
+    transition:
+      border-color var(--dur-2) var(--ease-out),
+      transform var(--dur-2) var(--ease-out),
+      box-shadow var(--dur-3) var(--ease-out);
+  }
+
+  @media (pointer: fine) {
+    .console-card:hover {
+      border-color: var(--line-strong);
+      box-shadow:
+        0 0 0 1px var(--line-strong),
+        0 30px 70px -46px var(--glow-signal),
+        var(--highlight);
+    }
+  }
+
+  /* ── Reveal system ──────────────────────────────────────────────────────
+     Server output is complete and static. JS arms only elements that begin
+     inside the initial viewport, so nothing waits for a scroll. */
   html.reveal-armed [data-reveal].is-in {
     animation: fx-rise var(--dur-4) var(--ease-out) var(--reveal-delay, 0ms) backwards;
   }
@@ -119,14 +208,32 @@
     from { opacity: 0; transform: translateY(var(--reveal-y, 12px)); }
     to { opacity: 1; transform: none; }
   }
-  /* Mask variant: wipe-bloom on the way in. The clip lives ONLY in the
-     incoming animation — never in a persistent hidden state. */
   @keyframes fx-mask {
     from { clip-path: inset(0 100% 0 0); }
     to { clip-path: inset(0 0 0 0); }
   }
 
-  /* ── Link & arrow micro-interactions ──────────────────────────────────── */
+  /* Line-by-line headline reveal used below the fold. */
+  .line-reveal {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .line-reveal > span {
+    display: block;
+  }
+  html.reveal-armed .line-reveal[data-reveal="mask"] > span {
+    transform: translateY(110%);
+  }
+  html.reveal-armed .line-reveal[data-reveal="mask"].is-in > span {
+    animation: line-up 900ms var(--ease-out) calc(var(--reveal-delay, 0ms) + var(--line-delay, 0ms)) both;
+  }
+  @keyframes line-up {
+    to { transform: translateY(0); }
+  }
+
+  /* ── Links & arrows ─────────────────────────────────────────────────────── */
 
   .link-sweep {
     background-image: linear-gradient(currentColor, currentColor);
@@ -136,9 +243,7 @@
     transition: background-size var(--dur-2) var(--ease-out), color var(--dur-1) linear;
   }
   .link-sweep:hover,
-  .link-sweep:focus-visible {
-    background-size: 100% 1px;
-  }
+  .link-sweep:focus-visible,
   .link-sweep.is-active {
     background-size: 100% 1px;
   }
@@ -148,41 +253,368 @@
   }
   .group:hover .arrow-shift,
   .group:focus-within .arrow-shift {
-    transform: translateX(4px);
+    transform: translateX(5px);
   }
 
-  /* Case diagrams nudge up 4px while their card is hovered. */
   .group:hover > .card-diagram,
   .group:hover .card-diagram-wrap .card-diagram {
     transform: translateY(-4px);
   }
 
-  /* Per-case figures render as their final diagram, statically: the draw
-     choreography was removed so the figure is never blank before a scroll
-     (full-page screenshots and reduced motion show the complete node and
-     arrow layout). svg[data-draw] / g[data-node] attributes remain in the
-     markup for any future re-enable. */
+  /* ── Buttons ────────────────────────────────────────────────────────────── */
 
-  /* Wide and vertical variants switch purely in CSS (same ownership block,
-     so no utility-layer fight): vertical below md, wide from md up. */
-  .case-figure svg[data-wide] {
-    display: none;
+  .btn-sweep {
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--dur-1) var(--ease-spring), filter var(--dur-1) linear, border-color var(--dur-1) linear, color var(--dur-1) linear;
+    box-shadow: 0 14px 34px -20px var(--glow-signal);
   }
-  .case-figure svg[data-vertical] {
-    display: block;
+  .btn-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 36%;
+    pointer-events: none;
+    transform: translateX(-130%) skewX(-18deg);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+    transition: transform var(--dur-3) var(--ease-inout);
   }
-  @media (min-width: 768px) {
-    .case-figure svg[data-wide] {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-    .case-figure svg[data-vertical] {
-      display: none;
+  .btn-sweep:hover::after,
+  .btn-sweep:focus-visible::after {
+    transform: translateX(320%) skewX(-18deg);
+  }
+  .btn-sweep:active {
+    transform: scale(0.975);
+  }
+
+  .magnet {
+    transition: transform 220ms var(--ease-out);
+    will-change: transform;
+  }
+
+  /* ── Ambient motion ─────────────────────────────────────────────────────── */
+
+  .fx-pulse {
+    position: relative;
+  }
+  .fx-pulse::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    animation: fx-pulse 2.8s var(--ease-inout) infinite;
+  }
+  @keyframes fx-pulse {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.28; transform: scale(1.5); }
+  }
+
+  .fx-rule {
+    transform-origin: left;
+  }
+  html.reveal-armed [data-reveal].is-in .fx-rule {
+    animation: fx-rule-grow var(--dur-4) var(--ease-inout) var(--reveal-delay, 0ms) backwards;
+  }
+  @keyframes fx-rule-grow {
+    from { transform: scaleX(0); }
+    to { transform: none; }
+  }
+
+  .drift {
+    animation: drift 14s var(--ease-inout) infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, -14px, 0); }
+  }
+
+  /* ── Page transition ────────────────────────────────────────────────────── */
+
+  .page-enter {
+    animation: page-in 620ms var(--ease-out) both;
+  }
+  .page-enter::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--signal), transparent);
+    transform-origin: left;
+    animation: page-line 780ms var(--ease-inout) both;
+  }
+  @keyframes page-in {
+    from { transform: translateY(14px); }
+    to { transform: none; }
+  }
+  @keyframes page-line {
+    0% { transform: scaleX(0); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: scaleX(1); opacity: 0; }
+  }
+
+  /* ── Hero scene ─────────────────────────────────────────────────────────── */
+
+  .scene {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-panel);
+    background:
+      radial-gradient(120% 90% at 84% 0%, var(--glow-signal), transparent 52%),
+      linear-gradient(180deg, color-mix(in srgb, var(--panel-top) 96%, transparent), var(--panel-bottom));
+    box-shadow: var(--highlight), var(--shadow-panel);
+    min-height: 430px;
+  }
+
+  .scene::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(120% 90% at 70% 20%, black 22%, transparent 78%);
+    pointer-events: none;
+  }
+
+  .scene-body {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+  }
+
+  .scene-lane {
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    padding: 14px 14px 18px;
+  }
+
+  @media (min-width: 640px) {
+    .scene-lane {
+      padding: 18px 20px 22px;
     }
   }
 
-  /* ── Findings table: its own scroll container on mobile (section 5.3) ── */
+  .scene-rail {
+    position: absolute;
+    left: 31px;
+    top: 32px;
+    bottom: 36px;
+    width: 1px;
+    z-index: 0;
+    background: linear-gradient(to bottom, transparent, var(--line-strong) 12%, var(--line-strong) 88%, transparent);
+  }
+
+  @media (min-width: 640px) {
+    .scene-rail {
+      left: 45px;
+    }
+  }
+
+  .scene-row {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px 10px 10px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--surface) 76%, transparent);
+    backdrop-filter: blur(6px);
+    transition: border-color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  }
+
+  @media (min-width: 640px) {
+    .scene-row {
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      gap: 16px;
+      padding: 12px 16px 12px 12px;
+    }
+  }
+
+  .scene-node {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-2);
+    color: var(--fg-subtle);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  @media (min-width: 640px) {
+    .scene-node {
+      width: 40px;
+      height: 40px;
+      font-size: 12px;
+    }
+  }
+
+  .scene-row[data-role="passed"] {
+    border-color: color-mix(in srgb, var(--signal) 22%, var(--line));
+  }
+  .scene-row[data-role="blocked"] {
+    border-color: color-mix(in srgb, var(--signal) 58%, transparent);
+    background: color-mix(in srgb, var(--signal-soft) 58%, var(--surface));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--signal) 22%, transparent), 0 0 46px -18px var(--glow-signal);
+  }
+  .scene-row[data-role="blocked"] .scene-node {
+    border-color: var(--signal);
+    color: var(--signal);
+    background: color-mix(in srgb, var(--signal) 14%, var(--surface));
+  }
+  .scene-row[data-role="not-reached"] {
+    opacity: 0.55;
+  }
+
+  .scene-packet {
+    position: absolute;
+    left: 50%;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--danger) 60%, transparent);
+    background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+    color: var(--danger);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+    animation: scene-travel 2100ms var(--ease-inout) both;
+  }
+
+  @keyframes scene-travel {
+    0% { top: 104%; opacity: 0; }
+    10% { opacity: 1; }
+    62% { top: var(--scene-stop, 60%); opacity: 1; }
+    78% { top: var(--scene-stop, 60%); opacity: 1; }
+    100% { top: var(--scene-stop, 60%); opacity: 0; }
+  }
+
+  .scene-burst {
+    position: absolute;
+    left: 50%;
+    top: var(--scene-stop, 60%);
+    z-index: 2;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border-radius: 999px;
+    border: 1px solid var(--signal);
+    opacity: 0;
+    animation: scene-burst 1100ms var(--ease-out) 1550ms both;
+  }
+
+  @keyframes scene-burst {
+    0% { opacity: 0.9; transform: scale(0.4); }
+    100% { opacity: 0; transform: scale(5.2); }
+  }
+
+  .scene-scan {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 40%, var(--glow-signal) 50%, transparent 60%);
+    opacity: 0;
+    animation: scene-scan 5.6s var(--ease-inout) 800ms infinite;
+  }
+  @keyframes scene-scan {
+    0% { transform: translateY(-60%); opacity: 0; }
+    20% { opacity: 0.7; }
+    70% { opacity: 0; }
+    100% { transform: translateY(60%); opacity: 0; }
+  }
+
+  /* ── Sticky project story ───────────────────────────────────────────────── */
+
+  .story-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .story-card {
+    position: relative;
+    border-radius: var(--radius-panel);
+  }
+
+  @media (min-width: 1024px) {
+    .story-stack {
+      gap: 0;
+    }
+    .story-card {
+      position: sticky;
+      top: calc(var(--header-h) + 28px);
+      margin-bottom: 28px;
+      transform: translateZ(0);
+    }
+    .story-card:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* ── Full-screen menu ───────────────────────────────────────────────────── */
+
+  .menu-shell {
+    animation: menu-in 420ms var(--ease-out) both;
+  }
+  @keyframes menu-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .menu-item {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: menu-item-in 620ms var(--ease-out) both;
+    animation-delay: var(--menu-delay, 0ms);
+  }
+  @keyframes menu-item-in {
+    to { opacity: 1; transform: none; }
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    transform: translateY(-160%);
+    border-radius: 10px;
+    border: 1px solid var(--signal);
+    background: var(--surface);
+    color: var(--fg);
+    padding: 10px 16px;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 13px;
+    text-decoration: none;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+
+  /* ── Findings table ─────────────────────────────────────────────────────── */
+
   .findings-scroll {
     min-width: 0;
     overflow-x: auto;
@@ -201,8 +633,8 @@
     }
   }
 
-  /* ── Header trigger visibility: MENU button below md and on md+ coarse
-     pointers; the Cmd K button only on md+ fine pointers (section 5.8). ── */
+  /* ── Header trigger visibility ──────────────────────────────────────────── */
+
   .menu-trigger-btn {
     display: inline-flex;
   }
@@ -225,26 +657,29 @@
     }
   }
 
-  /* ── Shiki (build time only): dual themes switch on the html class ───── */
+  /* ── Shiki (build time only) ────────────────────────────────────────────── */
+
   .shiki-host {
     position: relative;
+    min-width: 0;
     border: 1px solid var(--line);
     border-radius: var(--radius-card);
-    background: var(--bg);
+    background: var(--bg-deep);
   }
   .shiki-host pre {
     margin: 0;
-    padding: 14px 16px;
+    padding: 16px 18px;
     background: transparent !important;
     overflow-x: auto;
+    max-width: 100%;
     font-size: 12.5px;
-    line-height: 1.7;
+    line-height: 1.75;
+    scrollbar-width: thin;
   }
   .shiki-host code {
     font-family: var(--font-geist-mono), monospace;
+    overflow-wrap: anywhere;
   }
-  /* defaultColor: false -> shiki emits both color vars; the site's default
-     scheme is dark, so dark vars are the base rule and html.light overrides. */
   .shiki-host pre code span {
     color: var(--shiki-dark);
   }
@@ -252,12 +687,8 @@
     color: var(--shiki-light);
   }
 
-  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+  /* ── Request trace playback ─────────────────────────────────────────────── */
 
-  /* RequestTrace playback: server renders the full trace; when scripting
-     is on and motion is allowed, the browser hides it at first paint and
-     restarts it as a staggered playback. Without scripting, or with
-     reduced motion, the lines simply stay visible. */
   @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
     .trace-play .t-line {
       opacity: 0;
@@ -274,8 +705,6 @@
       transition: none;
     }
   }
-  /* Payload lanes inside the request trace: own horizontal scroll, clipped
-     scrollbar on touch screens (same recipe as .findings-scroll). */
   .t-scroll {
     scrollbar-width: thin;
   }
@@ -303,8 +732,6 @@
     100% { transform: scaleX(1); opacity: 0; }
   }
 
-  /* Slide-measured pill for the work index filter chips: transitions only
-     after the first measured placement, and never under reduced motion. */
   @media (prefers-reduced-motion: no-preference) {
     [data-pill][data-armed="true"] {
       transition:
@@ -313,83 +740,31 @@
     }
   }
 
-  .console-card {
-    transition:
-      border-color var(--dur-2) var(--ease-out),
-      transform var(--dur-2) var(--ease-out),
-      box-shadow var(--dur-3) var(--ease-out);
+  /* ── Case figure variants ───────────────────────────────────────────────── */
+
+  .case-figure svg[data-wide] {
+    display: none;
   }
-  @media (pointer: fine) {
-    .group:hover > .console-card,
-    .console-card.console-card-hover:hover {
-      transform: translateY(-3px);
-      border-color: var(--line-strong);
-      box-shadow:
-        0 0 0 1px var(--line-strong),
-        0 18px 48px -24px var(--glow-signal),
-        0 24px 64px -48px var(--glow-ai),
-        var(--highlight);
+  .case-figure svg[data-vertical] {
+    display: block;
+  }
+  @media (min-width: 768px) {
+    .case-figure svg[data-wide] {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .case-figure svg[data-vertical] {
+      display: none;
     }
   }
-  .console-card:active {
-    transform: translateY(-1px);
-  }
 
-  /* Primary button sheen sweep. */
-  .btn-sweep {
-    position: relative;
-    overflow: hidden;
-    transition: transform var(--dur-1) var(--ease-spring), filter var(--dur-1) linear;
-  }
-  .btn-sweep::after {
-    content: "";
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 36%;
-    pointer-events: none;
-    transform: translateX(-130%) skewX(-18deg);
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-    transition: transform var(--dur-3) var(--ease-inout);
-  }
-  .btn-sweep:hover::after,
-  .btn-sweep:focus-visible::after {
-    transform: translateX(320%) skewX(-18deg);
-  }
-  .btn-sweep:active {
-    transform: scale(0.97);
-  }
+  /* ── Fine noise overlay ─────────────────────────────────────────────────── */
 
-  /* ── Ambient motion ───────────────────────────────────────────────────── */
-
-  .fx-pulse {
-    position: relative;
-  }
-  .fx-pulse::before {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: inherit;
-    background: currentColor;
-    opacity: 0;
-    animation: fx-pulse 2.4s var(--ease-inout) infinite;
-  }
-
-  @keyframes fx-pulse {
-    0%, 100% { opacity: 0; transform: scale(1); }
-    50% { opacity: 0.35; transform: scale(1.5); }
-  }
-
-  /* ── Interior rules that grow once the owning reveal enters ───────────── */
-
-  .fx-rule {
-    transform-origin: left;
-  }
-  html.reveal-armed [data-reveal].is-in .fx-rule {
-    animation: fx-rule-grow var(--dur-4) var(--ease-inout) var(--reveal-delay, 0ms) backwards;
-  }
-  @keyframes fx-rule-grow {
-    from { transform: scaleX(0); }
-    to { transform: none; }
+  .noise-layer {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    mix-blend-mode: soft-light;
   }
 }
 
@@ -405,5 +780,11 @@
   html.reveal-armed [data-reveal],
   html.reveal-armed [data-reveal].is-in {
     animation: none;
+  }
+  .line-reveal > span {
+    transform: none;
+  }
+  .page-enter::before {
+    display: none;
   }
 }

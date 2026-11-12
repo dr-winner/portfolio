@@ -17,74 +17,103 @@ const links = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-[var(--line)]">
-      <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-14">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <footer className="relative overflow-hidden border-t border-[var(--line)]">
+      <div className="shell pb-8 pt-16">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_0.8fr_0.8fr_1fr]">
           <div className="min-w-0">
-            <p className="text-[17px] font-medium tracking-[-0.02em] text-[var(--fg)]">
-              dr<span className="text-[var(--fg-muted)]">Winner</span>
+            <StatusDot label={site.availabilityShort} />
+            <p className="mt-5 max-w-[30ch] text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em] text-[var(--fg)]">
+              Application security, with the proof attached.
             </p>
-            <p className="mt-3 max-w-[36ch] text-[length:var(--step--1)] leading-[var(--leading-snug)] text-[var(--fg-muted)]">
-              {site.headline}. {site.location}.
-            </p>
-            <div className="mt-4">
-              <StatusDot label={site.availabilityShort} />
-            </div>
+            <a
+              href={mailto}
+              className="link-sweep mt-5 inline-block break-all font-mono text-[13px] text-[var(--fg-muted)] no-underline hover:text-[var(--signal)]"
+            >
+              {site.email}
+            </a>
           </div>
+
           <nav aria-label="Footer">
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Site</p>
-            <ul className="mt-3 flex flex-col gap-2.5">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Site</p>
+            <ul className="mt-4 flex flex-col gap-1">
               {nav.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+                  <Link
+                    href={link.href}
+                    className="inline-flex min-h-[36px] items-center text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
+                  >
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
+
           <div>
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Elsewhere</p>
-            <ul className="mt-3 flex flex-col gap-2.5">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Elsewhere</p>
+            <ul className="mt-4 flex flex-col gap-1">
               {links.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]"
+                    className="inline-flex min-h-[36px] items-center gap-1.5 text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
                   >
                     {link.label}
+                    <span aria-hidden className="text-[10px] text-[var(--fg-subtle)]">↗</span>
                   </a>
                 </li>
               ))}
             </ul>
           </div>
+
           <div>
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--fg-subtle)]">Reach</p>
-            <ul className="mt-3 flex flex-col gap-2.5">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Take with you</p>
+            <ul className="mt-4 flex flex-col gap-1">
               <li>
-                <a href={mailto} className="link-sweep break-all text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
-                  {site.email}
+                <a
+                  href={cvHref}
+                  download
+                  className="inline-flex min-h-[36px] items-center gap-1.5 text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--signal)]"
+                >
+                  CV (PDF)
+                  <span aria-hidden className="text-[10px]">↓</span>
                 </a>
               </li>
               <li>
-                <a href={cvHref} download className="link-sweep text-[length:var(--step--1)] text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
-                  CV (PDF)
-                </a>
+                <Link
+                  href="/security"
+                  className="inline-flex min-h-[36px] items-center text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
+                >
+                  Security notes
+                </Link>
+              </li>
+              <li>
+                <span className="inline-flex min-h-[36px] items-center font-mono text-[11px] text-[var(--fg-subtle)]">
+                  {site.location} · GMT
+                </span>
               </li>
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex flex-row items-center justify-between gap-4 border-t border-[var(--line)] pt-5">
-          <p className="font-mono text-[12px] text-[var(--fg-subtle)]">
+
+        <div className="mt-14 flex flex-col gap-2 border-t border-[var(--line)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
             © {new Date().getFullYear()} drWinner
           </p>
-          <p className="font-mono text-[12px] text-[var(--fg-subtle)]">
-            BUILT &amp; SECURED <span className="text-[var(--signal)]">·</span> {site.location.toUpperCase()}
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
+            Built and secured <span className="text-[var(--signal)]">·</span> {site.location}
           </p>
         </div>
       </div>
+
+      <p
+        aria-hidden
+        className="pointer-events-none select-none px-[clamp(20px,4vw,44px)] text-[clamp(64px,16vw,220px)] font-medium leading-[0.72] tracking-[-0.07em] text-[var(--wordmark)]"
+      >
+        drWinner
+      </p>
     </footer>
   );
 }

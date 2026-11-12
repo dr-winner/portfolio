@@ -7,11 +7,16 @@ import { BackgroundFx } from "@/components/site/BackgroundFx";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col text-[var(--fg)]">
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <BackgroundFx />
       <SiteHeader />
       <CommandHotkey />
       <HashRedirect />
-      <main className="grow">{children}</main>
+      <main id="main" tabIndex={-1} className="grow focus:outline-none">
+        {children}
+      </main>
       <SiteFooter />
     </div>
   );
