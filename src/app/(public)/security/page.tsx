@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
+import { SplitHeadline } from "@/components/motion/SplitHeadline";
 import { CaseToc } from "@/components/site/CaseToc";
 import { CopyButton } from "@/components/site/CopyButton";
-import { SecurityReport } from "@/components/site/SecurityReport";
+import { SectionLabel } from "@/components/site/SectionLabel";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -35,8 +36,6 @@ strict-transport-security: max-age=63072000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: DENY
 referrer-policy: strict-origin-when-cross-origin
-permissions-policy: camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), interest-cohort=()
-x-dns-prefetch-control: off
 cross-origin-opener-policy: same-origin
 cross-origin-resource-policy: same-origin`;
 }
@@ -66,83 +65,106 @@ const protections: { label: string; text: string }[] = [
 
 export default function SecurityPage() {
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-[clamp(24px,4vw,40px)] py-[var(--space-2xl)]">
-      <Reveal y={10}>
-        <p className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">Security</p>
-      </Reveal>
-      <Reveal delay={80} y={20}>
-        <h1 className="mt-6 max-w-[18ch] text-balance text-[length:var(--step-4)] font-medium leading-[var(--leading-tight)] tracking-[-0.02em]">
-          How this site is secured
-        </h1>
-      </Reveal>
-      <Reveal delay={160} y={16}>
-        <p className="mt-6 max-w-[62ch] text-pretty text-[length:var(--step-1)] leading-[var(--leading-body)]">
-          This is a personal site, but I hold it to the standard I&apos;d expect from a product team. Here&apos;s exactly what it sends and what that buys.
-        </p>
-        <div className="mt-8 h-px w-full bg-[var(--line)]" />
-        <SecurityReport variant="panel" />
-      </Reveal>
-
-      <div className="mt-12 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[230px_minmax(0,1fr)] min-[1100px]:gap-14">
-        <aside className="min-w-0 self-start min-[1100px]:sticky min-[1100px]:top-28">
-          <CaseToc
-            sections={[
-              { id: "headers", heading: "Response headers" },
-              { id: "protections", heading: "What they buy" },
-              { id: "report", heading: "Report an issue" },
-            ]}
+    <div className="shell pb-[clamp(72px,9vw,128px)] pt-[clamp(40px,7vh,76px)]">
+      <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+        <header className="min-w-0">
+          <Reveal y={8}>
+            <SectionLabel title="Security" />
+          </Reveal>
+          <SplitHeadline
+            as="h1"
+            lines={["How this site", "is secured."]}
+            delay={60}
+            className="mt-7 text-[clamp(40px,7vw,78px)] font-medium leading-[0.96] tracking-[-0.045em]"
           />
+        </header>
+        <Reveal delay={200} y={10}>
+          <p className="max-w-[52ch] text-pretty text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)] lg:justify-self-end">
+            This is a personal site, but I hold it to the standard I would expect from a product team. Here is exactly
+            what it sends and what that buys.
+          </p>
+        </Reveal>
+      </div>
+
+      <div className="mt-12 grid grid-cols-1 gap-12 min-[1100px]:grid-cols-[220px_minmax(0,1fr)] min-[1100px]:gap-16">
+        <aside className="min-w-0 self-start min-[1100px]:sticky min-[1100px]:top-28">
+          <div className="hidden min-[1100px]:block">
+            <CaseToc
+              sections={[
+                { id: "headers", heading: "Response headers" },
+                { id: "protections", heading: "What they buy" },
+                { id: "report", heading: "Report an issue" },
+              ]}
+            />
+          </div>
         </aside>
 
         <div className="min-w-0">
           <section id="headers" className="scroll-mt-32">
-            <p aria-hidden className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">01</p>
-            <h2 className="mt-2 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.01em]">
+            <div className="flex items-center gap-3">
+              <span aria-hidden className="font-mono text-[10.5px] tracking-[0.14em] text-[var(--signal)]">01</span>
+              <span aria-hidden className="h-px flex-1 bg-[var(--line)]" />
+            </div>
+            <h2 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em]">
               The real response headers
             </h2>
-            <p className="mt-3 max-w-[62ch] text-pretty leading-[var(--leading-body)] text-[var(--fg-muted)]">
-              Copied from the live server response. The nonce is regenerated for every request, so what you see below stands in for the rotating value.
+            <p className="mt-3 max-w-[62ch] text-pretty text-[13.5px] leading-[var(--leading-body)] text-[var(--fg-muted)]">
+              Copied from the live server response. The nonce is regenerated for every request, so what you see below
+              stands in for the rotating value.
             </p>
             <div className="shiki-host shiki-plain mt-6">
               <div className="absolute right-2.5 top-2.5 z-10">
                 <CopyButton value={headersSnippet()} />
               </div>
-              <pre className="font-mono text-[12.5px] leading-[1.7]">
-                <code>{headersSnippet()}</code>
+              <pre className="font-mono text-[11.5px] leading-[1.7]">
+                <code className="overflow-wrap-anywhere">{headersSnippet()}</code>
               </pre>
             </div>
           </section>
 
           <section id="protections" className="mt-16 scroll-mt-32">
-            <p aria-hidden className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">02</p>
-            <h2 className="mt-2 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.01em]">
+            <div className="flex items-center gap-3">
+              <span aria-hidden className="font-mono text-[10.5px] tracking-[0.14em] text-[var(--signal)]">02</span>
+              <span aria-hidden className="h-px flex-1 bg-[var(--line)]" />
+            </div>
+            <h2 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em]">
               What each header buys
             </h2>
-            <dl className="mt-6 divide-y divide-[var(--line)] border-y border-[var(--line)]">
+            <dl className="mt-6 grid gap-3">
               {protections.map((item) => (
-                <div key={item.label} className="grid gap-1 py-5 sm:grid-cols-[200px_1fr] sm:gap-6">
+                <div key={item.label} className="panel-quiet grid gap-1.5 p-5 sm:grid-cols-[210px_minmax(0,1fr)] sm:gap-6">
                   <dt className="text-[13.5px] font-medium text-[var(--fg)]">{item.label}</dt>
-                  <dd className="text-pretty leading-[var(--leading-body)] text-[var(--fg-muted)]">{item.text}</dd>
+                  <dd className="text-pretty text-[13px] leading-[var(--leading-body)] text-[var(--fg-muted)]">{item.text}</dd>
                 </div>
               ))}
             </dl>
           </section>
 
           <section id="report" className="mt-16 scroll-mt-32">
-            <p aria-hidden className="font-mono text-[12px] tracking-[0.08em] text-[var(--fg-subtle)]">03</p>
-            <h2 className="mt-2 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.01em]">
+            <div className="flex items-center gap-3">
+              <span aria-hidden className="font-mono text-[10.5px] tracking-[0.14em] text-[var(--signal)]">03</span>
+              <span aria-hidden className="h-px flex-1 bg-[var(--line)]" />
+            </div>
+            <h2 className="mt-3 text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em]">
               Report an issue
             </h2>
-            <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--amber)]/50 bg-[var(--surface)] p-6">
-              <p className="text-pretty leading-[var(--leading-body)]">
+            <div className="panel mt-6 border-[var(--amber)]/40 p-6">
+              <p className="text-pretty text-[13.5px] leading-[var(--leading-body)]">
                 If you find a security issue on this site, email{" "}
-                <a href={`mailto:${site.email}`} className="link-sweep is-active text-[var(--fg)] underline decoration-[var(--amber)] decoration-2 underline-offset-4 no-underline">
+                <a
+                  href={`mailto:${site.email}`}
+                  className="link-sweep is-active text-[var(--fg)] underline decoration-[var(--amber)] decoration-2 underline-offset-4 no-underline"
+                >
                   {site.email}
                 </a>{" "}
-                with the details. Please don&apos;t run scanners against it, try to take it down, or access data that isn&apos;t yours. I&apos;ll reply, and I&apos;m happy to credit you here if you&apos;d like.
+                with the details. Please don&apos;t run scanners against it, try to take it down, or access data that
+                isn&apos;t yours. I&apos;ll reply, and I&apos;m happy to credit you here if you&apos;d like.
               </p>
               <p className="mt-4">
-                <Link href="/.well-known/security.txt" className="font-mono text-[12px] uppercase tracking-[0.08em] text-[var(--signal)] link-sweep no-underline">
+                <Link
+                  href="/.well-known/security.txt"
+                  className="link-sweep font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--signal)] no-underline"
+                >
                   security.txt
                 </Link>
               </p>

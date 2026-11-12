@@ -8,13 +8,17 @@ import { ClientRuntime } from "@/components/site/ClientRuntime";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col text-[var(--fg)]">
-      <a href="#content" className="skip-link">Skip to content</a>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <BackgroundFx />
       <ClientRuntime />
       <SiteHeader />
       <CommandHotkey />
       <HashRedirect />
-      <main id="content" className="grow">{children}</main>
+      <main id="main" tabIndex={-1} className="grow focus:outline-none">
+        {children}
+      </main>
       <SiteFooter />
     </div>
   );
