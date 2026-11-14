@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cvHref, mailto, site } from "@/content/site";
-import { StatusDot } from "@/components/site/StatusDot";
 
 const nav = [
   { href: "/work", label: "Work" },
@@ -17,17 +16,16 @@ const links = [
 
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden border-t border-[var(--line)]">
+    <footer className="relative z-10 overflow-hidden border-t border-[var(--line)]">
       <div className="shell pb-8 pt-16">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_0.8fr_0.8fr_1fr]">
           <div className="min-w-0">
-            <StatusDot label={site.availabilityShort} />
-            <p className="mt-5 max-w-[30ch] text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em] text-[var(--fg)]">
+            <p className="max-w-[30ch] text-[length:var(--step-2)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em] text-[var(--fg)]">
               Application security, with the proof attached.
             </p>
             <a
               href={mailto}
-              className="link-sweep mt-5 inline-block break-all font-mono text-[13px] text-[var(--fg-muted)] no-underline hover:text-[var(--signal)]"
+              className="link-sweep mt-3 inline-flex min-h-11 items-center break-all font-mono text-[13px] text-[var(--fg-muted)] no-underline hover:text-[var(--signal)]"
             >
               {site.email}
             </a>
@@ -40,7 +38,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="inline-flex min-h-[36px] items-center text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
+                    className="inline-flex min-h-11 min-w-11 items-center text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
                   >
                     {link.label}
                   </Link>
@@ -58,7 +56,7 @@ export function SiteFooter() {
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-[36px] items-center gap-1.5 text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
+                    className="inline-flex min-h-11 min-w-11 items-center gap-1.5 text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
                   >
                     {link.label}
                     <span aria-hidden className="text-[10px] text-[var(--fg-subtle)]">↗</span>
@@ -75,7 +73,7 @@ export function SiteFooter() {
                 <a
                   href={cvHref}
                   download
-                  className="inline-flex min-h-[36px] items-center gap-1.5 text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--signal)]"
+                  className="inline-flex min-h-11 min-w-11 items-center gap-1.5 text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--signal)]"
                 >
                   CV (PDF)
                   <span aria-hidden className="text-[10px]">↓</span>
@@ -84,7 +82,7 @@ export function SiteFooter() {
               <li>
                 <Link
                   href="/security"
-                  className="inline-flex min-h-[36px] items-center text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
+                  className="inline-flex min-h-11 min-w-11 items-center text-[13.5px] text-[var(--fg-muted)] no-underline transition-colors hover:text-[var(--fg)]"
                 >
                   Security notes
                 </Link>

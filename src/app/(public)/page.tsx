@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { headers } from "next/headers";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { SplitHeadline } from "@/components/motion/SplitHeadline";
 import { HeroScene } from "@/components/hero/HeroScene";
-import { CaseDiagram, type CaseDiagramVariant } from "@/components/site/CaseDiagram";
+import { CountUp } from "@/components/motion/CountUp";
 import { CertificationCard } from "@/components/site/CertificationCard";
 import { CopyEmail } from "@/components/site/CopyEmail";
+import { HomeLabPreview } from "@/components/site/HomeLabPreview";
+import { ProjectStage, type ProjectStageItem } from "@/components/site/ProjectStage";
 import { SectionLabel } from "@/components/site/SectionLabel";
 import { SpotlightCard } from "@/components/site/SpotlightCard";
-import { StatusDot } from "@/components/site/StatusDot";
 import { cvHref, mailto, site } from "@/content/site";
 import { skills } from "@/content/skills";
 import { work } from "@/content/work";
@@ -20,9 +20,16 @@ import { personSchema, profilePageSchema, webSiteSchema } from "@/lib/structured
 /* ── Home page copy (facts only, read alongside src/content) ────────────── */
 
 const proofStrip = [
-  { value: "5", label: "OWASP LLM Top 10 attack paths tested" },
-  { value: "6", label: "AWS detections mapped to MITRE ATT&CK" },
-  { value: "2", label: "certifications earned, 2 in progress" },
+  { value: 5, label: "OWASP LLM Top 10 attack paths tested" },
+  {
+    value: 6,
+    label: (
+      <>
+        AWS detections mapped to MITRE <span className="whitespace-nowrap">ATT&amp;CK</span>
+      </>
+    ),
+  },
+  { value: 2, label: "certifications earned, 2 in progress" },
 ];
 
 const stories: Record<
@@ -102,6 +109,23 @@ export default async function HomePage() {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   const featured = work.filter((item) => item.kind === "case-study");
   const [head, ...rest] = featured;
+  const stageItems: ProjectStageItem[] = featured.flatMap((item) => {
+    const story = stories[item.slug];
+    if (!story) return [];
+    return [
+      {
+        slug: item.slug,
+        title: item.title,
+        year: item.year,
+        domain: story.domain,
+        summary: item.card,
+        risk: story.risk,
+        built: story.built,
+        proof: story.proof,
+        tags: item.tags,
+      },
+    ];
+  });
 
   return (
     <>
@@ -110,38 +134,36 @@ export default async function HomePage() {
       <script suppressHydrationWarning nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema()) }} />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section data-scene="hero" className="relative">
-        <div className="shell grid items-center gap-12 pb-[clamp(48px,7vw,84px)] pt-[clamp(36px,7vh,76px)] lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <StatusDot label="Available for AppSec roles" />
-              <span aria-hidden className="h-3 w-px bg-[var(--line-strong)]" />
-              <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
-                {site.location}
-              </span>
-            </div>
-
-            <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--fg-muted)]">
+      <section id="hero" data-scene="hero" className="relative">
+        <div className="shell hero-layout pb-[clamp(40px,6vw,84px)] pt-[clamp(22px,5vh,72px)]">
+          <div className="hero-copy min-w-0">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-[var(--fg-muted)]">
               Richard Winner Duvor
+              <span aria-hidden className="mx-2 text-[var(--line-strong)]">/</span>
+              <span className="text-[var(--fg-subtle)]">{site.location}</span>
             </p>
 
-            <h1 className="mt-3 text-[clamp(42px,9.4vw,104px)] font-medium leading-[0.9] tracking-[-0.055em]">
-              <span className="block text-gradient">Application</span>
-              <span className="block">
-                Security<span className="text-[var(--signal)]">.</span>
-              </span>
-            </h1>
+            <SplitHeadline
+              as="h1"
+              lines={["Application", "Security."]}
+              accentLastChar
+              cursor
+              priority
+              delay={80}
+              className="hero-headline mt-3 text-[clamp(40px,9.8vw,104px)] font-medium leading-[0.9] tracking-[-0.055em]"
+            />
 
-            <p className="mt-7 max-w-[46ch] text-[clamp(19px,2.1vw,25px)] font-medium leading-[1.28] tracking-[-0.015em] text-[var(--fg)]">
+            <p className="mt-5 max-w-[30ch] text-[clamp(19px,2.1vw,25px)] font-medium leading-[1.28] tracking-[-0.015em] text-[var(--fg)] sm:mt-7 sm:max-w-[46ch]">
               I find the way in, show the evidence, and leave the team with a fix.
             </p>
+          </div>
 
-            <p className="mt-4 max-w-[56ch] text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)]">
-              Application security and penetration testing across web, API and AI/LLM systems. I test how an application
-              handles trust at each boundary, then write CVSS-scored findings that engineering teams can act on.
-            </p>
+          <div className="hero-scene min-w-0" id="hero-simulator">
+            <HeroScene />
+          </div>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="hero-actions min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
               <Magnetic>
                 <Button href="/work">
                   See the work
@@ -156,27 +178,28 @@ export default async function HomePage() {
               </Magnetic>
             </div>
 
-            <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[var(--fg-subtle)]">
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[var(--fg-subtle)] sm:mt-7 sm:gap-x-6">
               <CopyEmail variant="icon" />
               <a
                 href={cvHref}
                 download
-                className="link-sweep font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)] no-underline transition-colors hover:text-[var(--fg)]"
+                className="hero-quick link-sweep font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)] no-underline transition-colors hover:text-[var(--fg)]"
               >
                 Download CV
               </a>
               <Link
                 href="/about"
-                className="link-sweep font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)] no-underline transition-colors hover:text-[var(--fg)]"
+                className="hero-quick link-sweep font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-subtle)] no-underline transition-colors hover:text-[var(--fg)]"
               >
                 About the work
               </Link>
             </div>
-          </div>
 
-          <Reveal delay={220} y={18} className="min-w-0">
-            <HeroScene />
-          </Reveal>
+            <p className="mt-5 max-w-[56ch] text-[length:var(--step-0)] leading-[var(--leading-body)] text-[var(--fg-muted)] sm:mt-6">
+              Application security and penetration testing across web, API and AI/LLM systems. I test how an application
+              handles trust at each boundary, then write CVSS-scored findings that engineering teams can act on.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -184,10 +207,10 @@ export default async function HomePage() {
       <section aria-label="Proof points" className="border-y border-[var(--line)]">
         <div className="shell grid grid-cols-1 gap-y-0 md:grid-cols-3">
           {proofStrip.map((item, i) => (
-            <Reveal key={item.label} delay={i * 70} y={8}>
+            <Reveal key={`${item.value}-${i}`} delay={i * 70} y={8}>
               <div className={`flex items-baseline gap-3 py-5 ${i > 0 ? "border-t border-[var(--line)] md:border-l md:border-t-0 md:pl-8" : ""}`}>
                 <span className="font-mono text-[length:var(--step-2)] font-medium leading-none tracking-[-0.03em] text-[var(--signal)]">
-                  {item.value}
+                  <CountUp to={item.value} />
                 </span>
                 <span className="max-w-[30ch] text-[12.5px] leading-snug text-[var(--fg-muted)]">{item.label}</span>
               </div>
@@ -197,7 +220,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Selected work: sticky story stack ────────────────────────────── */}
-      <section data-scene="work" className="shell section-pad">
+      <section id="selected-work" data-scene="work" className="shell section-pad">
         <Reveal>
           <SectionLabel title="Selected work" />
         </Reveal>
@@ -215,68 +238,13 @@ export default async function HomePage() {
           </Reveal>
         </div>
 
-        <div className="story-stack mt-10">
-          {featured.map((item, index) => {
-            const story = stories[item.slug];
-            if (!story) return null;
-            return (
-              <div key={item.slug} className="story-card">
-                <SpotlightCard className="panel overflow-hidden">
-                  <Link
-                    href={`/work/${item.slug}`}
-                    className="group grid gap-7 p-[clamp(20px,3.4vw,40px)] no-underline lg:grid-cols-[minmax(0,1fr)_300px] lg:items-stretch lg:gap-10"
-                  >
-                    <div className="flex min-w-0 flex-col">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="font-mono text-[11px] tracking-[0.14em] text-[var(--signal)]">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <Badge>{story.domain}</Badge>
-                        <span className="font-mono text-[11px] text-[var(--fg-subtle)]">{item.year}</span>
-                      </div>
-
-                      <h3 className="mt-4 max-w-[24ch] text-[length:var(--step-3)] font-medium leading-[var(--leading-heading)] tracking-[-0.025em] text-[var(--fg)]">
-                        {item.title}
-                      </h3>
-
-                      <dl className="mt-6 grid gap-4 border-t border-[var(--line)] pt-5 sm:grid-cols-2">
-                        <div className="min-w-0">
-                          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Risk</dt>
-                          <dd className="mt-1.5 text-[13px] leading-snug text-[var(--fg)]">{story.risk}</dd>
-                        </div>
-                        <div className="min-w-0">
-                          <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Built</dt>
-                          <dd className="mt-1.5 text-[13px] leading-snug text-[var(--fg-muted)]">{story.built}</dd>
-                        </div>
-                      </dl>
-
-                      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Proof</span>
-                        <span className="text-[12.5px] text-[var(--signal)]">{story.proof}</span>
-                      </div>
-
-                      <span className="mt-auto inline-flex items-center gap-2 pt-7 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--fg-muted)] transition-colors duration-[var(--dur-1)] group-hover:text-[var(--signal)]">
-                        Read the case study
-                        <span aria-hidden className="arrow-shift">→</span>
-                      </span>
-                    </div>
-
-                    <div className="card-diagram-wrap flex min-w-0 items-center rounded-[16px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-2)_70%,transparent)] p-5">
-                      <CaseDiagram
-                        variant={item.slug as CaseDiagramVariant}
-                        className="card-diagram h-auto w-full transition-transform duration-[var(--dur-2)]"
-                      />
-                    </div>
-                  </Link>
-                </SpotlightCard>
-              </div>
-            );
-          })}
+        <div className="mt-10">
+          <ProjectStage items={stageItems} />
         </div>
 
         <Reveal delay={120} y={8}>
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link href="/work" className="link-sweep font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--signal)] no-underline">
+            <Link href="/work" className="link-sweep inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--signal)] no-underline">
               All work and labs
             </Link>
             {head ? (
@@ -286,6 +254,15 @@ export default async function HomePage() {
             ) : null}
           </div>
         </Reveal>
+      </section>
+
+      {/* ── Live lab preview ─────────────────────────────────────────────── */}
+      <section data-scene="work" className="border-t border-[var(--line)]">
+        <div className="shell pb-[clamp(56px,7vw,96px)] pt-[clamp(48px,6vw,80px)]">
+          <Reveal y={12}>
+            <HomeLabPreview />
+          </Reveal>
+        </div>
       </section>
 
       {/* ── What I do ────────────────────────────────────────────────────── */}
@@ -329,7 +306,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Method ───────────────────────────────────────────────────────── */}
-      <section className="border-t border-[var(--line)] bg-[color-mix(in_srgb,var(--bg-raised)_55%,transparent)]">
+      <section data-scene="quiet" className="border-t border-[var(--line)] bg-[color-mix(in_srgb,var(--bg-raised)_55%,transparent)]">
         <div className="shell section-pad">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <div>
@@ -368,7 +345,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Credentials ──────────────────────────────────────────────────── */}
-      <section className="shell section-pad">
+      <section data-scene="quiet" className="shell section-pad">
         <Reveal>
           <SectionLabel title="Credentials" />
         </Reveal>
@@ -389,7 +366,7 @@ export default async function HomePage() {
                   </span>
                 ))}
               </div>
-              <Link href="/about" className="link-sweep mt-6 inline-block font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--signal)] no-underline">
+              <Link href="/about" className="link-sweep mt-4 inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--signal)] no-underline">
                 Full background →
               </Link>
             </div>

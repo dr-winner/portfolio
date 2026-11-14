@@ -16,7 +16,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <SiteHeader />
       <CommandHotkey />
       <HashRedirect />
-      <main id="main" tabIndex={-1} className="grow focus:outline-none">
+      <main id="main" tabIndex={-1} className="relative z-10 grow focus:outline-none">
         {children}
       </main>
       <SiteFooter />

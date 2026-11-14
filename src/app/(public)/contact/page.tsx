@@ -5,7 +5,6 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeadline } from "@/components/motion/SplitHeadline";
 import { LinkCard } from "@/components/site/LinkCard";
 import { SectionLabel } from "@/components/site/SectionLabel";
-import { StatusDot } from "@/components/site/StatusDot";
 import { cvHref, mailto, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -54,7 +53,7 @@ export default function ContactPage() {
               <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Direct</p>
               <a
                 href={mailto}
-                className="mt-3 block break-words text-[clamp(20px,3.4vw,34px)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em] text-[var(--fg)] underline decoration-[var(--line-strong)] decoration-1 underline-offset-[6px] transition-colors duration-[var(--dur-1)] hover:text-[var(--signal)] hover:decoration-[var(--signal)]"
+                className="mt-3 block min-h-11 break-words text-[clamp(20px,3.4vw,34px)] font-medium leading-[var(--leading-snug)] tracking-[-0.02em] text-[var(--fg)] underline decoration-[var(--line-strong)] decoration-1 underline-offset-[6px] transition-colors duration-[var(--dur-1)] hover:text-[var(--signal)] hover:decoration-[var(--signal)]"
               >
                 {site.email}
               </a>
@@ -106,9 +105,6 @@ export default function ContactPage() {
         {/* ── Right: quiet link cards with icon, label, handle ────────────── */}
         <Reveal delay={200} y={14} className="min-w-0">
           <aside className="flex flex-col gap-4 lg:sticky lg:top-28">
-            <div className="flex items-center justify-between gap-3 rounded-full border border-[var(--line)] px-4 py-3">
-              <StatusDot label={site.availabilityShort} />
-            </div>
             <div className="flex flex-col gap-2.5">
               {links.map((link) => (
                 <LinkCard key={link.label} href={link.href} label={link.label} handle={link.handle} />

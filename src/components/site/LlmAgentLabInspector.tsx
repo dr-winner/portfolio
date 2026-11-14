@@ -305,18 +305,18 @@ export function LlmAgentLabInspector({
               <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
                 Enforced control
               </p>
-              <span className="font-mono text-[10px] text-[var(--fg-subtle)]">engine.ts</span>
+              <span className="flex items-center gap-2.5">
+                <span className="font-mono text-[10px] text-[var(--fg-subtle)]">engine.ts</span>
+                <CopyButton value={scenario.controlSnippet} />
+              </span>
             </div>
             {scenarioCode ? (
               <div className="shiki-host mt-2">
-                <div className="absolute right-2.5 top-2.5 z-10">
-                  <CopyButton value={scenario.controlSnippet} />
-                </div>
                 <div dangerouslySetInnerHTML={{ __html: scenarioCode }} />
               </div>
             ) : (
-              <pre className="mt-2 max-w-full overflow-x-auto rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-3 font-mono text-[11.5px] leading-relaxed text-[var(--fg)]">
-                <code className="overflow-wrap-anywhere">{scenario.controlSnippet}</code>
+              <pre className="mt-2 max-w-full overflow-x-hidden whitespace-pre-wrap rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-3 font-mono text-[11.5px] leading-relaxed text-[var(--fg)] [overflow-wrap:anywhere]">
+                <code className="[overflow-wrap:anywhere]">{scenario.controlSnippet}</code>
               </pre>
             )}
           </div>

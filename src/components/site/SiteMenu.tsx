@@ -148,12 +148,12 @@ export function SiteMenu({ onClose }: { onClose: () => void }) {
             <input
               id="menu-filter"
               type="text"
-              placeholder="Search pages, case studies, links"
+              placeholder="Search"
               autoComplete="off"
               spellCheck={false}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              className="h-12 w-full rounded-xl border border-[var(--line-strong)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] pl-11 pr-4 font-mono text-[13px] text-[var(--fg)] outline-none transition-colors placeholder:text-[var(--fg-subtle)] focus:border-[var(--signal)]"
+              className="h-12 w-full rounded-xl border border-[var(--line-strong)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] pl-11 pr-4 font-mono text-[16px] text-[var(--fg)] outline-none transition-colors placeholder:text-[var(--fg-subtle)] focus:border-[var(--signal)] sm:text-[13px]"
             />
             <span aria-hidden className="absolute right-4 top-1/2 hidden -translate-y-1/2 rounded border border-[var(--line)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--fg-subtle)] sm:block">
               ESC

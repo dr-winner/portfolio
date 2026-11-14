@@ -5,7 +5,6 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeadline } from "@/components/motion/SplitHeadline";
 import { CertificationCard } from "@/components/site/CertificationCard";
 import { SectionLabel } from "@/components/site/SectionLabel";
-import { StatusDot } from "@/components/site/StatusDot";
 import { experience } from "@/content/experience";
 import { profile } from "@/content/profile";
 import { cvHref, mailto } from "@/content/site";
@@ -58,7 +57,6 @@ export default function AboutPage() {
           <aside className="panel p-6 lg:sticky lg:top-28">
             <div className="flex items-center justify-between gap-3">
               <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--fg-subtle)]">Focus</p>
-              <StatusDot label="Available" />
             </div>
             <ul className="mt-5 flex flex-col">
               {focus.map((group) => (

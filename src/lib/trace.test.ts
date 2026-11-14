@@ -14,8 +14,18 @@ test("sql injection markers block and a plain username passes", () => {
 test("idor blocks a tenant other than acme", () => {
   assert.equal(classify("idor", "globex"), "block");
   assert.equal(classify("idor", "tenant-globex"), "block");
+  assert.equal(classify("idor", "../admin"), "block");
+  assert.equal(classify("idor", "../../etc/passwd"), "block");
   assert.equal(classify("idor", "acme"), "pass");
   assert.equal(classify("idor", "tenant-acme"), "pass");
+});
+
+test("idor request lines follow clean REST conventions without JSON body on GET", () => {
+  const lines = requestLines("idor", "globex");
+  const joined = lines.map((l) => l.text).join("\n");
+  assert.match(joined, /GET \/api\/v1\/tenants\/globex\/invoices\/4821 HTTP\/1.1/);
+  assert.match(joined, /X-Tenant-ID: globex/);
+  assert.equal(joined.includes("{ requestedTenant:"), false);
 });
 
 test("prompt markers block, including the lab refund phrase", () => {

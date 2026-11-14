@@ -57,8 +57,28 @@ export function HeroScene() {
   const [active, setActive] = useState(0);
   const [cycle, setCycle] = useState(0);
   const rootRef = useRef<HTMLElement | null>(null);
+  const burstRef = useRef<HTMLSpanElement | null>(null);
 
   const scenario = scenarios[active];
+
+  /* When the packet reaches the gate, ask the background field to pull into
+     the same shield. The rect is in viewport space, which is what the fixed
+     canvas works in. */
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const node = burstRef.current;
+      if (!node) return;
+      const box = node.getBoundingClientRect();
+      if (box.bottom < 0 || box.top > window.innerHeight) return;
+      window.dispatchEvent(
+        new CustomEvent("field:shield", {
+          detail: { x: box.left + box.width / 2, y: box.top + box.height / 2 },
+        }),
+      );
+    }, 1280);
+    return () => window.clearTimeout(timer);
+  }, [cycle, scenario.id]);
+
 
   /* The command palette can fire a preset at the hero. Keep the same scene
      as the one a visitor reaches by clicking the scenario buttons. */
@@ -130,7 +150,7 @@ export function HeroScene() {
                   <span className="block text-[13px] font-medium leading-tight text-[var(--fg)] sm:text-[13.5px]">
                     {row.name}
                   </span>
-                  <span className="mt-0.5 block text-[11px] leading-snug text-[var(--fg-subtle)] sm:text-[11.5px]">
+                  <span className="mt-0.5 block text-[11px] leading-snug text-[var(--fg-subtle)] sm:text-[11.5px] scene-detail">
                     {row.detail}
                   </span>
                 </span>
@@ -152,12 +172,12 @@ export function HeroScene() {
           <span
             key={`packet-${cycle}-${scenario.id}`}
             aria-hidden
-            className="scene-packet max-w-[72%] truncate"
+            className="scene-packet"
           >
-            <span className="text-[var(--danger)]">ATTACK</span>
-            <span className="truncate">{scenario.payload}</span>
+            <span className="scene-packet-dot" />
+            ATTACK
           </span>
-          <span key={`burst-${cycle}-${scenario.id}`} aria-hidden className="scene-burst" />
+          <span key={`burst-${cycle}-${scenario.id}`} ref={burstRef} aria-hidden className="scene-burst" />
         </div>
 
         <div className="relative z-10 border-t border-[var(--line)] px-3 py-3 sm:px-4">
@@ -171,7 +191,7 @@ export function HeroScene() {
                   setActive(index);
                   setCycle((value) => value + 1);
                 }}
-                className={`inline-flex h-8 items-center rounded-full border px-3 font-mono text-[11px] tracking-[0.04em] transition-colors duration-[var(--dur-1)] ${
+                className={`inline-flex h-11 items-center rounded-full border px-3 font-mono text-[11px] tracking-[0.04em] transition-colors duration-[var(--dur-1)] ${
                   active === index
                     ? "border-[var(--signal)] bg-[var(--signal-soft)] text-[var(--signal)]"
                     : "border-[var(--line)] text-[var(--fg-muted)] hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
@@ -184,7 +204,7 @@ export function HeroScene() {
               type="button"
               onClick={replay}
               aria-label="Replay this attack"
-              className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] text-[var(--fg-muted)] transition-colors hover:border-[var(--signal)] hover:text-[var(--signal)]"
+              className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] text-[var(--fg-muted)] transition-colors hover:border-[var(--signal)] hover:text-[var(--signal)]"
             >
               <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />

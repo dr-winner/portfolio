@@ -30,13 +30,17 @@ function ShieldMark() {
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(!isHome);
   const [open, setOpen] = useState(false);
   const progressRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 8);
+      const heroThreshold = window.innerHeight * 0.42;
+      setPastHero(!isHome || window.scrollY > heroThreshold);
       const doc = document.documentElement;
       const max = doc.scrollHeight - window.innerHeight;
       const p = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
@@ -62,7 +66,7 @@ export function SiteHeader() {
       window.removeEventListener("resize", throttled);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [isHome]);
 
   useEffect(() => {
     setOpen(false);
@@ -72,9 +76,9 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 h-[68px]">
       <div
         aria-hidden
-        className={`absolute inset-0 border-b backdrop-blur-[14px] backdrop-saturate-[150%] transition-colors duration-[var(--dur-2)] ${
+        className={`absolute inset-0 border-b transition-colors duration-[var(--dur-2)] ${
           scrolled
-            ? "border-[var(--line)] bg-[color-mix(in_srgb,var(--bg)_76%,transparent)]"
+            ? "border-[var(--line)] bg-[var(--bg)] shadow-[0_18px_40px_-34px_rgba(0,0,0,0.85)] backdrop-blur-[18px] backdrop-saturate-[150%]"
             : "border-transparent bg-transparent"
         }`}
       />
@@ -144,7 +148,13 @@ export function SiteHeader() {
           <a
             href={cvHref}
             download={cvDownloadName}
-            className="hidden h-11 items-center rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--fg)] no-underline transition-colors duration-[var(--dur-1)] hover:border-[var(--signal)] hover:text-[var(--signal)] lg:inline-flex"
+            aria-hidden={!pastHero}
+            tabIndex={pastHero ? 0 : -1}
+            className={`hidden h-11 items-center rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--fg)] no-underline transition-all duration-[var(--dur-2)] hover:border-[var(--signal)] hover:text-[var(--signal)] lg:inline-flex ${
+              pastHero
+                ? "opacity-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 -translate-y-1 pointer-events-none"
+            }`}
           >
             CV
           </a>

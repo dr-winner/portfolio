@@ -40,7 +40,7 @@ export function CertificationCard() {
               <li key={item.name} className="flex items-baseline justify-between gap-4 border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0">
                 <span className="min-w-0">
                   {item.link ? (
-                    <a href={item.link} target="_blank" rel="noreferrer" className="link-sweep text-[13.5px] text-[var(--fg)] no-underline hover:text-[var(--signal)]">
+                    <a href={item.link} target="_blank" rel="noreferrer" className="link-sweep -my-2 inline-flex min-h-11 items-center text-[13.5px] text-[var(--fg)] no-underline hover:text-[var(--signal)]">
                       {item.name}
                     </a>
                   ) : (

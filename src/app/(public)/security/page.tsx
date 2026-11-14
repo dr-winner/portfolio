@@ -153,7 +153,7 @@ export default function SecurityPage() {
                 If you find a security issue on this site, email{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="link-sweep is-active text-[var(--fg)] underline decoration-[var(--amber)] decoration-2 underline-offset-4 no-underline"
+                  className="link-sweep is-active py-4 text-[var(--fg)] underline decoration-[var(--amber)] decoration-2 underline-offset-4 no-underline"
                 >
                   {site.email}
                 </a>{" "}
@@ -163,7 +163,7 @@ export default function SecurityPage() {
               <p className="mt-4">
                 <Link
                   href="/.well-known/security.txt"
-                  className="link-sweep font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--signal)] no-underline"
+                  className="link-sweep inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--signal)] no-underline"
                 >
                   security.txt
                 </Link>

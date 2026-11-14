@@ -147,7 +147,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
       {/* ── Hero: breadcrumb, two-line title, tags, one meta bar ─────────── */}
       <Reveal y={8}>
         <p className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">
-          <Link href="/work" className="link-sweep shrink-0 text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
+          <Link href="/work" className="link-sweep inline-flex min-h-11 min-w-11 shrink-0 items-center text-[var(--fg-muted)] no-underline hover:text-[var(--fg)]">
             Work
           </Link>
           <span aria-hidden className="shrink-0 text-[var(--line-strong)]">/</span>
@@ -203,7 +203,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
                     href={item.repo}
                     target="_blank"
                     rel="noreferrer"
-                    className="link-sweep inline-flex max-w-full items-center gap-1.5 break-all font-mono text-[12px] text-[var(--fg)] no-underline hover:text-[var(--signal)]"
+                    className="link-sweep inline-flex min-h-11 max-w-full items-center gap-1.5 break-all font-mono text-[12px] text-[var(--fg)] no-underline hover:text-[var(--signal)]"
                   >
                     {new URL(item.repo).hostname}/{new URL(item.repo).pathname.split("/").filter(Boolean).slice(0, 2).join("/")}
                     <span aria-hidden className="shrink-0">↗</span>

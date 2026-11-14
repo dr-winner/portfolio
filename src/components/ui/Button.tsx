@@ -22,7 +22,7 @@ export function Button({
   variant?: keyof typeof styles;
   download?: boolean;
 }) {
-  const className = `inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[14px] no-underline ${styles[variant]}`;
+  const className = `inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[14px] no-underline transition-transform duration-100 ease-out active:scale-[0.98] ${styles[variant]}`;
   const isCv = download || href === cvHref;
   if (href.startsWith("mailto:") || href.startsWith("http") || isCv) {
     return (
