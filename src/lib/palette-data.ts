@@ -1,5 +1,5 @@
-/** Display rows for the command palette. A test locks these to the lab
- * scenarios so the palette cannot drift from the engine. */
+/** Display rows for the command palette. The lab engine lives in its own
+ * repository now, so a test locks the shape and scores of these rows. */
 
 export const paletteFindings = [
   {

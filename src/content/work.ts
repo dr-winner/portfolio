@@ -38,7 +38,7 @@ export const work: WorkItem[] = [
     year: "2026",
     kind: "case-study",
     badges: ["Own project", "AI/LLM security", "2026"],
-    card: "I built a vulnerable-vs-hardened RAG and tool-calling support agent in TypeScript to test five OWASP LLM Top 10 (2025) attack paths and verify the controls in CI.",
+    card: "I built a vulnerable-vs-hardened RAG and tool-calling support agent in TypeScript to test five OWASP LLM Top 10 (2025) attack paths and verify the controls in CI. The engine and its suite now ship as a standalone lab.",
     tags: [
       "OWASP LLM Top 10",
       "Indirect prompt injection",
@@ -47,14 +47,15 @@ export const work: WorkItem[] = [
       "Zod policy gates",
     ],
     filters: ["ai", "web", "threat"],
-    repo: "https://github.com/dr-winner/portfolio/tree/main/src/lab/llm-agent-security",
+    repo: "https://github.com/dr-winner/llm-agent-security-lab",
+    link: "https://llm-agent-security-lab.vercel.app",
     context: "Own project (self-built lab)",
     role: "Author and security engineer",
-    stack: ["TypeScript", "Zod", "Node.js test runner", "OWASP LLM Top 10 (2025)"],
+    stack: ["TypeScript", "Next.js", "Zod", "Node.js test runner", "OWASP LLM Top 10 (2025)"],
     outcome:
       "Five repeatable LLM/agent attack paths reproduced in vulnerable mode and blocked by deterministic controls in CI.",
     scope:
-      "Self-built, deterministic security lab inside this portfolio repository (src/lab/llm-agent-security). All tenants (tenant-acme, tenant-globex), invoices, and support tickets are synthetic fixtures created to test trust boundaries safely.",
+      "Self-built, deterministic security lab, now maintained as a standalone project at github.com/dr-winner/llm-agent-security-lab. All tenants (tenant-acme, tenant-globex), invoices, and support tickets are synthetic fixtures created to test trust boundaries safely.",
     sections: [
       {
         id: "summary",
@@ -89,7 +90,7 @@ export const work: WorkItem[] = [
         id: "limitations",
         heading: "Verification and known limitations",
         paragraphs: [
-          "Every attack scenario and positive authorization check is asserted in src/lab/llm-agent-security/engine.test.ts and runs on every push in GitHub Actions (npm test).",
+          "Every attack scenario and positive authorization check is asserted in the standalone lab's engine.test.ts suite and runs on every push (npm test).",
           "Known limitation: Delimiters (<untrusted_data>) and regex stripping reduce prompt-injection compliance, but no prompt-level filter can guarantee a probabilistic model will never emit a malicious tool call. That is why the security boundary in this lab is placed outside the model, at the pre-retrieval query filter, the deterministic tool policy gate, and the output sanitizer.",
         ],
       },

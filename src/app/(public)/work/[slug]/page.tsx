@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { codeToHtml } from "shiki";
 import { Badge } from "@/components/ui/Badge";
 import { CaseFigure } from "@/components/site/CaseFigure";
 import { CaseToc } from "@/components/site/CaseToc";
-import { LlmAgentLabInspector } from "@/components/site/LlmAgentLabInspector";
+import { LiveLabCard } from "@/components/site/LiveLabCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeadline } from "@/components/motion/SplitHeadline";
-import { ATTACK_SCENARIOS } from "@/lab/llm-agent-security/engine";
 import { getWork, publishedWork } from "@/content/work";
 
 type Params = { slug: string };
@@ -101,28 +99,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   };
 }
 
-/* Build-time syntax highlighting for the lab verifier's enforced-control
-   snippets (shiki, section 2 + 5.3). Runs during static generation only. */
-async function highlightedSnippets() {
-  const entries = await Promise.all(
-    ATTACK_SCENARIOS.map(async (scenario) => {
-      try {
-        return [
-          scenario.id,
-          await codeToHtml(scenario.controlSnippet, {
-            lang: "ts",
-            themes: { light: "vitesse-light", dark: "vitesse-dark" },
-            defaultColor: false,
-          }),
-        ] as const;
-      } catch {
-        return [scenario.id, ""] as const;
-      }
-    }),
-  );
-  return Object.fromEntries(entries);
-}
-
 export default async function WorkCasePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
   const item = getWork(slug);
@@ -133,7 +109,6 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
   const next = publishedWork[index + 1];
 
   const { main, sub } = splitTitle(item.title);
-  const highlights = item.slug === "llm-agent-security-lab" ? await highlightedSnippets() : undefined;
 
   const meta = [
     { label: "Role", value: item.role },
@@ -195,6 +170,22 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
                 <dd className="mt-1.5 break-words text-[12.5px] leading-[var(--leading-snug)] text-[var(--fg-muted)]">{entry.value}</dd>
               </div>
             ))}
+            {item.link ? (
+              <div className="col-span-2 border-t border-[var(--line)] pt-4">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">Live lab</dt>
+                <dd className="mt-1.5 min-w-0">
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="link-sweep inline-flex min-h-11 max-w-full items-center gap-1.5 break-all font-mono text-[12px] text-[var(--fg)] no-underline hover:text-[var(--signal)]"
+                  >
+                    {new URL(item.link).host}
+                    <span aria-hidden className="shrink-0">↗</span>
+                  </a>
+                </dd>
+              </div>
+            ) : null}
             {item.repo ? (
               <div className="col-span-2 border-t border-[var(--line)] pt-4">
                 <dt className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--fg-subtle)]">Repository</dt>
@@ -248,7 +239,7 @@ export default async function WorkCasePage({ params }: { params: Promise<Params>
 
           {item.slug === "llm-agent-security-lab" ? (
             <Reveal delay={180} y={10}>
-              <LlmAgentLabInspector highlighted={highlights} />
+              <LiveLabCard />
             </Reveal>
           ) : null}
 

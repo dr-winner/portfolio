@@ -4,7 +4,6 @@ import test from "node:test";
 
 const files = [
   "src/components/site/RequestTrace.tsx",
-  "src/components/site/AgentLabDemo.tsx",
   "src/components/site/DetectionsStream.tsx",
   "src/lib/trace.ts",
 ];
