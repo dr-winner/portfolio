@@ -1800,36 +1800,6 @@
     to { transform: scale(var(--breath-max, 1.1)) translate3d(0, 2.5%, 0); opacity: var(--breath-opacity-max, 1); }
   }
 
-  .field-icon {
-    position: absolute;
-    left: var(--icon-left);
-    top: var(--icon-top);
-    width: var(--icon-size);
-    height: var(--icon-size);
-    translate: -50% -50%;
-    color: var(--fg-subtle);
-    opacity: var(--icon-alpha, 0.17);
-    transition: color 320ms var(--ease-out);
-    will-change: transform, opacity;
-  }
-  .field-icon svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .field-icon.is-accent {
-    color: color-mix(in srgb, var(--fg-subtle) 52%, var(--signal));
-  }
-  .field-icon.is-accent svg {
-    filter: drop-shadow(0 0 24px color-mix(in srgb, var(--signal) 18%, transparent));
-  }
-  .field-icon[data-hot="true"] {
-    color: var(--signal);
-  }
-  .field-icon[data-hot="true"] svg {
-    filter: drop-shadow(0 0 30px color-mix(in srgb, var(--signal) 42%, transparent));
-  }
-
   .field-tap {
     position: absolute;
     width: 32px;
@@ -1850,16 +1820,6 @@
   }
 
   @media (max-width: 767px) {
-    .field-icon:not(.is-mobile) {
-      display: none;
-    }
-    .field-icon {
-      left: var(--icon-left-mobile, var(--icon-left));
-      top: var(--icon-top-mobile, var(--icon-top));
-      width: calc(var(--icon-size) * 0.62);
-      height: calc(var(--icon-size) * 0.62);
-      opacity: calc(var(--icon-alpha, 0.17) * 0.55);
-    }
     .field-orb-shell {
       filter: blur(36px);
     }
