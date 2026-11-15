@@ -1,51 +1,127 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
-type Mote = {
+type IconName = "shield" | "lock" | "key" | "terminal" | "bug" | "eye" | "radar" | "code";
+
+type IconSpec = {
+  name: IconName;
+  /** Centre position as a percentage of the viewport. */
   x: number;
   y: number;
-  vx: number;
-  vy: number;
-  s: number;
-  seed: number;
+  /** Mobile overrides, kept clear of the hero copy and scene edges. */
+  mx?: number;
+  my?: number;
+  size: number;
+  depth: number;
+  phase: number;
+  accent?: boolean;
+  mobile?: boolean;
 };
 
-type ShieldPulse = { x: number; y: number; start: number };
+/* Placed in the margins and the space below the hero so the icons never sit
+   on top of the copy. */
+const ICONS: IconSpec[] = [
+  { name: "shield", x: 2, y: 52, mx: 8, my: 48, size: 128, depth: 1.2, phase: 0.2, accent: true, mobile: true },
+  { name: "lock", x: 95, y: 28, size: 92, depth: 0.8, phase: 1.4 },
+  { name: "key", x: 7, y: 84, mx: 8, my: 86, size: 112, depth: 1.5, phase: 2.2, accent: true, mobile: true },
+  { name: "terminal", x: 94, y: 80, size: 120, depth: 0.7, phase: 3.1 },
+  { name: "bug", x: 42, y: 94, size: 78, depth: 1.8, phase: 4 },
+  { name: "eye", x: 66, y: 91, size: 88, depth: 0.9, phase: 5.2 },
+  { name: "radar", x: 99, y: 54, size: 104, depth: 1.3, phase: 2.8 },
+  { name: "code", x: 48, y: 16, size: 66, depth: 1.6, phase: 3.7 },
+];
 
-const SHIELD_MS = 1250;
+const PATHS: Record<IconName, ReactNode> = {
+  shield: (
+    <>
+      <path d="M12 3 4.5 6v5.5c0 4.6 3.1 7.8 7.5 8.5 4.4-.7 7.5-3.9 7.5-8.5V6L12 3Z" />
+      <path d="m8.7 11.8 2.2 2.2 4.4-4.5" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="4.5" y="10.5" width="15" height="10" rx="2.2" />
+      <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+      <path d="M12 14.6v2.3" />
+    </>
+  ),
+  key: (
+    <>
+      <circle cx="8" cy="15" r="3.2" />
+      <path d="m10.4 12.6 8-8" />
+      <path d="m15.2 7.8 1.9 1.9" />
+      <path d="m13.3 9.7 1.9 1.9" />
+    </>
+  ),
+  terminal: (
+    <>
+      <path d="m5 7 5 5-5 5" />
+      <path d="M12.5 17H19" />
+    </>
+  ),
+  bug: (
+    <>
+      <path d="M8.5 9.5h7V14a3.5 3.5 0 0 1-7 0V9.5Z" />
+      <path d="m9.8 7.2-1.4-1.4" />
+      <path d="m14.2 7.2 1.4-1.4" />
+      <path d="M5.2 12H8" />
+      <path d="M16 12h2.8" />
+      <path d="m6.2 17 2.3-1.7" />
+      <path d="m17.8 17-2.3-1.7" />
+      <path d="M12 10v8" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2.6 12S6.1 5.6 12 5.6 21.4 12 21.4 12 17.9 18.4 12 18.4 2.6 12 2.6 12Z" />
+      <circle cx="12" cy="12" r="2.9" />
+    </>
+  ),
+  radar: (
+    <>
+      <circle cx="12" cy="12" r="8.4" />
+      <circle cx="12" cy="12" r="4.3" />
+      <path d="M12 3.6v4" />
+      <path d="M12 16.4v4" />
+      <path d="M3.6 12h4" />
+      <path d="M16.4 12h4" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  code: (
+    <>
+      <path d="m8.4 8-4.4 4 4.4 4" />
+      <path d="m15.6 8 4.4 4-4.4 4" />
+      <path d="m13.4 6-2.8 12" />
+    </>
+  ),
+};
+
+type Tap = { x: number; y: number; start: number; strength: number };
 
 /**
- * The living field behind the page: a slow mesh of teal and navy light that
- * bends around the pointer, follows touch, drifts with scroll and pulls
- * together into a gate when the hero scene blocks an attack.
+ * The living field behind the page. A soft aurora breathes at the base while
+ * a loose constellation of security line icons floats above it. The icons
+ * lean away from the pointer, brighten as it comes close, drift at different
+ * depths as the page scrolls, and pulse outward from a tap.
  *
- * It is canvas 2D on purpose: no extra dependency, no shader, nothing that
- * the strict CSP has to allow. The static gradient and dot field below are
- * plain CSS, so reduced motion and a failed canvas still get the same look.
- * Rendering stops when the tab is hidden or no scene section is on screen.
+ * Everything is CSS and one small rAF loop that writes transforms, so the
+ * strict CSP never sees a script it has to allow. Reduced motion leaves the
+ * icons still and the aurora unanimated. Rendering stops when the tab is
+ * hidden or no scene section is on screen.
  */
 export function BackgroundFx() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const layerRef = useRef<HTMLDivElement | null>(null);
+  const iconRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const layer = layerRef.current;
+    if (!layer) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const context = canvas.getContext("2d", { alpha: true, desynchronized: true });
-    if (!context) return;
-    const ctx = context;
-    const node = canvas;
-
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    const lowPower = coarse || (navigator.hardwareConcurrency ?? 8) <= 4;
-    const fps = lowPower ? 26 : 36;
-    const step = 1000 / fps;
-
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
     let raf = 0;
     let last = 0;
     let running = false;
@@ -53,216 +129,117 @@ export function BackgroundFx() {
     let visible = !document.hidden;
     let ready = false;
 
-    const pointer = { x: 0, y: 0, tx: 0, ty: 0, seen: 0 };
-    const drift = { scroll: 0, target: 0 };
-    let shield: ShieldPulse | null = null;
-    const motes: Mote[] = [];
-    const scenes = new Set<Element>();
+    const pointer = { x: width * 0.55, y: height * 0.2, tx: width * 0.55, ty: height * 0.2, seen: 0 };
+    const scroll = { value: window.scrollY, target: window.scrollY };
+    const taps: Tap[] = [];
+    let agitation = 0;
+    let lastScroll = window.scrollY;
 
-    function build() {
-      width = Math.max(320, window.innerWidth);
-      height = Math.max(320, window.innerHeight);
-      dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.15 : 1.6);
-      node.width = Math.floor(width * dpr);
-      node.height = Math.floor(height * dpr);
-      node.style.width = `${width}px`;
-      node.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const icons = iconRefs.current;
 
-      const area = width < 700 ? 58 : 112;
-      const count = Math.round(area * (lowPower ? 0.74 : 1));
-      motes.length = 0;
-      for (let i = 0; i < count; i += 1) {
-        motes.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * (lowPower ? 0.12 : 0.2),
-          vy: (Math.random() - 0.5) * (lowPower ? 0.1 : 0.18),
-          s: 0.7 + Math.random() * 1.5,
-          seed: Math.random() * Math.PI * 2,
-        });
-      }
+    function addTap(x: number, y: number, strength: number) {
+      taps.push({ x, y, start: performance.now(), strength });
+      if (taps.length > 6) taps.shift();
 
-      if (!pointer.seen) {
-        pointer.x = width * 0.62;
-        pointer.y = height * 0.24;
-      }
+      const bloom = document.createElement("span");
+      bloom.className = "field-tap";
+      bloom.style.left = `${x}px`;
+      bloom.style.top = `${y}px`;
+      bloom.style.setProperty("--tap-strength", strength.toFixed(2));
+      layer?.appendChild(bloom);
+      window.setTimeout(() => bloom.remove(), 1000);
     }
 
-    function palette() {
-      const light = document.documentElement.classList.contains("light");
-      return light
-        ? { teal: "15,118,110", cool: "37,99,235", base: "71,85,105" }
-        : { teal: "54,230,196", cool: "96,150,255", base: "132,158,190" };
-    }
-
-    function draw(now: number, t: number, colors: ReturnType<typeof palette>) {
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalCompositeOperation = "lighter";
-
-      const px = pointer.x;
-      const py = pointer.y;
-      const influence = Math.min(width, height) * (coarse ? 0.44 : 0.35);
-      const influenceSq = influence * influence;
-      const shieldAge = shield ? now - shield.start : Infinity;
-      const shieldOn = shield && shieldAge < SHIELD_MS;
-      const shieldK = shieldOn ? 1 - shieldAge / SHIELD_MS : 0;
-
-      /* A soft light that follows the pointer so the field reads at once. */
-      const halo = ctx.createRadialGradient(px, py, 0, px, py, influence * 1.7);
-      halo.addColorStop(0, `rgba(${colors.teal},0.13)`);
-      halo.addColorStop(0.45, `rgba(${colors.teal},0.045)`);
-      halo.addColorStop(1, `rgba(${colors.teal},0)`);
-      ctx.fillStyle = halo;
-      ctx.fillRect(0, 0, width, height);
-
-      /* Two slow ribbons keep the plane moving even when the pointer is still. */
-      for (let band = 0; band < 2; band += 1) {
-        ctx.beginPath();
-        const base = height * (0.26 + band * 0.34) + drift.scroll * height * 0.16;
-        for (let x = -20; x <= width + 20; x += 26) {
-          const y = base + Math.sin(x * 0.0038 + t * 0.34 + band * 1.9) * (34 + band * 18);
-          if (x === -20) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = `rgba(${band === 0 ? colors.teal : colors.cool},${band === 0 ? "0.075" : "0.055"})`;
-        ctx.lineWidth = band === 0 ? 1.4 : 1;
-        ctx.stroke();
-      }
-
-      /* Move and place the motes first, collecting their current screen
-         positions so link lines and dots agree. */
-      const placed: { x: number; y: number; near: number; s: number }[] = [];
-
-      for (let i = 0; i < motes.length; i += 1) {
-        const m = motes[i];
-        m.x += m.vx + Math.cos(t * 0.8 + m.seed) * 0.16;
-        m.y += m.vy + Math.sin(t * 0.66 + m.seed) * 0.14 + drift.scroll * 0.16;
-
-        if (m.x < -30) m.x = width + 30;
-        else if (m.x > width + 30) m.x = -30;
-        if (m.y < -30) m.y = height + 30;
-        else if (m.y > height + 30) m.y = -30;
-
-        const dx = m.x - px;
-        const dy = m.y - py;
-        const d2 = dx * dx + dy * dy;
-        let near = 0;
-
-        if (d2 < influenceSq) {
-          near = 1 - Math.sqrt(d2) / influence;
-          const inv = 1 / (Math.sqrt(d2) || 1);
-          /* A gentle swirl instead of a hard push: the field opens around
-             the pointer and curls rather than scattering. */
-          m.x += (-dy * inv) * near * 1.9 + dx * inv * near * 0.55;
-          m.y += (dx * inv) * near * 1.9 + dy * inv * near * 0.55;
-        }
-
-        if (shield && shieldOn) {
-          const sdx = m.x - shield.x;
-          const sdy = m.y - shield.y;
-          const sd = Math.hypot(sdx, sdy);
-          const reach = 250;
-          if (sd < reach) {
-            const pull = (1 - sd / reach) * shieldK;
-            const lane = shield.y + (sdy < 0 ? -1 : 1) * (46 + (i % 4) * 26);
-            m.x += (shield.x + (sdx < 0 ? -9 : 9) - m.x) * 0.05 * pull;
-            m.y += (lane - m.y) * 0.028 * pull;
-            near = Math.max(near, pull * 0.9);
-          }
-        }
-
-        placed.push({ x: m.x, y: m.y, near, s: m.s });
-      }
-
-      /* Hairline mesh, brighter near the cursor and the shield. */
-      const linkLimit = lowPower ? 104 : 124;
-      const linkSq = linkLimit * linkLimit;
-      for (let i = 0; i < placed.length; i += 1) {
-        const a = placed[i];
-        for (let j = i + 1; j < placed.length; j += 1) {
-          const b = placed[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 > linkSq) continue;
-          const alpha = (1 - Math.sqrt(d2) / linkLimit) * (0.17 + (a.near + b.near) * 0.26);
-          if (alpha < 0.014) continue;
-          ctx.strokeStyle = `rgba(${colors.teal},${alpha.toFixed(3)})`;
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-
-      /* Gate arcs and the two vertical rails that form when the hero blocks. */
-      if (shield && shieldOn) {
-        const grow = shieldAge * 0.09;
-        for (let ring = 0; ring < 3; ring += 1) {
-          const radius = 48 + grow + ring * 34;
-          ctx.strokeStyle = `rgba(${colors.teal},${(0.34 * shieldK * (1 - ring * 0.22)).toFixed(3)})`;
-          ctx.lineWidth = ring === 0 ? 1.5 : 1;
-          ctx.beginPath();
-          ctx.arc(shield.x, shield.y, radius, -Math.PI * 0.12, Math.PI * 1.12);
-          ctx.stroke();
-        }
-        ctx.strokeStyle = `rgba(${colors.teal},${(0.4 * shieldK).toFixed(3)})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(shield.x - 15, shield.y - 104);
-        ctx.lineTo(shield.x - 15, shield.y + 104);
-        ctx.moveTo(shield.x + 15, shield.y - 104);
-        ctx.lineTo(shield.x + 15, shield.y + 104);
-        ctx.stroke();
-      }
-
-      /* Points. The glow doubles as the pointer echo and the gate fill. */
-      for (let i = 0; i < placed.length; i += 1) {
-        const p = placed[i];
-        const hot = p.near;
-        const alpha = 0.3 + hot * 0.66;
-        const radius = p.s + hot * 1.8;
-        ctx.fillStyle = hot > 0.08 ? `rgba(${colors.teal},${alpha.toFixed(3)})` : `rgba(${colors.base},${alpha.toFixed(3)})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (hot > 0.25) {
-          ctx.fillStyle = `rgba(${colors.cool},${(hot * 0.2).toFixed(3)})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, radius * 4.8, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      ctx.globalCompositeOperation = "source-over";
-    }
-
-    function loop(now: number) {
+    function frame(now: number) {
       if (!running) return;
-      raf = window.requestAnimationFrame(loop);
-      if (now - last < step) return;
+      raf = window.requestAnimationFrame(frame);
+      if (now - last < 1000 / 36) return;
       const t = now * 0.001;
       last = now;
 
-      const idleFor = now - pointer.seen;
-      if (idleFor > 1600) {
-        /* No hand on the screen: drift on a slow orbit and let scroll pull
-           the centre of the field down the page. */
-        pointer.tx = width * (0.5 + Math.sin(t * 0.19) * 0.26);
-        pointer.ty = height * (0.18 + drift.scroll * 0.55 + Math.sin(t * 0.31 + 0.8) * 0.1);
+      if (now - pointer.seen > 1600) {
+        /* No hand on the screen: the icons keep a slow breath of their own. */
+        pointer.tx = width * (0.5 + Math.sin(t * 0.16) * 0.22);
+        pointer.ty = height * (0.24 + Math.sin(t * 0.23 + 0.7) * 0.12);
       }
 
-      pointer.x += (pointer.tx - pointer.x) * 0.085;
-      pointer.y += (pointer.ty - pointer.y) * 0.085;
-      drift.scroll += (drift.target - drift.scroll) * 0.06;
+      pointer.x += (pointer.tx - pointer.x) * 0.07;
+      pointer.y += (pointer.ty - pointer.y) * 0.07;
+      scroll.value += (scroll.target - scroll.value) * 0.08;
+      agitation *= 0.9;
 
-      draw(now, t, palette());
+      const mx = Math.max(-1, Math.min(1, (pointer.x / width - 0.5) * 2));
+      const my = Math.max(-1, Math.min(1, (pointer.y / height - 0.5) * 2));
+      const scrollShift = Math.min(scroll.value, 5000) / 700;
+      layer?.style.setProperty("--field-mx", mx.toFixed(3));
+      layer?.style.setProperty("--field-my", my.toFixed(3));
+      layer?.style.setProperty("--field-scroll", scrollShift.toFixed(3));
+
+      const min = Math.min(width, height);
+      const reach = Math.max(190, min * 0.32);
+
+      for (let i = 0; i < ICONS.length; i += 1) {
+        const el = icons[i];
+        if (!el) continue;
+        const spec = ICONS[i];
+        const narrow = width < 768;
+        const baseX = ((narrow ? spec.mx ?? spec.x : spec.x) / 100) * width;
+        const baseY = ((narrow ? spec.my ?? spec.y : spec.y) / 100) * height;
+        const wobble = t * 0.23 + spec.phase;
+
+        let x = Math.sin(wobble) * 9 + Math.cos(wobble * 0.7) * 5;
+        let y = Math.cos(wobble * 0.86) * 11;
+        y -= Math.min(scroll.value, 5000) * 0.05 * spec.depth;
+        y += Math.sin(scroll.value * 0.0022 + spec.phase) * 7 * spec.depth;
+
+        const dx = baseX - pointer.x;
+        const dy = baseY - pointer.y;
+        const dist = Math.hypot(dx, dy);
+        const near = Math.max(0, 1 - dist / reach);
+        const hot = Math.max(0, 1 - dist / 150);
+
+        if (dist < reach) {
+          const push = near * near * 30;
+          x += (dx / (dist || 1)) * push;
+          y += (dy / (dist || 1)) * push;
+        }
+
+        let pop = 0;
+        for (let k = 0; k < taps.length; k += 1) {
+          const tap = taps[k];
+          const age = now - tap.start;
+          if (age < 0 || age > 900) continue;
+          const tapDist = Math.hypot(baseX - tap.x, baseY - tap.y);
+          if (tapDist < 360) {
+            pop = Math.max(pop, (1 - age / 900) * (1 - tapDist / 360) * tap.strength);
+          }
+        }
+
+        const jitter = agitation * agitation;
+        x += Math.sin(t * 17 + i * 1.3) * jitter * 8;
+        y += Math.cos(t * 19 + i * 1.9) * jitter * 7;
+
+        const scale = 1 + near * 0.05 + pop * 0.16 + agitation * 0.02;
+        const rotate =
+          Math.sin(wobble * 0.5) * 4 +
+          Math.sin(t * 0.5 + spec.phase) * 2 +
+          near * (dx < 0 ? -4 : 4) +
+          pop * 3;
+
+        el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${rotate.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        const quiet = narrow ? 0.55 : 1;
+        el.style.opacity = String(
+          Math.min(0.86, ((spec.accent ? 0.26 : 0.17) + near * 0.5 + pop * 0.34) * quiet),
+        );
+
+        if (hot > 0.45 !== (el.dataset.hot === "true")) {
+          el.dataset.hot = hot > 0.45 ? "true" : "false";
+        }
+      }
+
       if (!ready) {
         ready = true;
-        node.dataset.live = "true";
+        if (layer) layer.dataset.live = "true";
       }
     }
 
@@ -271,7 +248,7 @@ export function BackgroundFx() {
       if (next && !running) {
         running = true;
         last = performance.now();
-        raf = window.requestAnimationFrame(loop);
+        raf = window.requestAnimationFrame(frame);
       } else if (!next && running) {
         running = false;
         window.cancelAnimationFrame(raf);
@@ -284,17 +261,31 @@ export function BackgroundFx() {
       pointer.seen = performance.now();
     }
 
+    function onPress(event: PointerEvent) {
+      pointer.tx = event.clientX;
+      pointer.ty = event.clientY;
+      pointer.seen = performance.now();
+      agitation = Math.min(1, agitation + 0.24);
+      addTap(event.clientX, event.clientY, 0.9);
+    }
+
     function onLeave() {
       pointer.seen = 0;
     }
 
     function onScroll() {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      drift.target = max > 0 ? window.scrollY / max : 0;
+      const y = window.scrollY;
+      const delta = y - lastScroll;
+      lastScroll = y;
+      scroll.target = y;
+      if (Math.abs(delta) > 1) {
+        agitation = Math.min(1, agitation + Math.min(0.7, Math.abs(delta) / 180));
+      }
     }
 
     function onResize() {
-      build();
+      width = window.innerWidth;
+      height = window.innerHeight;
       onScroll();
     }
 
@@ -306,14 +297,13 @@ export function BackgroundFx() {
     function onShield(event: Event) {
       const detail = (event as CustomEvent<{ x?: number; y?: number }>).detail;
       if (!detail || typeof detail.x !== "number" || typeof detail.y !== "number") return;
-      shield = { x: detail.x, y: detail.y, start: performance.now() };
+      agitation = Math.min(1, agitation + 0.5);
+      addTap(detail.x, detail.y, 1.6);
       if (!running && visible && onScreen) sync();
     }
 
-    build();
-    onScroll();
-
     /* Pause when no section that asks for the field is on screen. */
+    const scenes = new Set<Element>();
     const observed = Array.from(document.querySelectorAll<HTMLElement>("[data-scene]"));
     let observer: IntersectionObserver | null = null;
     if (observed.length > 0) {
@@ -328,11 +318,11 @@ export function BackgroundFx() {
         },
         { rootMargin: "120px 0px", threshold: 0 },
       );
-      observed.forEach((node) => observer?.observe(node));
+      observed.forEach((item) => observer?.observe(item));
     }
 
     window.addEventListener("pointermove", onPointer, { passive: true });
-    window.addEventListener("pointerdown", onPointer, { passive: true });
+    window.addEventListener("pointerdown", onPress, { passive: true });
     window.addEventListener("pointerleave", onLeave);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
@@ -351,7 +341,7 @@ export function BackgroundFx() {
       window.cancelAnimationFrame(raf);
       observer?.disconnect();
       window.removeEventListener("pointermove", onPointer);
-      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("pointerdown", onPress);
       window.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
@@ -361,7 +351,11 @@ export function BackgroundFx() {
   }, []);
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div
+      ref={layerRef}
+      aria-hidden
+      className="field-layer pointer-events-none fixed inset-0 z-0 overflow-hidden"
+    >
       {/* Base plane: deep navy with two soft light sources. */}
       <div
         className="absolute inset-0"
@@ -370,31 +364,58 @@ export function BackgroundFx() {
             "radial-gradient(74% 58% at 78% -6%, var(--field-teal), transparent 66%), radial-gradient(62% 54% at 0% 94%, var(--field-blue), transparent 70%), linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%)",
         }}
       />
-      {/* Static point field keeps the space alive with no script. */}
-      <div
-        className="field-grid absolute inset-0"
-        style={{
-          backgroundImage: "radial-gradient(circle, var(--line-strong) 1.1px, transparent 1.5px)",
-          backgroundSize: "42px 42px",
-          maskImage: "radial-gradient(150% 110% at 58% 8%, black 10%, transparent 86%)",
-          WebkitMaskImage: "radial-gradient(150% 110% at 58% 8%, black 10%, transparent 86%)",
-        }}
-      />
-      <div
-        className="field-orb absolute left-1/2 top-[-16%] h-[62vh] w-[90vw] -translate-x-1/2 rounded-full"
-        style={{
-          background: `radial-gradient(closest-side, var(--field-glow), transparent 70%)`,
-          filter: "blur(42px)",
-        }}
-      />
-      <div
-        className="field-orb field-orb-cool absolute -right-[18%] top-[34%] h-[52vh] w-[62vw] rounded-full"
-        style={{
-          background: `radial-gradient(closest-side, var(--field-blue), transparent 70%)`,
-          filter: "blur(58px)",
-        }}
-      />
-      <canvas ref={canvasRef} width={1} height={1} className="field-canvas absolute inset-0 h-full w-full" />
+
+      {/* Four blurred masses breathe behind the icons. The shells take the
+          pointer and scroll offset so the inner glow can animate freely. */}
+      <div className="field-orb-shell field-shell-a absolute left-[58%] top-[-18%] h-[72vh] w-[78vw]">
+        <span className="field-orb" />
+      </div>
+      <div className="field-orb-shell field-shell-b absolute left-[-16%] top-[26%] h-[62vh] w-[58vw]">
+        <span className="field-orb field-orb-cool" />
+      </div>
+      <div className="field-orb-shell field-shell-c absolute left-[10%] top-[62%] h-[54vh] w-[64vw]">
+        <span className="field-orb field-orb-faint" />
+      </div>
+      <div className="field-orb-shell field-shell-d absolute left-[66%] top-[58%] h-[46vh] w-[48vw]">
+        <span className="field-orb field-orb-cool" />
+      </div>
+
+      {/* Security line icons. Static in the server output, moved by the loop
+          once the page is ready. */}
+      <div className="field-icons absolute inset-0">
+        {ICONS.map((icon, index) => (
+          <div
+            key={icon.name}
+            ref={(node) => {
+              iconRefs.current[index] = node;
+            }}
+            className={`field-icon${icon.accent ? " is-accent" : ""}${icon.mobile ? " is-mobile" : ""}`}
+            style={
+              {
+                "--icon-left": `${icon.x}%`,
+                "--icon-top": `${icon.y}%`,
+                "--icon-left-mobile": `${icon.mx ?? icon.x}%`,
+                "--icon-top-mobile": `${icon.my ?? icon.y}%`,
+                "--icon-size": `${icon.size}px`,
+                "--icon-alpha": icon.accent ? 0.26 : 0.17,
+              } as CSSProperties
+            }
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.35"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              focusable="false"
+            >
+              {PATHS[icon.name]}
+            </svg>
+          </div>
+        ))}
+      </div>
+
       <div className="noise-layer absolute inset-0" />
     </div>
   );

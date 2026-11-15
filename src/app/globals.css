@@ -1832,38 +1832,129 @@
 
   /* ── Living field ───────────────────────────────────────────────────────── */
 
-  .field-grid {
-    opacity: 0.7;
+  .field-layer {
+    --field-mx: 0;
+    --field-my: 0;
+    --field-scroll: 0;
   }
+
+  .field-orb-shell {
+    filter: blur(clamp(34px, 5.4vw, 64px));
+    transform: translate3d(
+      calc(var(--field-mx) * var(--shell-mx, 18px)),
+      calc(var(--field-my) * var(--shell-my, 14px) + var(--field-scroll) * var(--shell-scroll, -14px)),
+      0
+    );
+    will-change: transform;
+  }
+  .field-shell-a { --shell-mx: 24px; --shell-my: 16px; --shell-scroll: -10px; }
+  .field-shell-b { --shell-mx: 16px; --shell-my: 22px; --shell-scroll: 16px; }
+  .field-shell-c { --shell-mx: 12px; --shell-my: 10px; --shell-scroll: -20px; }
+  .field-shell-d { --shell-mx: 20px; --shell-my: 8px; --shell-scroll: 10px; }
+
   .field-orb {
-    opacity: 0.95;
-    animation: field-breathe 12s var(--ease-inout) infinite alternate;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: radial-gradient(closest-side, var(--field-glow), transparent 72%);
+    opacity: 0.9;
+    animation: field-breathe 13s var(--ease-inout) infinite alternate;
+    will-change: transform, opacity;
   }
   .field-orb-cool {
-    opacity: 0.55;
-    animation: field-breathe-cool 15s var(--ease-inout) infinite alternate;
-    animation-delay: -5s;
+    background: radial-gradient(closest-side, var(--field-blue), transparent 72%);
+    --breath-min: 0.92;
+    --breath-max: 1.12;
+    --breath-opacity-min: 0.45;
+    --breath-opacity-max: 0.75;
+    animation-duration: 17s;
+    animation-delay: -6s;
+  }
+  .field-orb-faint {
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--field-teal) 72%, transparent), transparent 76%);
+    --breath-min: 0.96;
+    --breath-max: 1.16;
+    --breath-opacity-min: 0.35;
+    --breath-opacity-max: 0.62;
+    animation-duration: 21s;
+    animation-delay: -11s;
   }
   @keyframes field-breathe {
-    from { transform: translate3d(-50%, 0, 0) scale(1); }
-    to { transform: translate3d(-50%, 18px, 0) scale(1.06); }
+    from { transform: scale(var(--breath-min, 0.94)) translate3d(0, 0, 0); opacity: var(--breath-opacity-min, 0.72); }
+    to { transform: scale(var(--breath-max, 1.1)) translate3d(0, 2.5%, 0); opacity: var(--breath-opacity-max, 1); }
   }
-  @keyframes field-breathe-cool {
-    from { transform: translate3d(0, 0, 0) scale(1); }
-    to { transform: translate3d(0, 22px, 0) scale(1.07); }
+
+  .field-icon {
+    position: absolute;
+    left: var(--icon-left);
+    top: var(--icon-top);
+    width: var(--icon-size);
+    height: var(--icon-size);
+    translate: -50% -50%;
+    color: var(--fg-subtle);
+    opacity: var(--icon-alpha, 0.17);
+    transition: color 320ms var(--ease-out);
+    will-change: transform, opacity;
   }
-  .field-canvas {
+  .field-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .field-icon.is-accent {
+    color: color-mix(in srgb, var(--fg-subtle) 52%, var(--signal));
+  }
+  .field-icon.is-accent svg {
+    filter: drop-shadow(0 0 24px color-mix(in srgb, var(--signal) 18%, transparent));
+  }
+  .field-icon[data-hot="true"] {
+    color: var(--signal);
+  }
+  .field-icon[data-hot="true"] svg {
+    filter: drop-shadow(0 0 30px color-mix(in srgb, var(--signal) 42%, transparent));
+  }
+
+  .field-tap {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    translate: -50% -50%;
+    border-radius: 999px;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--signal) 46%, transparent), transparent 72%);
     opacity: 0;
-    transition: opacity 900ms linear;
+    transform: scale(0.2);
+    animation: field-tap 900ms var(--ease-out) forwards;
+    pointer-events: none;
+    will-change: transform, opacity;
   }
-  .field-canvas[data-live="true"] {
-    opacity: 0.95;
+  @keyframes field-tap {
+    0% { transform: scale(0.2); opacity: calc(0.52 * var(--tap-strength, 1)); }
+    55% { opacity: calc(0.2 * var(--tap-strength, 1)); }
+    100% { transform: scale(9); opacity: 0; }
   }
+
+  @media (max-width: 767px) {
+    .field-icon:not(.is-mobile) {
+      display: none;
+    }
+    .field-icon {
+      left: var(--icon-left-mobile, var(--icon-left));
+      top: var(--icon-top-mobile, var(--icon-top));
+      width: calc(var(--icon-size) * 0.62);
+      height: calc(var(--icon-size) * 0.62);
+      opacity: calc(var(--icon-alpha, 0.17) * 0.55);
+    }
+    .field-orb-shell {
+      filter: blur(36px);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .field-orb {
       animation: none;
     }
-    .field-canvas {
+    .field-tap {
       display: none;
     }
   }
