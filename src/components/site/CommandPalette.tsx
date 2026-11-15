@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { cvHref, mailto, site } from "@/content/site";
+import { cvHref, site } from "@/content/site";
 import { work } from "@/content/work";
 import { paletteFindings, sqliFinding } from "@/lib/palette-data";
 import { classify, type PresetId } from "@/lib/trace";
+import { announce } from "@/lib/motion";
+
+type RowKind = "page" | "work" | "security" | "action" | "finding" | "detection";
 
 type Row = {
   id: string;
@@ -15,6 +18,7 @@ type Row = {
   keywords?: string;
   severity?: string;
   cvss?: string;
+  kind?: RowKind;
   run: () => void;
 };
 
@@ -42,7 +46,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     onClose();
     const fire = () => {
       window.dispatchEvent(new CustomEvent("trace:run", { detail: id }));
-      document.getElementById("hero")?.scrollIntoView();
+      document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" });
     };
     if (window.location.pathname !== "/") {
       router.push("/");
@@ -56,6 +60,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     try {
       await navigator.clipboard.writeText(site.email);
       setCopied(true);
+      announce("Email address copied to clipboard.");
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
@@ -68,6 +73,19 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     document.documentElement.classList.add(next);
     document.cookie = `theme=${next}; Path=/; Max-Age=31536000; SameSite=Lax`;
     window.dispatchEvent(new Event("theme:changed"));
+    announce(`Switched to ${next} theme.`);
+  }
+
+  function jumpToSection(sectionId: string, fallbackPath: string) {
+    onClose();
+    if (window.location.pathname === "/") {
+      const el = document.getElementById(sectionId) ?? document.querySelector(`[data-scene="${sectionId}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+    router.push(fallbackPath);
   }
 
   const detections = useMemo(() => {
@@ -88,6 +106,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           group: "Blocked",
           label: "Nice try. Blocked by rule auth.sqli.",
           severity: "BLOCKED",
+          kind: "action",
           run: () => undefined,
         },
       ];
@@ -98,6 +117,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           id: "egg-who",
           group: "Result",
           label: "drWinner. Application Security. Accra, Ghana.",
+          kind: "action",
           run: () => undefined,
         },
       ];
@@ -108,6 +128,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           id: "egg-sudo",
           group: "Actions",
           label: "sudo hire drwinner",
+          kind: "action",
           run: () => {
             window.dispatchEvent(new CustomEvent("site-toast", { detail: "Permission granted." }));
             onClose();
@@ -117,85 +138,212 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       ];
     }
 
-    const pages = [
-      ["/", "Home"],
-      ["/work", "Work"],
-      ["/about", "About"],
-      ["/contact", "Contact"],
-      ["/security", "Security"],
-    ].map(([href, label]) => ({
-      id: `page-${href}`,
-      group: "Pages",
-      label,
-      run: () => go(href),
-    }));
+    // Security Domains Group
+    const securityDomains: Row[] = [
+      {
+        id: "sec-owasp-llm",
+        group: "Security Domains",
+        label: "OWASP LLM Top 10 (2025)",
+        hint: "AI/LLM Agent Lab",
+        keywords: "owasp llm top 10 ai prompt injection rag cross tenant ssrf bola agent security",
+        kind: "security",
+        run: () => go("/work/llm-agent-security-lab"),
+      },
+      {
+        id: "sec-mitre-attack",
+        group: "Security Domains",
+        label: "MITRE ATT&CK Cloud Detections",
+        hint: "AWS Threat Detection",
+        keywords: "mitre attack tactics cloud aws detection cloudtrail guardduty eventbridge",
+        kind: "security",
+        run: () => go("/work/aws-threat-detection-as-code"),
+      },
+      {
+        id: "sec-idor",
+        group: "Security Domains",
+        label: "IDOR & Multi-Tenant Authorization",
+        hint: "Run Interactive Trace",
+        keywords: "idor bola broken object access tenant isolation auth customer scope",
+        kind: "security",
+        run: () => runTrace("idor"),
+      },
+      {
+        id: "sec-sqli",
+        group: "Security Domains",
+        label: "SQL Injection & Parameterized Remediation",
+        hint: "Run Interactive Trace",
+        keywords: "sqli sql injection prepared statements auth bypass database cwe-89",
+        kind: "security",
+        run: () => runTrace("sqli"),
+      },
+    ];
 
-    const studies = work
+    // Quick Actions Group
+    const actions: Row[] = [
+      {
+        id: "act-cv",
+        group: "Quick Actions",
+        label: "Download CV",
+        hint: "PDF",
+        keywords: "cv resume pdf download curriculum vitae",
+        kind: "action",
+        run: () => go(cvHref),
+      },
+      {
+        id: "act-mail",
+        group: "Quick Actions",
+        label: copied ? "Email Copied!" : "Copy Email",
+        hint: site.email,
+        keywords: "email copy address mail",
+        kind: "action",
+        run: () => void copyEmail(),
+      },
+      {
+        id: "act-jump-work",
+        group: "Quick Actions",
+        label: "Jump to Work",
+        hint: "Selected Work Section",
+        keywords: "jump work projects case studies labs portfolio",
+        kind: "action",
+        run: () => jumpToSection("work", "/work"),
+      },
+      {
+        id: "act-jump-about",
+        group: "Quick Actions",
+        label: "Jump to About",
+        hint: "Background & Bio",
+        keywords: "jump about bio profile background experience",
+        kind: "action",
+        run: () => go("/about"),
+      },
+      {
+        id: "act-jump-contact",
+        group: "Quick Actions",
+        label: "Jump to Contact",
+        hint: "Get in touch",
+        keywords: "jump contact message email hire get in touch",
+        kind: "action",
+        run: () => jumpToSection("quiet", "/contact"),
+      },
+      {
+        id: "act-theme",
+        group: "Quick Actions",
+        label: "Toggle Theme",
+        hint: "Dark / Light Mode",
+        keywords: "switch theme toggle dark light mode appearance color scheme",
+        kind: "action",
+        run: () => toggleTheme(),
+      },
+      {
+        id: "act-trace-sqli",
+        group: "Quick Actions",
+        label: "Run SQL Injection Simulator",
+        hint: "Hero Trace",
+        keywords: "sqli sql injection simulator test trace",
+        kind: "action",
+        run: () => runTrace("sqli"),
+      },
+      {
+        id: "act-trace-idor",
+        group: "Quick Actions",
+        label: "Run IDOR Access Simulator",
+        hint: "Hero Trace",
+        keywords: "idor broken object access simulator trace",
+        kind: "action",
+        run: () => runTrace("idor"),
+      },
+      {
+        id: "act-trace-prompt",
+        group: "Quick Actions",
+        label: "Run Prompt Injection Simulator",
+        hint: "Hero Trace",
+        keywords: "prompt injection override llm simulator trace",
+        kind: "action",
+        run: () => runTrace("prompt"),
+      },
+    ];
+
+    // Case Studies Group
+    const studies: Row[] = work
       .filter((item) => item.kind !== "archive" || item.link)
       .filter((item) => item.slug !== "proof9")
       .map((item) => ({
         id: `work-${item.slug}`,
-        group: "Work",
+        group: "Case Studies",
         label: item.title,
+        hint: item.year,
+        keywords: `${item.tags.join(" ")} ${item.card}`,
+        kind: "work",
         run: () => (item.kind === "archive" && item.link ? go(item.link) : go(`/work/${item.slug}`)),
       }));
 
+    // Findings Group
     const findings: Row[] = [
       ...paletteFindings.map((item) => ({
         id: `find-${item.index}`,
-        group: "Findings",
+        group: "Vulnerability Findings",
         label: `${item.index} ${item.title}`,
-        keywords: "cvss",
+        keywords: "cvss finding vulnerability report",
         severity: item.severity,
         cvss: item.cvss,
+        kind: "finding" as RowKind,
         run: () => go(item.href),
       })),
       {
         id: "find-sqli",
-        group: "Findings",
+        group: "Vulnerability Findings",
         label: sqliFinding.title,
-        keywords: "sqli sql injection cvss",
+        keywords: "sqli sql injection cvss finding vulnerability report",
         severity: sqliFinding.severity,
         cvss: sqliFinding.cvss,
+        kind: "finding" as RowKind,
         run: () => go(sqliFinding.href),
       },
     ];
 
+    // Detections Group
     const rules: Row[] = detections.map((item) => ({
       id: `det-${item.name}`,
-      group: "Detections",
+      group: "Cloud Detections",
       label: item.attack ? `${item.name}, ${item.attack}` : item.name,
+      keywords: "cloud detection aws terraform mitre",
+      kind: "detection" as RowKind,
       run: () => go(item.href),
     }));
 
-    const actions: Row[] = [
-      { id: "act-cv", group: "Actions", label: "Download CV", run: () => go(cvHref) },
-      { id: "act-mail", group: "Actions", label: copied ? "Copied" : "Copy email", run: () => void copyEmail() },
-      { id: "act-email", group: "Actions", label: "Email me", run: () => go(mailto) },
-      { id: "act-sqli", group: "Actions", label: "Run the SQL injection trace", keywords: "sqli sql", run: () => runTrace("sqli") },
-      { id: "act-idor", group: "Actions", label: "Run the IDOR trace", keywords: "idor", run: () => runTrace("idor") },
-      { id: "act-prompt", group: "Actions", label: "Run the prompt injection trace", keywords: "prompt", run: () => runTrace("prompt") },
-      { id: "act-theme", group: "Actions", label: "Switch theme", run: () => toggleTheme() },
-    ];
+    // Pages Group
+    const pages: Row[] = [
+      ["/", "Home", "Main landing & simulator"],
+      ["/work", "Work", "All case studies and labs"],
+      ["/about", "About", "Background, skills & toolkit"],
+      ["/contact", "Contact", "Availability & communication channels"],
+      ["/security", "Security", "Security posture & disclosure policy"],
+    ].map(([href, label, hint]) => ({
+      id: `page-${href}`,
+      group: "Navigation Pages",
+      label,
+      hint,
+      kind: "page" as RowKind,
+      run: () => go(href),
+    }));
 
-    const suggested: Row[] = [
-      { id: "sug-work", group: "Suggested", label: "View my work", run: () => go("/work") },
-      { id: "sug-sqli", group: "Suggested", label: "Run the SQL injection trace", keywords: "sqli sql", run: () => runTrace("sqli") },
-      { id: "sug-lab", group: "Suggested", label: "Open the agent lab", keywords: "agent lab", run: () => go("/#see-it-work") },
-      { id: "sug-cv", group: "Suggested", label: "Download CV", run: () => go(cvHref) },
-      { id: "sug-mail", group: "Suggested", label: "Email me", run: () => go(mailto) },
-    ];
-
-    const all: Row[] = [...suggested, ...pages, ...studies, ...findings, ...rules, ...actions];
+    const all: Row[] = [...securityDomains, ...actions, ...studies, ...findings, ...rules, ...pages];
     if (!q) return all;
-    return all.filter((row) => `${row.label} ${row.cvss ?? ""} ${row.keywords ?? ""}`.toLowerCase().includes(q));
-    // go and runTrace close over router. Recomputed when the query changes.
+
+    return all.filter((row) =>
+      `${row.label} ${row.hint ?? ""} ${row.cvss ?? ""} ${row.keywords ?? ""}`
+        .toLowerCase()
+        .includes(q),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, copied, detections]);
 
   useEffect(() => {
     setActive(0);
-  }, [query]);
+    if (query.trim()) {
+      announce(`${rows.length} ${rows.length === 1 ? "result" : "results"} found.`);
+    }
+  }, [query, rows.length]);
 
   useEffect(() => {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -226,18 +374,30 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       }
       if (event.key === "ArrowDown") {
         event.preventDefault();
-        setActive((value) => (rows.length === 0 ? 0 : (value + 1) % rows.length));
+        setActive((value) => {
+          const next = rows.length === 0 ? 0 : (value + 1) % rows.length;
+          const rowEl = listRef.current?.querySelector<HTMLElement>(`[data-index="${next}"]`);
+          rowEl?.scrollIntoView({ block: "nearest" });
+          return next;
+        });
       }
       if (event.key === "ArrowUp") {
         event.preventDefault();
-        setActive((value) => (rows.length === 0 ? 0 : (value - 1 + rows.length) % rows.length));
+        setActive((value) => {
+          const next = rows.length === 0 ? 0 : (value - 1 + rows.length) % rows.length;
+          const rowEl = listRef.current?.querySelector<HTMLElement>(`[data-index="${next}"]`);
+          rowEl?.scrollIntoView({ block: "nearest" });
+          return next;
+        });
       }
       if (event.key === "Enter") {
         event.preventDefault();
         rows[active]?.run();
       }
       if (event.key === "Tab" && shellRef.current) {
-        const focusable = Array.from(shellRef.current.querySelectorAll<HTMLElement>("button, input, a")).filter((el) => !el.hasAttribute("disabled"));
+        const focusable = Array.from(
+          shellRef.current.querySelectorAll<HTMLElement>("button, input, a"),
+        ).filter((el) => !el.hasAttribute("disabled"));
         if (focusable.length === 0) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
@@ -264,36 +424,74 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     mark.style.height = `${box.height}px`;
   }, [active, rows]);
 
-  const groups = rows.reduce<string[]>((list, row) => (list.includes(row.group) ? list : [...list, row.group]), []);
+  const groups = rows.reduce<string[]>(
+    (list, row) => (list.includes(row.group) ? list : [...list, row.group]),
+    [],
+  );
   const current = rows[active];
 
   return (
-    <div className={`palette-root ${entered ? "is-in" : ""}`} role="presentation" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose();
-    }}>
+    <div
+      className={`palette-root ${entered ? "is-in" : ""}`}
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
       <div
         ref={shellRef}
         className="palette-panel"
         role="dialog"
         aria-modal="true"
-        aria-label="Command palette"
+        aria-label="Spotlight Command Palette"
       >
-        <input
-          ref={inputRef}
-          role="combobox"
-          aria-expanded="true"
-          aria-controls="palette-list"
-          aria-activedescendant={current ? `palette-opt-${current.id}` : undefined}
-          aria-autocomplete="list"
-          value={query}
-          onChange={(event) => setQuery(event.target.value.slice(0, 200))}
-          placeholder="Search pages, work, findings"
-          className="palette-input"
-        />
+        {/* Search Input Bar with Icon */}
+        <div className="relative flex items-center border-b border-[var(--line)] px-4">
+          <svg
+            viewBox="0 0 20 20"
+            className="h-4 w-4 shrink-0 text-[var(--signal)]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <circle cx="9" cy="9" r="6" />
+            <path d="m13.5 13.5 4.5 4.5" />
+          </svg>
+          <input
+            ref={inputRef}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="palette-list"
+            aria-activedescendant={current ? `palette-opt-${current.id}` : undefined}
+            aria-autocomplete="list"
+            value={query}
+            onChange={(event) => setQuery(event.target.value.slice(0, 200))}
+            placeholder="Type a command or search domains (e.g. IDOR, SQLi, OWASP)..."
+            className="palette-input w-full bg-transparent pl-3 text-[15px] outline-none text-[var(--fg)] placeholder:text-[var(--fg-subtle)]"
+          />
+          {query ? (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="text-[11px] font-mono text-[var(--fg-subtle)] hover:text-[var(--fg)] px-1.5 py-0.5 rounded border border-[var(--line)]"
+            >
+              Clear
+            </button>
+          ) : (
+            <kbd className="hidden sm:inline-block rounded border border-[var(--line-strong)] bg-[var(--surface-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--fg-subtle)]">
+              ESC
+            </kbd>
+          )}
+        </div>
+
+        {/* Results List */}
         <div id="palette-list" ref={listRef} role="listbox" className="palette-list">
           <span aria-hidden data-highlight className="palette-highlight" />
           {groups.map((group) => (
-            <div key={group}>
+            <div key={group} className="mb-2">
               <p className="palette-group">{group}</p>
               {rows.map((row, index) =>
                 row.group === group ? (
@@ -304,23 +502,103 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                     role="option"
                     aria-selected={index === active}
                     data-index={index}
-                    className="palette-row"
+                    className={`palette-row group flex items-center justify-between transition-colors ${
+                      index === active ? "is-active text-[var(--fg-strong)]" : ""
+                    }`}
                     onMouseEnter={() => setActive(index)}
                     onClick={() => row.run()}
                   >
-                    <span>{row.label}</span>
-                    {row.severity ? <span className={`sev ${row.severity === "BLOCKED" ? "sev-signal badge-pop" : "sev-high"}`}>{row.severity}</span> : null}
-                    {row.cvss ? <span className="font-mono text-[12px] text-[var(--fg-subtle)]">{row.cvss}</span> : null}
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                      {/* Kind Indicator Icon */}
+                      {row.kind === "security" ? (
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[var(--signal-soft)] text-[var(--signal)]">
+                          <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M8 1.5 13.5 3.8v4c0 3.2-2.2 5.5-5.5 6.9-3.3-1.4-5.5-3.7-5.5-6.9v-4L8 1.5Z" />
+                          </svg>
+                        </span>
+                      ) : row.kind === "action" ? (
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[var(--surface-3)] text-[var(--fg-subtle)] font-mono text-[10px]">
+                          ⌘
+                        </span>
+                      ) : row.kind === "work" ? (
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[color-mix(in_srgb,var(--signal)_12%,transparent)] text-[var(--signal)]">
+                          <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <rect x="2" y="3" width="12" height="10" rx="2" />
+                            <path d="M5 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+                          </svg>
+                        </span>
+                      ) : (
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--fg-subtle)]">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[var(--line-strong)]" />
+                        </span>
+                      )}
+
+                      <span className="truncate font-medium text-[13.5px]">{row.label}</span>
+                      {row.hint ? (
+                        <span className="hidden sm:inline truncate font-mono text-[11px] text-[var(--fg-subtle)]">
+                          {row.hint}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {row.severity ? (
+                        <span
+                          className={`sev ${
+                            row.severity === "BLOCKED"
+                              ? "sev-signal badge-pop"
+                              : "sev-high"
+                          }`}
+                        >
+                          {row.severity}
+                        </span>
+                      ) : null}
+                      {row.cvss ? (
+                        <span className="font-mono text-[11.5px] text-[var(--fg-subtle)]">
+                          {row.cvss}
+                        </span>
+                      ) : null}
+                      <span className="arrow-shift text-[var(--fg-subtle)] group-hover:text-[var(--signal)]">
+                        →
+                      </span>
+                    </div>
                   </button>
                 ) : null,
               )}
             </div>
           ))}
-          {rows.length === 0 ? <p className="px-4 py-6 text-[14px] text-[var(--fg-subtle)]">No matches.</p> : null}
+          {rows.length === 0 ? (
+            <p className="px-4 py-8 text-center text-[13.5px] text-[var(--fg-subtle)]">
+              No matching commands or findings.
+            </p>
+          ) : null}
         </div>
-        <div className="palette-foot">
-          <span>Enter to open</span>
-          <span>Esc to close</span>
+
+        {/* Footer with Keyboard Hints */}
+        <div className="palette-foot flex items-center justify-between border-t border-[var(--line)] px-4 py-2.5">
+          <div className="flex items-center gap-3 text-[11px] text-[var(--fg-subtle)]">
+            <span className="inline-flex items-center gap-1">
+              <kbd className="rounded border border-[var(--line-strong)] bg-[var(--surface-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--fg-muted)]">
+                ↑↓
+              </kbd>
+              <span>Navigate</span>
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <kbd className="rounded border border-[var(--line-strong)] bg-[var(--surface-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--fg-muted)]">
+                ↵
+              </kbd>
+              <span>Select</span>
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <kbd className="rounded border border-[var(--line-strong)] bg-[var(--surface-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--fg-muted)]">
+                esc
+              </kbd>
+              <span>Close</span>
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-[var(--fg-subtle)]">
+            {rows.length} {rows.length === 1 ? "match" : "matches"}
+          </span>
         </div>
       </div>
     </div>

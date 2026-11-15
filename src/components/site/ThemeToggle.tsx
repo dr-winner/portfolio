@@ -15,11 +15,6 @@ export function ThemeToggle() {
 
   useEffect(() => {
     setTheme(currentTheme());
-    function sync() {
-      setTheme(currentTheme());
-    }
-    window.addEventListener("theme:changed", sync);
-    return () => window.removeEventListener("theme:changed", sync);
   }, []);
 
   function toggle() {
@@ -39,7 +34,7 @@ export function ThemeToggle() {
       aria-checked={checked}
       aria-label={checked ? "Switch to dark theme" : "Switch to light theme"}
       onClick={toggle}
-      className="group inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-[6px] border border-[var(--line)] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
+      className="group inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-lg border border-[var(--line)] text-[var(--fg-muted)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--fg)]"
     >
       {/* Sun / moon crossfade + rotation; neutral dial paint until theme is known */}
       <span aria-hidden className="relative block h-4 w-4">
@@ -49,7 +44,7 @@ export function ThemeToggle() {
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`absolute inset-0 h-full w-full transition-all duration-200 ${
+          className={`absolute inset-0 h-full w-full transition-all duration-300 ${
             known ? "opacity-0 scale-75" : "opacity-100 rotate-0"
           } ${known ? "pointer-events-none" : ""}`}
         >
@@ -63,7 +58,7 @@ export function ThemeToggle() {
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`absolute inset-0 h-full w-full transition-all duration-200 ${
+          className={`absolute inset-0 h-full w-full transition-all duration-300 ${
             known && checked ? "rotate-0 opacity-100" : known ? "-rotate-90 opacity-0" : "opacity-0"
           }`}
         >
@@ -78,7 +73,7 @@ export function ThemeToggle() {
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`absolute inset-0 h-full w-full transition-all duration-200 ${
+          className={`absolute inset-0 h-full w-full transition-all duration-300 ${
             known && !checked ? "rotate-0 opacity-100" : known ? "rotate-90 opacity-0" : "opacity-0"
           }`}
         >

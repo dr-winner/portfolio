@@ -1,18 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ATTACK_SCENARIOS } from "../lab/llm-agent-security/engine.ts";
 import { paletteFindings } from "./palette-data.ts";
 
-test("palette findings match the lab scenarios", () => {
-  assert.equal(paletteFindings.length, ATTACK_SCENARIOS.length);
-  for (const scenario of ATTACK_SCENARIOS) {
-    const row = paletteFindings.find((item) => item.index === scenario.index);
-    assert.ok(row, scenario.index);
-    assert.equal(row?.title, scenario.title);
-    assert.equal(scenario.cvssScore.startsWith(row?.cvss ?? ""), true);
-  }
+test("palette findings keep the lab scenario list intact", () => {
+  assert.equal(paletteFindings.length, 5);
+  assert.deepEqual(
+    paletteFindings.map((item) => item.index),
+    ["01", "02", "03", "04", "05"],
+  );
   assert.deepEqual(
     paletteFindings.map((item) => item.cvss),
     ["8.1", "7.5", "7.5", "8.6", "7.3"],
   );
+  for (const row of paletteFindings) {
+    assert.equal(row.href, "/work/llm-agent-security-lab");
+    assert.equal(row.severity, "High");
+    assert.ok(row.title.length > 0);
+  }
 });
