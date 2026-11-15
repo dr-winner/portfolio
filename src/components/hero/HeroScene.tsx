@@ -61,9 +61,9 @@ export function HeroScene() {
 
   const scenario = scenarios[active];
 
-  /* When the packet reaches the gate, ask the background field to pull into
-     the same shield. The rect is in viewport space, which is what the fixed
-     canvas works in. */
+  /* When the packet reaches the gate, pulse the background field at the
+     same point. The rect is in viewport space, which is what the fixed
+     layer works in. */
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const node = burstRef.current;
