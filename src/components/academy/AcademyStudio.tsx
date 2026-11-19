@@ -143,7 +143,7 @@ function EditorialNotebookPanel({
   };
 
   return (
-    <div className="space-y-4 text-[#26201b]">
+    <div className="space-y-4 text-[#26201b] max-w-full overflow-hidden">
       {/* ── Top Header: Step Badge + Problem Badge ── */}
       <div>
         <div className="flex items-center justify-between gap-2">
@@ -192,10 +192,10 @@ function EditorialNotebookPanel({
             type="button"
             onClick={onNextStep}
             disabled={isNextDisabled}
-            className="scale-btn-next flex-1 !py-2 !px-4"
+            className="scale-btn-next flex-1 min-w-0 !py-2 !px-4"
           >
             <span className="truncate">Next: {nextStepTitle}</span>
-            <span aria-hidden>→</span>
+            <span aria-hidden className="shrink-0">→</span>
           </button>
         </div>
 
@@ -244,19 +244,21 @@ function EditorialNotebookPanel({
 
       {/* ── "What Changed" Diff Box (If Diff Lines Exist) ── */}
       {currentStep.diff && currentStep.diff.length > 0 && (
-        <div className="scale-diff-box">
+        <div className="scale-diff-box max-w-full overflow-hidden">
           <div className="flex items-center justify-between border-b border-[#26201b]/10 pb-2 mb-2 font-mono text-[10.5px]">
             <span className="uppercase font-extrabold tracking-wider text-[#26201b]/60">
               WHAT CHANGED
             </span>
-            <span className="font-bold text-[#10b981] truncate max-w-[170px]">{currentStep.diffTitle}</span>
+            <span className="font-bold text-[#10b981] truncate max-w-[170px]" title={currentStep.diffTitle}>
+              {currentStep.diffTitle}
+            </span>
           </div>
 
-          <div className="space-y-1 font-mono text-[11px] leading-relaxed overflow-x-auto">
+          <div className="space-y-1 font-mono text-[11px] leading-relaxed overflow-x-auto max-w-full pb-1 scrollbar-thin">
             {currentStep.diff.map((line, idx) => (
               <div
                 key={idx}
-                className={`px-2 py-0.5 rounded font-medium ${
+                className={`px-2 py-0.5 rounded font-medium whitespace-pre ${
                   line.type === "add"
                     ? "bg-[#dcfce7] text-[#14532d]"
                     : line.type === "remove"

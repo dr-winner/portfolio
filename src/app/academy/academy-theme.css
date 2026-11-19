@@ -74,6 +74,7 @@ html:has(.scale-app).dark {
   top: 68px;
   max-height: calc(100vh - 80px);
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(38, 32, 27, 0.15) transparent;
 }
@@ -90,6 +91,7 @@ html:has(.scale-app).dark {
   top: 68px;
   max-height: calc(100vh - 80px);
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(38, 32, 27, 0.15) transparent;
 }
@@ -127,6 +129,8 @@ html:has(.scale-app).dark {
   border-radius: 16px;
   padding: 18px 20px;
   box-shadow: 1px 1px 0px rgba(38, 32, 27, 0.08);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* ── Header Components ───────────────────────────────────────────────────── */
@@ -359,6 +363,8 @@ html:has(.scale-app).dark {
   padding: 12px 14px;
   color: #5b21b6;
   box-shadow: 1px 1px 0px rgba(124, 58, 237, 0.08);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .scale-diff-box {
@@ -367,6 +373,8 @@ html:has(.scale-app).dark {
   border-radius: 12px;
   padding: 12px;
   box-shadow: 1px 1px 0px rgba(38, 32, 27, 0.06);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .scale-checkbox {
