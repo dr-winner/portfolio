@@ -1,7 +1,41 @@
-/* ── EXACT DESIGNED-TO-SCALE THEME & STYLES ──────────────────────────────── */
+/* ── ACADEMY THEME: WARM SAND PALETTE ─────────────────────────────────────── */
+/* This file MUST override every dark-mode token from the portfolio's
+   tokens.css / globals.css so the academy always renders light. */
 
-/* Base container and layout variables */
-:root {
+/* Force light on the entire document when .scale-app is present */
+html:has(.scale-app),
+html:has(.scale-app) body {
+  color-scheme: light !important;
+  background-color: #f5efe6 !important;
+  color: #26201b !important;
+
+  /* Override ALL dark-mode design tokens from tokens.css */
+  --bg: #f5efe6 !important;
+  --bg-raised: #fbf8f3 !important;
+  --bg-deep: #ede5d8 !important;
+  --surface: #fbf8f3 !important;
+  --surface-2: #f7f0e7 !important;
+  --surface-3: #ede5d8 !important;
+  --glass: rgba(245, 239, 230, 0.85) !important;
+  --line: rgba(38, 32, 27, 0.12) !important;
+  --line-strong: rgba(38, 32, 27, 0.24) !important;
+  --fg: #26201b !important;
+  --fg-strong: #1a1613 !important;
+  --fg-muted: #6b5e51 !important;
+  --fg-subtle: #9a8e82 !important;
+  --signal: #10b981 !important;
+  --signal-rgb: 16 185 129 !important;
+  --signal-strong: #059669 !important;
+  --signal-soft: rgba(16, 185, 129, 0.14) !important;
+}
+
+/* Remove dark class effects */
+html:has(.scale-app).dark {
+  color-scheme: light !important;
+}
+
+/* ── Academy custom properties ──────────────────────────────────────────── */
+.scale-app {
   --scale-bg: #f5efe6;
   --scale-surface: #fbf8f3;
   --scale-border: #26201b;
@@ -14,22 +48,9 @@
   --scale-coral: #fbd5c5;
   --scale-coral-text: #991b1b;
   --scale-coral-border: #f87171;
-}
 
-/* Force body and html on /academy */
-html:has(.scale-app),
-body:has(.scale-app),
-.scale-app {
-  color-scheme: light !important;
   background-color: #f5efe6 !important;
   color: #26201b !important;
-  --bg: #f5efe6 !important;
-  --fg: #26201b !important;
-}
-
-.scale-app {
-  background-color: #f5efe6;
-  color: #26201b;
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
 }
@@ -47,10 +68,14 @@ body:has(.scale-app),
 }
 
 .scale-col-sidebar {
-  width: 260px;
+  width: 275px;
   flex-shrink: 0;
   position: sticky;
-  top: 12px;
+  top: 68px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(38, 32, 27, 0.15) transparent;
 }
 
 .scale-col-center {
@@ -62,7 +87,11 @@ body:has(.scale-app),
   width: 360px;
   flex-shrink: 0;
   position: sticky;
-  top: 12px;
+  top: 68px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(38, 32, 27, 0.15) transparent;
 }
 
 .scale-col-notebook-mobile {
@@ -77,6 +106,7 @@ body:has(.scale-app),
   .scale-col-sidebar {
     width: 100%;
     position: static;
+    max-height: none;
   }
   .scale-col-center {
     width: 100%;
@@ -106,6 +136,7 @@ body:has(.scale-app),
   border-radius: 8px;
   border: 1.5px solid #26201b;
   background-color: #ffffff;
+  color: #26201b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,6 +227,7 @@ body:has(.scale-app),
   box-shadow: 1px 1px 0px rgba(38, 32, 27, 0.08);
   width: 100%;
   text-align: left;
+  line-height: 1.35;
 }
 
 .scale-inactive-lesson-item {
@@ -208,6 +240,7 @@ body:has(.scale-app),
   width: 100%;
   text-align: left;
   border-radius: 6px;
+  line-height: 1.35;
   transition: background-color 0.15s ease;
 }
 .scale-inactive-lesson-item:hover {
@@ -234,6 +267,7 @@ body:has(.scale-app),
   gap: 8px;
   flex: 1 1 0%;
   min-width: 0;
+  overflow-x: auto;
 }
 
 .scale-hud-slot {
@@ -243,7 +277,7 @@ body:has(.scale-app),
   padding: 5px 8px;
   text-align: left;
   flex: 1 1 0%;
-  min-width: 0;
+  min-width: 80px;
   box-shadow: 1px 1px 0px rgba(38, 32, 27, 0.04);
 }
 
@@ -350,4 +384,19 @@ body:has(.scale-app),
 .scale-checkbox.checked {
   background-color: #c5e8b7;
   color: #1b4332;
+}
+
+/* ── Ensure all text within .scale-app is light-mode ─────────────────────── */
+.scale-app *,
+.scale-app *::before,
+.scale-app *::after {
+  border-color: rgba(38, 32, 27, 0.15);
+}
+
+/* Override any dark-mode Tailwind utilities that might leak through */
+.scale-app .dark\:text-white,
+.scale-app .dark\:bg-gray-900,
+.scale-app .dark\:bg-gray-800 {
+  color: #26201b !important;
+  background-color: transparent !important;
 }

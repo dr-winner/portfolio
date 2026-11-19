@@ -16,6 +16,8 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
         color: "#26201b",
         colorScheme: "light",
         minHeight: "100vh",
+        /* Hide the portfolio's global header/footer that come from layout.tsx */
+        isolation: "isolate",
       }}
       className="scale-app antialiased selection:bg-[#c5e8b7] selection:text-[#1b4332]"
     >

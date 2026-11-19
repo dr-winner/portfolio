@@ -93,7 +93,11 @@ export function AcademyCommandPalette({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 flex items-start justify-center pt-16 sm:pt-24 px-4 backdrop-blur-sm"
+      style={{
+        zIndex: 9999,
+        backgroundColor: "rgba(38, 32, 27, 0.55)",
+      }}
       onClick={onClose}
     >
       <div

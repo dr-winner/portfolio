@@ -459,7 +459,7 @@ export function AcademyStudio() {
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <span className="hidden lg:inline">Search lessons & concepts...</span>
+            <span className="hidden sm:inline">Search lessons & concepts...</span>
             <kbd className="hidden sm:inline-block rounded border border-[#26201b]/30 bg-[#ede5d8] px-1 py-0.2 text-[9.5px] font-bold">
               ⌘K
             </kbd>
@@ -472,11 +472,16 @@ export function AcademyStudio() {
             <span className="text-[9px]">▼</span>
           </div>
 
-          {/* Theme Toggle */}
+          {/* Theme Indicator */}
           <button
             type="button"
-            title="Warm Parchment Paper Mode"
+            title="Warm Parchment Paper Mode (Enforced)"
             className="scale-header-btn"
+            onClick={() => {
+              const root = document.documentElement;
+              root.classList.remove("dark");
+              root.classList.add("light");
+            }}
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
@@ -495,6 +500,45 @@ export function AcademyStudio() {
           </Link>
         </div>
       </header>
+
+      {/* ── MOBILE NAVIGATION TAB STRIP (< md) ────────────────────────────── */}
+      <div className="flex md:hidden items-center gap-1 overflow-x-auto border-b border-[#26201b]/15 bg-[#f5efe6] px-3 py-1.5 scrollbar-none">
+        <button
+          type="button"
+          onClick={() => setActiveTab("interactive")}
+          className={activeTab === "interactive" ? "scale-nav-pill-active !text-[11px] !py-1 !px-2.5 shrink-0" : "scale-nav-pill-inactive !text-[11px] !py-1 !px-2 shrink-0"}
+        >
+          <span>📖 Learn</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("practice")}
+          className={activeTab === "practice" ? "scale-nav-pill-active !text-[11px] !py-1 !px-2.5 shrink-0" : "scale-nav-pill-inactive !text-[11px] !py-1 !px-2 shrink-0"}
+        >
+          <span>⚙️ Practice</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("lab")}
+          className={activeTab === "lab" ? "scale-nav-pill-active !text-[11px] !py-1 !px-2.5 shrink-0" : "scale-nav-pill-inactive !text-[11px] !py-1 !px-2 shrink-0"}
+        >
+          <span>📐 Design Lab</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("cheatsheets")}
+          className={activeTab === "cheatsheets" ? "scale-nav-pill-active !text-[11px] !py-1 !px-2.5 shrink-0" : "scale-nav-pill-inactive !text-[11px] !py-1 !px-2 shrink-0"}
+        >
+          <span>📑 Cheatsheets</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("cohort")}
+          className={activeTab === "cohort" ? "scale-nav-pill-active !text-[11px] !py-1 !px-2.5 shrink-0" : "scale-nav-pill-inactive !text-[11px] !py-1 !px-2 shrink-0"}
+        >
+          <span>🎓 Cohort 1</span>
+        </button>
+      </div>
 
       {/* ── MAIN BODY CONTENT (TAB ROUTER) ───────────────────────────────── */}
       {activeTab === "practice" ? (
@@ -734,13 +778,14 @@ export function AcademyStudio() {
                       <div
                         key={`${metric.label}-${i}`}
                         className="scale-hud-slot"
+                        title={`${metric.label}: ${metric.value}`}
                       >
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-wider text-[#26201b]/60 whitespace-nowrap flex items-center gap-1">
+                        <p className="font-mono text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[#26201b]/60 whitespace-nowrap flex items-center gap-1">
                           <span>{icon}</span>
                           <span>{metric.label}</span>
                         </p>
                         <p
-                          className={`font-mono text-[11px] font-bold whitespace-nowrap truncate ${
+                          className={`font-mono text-[10.5px] sm:text-[11.5px] font-bold whitespace-nowrap truncate ${
                             metric.status === "danger"
                               ? "text-[#ef4444]"
                               : metric.status === "warning"
@@ -795,6 +840,7 @@ export function AcademyStudio() {
               <div className="w-full relative">
                 <IsometricStage
                   step={currentStep}
+                  lesson={currentLesson}
                   isPaused={isPaused}
                   onTogglePause={() => setIsPaused((p) => !p)}
                   onReplay={() => setIsPaused(false)}
