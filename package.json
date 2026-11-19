@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --no-warnings --experimental-strip-types --test src/lib/trace.test.ts src/lib/network-free.test.ts src/lib/palette-data.test.ts"
+    "test": "node --no-warnings --experimental-strip-types --test src/lib/trace.test.ts src/lib/network-free.test.ts src/lib/palette-data.test.ts src/lib/waitlist.test.ts"
   },
   "overrides": {
     "@humanfs/node": "0.16.8",

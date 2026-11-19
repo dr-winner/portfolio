@@ -50,3 +50,13 @@ next-env.d.ts
 
 # personal documents accidentally dropped in the repo root
 *.docx
+
+# agent scratch and local test runtime artifacts
+.taste-skill/
+.agents/
+.claude/
+.github/agents/
+.github/hooks/
+.github/skills/
+skills-lock.json
+.waitlist_data.json
