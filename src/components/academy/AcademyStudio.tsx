@@ -53,14 +53,16 @@ const additionalCurriculumChapters = [
 
 function formatHudLabel(label: string): string {
   const map: Record<string, string> = {
-    "NETWORK SEGMENT": "NETWORK",
+    "NETWORK SEGMENT": "SEGMENT",
     "INTERNAL AUTH": "AUTH",
     "IDENTITY PROPAGATION": "IDENTITY",
     "TRUST LEVEL": "TRUST",
     "EXPLOIT RISK": "RISK",
     "USER CONTEXT": "IDENTITY",
     "SECURITY STATUS": "SECURITY",
-    "UNAUTHORIZED PINGS": "UNAUTH HOPS",
+    "UNAUTHORIZED PINGS": "UNAUTH",
+    "UNAUTHORIZED HOPS": "INTRUSION",
+    "UNAUTH HOPS": "INTRUSION",
     "DATA SINK ACCESS": "DATA SINK",
     "CVSS MITIGATION": "CVSS",
     "POSTURE AUDIT": "POSTURE",
@@ -71,8 +73,33 @@ function formatHudLabel(label: string): string {
     "DATA EXPOSURE": "EXPOSURE",
     "ORIGIN DOMAIN": "ORIGIN",
     "AUTHENTICATION": "AUTH",
+    "ADVERSARIAL SIMULATIONS": "TESTS",
+    "UNAUTHORIZED DELETES": "DELETES",
+    "PRIVILEGE ESCALATION": "ESCALATION",
+    "HUMAN GATES": "GATES",
+    "FINAL AUDIT": "AUDIT",
   };
-  return map[label] ?? (label.length > 12 ? label.split(" ")[0] : label);
+  return map[label] ?? (label.length > 10 ? label.split(" ")[0] : label);
+}
+
+function formatHudValue(val: string): string {
+  const map: Record<string, string> = {
+    "100% Blocked": "Blocked",
+    "Least-Privilege": "Scoped",
+    "0.0 (Mitigated)": "0.0 / Safe",
+    "NIST 800-207": "NIST Pass",
+    "mTLS (SPIFFE/SPIRE X.509)": "SPIFFE Cert",
+    "Encrypted Service Mesh": "Encrypted",
+    "Signed Ed25519 JWT": "Ed25519",
+    "Zero Trust Verified": "Verified",
+    "Enforced Defense-in-Depth": "Enforced",
+    "100% Rejected (401)": "401 Reject",
+    "Lateral Movement Blocked": "Blocked",
+    "Compliant (NIST 800-207)": "NIST Pass",
+    "20 Automated Scenarios": "20 Passing",
+    "Hardened Least-Privilege Agent": "Hardened",
+  };
+  return map[val] ?? val;
 }
 
 // Helper to get short punchy chapter names for the sidebar
@@ -819,7 +846,7 @@ export function AcademyStudio() {
                                   : "text-[#26201b]"
                           }`}
                         >
-                          {metric.value}
+                          {formatHudValue(metric.value)}
                         </p>
                       </div>
                     );

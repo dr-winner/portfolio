@@ -466,11 +466,19 @@ function renderLaptop(
           ? `<g transform="translate(${tagX}, ${tagY - 24})">
               ${renderPill(0, 0, urlTag, { icon: isAttacker ? "skull" : "globe", tone: isAttacker ? "red" : "paper" })}
             </g>`
+          : isAttacker && label
+            ? `<g transform="translate(${tagX}, ${tagY - 24})">
+                ${renderPill(0, 0, label, { icon: "skull", tone: "red" })}
+              </g>`
+            : ""
+      }
+      ${
+        (!isAttacker || urlTag) && label
+          ? `<g transform="translate(${labelX}, ${labelY + 24})">
+              ${renderPill(0, 0, label, { icon: isAttacker ? "skull" : "user", tone: isAttacker ? "red" : "paper" })}
+            </g>`
           : ""
       }
-      <g transform="translate(${labelX}, ${labelY + 24})">
-        ${renderPill(0, 0, label, { icon: isAttacker ? "skull" : "user", tone: isAttacker ? "red" : "paper" })}
-      </g>
     `,
   };
 }
@@ -664,7 +672,7 @@ export function IsometricStage({
     // Database on far upper-right
     const pDb: [number, number] = [308, -14];
     // Attacker laptop on upper-left (properly offset to prevent any overlap with client)
-    const pAttacker: [number, number] = [-196, -112];
+    const pAttacker: [number, number] = [-112, -126];
     // Security Gate Shield between Web and DB
     const pShield: [number, number] = [140, 4];
 
@@ -678,7 +686,7 @@ export function IsometricStage({
     // 4. Web to DB (straight link)
     const linkWebDb = `M ${pWeb[0]} ${pWeb[1]} L ${pDb[0]} ${pDb[1]}`;
     // 5. Attacker to Web (smooth elbow link)
-    const linkAttackerWeb = roundPath([pAttacker, [-30, -50], pWeb], 14);
+    const linkAttackerWeb = roundPath([pAttacker, [15, -35], pWeb], 14);
     // 6. Web through Shield to DB
     const linkWebShield = `M ${pWeb[0]} ${pWeb[1]} L ${pShield[0]} ${pShield[1]}`;
     const linkShieldDb = `M ${pShield[0]} ${pShield[1]} L ${pDb[0]} ${pDb[1]}`;
@@ -689,7 +697,7 @@ export function IsometricStage({
       const dns = renderCube(0, 1, "DNS", "resolver", { color: "yellow", glyph: "globe", tag: { text: "→ 203.0.113.7", tone: "amber" }, isNew: stepNum === 2 });
       const web = renderCube(10, -1, "Web", "Server", { color: "blue", glyph: "server", cpu: 0.3, isNew: stepNum === 3 });
       const db = renderDatabase(10, 12, "database", stepNum === 4);
-      const attacker = renderLaptop(-15, 1, { label: "attacker", urlTag: null, isAttacker: true, isNew: stepNum === 5 });
+      const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: null, isAttacker: true, isNew: stepNum === 5 });
 
       if (stepNum === 1) {
         return {
@@ -786,7 +794,7 @@ export function IsometricStage({
       }
       // Step 5: Trust Boundary Collapse / Internal Attacker
       return {
-        viewBox: "-380 -140 840 420",
+        viewBox: "-380 -250 840 500",
         camCenterX: 40,
         camCenterY: 60,
         camRadius: 480,
@@ -805,7 +813,7 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "Legitimate Client", { tone: "green" })}
           </g>
-          <g transform="translate(-30, -50)">
+          <g transform="translate(30, -35)">
             ${renderPill(0, 0, "⚠️ Perimeter Bypass: Unauthenticated Hop", { tone: "red" })}
           </g>
           ${client.over} ${attacker.over} ${web.over} ${db.over}
@@ -816,7 +824,7 @@ export function IsometricStage({
     // ── CHAPTER 2: APPLICATION SECURITY (BOLA, SQLi, SSRF, XSS) ───────────
     if (lessonId.includes("bola") || lessonId.includes("idor") || lessonId.includes("lesson-2-1")) {
       const client = renderLaptop(0, -12, { label: "acme (you)", urlTag: "https://api.saas.io", isNew: stepNum === 1 });
-      const attacker = renderLaptop(-15, 1, { label: "attacker", urlTag: "tamper 4822", isAttacker: true, isNew: stepNum === 2 });
+      const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: "tamper 4822", isAttacker: true, isNew: stepNum === 2 });
       const web = renderCube(10, -1, "Invoice", "Service", { color: "blue", glyph: "server", cpu: stepNum >= 4 ? 0.22 : 0.65, isNew: stepNum === 1 });
       const db = renderDatabase(10, 12, "Invoices DB", stepNum === 1);
       const shield = renderShieldWall(6, 4, "Scoped Tenant RLS", stepNum === 4);
@@ -848,7 +856,7 @@ export function IsometricStage({
 
       if (stepNum === 2 || stepNum === 3) {
         return {
-          viewBox: "-380 -140 820 420",
+          viewBox: "-380 -250 840 500",
           camCenterX: 30,
           camCenterY: 70,
           camRadius: 460,
@@ -867,7 +875,7 @@ export function IsometricStage({
             <g transform="translate(38, 142)">
               ${renderPill(0, 0, "GET /invoices/4821 (acme)", { tone: "green" })}
             </g>
-            <g transform="translate(-30, -50)">
+            <g transform="translate(30, -35)">
               ${renderPill(0, 0, "⚠️ GET /invoices/4822 (target)", { tone: "red" })}
             </g>
             ${client.over} ${attacker.over} ${web.over} ${db.over}
@@ -877,7 +885,7 @@ export function IsometricStage({
 
       // Step 4 & 5: Remediation with Scoped Filter
       return {
-        viewBox: "-380 -140 840 420",
+        viewBox: "-380 -250 840 500",
         camCenterX: 40,
         camCenterY: 70,
         camRadius: 470,
@@ -897,7 +905,7 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "GET /invoices/4821 (acme)", { tone: "green" })}
           </g>
-          <g transform="translate(-30, -50)">
+          <g transform="translate(30, -35)">
             ${renderPill(0, 0, "403 BLOCKED (tenant scope)", { tone: "red" })}
           </g>
           ${client.over} ${attacker.over} ${web.over} ${shield.over} ${db.over}
