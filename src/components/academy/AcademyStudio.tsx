@@ -51,6 +51,30 @@ const additionalCurriculumChapters = [
   },
 ];
 
+function formatHudLabel(label: string): string {
+  const map: Record<string, string> = {
+    "NETWORK SEGMENT": "NETWORK",
+    "INTERNAL AUTH": "AUTH",
+    "IDENTITY PROPAGATION": "IDENTITY",
+    "TRUST LEVEL": "TRUST",
+    "EXPLOIT RISK": "RISK",
+    "USER CONTEXT": "IDENTITY",
+    "SECURITY STATUS": "SECURITY",
+    "UNAUTHORIZED PINGS": "UNAUTH HOPS",
+    "DATA SINK ACCESS": "DATA SINK",
+    "CVSS MITIGATION": "CVSS",
+    "POSTURE AUDIT": "POSTURE",
+    "CALLER IDENTITY": "CALLER",
+    "REQUESTED RESOURCE": "RESOURCE",
+    "RESOURCE OWNER": "OWNER",
+    "ACCESS GATE": "ACCESS",
+    "DATA EXPOSURE": "EXPOSURE",
+    "ORIGIN DOMAIN": "ORIGIN",
+    "AUTHENTICATION": "AUTH",
+  };
+  return map[label] ?? (label.length > 12 ? label.split(" ")[0] : label);
+}
+
 // Helper to get short punchy chapter names for the sidebar
 function getShortChapterTitle(chapterNumber: string, fullTitle: string): string {
   if (chapterNumber === "01") return "Foundations";
@@ -780,9 +804,9 @@ export function AcademyStudio() {
                         className="scale-hud-slot"
                         title={`${metric.label}: ${metric.value}`}
                       >
-                        <p className="font-mono text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[#26201b]/60 whitespace-nowrap flex items-center gap-1">
+                        <p className="font-mono text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-wider text-[#26201b]/60 whitespace-nowrap flex items-center gap-1">
                           <span>{icon}</span>
-                          <span>{metric.label}</span>
+                          <span className="truncate">{formatHudLabel(metric.label)}</span>
                         </p>
                         <p
                           className={`font-mono text-[10.5px] sm:text-[11.5px] font-bold whitespace-nowrap truncate ${
@@ -876,40 +900,58 @@ export function AcademyStudio() {
                   </span>
                 </div>
 
-                {/* Horizontal Step Circles Connected by Line */}
-                <div className="mt-3 flex items-center justify-between gap-1 overflow-x-auto pb-1">
-                  {currentLesson.steps.map((st, idx) => {
-                    const isPassed = idx < activeStepIdx;
-                    const isCurrent = idx === activeStepIdx;
+                {/* Horizontal Step Circles Connected by Rail */}
+                <div className="relative mt-4 mb-1">
+                  {/* Connecting Rail */}
+                  <div className="absolute top-[13px] left-6 right-6 h-[2px] bg-[#26201b]/20 -z-0">
+                    <div
+                      className="h-full bg-[#10b981] transition-all duration-300"
+                      style={{
+                        width: `${currentLesson.steps.length > 1 ? (activeStepIdx / (currentLesson.steps.length - 1)) * 100 : 0}%`,
+                      }}
+                    />
+                  </div>
 
-                    return (
-                      <button
-                        key={st.id}
-                        type="button"
-                        onClick={() => setActiveStepIdx(idx)}
-                        className="group flex flex-1 flex-col items-center min-w-[60px] text-center"
-                      >
-                        <div
-                          className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-[11px] font-bold border-[1.5px] transition-all ${
-                            isCurrent
-                              ? "border-[#26201b] bg-[#c5e8b7] text-[#1b4332] scale-110 shadow-[1px_1px_0px_#26201b]"
-                              : isPassed
-                                ? "border-[#10b981] bg-[#d1fae5] text-[#065f46]"
-                                : "border-[#26201b]/30 bg-[#f5efe6] text-[#26201b]/50"
-                          }`}
+                  <div className="relative z-10 flex items-start justify-between gap-1 overflow-x-auto pb-1 scrollbar-none">
+                    {currentLesson.steps.map((st, idx) => {
+                      const isPassed = idx < activeStepIdx;
+                      const isCurrent = idx === activeStepIdx;
+
+                      return (
+                        <button
+                          key={st.id}
+                          type="button"
+                          onClick={() => setActiveStepIdx(idx)}
+                          className="group flex flex-1 flex-col items-center min-w-[65px] text-center focus:outline-none focus:ring-0 select-none"
                         >
-                          {isPassed ? "✓" : st.stepNumber}
-                        </div>
-                        <span
-                          className={`mt-1 line-clamp-1 font-mono text-[9.5px] font-bold ${
-                            isCurrent ? "text-[#26201b]" : "text-[#26201b]/50"
-                          }`}
-                        >
-                          {st.subtitle}
-                        </span>
-                      </button>
-                    );
-                  })}
+                          <div
+                            className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-[11px] font-bold border-2 transition-all ${
+                              isCurrent
+                                ? "border-[#26201b] bg-[#c5e8b7] text-[#1b4332] scale-110 shadow-[2px_2px_0px_#26201b]"
+                                : isPassed
+                                  ? "border-[#10b981] bg-[#d1fae5] text-[#065f46]"
+                                  : "border-[#26201b]/30 bg-[#ffffff] text-[#26201b]/50 group-hover:border-[#26201b]"
+                            }`}
+                          >
+                            {isPassed ? (
+                              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-[#065f46]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            ) : (
+                              st.stepNumber
+                            )}
+                          </div>
+                          <span
+                            className={`mt-2 font-mono text-[10px] font-bold leading-tight px-1 transition-colors ${
+                              isCurrent ? "text-[#26201b]" : "text-[#26201b]/60 group-hover:text-[#26201b]"
+                            }`}
+                          >
+                            {st.subtitle}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

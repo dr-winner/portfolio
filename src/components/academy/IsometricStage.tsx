@@ -663,8 +663,8 @@ export function IsometricStage({
     const pWeb: [number, number] = [126, 77];
     // Database on far upper-right
     const pDb: [number, number] = [308, -14];
-    // Attacker laptop on upper-left
-    const pAttacker: [number, number] = [-112, -84];
+    // Attacker laptop on upper-left (properly offset to prevent any overlap with client)
+    const pAttacker: [number, number] = [-196, -112];
     // Security Gate Shield between Web and DB
     const pShield: [number, number] = [140, 4];
 
@@ -678,7 +678,7 @@ export function IsometricStage({
     // 4. Web to DB (straight link)
     const linkWebDb = `M ${pWeb[0]} ${pWeb[1]} L ${pDb[0]} ${pDb[1]}`;
     // 5. Attacker to Web (smooth elbow link)
-    const linkAttackerWeb = roundPath([pAttacker, [-60, 25], pWeb], 12);
+    const linkAttackerWeb = roundPath([pAttacker, [-30, -50], pWeb], 14);
     // 6. Web through Shield to DB
     const linkWebShield = `M ${pWeb[0]} ${pWeb[1]} L ${pShield[0]} ${pShield[1]}`;
     const linkShieldDb = `M ${pShield[0]} ${pShield[1]} L ${pDb[0]} ${pDb[1]}`;
@@ -689,7 +689,7 @@ export function IsometricStage({
       const dns = renderCube(0, 1, "DNS", "resolver", { color: "yellow", glyph: "globe", tag: { text: "→ 203.0.113.7", tone: "amber" }, isNew: stepNum === 2 });
       const web = renderCube(10, -1, "Web", "Server", { color: "blue", glyph: "server", cpu: 0.3, isNew: stepNum === 3 });
       const db = renderDatabase(10, 12, "database", stepNum === 4);
-      const attacker = renderLaptop(-10, 2, { label: "attacker", urlTag: "internal bypass", isAttacker: true, isNew: stepNum === 5 });
+      const attacker = renderLaptop(-15, 1, { label: "attacker", urlTag: null, isAttacker: true, isNew: stepNum === 5 });
 
       if (stepNum === 1) {
         return {
@@ -777,7 +777,7 @@ export function IsometricStage({
             <g transform="translate(38, 142)">
               ${renderPill(0, 0, "GET /products", { tone: "paper" })}
             </g>
-            <g transform="translate(205, 20)">
+            <g transform="translate(242, -6)">
               ${renderPill(0, 0, "SELECT … FROM products", { tone: "paper" })}
             </g>
             ${client.over} ${dns.over} ${web.over} ${db.over}
@@ -805,8 +805,8 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "Legitimate Client", { tone: "green" })}
           </g>
-          <g transform="translate(-15, 20)">
-            ${renderPill(0, 0, "⚠️ Perimeter Bypass: Unauthenticated VPC Hop", { tone: "red" })}
+          <g transform="translate(-30, -50)">
+            ${renderPill(0, 0, "⚠️ Perimeter Bypass: Unauthenticated Hop", { tone: "red" })}
           </g>
           ${client.over} ${attacker.over} ${web.over} ${db.over}
         `,
@@ -816,7 +816,7 @@ export function IsometricStage({
     // ── CHAPTER 2: APPLICATION SECURITY (BOLA, SQLi, SSRF, XSS) ───────────
     if (lessonId.includes("bola") || lessonId.includes("idor") || lessonId.includes("lesson-2-1")) {
       const client = renderLaptop(0, -12, { label: "acme (you)", urlTag: "https://api.saas.io", isNew: stepNum === 1 });
-      const attacker = renderLaptop(-10, 2, { label: "attacker", urlTag: "tamper 4822", isAttacker: true, isNew: stepNum === 2 });
+      const attacker = renderLaptop(-15, 1, { label: "attacker", urlTag: "tamper 4822", isAttacker: true, isNew: stepNum === 2 });
       const web = renderCube(10, -1, "Invoice", "Service", { color: "blue", glyph: "server", cpu: stepNum >= 4 ? 0.22 : 0.65, isNew: stepNum === 1 });
       const db = renderDatabase(10, 12, "Invoices DB", stepNum === 1);
       const shield = renderShieldWall(6, 4, "Scoped Tenant RLS", stepNum === 4);
@@ -867,7 +867,7 @@ export function IsometricStage({
             <g transform="translate(38, 142)">
               ${renderPill(0, 0, "GET /invoices/4821 (acme)", { tone: "green" })}
             </g>
-            <g transform="translate(-15, 20)">
+            <g transform="translate(-30, -50)">
               ${renderPill(0, 0, "⚠️ GET /invoices/4822 (target)", { tone: "red" })}
             </g>
             ${client.over} ${attacker.over} ${web.over} ${db.over}
@@ -897,7 +897,7 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "GET /invoices/4821 (acme)", { tone: "green" })}
           </g>
-          <g transform="translate(-15, 20)">
+          <g transform="translate(-30, -50)">
             ${renderPill(0, 0, "403 BLOCKED (tenant scope)", { tone: "red" })}
           </g>
           ${client.over} ${attacker.over} ${web.over} ${shield.over} ${db.over}
@@ -908,7 +908,7 @@ export function IsometricStage({
     // ── CHAPTER 3: AI & LLM AGENT SECURITY ────────────────────────────────
     if (lessonId.includes("ai") || lessonId.includes("prompt") || lessonId.includes("agent") || lessonId.includes("rag") || lessonId.includes("chapter-3")) {
       const user = renderLaptop(0, -12, { label: "user", urlTag: "agent://core", isNew: stepNum === 1 });
-      const untrustedSource = renderCube(-10, 2, "Untrusted", "Web Source", { color: "orange", glyph: "globe", isNew: stepNum === 2 });
+      const untrustedSource = renderCube(-15, 1, "Untrusted", "Web Source", { color: "orange", glyph: "globe", isNew: stepNum === 2 });
       const agentCore = renderCube(10, -1, "AI Agent", "Core", { color: "purple", glyph: "brain", cpu: stepNum >= 4 ? 0.32 : 0.78, isNew: stepNum === 1 });
       const vectorDb = renderDatabase(10, 12, "Vector DB", stepNum === 1);
       const guardrail = renderShieldWall(6, 4, "Dual-LLM Guardrail", stepNum === 4);
@@ -959,7 +959,7 @@ export function IsometricStage({
             <g transform="translate(38, 142)">
               ${renderPill(0, 0, "User Prompt", { tone: "green" })}
             </g>
-            <g transform="translate(-15, 20)">
+            <g transform="translate(-30, -50)">
               ${renderPill(0, 0, "⚠️ Poisoned Context Injected", { tone: "red" })}
             </g>
             ${user.over} ${untrustedSource.over} ${agentCore.over} ${vectorDb.over}
@@ -988,7 +988,7 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "Sanitized Prompt Response", { tone: "green" })}
           </g>
-          <g transform="translate(-15, 20)">
+          <g transform="translate(-30, -50)">
             ${renderPill(0, 0, "Quarantined Injection", { tone: "red" })}
           </g>
           ${user.over} ${untrustedSource.over} ${agentCore.over} ${guardrail.over} ${vectorDb.over}

@@ -93,19 +93,26 @@ export function AcademyCommandPalette({
 
   return (
     <div
-      className="fixed inset-0 flex items-start justify-center pt-16 sm:pt-24 px-4 backdrop-blur-sm"
+      className="fixed inset-0 flex items-start justify-center pt-16 sm:pt-24 px-4 backdrop-blur-md"
       style={{
         zIndex: 9999,
-        backgroundColor: "rgba(38, 32, 27, 0.55)",
+        backgroundColor: "rgba(38, 32, 27, 0.65)",
       }}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-2xl border-2 border-[#26201b] bg-[#fbf8f3] shadow-[4px_4px_0px_#26201b] overflow-hidden"
+        className="w-full max-w-xl rounded-2xl border-2 border-[#26201b] shadow-[6px_6px_0px_#26201b] overflow-hidden"
+        style={{
+          backgroundColor: "#fbf8f3",
+          opacity: 1,
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 border-b-2 border-[#26201b]/15 px-4 py-3 bg-[#ffffff]">
+        <div
+          className="flex items-center gap-3 border-b-2 border-[#26201b]/15 px-4 py-3"
+          style={{ backgroundColor: "#ffffff" }}
+        >
           <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#26201b]/60" fill="none" stroke="currentColor" strokeWidth="2.5">
             <circle cx="11" cy="11" r="7" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -124,7 +131,10 @@ export function AcademyCommandPalette({
         </div>
 
         {/* Results List */}
-        <div className="max-h-[380px] overflow-y-auto p-2 space-y-1">
+        <div
+          className="max-h-[380px] overflow-y-auto p-2 space-y-1"
+          style={{ backgroundColor: "#fbf8f3" }}
+        >
           {filtered.length === 0 ? (
             <div className="py-8 text-center font-mono text-[12px] text-[#26201b]/50">
               No matching lessons or concepts found for &ldquo;{query}&rdquo;
