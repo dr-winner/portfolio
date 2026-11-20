@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   academyChapters,
@@ -53,19 +53,60 @@ const additionalCurriculumChapters = [
 
 function formatHudLabel(label: string): string {
   const map: Record<string, string> = {
+    // Lesson 1-1
+    "NETWORK SECURITY": "NET SEC",
     "NETWORK SEGMENT": "SEGMENT",
+    "INTERNAL AUTHENTICATION": "AUTH",
     "INTERNAL AUTH": "AUTH",
+    "USER CONTEXT": "IDENTITY",
     "IDENTITY PROPAGATION": "IDENTITY",
     "TRUST LEVEL": "TRUST",
     "EXPLOIT RISK": "RISK",
-    "USER CONTEXT": "IDENTITY",
-    "SECURITY STATUS": "SECURITY",
+    "SECURITY STATUS": "STATUS",
+    "SECURITY POSTURE": "POSTURE",
     "UNAUTHORIZED PINGS": "UNAUTH",
     "UNAUTHORIZED HOPS": "INTRUSION",
     "UNAUTH HOPS": "INTRUSION",
     "DATA SINK ACCESS": "DATA SINK",
+    "DATA SINK": "DATA SINK",
     "CVSS MITIGATION": "CVSS",
     "POSTURE AUDIT": "POSTURE",
+
+    // Lesson 1-2
+    "ALLOWED ALGORITHMS": "ALGS",
+    "ALLOWED ALGS": "ALGS",
+    "SIGNATURE ENFORCEMENT": "SIGN",
+    "SIGNATURE CHECK": "SIGN",
+    "FORGED TOKEN": "FORGED",
+    "EXPLOIT STATUS": "STATUS",
+    "TEST SUITE": "TESTS",
+    "NONE ALG TEST": "NONE ALG",
+    "SIGNATURE TEST": "SIG TEST",
+    "EXPIRED TEST": "EXP TEST",
+    "AUTH STATE": "AUTH",
+
+    // Lesson 1-3
+    "COMPOSITION METHOD": "CONCAT",
+    "COMPOSITION": "CONCAT",
+    "INPUT SANITIZATION": "INPUT",
+    "INPUT ESCAPING": "INPUT",
+    "SYNTAX INTEGRITY": "SYNTAX",
+    "SYNTAX TREE": "SYNTAX",
+    "BOUNDARY STATE": "BOUND",
+    "BOUNDARIES": "BOUND",
+    "ORIGINAL INTENT": "INTENT",
+    "ACTUAL EXECUTION": "EXEC",
+    "AFFECTED DATA": "AFFECTED",
+    "AFFECTED ROWS": "AFFECTED",
+    "SECURITY INCIDENT": "INCIDENT",
+    "CVSS SEVERITY": "CVSS",
+    "CVSS SCORE": "CVSS",
+    "CI RULE ENGINE": "CI SAST",
+    "RULE ID": "RULE",
+    "PULL REQUESTS": "PR GATE",
+    "SECURITY AUDIT": "AUDIT",
+
+    // Lesson 2-1 (BOLA)
     "CALLER IDENTITY": "CALLER",
     "REQUESTED RESOURCE": "RESOURCE",
     "RESOURCE OWNER": "OWNER",
@@ -73,33 +114,234 @@ function formatHudLabel(label: string): string {
     "DATA EXPOSURE": "EXPOSURE",
     "ORIGIN DOMAIN": "ORIGIN",
     "AUTHENTICATION": "AUTH",
-    "ADVERSARIAL SIMULATIONS": "TESTS",
+    "CROSS-TENANT GET": "TENANT GET",
+    "CROSS-TENANT PUT": "TENANT PUT",
+    "CROSS-TENANT DELETE": "TENANT DEL",
+    "HTTP RESPONSE": "RESPONSE",
+    "REMEDIATED QUERY": "QUERY",
+
+    // Lesson 2-2 (SQLi)
+    "INPUT USERNAME": "USERNAME",
+    "QUERY STRUCTURE": "QUERY",
+    "PARSER STATE": "PARSER",
+    "DATABASE ROWS": "ROWS",
+    "INPUT PAYLOAD": "PAYLOAD",
+    "QUERY MUTATION": "MUTATION",
+    "EVALUATION": "EVAL",
+    "INJECTION TECHNIQUE": "TECHNIQUE",
+    "TARGET METADATA": "METADATA",
+    "DATA EXFILTRATED": "EXFIL",
+    "QUERY BUILDER": "BUILDER",
+    "PAYLOAD TREATMENT": "TREATMENT",
+    "QUERY AST": "AST",
+    "ATTACK RESULT": "RESULT",
+    "FUZZ PAYLOADS": "FUZZ",
+    "AUTH BYPASSES": "BYPASSES",
+    "DB ERRORS LEAKED": "ERRORS",
+
+    // Lesson 2-3 (SSRF)
+    "REQUEST ORIGIN": "ORIGIN",
+    "TARGET URL": "TARGET",
+    "NETWORK BOUNDARY": "BOUNDARY",
+    "DESTINATION IP": "DEST IP",
+    "SUPPLIED URL": "URL",
+    "DESTINATION TYPE": "DEST",
+    "NETWORK PRIVILEGE": "PRIVILEGE",
+    "SECURITY FILTER": "FILTER",
+    "METADATA RESPONSE": "RESPONSE",
+    "STOLEN CREDENTIALS": "CREDS",
+    "CLOUD IMPACT": "IMPACT",
+    "IP RESOLUTION": "DNS CHECK",
+    "PRIVATE CIDR CHECK": "CIDR CHECK",
+    "IMDS VERSION": "IMDS",
+    "EGRESS FIREWALL": "EGRESS",
+    "OCTAL/HEX IP TEST": "HEX TEST",
+    "METADATA TEST": "META TEST",
+    "AWS HOP LIMIT": "HOP LIMIT",
+
+    // Lesson 2-4 (XSS)
+    "PAYLOAD TYPE": "TYPE",
+    "INLINE EVENT": "EVENT",
+    "TARGET AUDIENCE": "AUDIENCE",
+    "COOKIE FLAGS": "COOKIES",
+    "DOM INJECTION SINK": "DOM SINK",
+    "ATTACK IMPACT": "IMPACT",
+    "HTTPONLY STATUS": "HTTPONLY",
+    "CSP POLICY": "CSP",
+    "BROWSER ACTIONS": "BROWSER",
+    "CSP COMPLIANCE": "CSP AUDIT",
+    "XSS ATTEMPTS": "XSS TEST",
+
+    // Lesson 3-1 through 3-4 (AI / LLM)
+    "PROMPT INPUT": "PROMPT",
+    "SYSTEM PROMPT": "SYSTEM",
+    "DATA BOUNDARY": "BOUNDARY",
+    "MODEL COMPLIANCE": "MODEL",
+    "WEB RETRIEVAL": "RAG DATA",
+    "PROMPT SEPARATION": "DELIMIT",
+    "DUAL-LLM GUARD": "GUARDRAIL",
+    "INDIRECT INJECTION": "INJECTION",
+    "TOOL CAPABILITY": "TOOLS",
+    "CONFIRMATION GATE": "HUMAN GATE",
+    "TOOL EXECUTION": "EXECUTION",
     "UNAUTHORIZED DELETES": "DELETES",
-    "PRIVILEGE ESCALATION": "ESCALATION",
+    "PRIVILEGE ESCALATION": "ESCALATE",
     "HUMAN GATES": "GATES",
+    "CROSS-TENANT LEAK": "LEAK",
+    "VECTOR EMBEDDING": "EMBEDDING",
+    "METADATA FILTER": "FILTER",
+    "SIMILARITY SEARCH": "SEARCH",
+    "LLM AS JUDGE": "JUDGE",
+    "JAILBREAK RISK": "JAILBREAK",
+    "DETERMINISTIC GATE": "SCHEMA GATE",
     "FINAL AUDIT": "AUDIT",
   };
-  return map[label] ?? (label.length > 10 ? label.split(" ")[0] : label);
+  if (map[label]) return map[label];
+  const firstWord = label.split(" ")[0];
+  return firstWord.length <= 8 ? firstWord : firstWord.slice(0, 8);
 }
 
 function formatHudValue(val: string): string {
   const map: Record<string, string> = {
-    "100% Blocked": "Blocked",
-    "Least-Privilege": "Scoped",
-    "0.0 (Mitigated)": "0.0 / Safe",
-    "NIST 800-207": "NIST Pass",
-    "mTLS (SPIFFE/SPIRE X.509)": "SPIFFE Cert",
+    // Lesson 1-1
     "Encrypted Service Mesh": "Encrypted",
+    "mTLS (SPIFFE/SPIRE X.509)": "SPIFFE Cert",
     "Signed Ed25519 JWT": "Ed25519",
     "Zero Trust Verified": "Verified",
     "Enforced Defense-in-Depth": "Enforced",
+    "End-to-End Zero Trust": "Zero Trust",
     "100% Rejected (401)": "401 Reject",
+    "Least-Privilege": "Scoped",
     "Lateral Movement Blocked": "Blocked",
     "Compliant (NIST 800-207)": "NIST Pass",
-    "20 Automated Scenarios": "20 Passing",
-    "Hardened Least-Privilege Agent": "Hardened",
+    "100% Blocked": "Blocked",
+    "0.0 (Mitigated)": "0.0 / Safe",
+    "NIST 800-207": "NIST Pass",
+
+    // Lesson 1-2
+    "['RS256'] (Pinned)": "RS256 Pin",
+    "Enforced via RSA Public Key": "Enforced",
+    "Rejected (401 Invalid Signature)": "401 Reject",
+    "Rejected (401 None Alg)": "401 Reject",
+    "Cryptographically Verified": "Verified",
+    "8 / 8 Vectors Passing": "8/8 Pass",
+    "Deterministic State": "Valid",
+    "Stateful Session Cookie": "Cookie",
+    "Tampered Signature": "Tampered",
+    "alg: none Bypass": "Exploited",
+    "RS256 Enforced": "Enforced",
+
+    // Lesson 1-3
+    "String Concatenation (+)": "Raw Concat",
+    "String Concat (+)": "Raw Concat",
+    "alice' OR '1'='1": "Injected",
+    "Corrupted AST": "Corrupted",
+    "Corrupted AST Grammar": "Corrupted",
+    "Arbitrary Interpreter Control": "Hijacked",
+    "Lookup 1 specific user": "1 Record",
+    "Table Dump (Tautology)": "Dump All",
+    "All Records (14,280 rows)": "All Rows",
+    "Data Breach (Confidentiality)": "Breached",
+    "8.6 HIGH": "8.6 High",
+    "9.8 CRITICAL (Auth Bypass)": "9.8 Crit",
+    "9.8 CRITICAL": "9.8 Crit",
+    "Semgrep SAST Guard": "Semgrep",
+    "security.sql.no-raw-string-interpolation": "No Concat",
+    "Enforced at Gate": "PR Gate",
+    "Prevented at Commit": "Prevented",
+    "Verified Clean": "Verified",
+
+    // Lesson 2-1
+    "200 OK (LEAKED DATA)": "200 Leak",
+    "403 Forbidden (Blocked by Policy)": "403 Block",
+    "403 Forbidden": "403 Block",
+    "12 / 12 Tenant Matrix Tests Passing": "12/12 Pass",
+    "Remediated to 0.0": "0.0 / Safe",
+    "WHERE id = ? AND tenant_id = ?": "Scoped RLS",
+    "From Cryptographic JWT (globex)": "Scoped JWT",
+    "Blocked (0 rows matched)": "Blocked",
+    "Enforced at Database Layer": "Enforced",
+
+    // Lesson 2-2
+    "SELECT * FROM users WHERE username = ...": "Static SQL",
+    "Single User Lookup": "1 User",
+    "1 Row Matched": "1 Row",
+    "Normal Processing": "Normal",
+    "' OR 1=1 --": "Injected",
+    "Password Check Commented Out": "Bypassed",
+    "Always TRUE": "True (Bypass)",
+    "BYPASSED without Password": "Bypassed",
+    "UNION SELECT Reflection": "UNION Dump",
+    "information_schema.tables": "Schema Dump",
+    "Password Hashes & API Keys": "Exfiltrated",
+    "Full Data Breach": "Breached",
+    "P0 CRITICAL": "P0 Crit",
+    "Prepared Statements (Binary Wire Protocol)": "Prepared",
+    "Treated as Literal String Data": "Literal",
+    "Immutable & Pre-Compiled": "Immutable",
+    "No Rows Found (Lookup failed safely)": "Safe Miss",
+    "100% Parameterized Immunity": "Immune",
+    "24 Vectors Tested": "24/24 Pass",
+    "0 Successful": "0 Exploited",
+    "0 Leaked (Generic Errors)": "0 Leaks",
+    "Semgrep Passed": "Semgrep",
+    "Verified Hardened": "Hardened",
+
+    // Lesson 2-3
+    "Backend Application Server": "Backend",
+    "Public Internet (WAN)": "WAN",
+    "93.184.216.34 (Public)": "Public IP",
+    "Normal Image Download": "Normal",
+    "http://169.254.169.254/latest/meta-data/": "169.254...",
+    "AWS Instance Metadata (Link-Local)": "AWS IMDS",
+    "Server Local Network": "Local Net",
+    "None (Unvalidated fetch)": "Unfiltered",
+    "Probing Cloud Metadata": "Probing",
+    "HTTP 200 OK (JSON Credentials)": "200 Stolen",
+    "AWS_ACCESS_KEY_ID, SECRET_KEY": "Stolen IAM",
+    "Full AWS Cloud Account Lateral Access": "Account C2",
+    "Cloud Infrastructure Compromise": "Breached",
+    "Pre-Flight DNS Resolution Check": "DNS Check",
+    "169.254.169.254 REJECTED": "Rejected",
+    "IMDSv2 (Session Token Required)": "IMDSv2",
+    "Link-Local Egress Dropped": "Dropped",
+    "SSRF Blocked at Network Boundary": "Blocked",
+    "16 SSRF Bypasses Tested": "16/16 Pass",
+    "Rejected (400)": "400 Reject",
+    "Enforced (=1)": "Hop = 1",
+    "Secure Against SSRF": "Hardened",
+
+    // Lesson 2-4
+    "Plain text bio": "Plain Text",
+    "Idle (No inline execution)": "Idle",
+    "Safe Rendering": "Safe",
+    "Stored HTML Ingestion": "Stored HTML",
+    "Viewing Administrators": "Admin Targets",
+    "Full Admin Session Hijack": "Session Theft",
+    "DOM textContent": "textContent",
+    "Strict CSP (nonce-based)": "Strict CSP",
+    "0 Injected Scripts Executed": "0 Executed",
+    "0 / 12 Injections Passing": "12 Blocked",
+
+    // Module 3
+    "Raw Unparsed Text": "Raw Text",
+    "Isolated System vs User": "Isolated",
+    "Dual-LLM Supervisor": "Dual-LLM",
+    "Prompt Injection Thwarted": "Blocked",
+    "delete_account(102)": "Tool Call",
+    "Human Approval Required": "Human Gate",
+    "Action Rejected by Admin": "Rejected",
+    "Zero Unauthorized Execution": "Protected",
+    "Scoped Metadata ACL": "Scoped ACL",
+    "Cross-Tenant Leak Prevented": "Prevented",
+    "Deterministic AST Filter": "AST Gate",
+    "Jailbreak Neutralized": "Neutralized",
   };
-  return map[val] ?? val;
+  if (map[val]) return map[val];
+  if (val.length <= 12) return val;
+  const prefix = val.split(/[(),]/)[0].trim();
+  if (prefix.length <= 11) return prefix;
+  return prefix.slice(0, 10);
 }
 
 // Helper to get short punchy chapter names for the sidebar
@@ -143,7 +385,7 @@ function EditorialNotebookPanel({
   };
 
   return (
-    <div className="space-y-4 text-[#26201b] max-w-full overflow-hidden">
+    <div className="space-y-4 text-[#26201b] w-full min-w-0">
       {/* ── Top Header: Step Badge + Problem Badge ── */}
       <div>
         <div className="flex items-center justify-between gap-2">
@@ -183,7 +425,7 @@ function EditorialNotebookPanel({
             type="button"
             onClick={onPrevStep}
             disabled={isPrevDisabled}
-            className="scale-btn-back !py-2 !px-4"
+            className="scale-btn-back !py-2 !px-4 shrink-0"
           >
             ← Back
           </button>
@@ -192,10 +434,10 @@ function EditorialNotebookPanel({
             type="button"
             onClick={onNextStep}
             disabled={isNextDisabled}
-            className="scale-btn-next flex-1 min-w-0 !py-2 !px-4"
+            className="scale-btn-next flex-1 min-w-0 !py-2 !px-3 overflow-hidden"
           >
-            <span className="truncate">Next: {nextStepTitle}</span>
-            <span aria-hidden className="shrink-0">→</span>
+            <span className="truncate block flex-1 text-left">Next: {nextStepTitle}</span>
+            <span aria-hidden className="shrink-0 font-mono">→</span>
           </button>
         </div>
 
@@ -205,7 +447,7 @@ function EditorialNotebookPanel({
       </div>
 
       {/* ── "You'll Learn" Checklist Card ── */}
-      <div className="scale-diff-box">
+      <div className="scale-diff-box w-full min-w-0">
         <p className="font-mono text-[10.5px] font-extrabold uppercase tracking-wider text-[#26201b]/70 mb-2.5">
           YOU&apos;LL LEARN
         </p>
@@ -244,7 +486,7 @@ function EditorialNotebookPanel({
 
       {/* ── "What Changed" Diff Box (If Diff Lines Exist) ── */}
       {currentStep.diff && currentStep.diff.length > 0 && (
-        <div className="scale-diff-box max-w-full overflow-hidden">
+        <div className="scale-diff-box w-full min-w-0">
           <div className="flex items-center justify-between border-b border-[#26201b]/10 pb-2 mb-2 font-mono text-[10.5px]">
             <span className="uppercase font-extrabold tracking-wider text-[#26201b]/60">
               WHAT CHANGED
@@ -254,7 +496,7 @@ function EditorialNotebookPanel({
             </span>
           </div>
 
-          <div className="space-y-1 font-mono text-[11px] leading-relaxed overflow-x-auto max-w-full pb-1 scrollbar-thin">
+          <div className="space-y-1 font-mono text-[11px] leading-relaxed overflow-x-auto w-full min-w-0 pb-1 scrollbar-thin">
             {currentStep.diff.map((line, idx) => (
               <div
                 key={idx}
@@ -295,6 +537,15 @@ export function AcademyStudio() {
     "chapter-2": false,
     "chapter-3": false,
   });
+
+  const notebookRef = useRef<HTMLDivElement>(null);
+  const mobileNotebookRef = useRef<HTMLDivElement>(null);
+
+  // Ensure notebook container is always scrolled to leftmost edge on step/lesson change
+  useEffect(() => {
+    if (notebookRef.current) notebookRef.current.scrollLeft = 0;
+    if (mobileNotebookRef.current) mobileNotebookRef.current.scrollLeft = 0;
+  }, [activeLessonId, activeStepIdx]);
 
   // Force warm paper light theme while on Academy
   useEffect(() => {
@@ -986,7 +1237,7 @@ export function AcademyStudio() {
             </div>
 
             {/* Mobile / Tablet Editorial Notebook Panel (< 1080px) */}
-            <div className="scale-col-notebook-mobile scale-card">
+            <div ref={mobileNotebookRef} className="scale-col-notebook-mobile scale-card">
               <EditorialNotebookPanel
                 currentStep={currentStep}
                 currentLesson={currentLesson}
@@ -1000,7 +1251,7 @@ export function AcademyStudio() {
           </main>
 
           {/* ── RIGHT COLUMN: FIXED EDITORIAL NOTEBOOK PANEL (>= 1080px) ───── */}
-          <aside className="scale-col-notebook scale-card">
+          <aside ref={notebookRef} className="scale-col-notebook scale-card">
             <EditorialNotebookPanel
               currentStep={currentStep}
               currentLesson={currentLesson}

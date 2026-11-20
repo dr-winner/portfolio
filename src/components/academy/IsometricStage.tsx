@@ -473,9 +473,9 @@ function renderLaptop(
             : ""
       }
       ${
-        (!isAttacker || urlTag) && label
+        !isAttacker && label
           ? `<g transform="translate(${labelX}, ${labelY + 24})">
-              ${renderPill(0, 0, label, { icon: isAttacker ? "skull" : "user", tone: isAttacker ? "red" : "paper" })}
+              ${renderPill(0, 0, label, { icon: "user", tone: "paper" })}
             </g>`
           : ""
       }
@@ -813,8 +813,8 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "Legitimate Client", { tone: "green" })}
           </g>
-          <g transform="translate(30, -35)">
-            ${renderPill(0, 0, "⚠️ Perimeter Bypass: Unauthenticated Hop", { tone: "red" })}
+          <g transform="translate(25, -20)">
+            ${renderPill(0, 0, "⚠️ Unauthenticated Hop", { tone: "red" })}
           </g>
           ${client.over} ${attacker.over} ${web.over} ${db.over}
         `,
@@ -951,8 +951,8 @@ export function IsometricStage({
             <g transform="translate(38, 142)">
               ${renderPill(0, 0, "Verified RS256 Token", { tone: "green" })}
             </g>
-            <g transform="translate(30, -35)">
-              ${renderPill(0, 0, "401 Blocked: alg: none Not Whitelisted", { tone: "red" })}
+            <g transform="translate(-15, -35)">
+              ${renderPill(0, 0, "401 Blocked (Untrusted Alg)", { tone: "red" })}
             </g>
             ${client.over} ${attacker.over} ${gateway.over} ${shield.over} ${db.over} ${redis.over}
           `,
@@ -981,10 +981,10 @@ export function IsometricStage({
         entsSvg: `${client.ent} ${gateway.ent} ${shield.ent} ${db.ent} ${redis.ent}`,
         overSvg: `
           <g transform="translate(38, 142)">
-            ${renderPill(0, 0, "Deterministic Invariant: Pinned RS256", { tone: "green" })}
+            ${renderPill(0, 0, "Pinned RS256 Invariant", { tone: "green" })}
           </g>
-          <g transform="translate(30, -35)">
-            ${renderPill(0, 0, "8 / 8 Vectors Passing (alg: none, HMAC, expiry)", { tone: "green" })}
+          <g transform="translate(-15, -35)">
+            ${renderPill(0, 0, "8 / 8 Vectors Passing", { tone: "green" })}
           </g>
           ${client.over} ${gateway.over} ${shield.over} ${db.over} ${redis.over}
         `,
@@ -1075,11 +1075,11 @@ export function IsometricStage({
           `,
           entsSvg: `${client.ent} ${attacker.ent} ${engine.ent} ${db.ent}`,
           overSvg: `
-            <g transform="translate(30, -35)">
-              ${renderPill(0, 0, "⚠️ Syntax Takeover: Lexer Mutated AST", { tone: "red" })}
+            <g transform="translate(-15, -35)">
+              ${renderPill(0, 0, "⚠️ AST Syntax Hijack", { tone: "red" })}
             </g>
-            <g transform="translate(242, -6)">
-              ${renderPill(0, 0, "OR '1'='1' (Grammar Overridden)", { tone: "red" })}
+            <g transform="translate(210, 38)">
+              ${renderPill(0, 0, "Grammar Mutated: '1'='1'", { tone: "red" })}
             </g>
             ${client.over} ${attacker.over} ${engine.over} ${db.over}
           `,
@@ -1106,10 +1106,10 @@ export function IsometricStage({
           entsSvg: `${client.ent} ${attacker.ent} ${engine.ent} ${boundary.ent} ${db.ent}`,
           overSvg: `
             <g transform="translate(38, 142)">
-              ${renderPill(0, 0, "Literal Param Bound to AST Leaf", { tone: "green" })}
+              ${renderPill(0, 0, "Literal Param Invariant", { tone: "green" })}
             </g>
-            <g transform="translate(30, -35)">
-              ${renderPill(0, 0, "Syntax Treated As Inert Data String", { tone: "paper" })}
+            <g transform="translate(-15, -35)">
+              ${renderPill(0, 0, "Syntax Isolated from Control", { tone: "paper" })}
             </g>
             ${client.over} ${attacker.over} ${engine.over} ${boundary.over} ${db.over}
           `,
@@ -1138,10 +1138,10 @@ export function IsometricStage({
         entsSvg: `${client.ent} ${engine.ent} ${boundary.ent} ${db.ent}`,
         overSvg: `
           <g transform="translate(38, 142)">
-            ${renderPill(0, 0, "AST Invariant: Control & Data Lexically Isolated", { tone: "green" })}
+            ${renderPill(0, 0, "AST Boundary Invariant", { tone: "green" })}
           </g>
-          <g transform="translate(30, -35)">
-            ${renderPill(0, 0, "AST Boundary Verified: 0 Injections Possible", { tone: "green" })}
+          <g transform="translate(-15, -35)">
+            ${renderPill(0, 0, "AST Invariant Enforced", { tone: "green" })}
           </g>
           ${client.over} ${engine.over} ${boundary.over} ${db.over}
         `,
