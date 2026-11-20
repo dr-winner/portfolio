@@ -821,8 +821,336 @@ export function IsometricStage({
       };
     }
 
-    // ── CHAPTER 2: APPLICATION SECURITY (BOLA, SQLi, SSRF, XSS) ───────────
-    if (lessonId.includes("bola") || lessonId.includes("idor") || lessonId.includes("lesson-2-1")) {
+
+    // ── CHAPTER 1: LESSON 1-2 (Authentication, Tokens & Session Lifecycles) ─
+    if (lessonId === "lesson-1-2" || lessonId.includes("token") || lessonId.includes("auth-lifecycle")) {
+      const client = renderLaptop(0, -12, { label: "client", urlTag: "https://auth.saas.io", isNew: stepNum === 1 });
+      const authServer = renderCube(0, 1, "Auth (IdP)", "RS256 / Ed25519", { color: "purple", glyph: "shield", tag: { text: "JWKS Endpoint", tone: "green" }, isNew: stepNum === 1 });
+      const gateway = renderCube(10, -1, "API Gateway", "Token Verify", { color: "yellow", glyph: "balancer", cpu: 0.28, isNew: stepNum === 1 });
+      const db = renderDatabase(10, 12, "App Database", stepNum === 1);
+      const attacker = renderLaptop(-13, 5, {
+        label: "attacker",
+        urlTag: stepNum === 2 ? "tamper: role=admin" : "alg: none",
+        isAttacker: true,
+        isNew: stepNum === 2,
+      });
+      const shield = renderShieldWall(6, 4, "Pinned RS256 + JWKS", stepNum === 4);
+      const redis = renderDatabase(10, 18, "Redis Revoke", stepNum === 4);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -150 720 380",
+          camCenterX: -20,
+          camCenterY: 30,
+          camRadius: 380,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#8b5cf6" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1s" repeatCount="indefinite" path="${linkFirstHopWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${authServer.ent} ${gateway.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(${(pClient[0] + pFirstHop[0]) / 2 + 35}, ${(pClient[1] + pFirstHop[1]) / 2 + 10})">
+              ${renderPill(0, 0, "POST /oauth/token (credentials)", { tone: "paper" })}
+            </g>
+            <g transform="translate(180, 130)">
+              ${renderPill(0, 0, "Bearer: RS256 Signed JWT", { tone: "green" })}
+            </g>
+            ${client.over} ${authServer.over} ${gateway.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 20,
+          camCenterY: 60,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${gateway.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Valid Client JWT (role: user)", { tone: "green" })}
+            </g>
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, "⚠️ Signature Mismatch: 401 Unauthorized", { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${gateway.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 20,
+          camCenterY: 60,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${gateway.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, "⚠️ alg: none Accepted (Privilege Escalation)", { tone: "red" })}
+            </g>
+            <g transform="translate(242, -6)">
+              ${renderPill(0, 0, "Admin Actions Executed", { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${gateway.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 4) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 60,
+          camRadius: 480,
+          linksSvg: `
+            <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+            <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${gateway.ent} ${shield.ent} ${db.ent} ${redis.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Verified RS256 Token", { tone: "green" })}
+            </g>
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, "401 Blocked: alg: none Not Whitelisted", { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${gateway.over} ${shield.over} ${db.over} ${redis.over}
+          `,
+        };
+      }
+
+      // Step 5: Verification (Automated Regression Test Suite)
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 60,
+        camRadius: 480,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1.1s" repeatCount="indefinite" path="${linkShieldDb}"/>
+          </circle>
+        `,
+        entsSvg: `${client.ent} ${gateway.ent} ${shield.ent} ${db.ent} ${redis.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "Deterministic Invariant: Pinned RS256", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "8 / 8 Vectors Passing (alg: none, HMAC, expiry)", { tone: "green" })}
+          </g>
+          ${client.over} ${gateway.over} ${shield.over} ${db.over} ${redis.over}
+        `,
+      };
+    }
+
+    // ── CHAPTER 1: LESSON 1-3 (The Injection Boundary: Data vs Control Planes) ──
+    if (lessonId === "lesson-1-3" || lessonId.includes("injection-boundary")) {
+      const client = renderLaptop(0, -12, { label: "client", urlTag: "https://db.internal", isNew: stepNum === 1 });
+      const lexer = renderCube(0, 1, "SQL Lexer", "AST Parser", { color: "yellow", glyph: "brain", isNew: stepNum === 1 });
+      const engine = renderCube(10, -1, "Query Engine", "Interpreter", { color: "blue", glyph: "server", cpu: 0.35, isNew: stepNum === 1 });
+      const db = renderDatabase(10, 12, "App Database", stepNum === 1);
+      const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: "' OR 1=1 --", isAttacker: true, isNew: stepNum === 2 });
+      const boundary = renderShieldWall(6, 4, "Lexical AST Boundary", stepNum === 4);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -150 720 380",
+          camCenterX: -20,
+          camCenterY: 30,
+          camRadius: 380,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${lexer.ent} ${engine.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(${(pClient[0] + pFirstHop[0]) / 2 + 35}, ${(pClient[1] + pFirstHop[1]) / 2 + 10})">
+              ${renderPill(0, 0, "Data Stream: literal 'alice'", { tone: "paper" })}
+            </g>
+            <g transform="translate(242, -6)">
+              ${renderPill(0, 0, "SELECT WHERE user = 'alice'", { tone: "paper" })}
+            </g>
+            ${client.over} ${lexer.over} ${engine.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 20,
+          camCenterY: 60,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${engine.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, '⚠️ String Concat: "..." + input', { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${engine.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 20,
+          camCenterY: 60,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${engine.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, "⚠️ Syntax Takeover: Lexer Mutated AST", { tone: "red" })}
+            </g>
+            <g transform="translate(242, -6)">
+              ${renderPill(0, 0, "OR '1'='1' (Grammar Overridden)", { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${engine.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 4) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 60,
+          camRadius: 480,
+          linksSvg: `
+            <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+            <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${engine.ent} ${boundary.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Literal Param Bound to AST Leaf", { tone: "green" })}
+            </g>
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, "Syntax Treated As Inert Data String", { tone: "paper" })}
+            </g>
+            ${client.over} ${attacker.over} ${engine.over} ${boundary.over} ${db.over}
+          `,
+        };
+      }
+
+      // Step 5: Verification
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 60,
+        camRadius: 480,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1.1s" repeatCount="indefinite" path="${linkShieldDb}"/>
+          </circle>
+        `,
+        entsSvg: `${client.ent} ${engine.ent} ${boundary.ent} ${db.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "AST Invariant: Control & Data Lexically Isolated", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "AST Boundary Verified: 0 Injections Possible", { tone: "green" })}
+          </g>
+          ${client.over} ${engine.over} ${boundary.over} ${db.over}
+        `,
+      };
+    }
+
+    // ── CHAPTER 2: APPLICATION SECURITY ──────────────────────────────────
+    // ── LESSON 2-1: BOLA / IDOR ───────────────────────────────────────────
+    if (lessonId === "lesson-2-1" || lessonId.includes("bola") || lessonId.includes("idor")) {
       const client = renderLaptop(0, -12, { label: "acme (you)", urlTag: "https://api.saas.io", isNew: stepNum === 1 });
       const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: "tamper 4822", isAttacker: true, isNew: stepNum === 2 });
       const web = renderCube(10, -1, "Invoice", "Service", { color: "blue", glyph: "server", cpu: stepNum >= 4 ? 0.22 : 0.65, isNew: stepNum === 1 });
@@ -883,7 +1211,6 @@ export function IsometricStage({
         };
       }
 
-      // Step 4 & 5: Remediation with Scoped Filter
       return {
         viewBox: "-380 -250 840 500",
         camCenterX: 40,
@@ -913,12 +1240,280 @@ export function IsometricStage({
       };
     }
 
+    // ── LESSON 2-2: DEEP SQL INJECTION & PARAMETERIZED DEFENSE ────────────
+    if (lessonId === "lesson-2-2" || lessonId.includes("sqli")) {
+      const client = renderLaptop(0, -12, { label: "user", urlTag: "https://shop.io/login", isNew: stepNum === 1 });
+      const backend = renderCube(10, -1, "Auth Svc", "Query Handler", { color: "blue", glyph: "server", cpu: 0.45, isNew: stepNum === 1 });
+      const db = renderDatabase(10, 12, "Postgres DB", stepNum === 1);
+      const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: "' UNION SELECT...", isAttacker: true, isNew: stepNum === 2 });
+      const stmtGate = renderShieldWall(6, 4, "Prepared Statement Gate", stepNum === 4);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -140 760 380",
+          camCenterX: 20,
+          camCenterY: 50,
+          camRadius: 420,
+          linksSvg: `
+            <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${backend.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Login: user=alice", { tone: "green" })}
+            </g>
+            ${client.over} ${backend.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2 || stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 70,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${backend.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, stepNum === 2 ? "⚠️ Tautology: ' OR '1'='1" : "⚠️ UNION SELECT password_hashes", { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${backend.over} ${db.over}
+          `,
+        };
+      }
+
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 70,
+        camRadius: 470,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+        `,
+        entsSvg: `${client.ent} ${attacker.ent} ${backend.ent} ${stmtGate.ent} ${db.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "Query Plan Compiled Once ($1, $2)", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Syntax Treated As Raw Literal Value", { tone: "paper" })}
+          </g>
+          ${client.over} ${attacker.over} ${backend.over} ${stmtGate.over} ${db.over}
+        `,
+      };
+    }
+
+    // ── LESSON 2-3: SSRF & CLOUD METADATA (IMDS) ──────────────────────────
+    if (lessonId === "lesson-2-3" || lessonId.includes("ssrf")) {
+      const client = renderLaptop(0, -12, { label: "user", urlTag: "https://app.io/webhook", isNew: stepNum === 1 });
+      const webhook = renderCube(0, 1, "Webhook", "Worker", { color: "yellow", glyph: "balancer", isNew: stepNum === 1 });
+      const fetcher = renderCube(10, -1, "Fetch Client", "HTTP Service", { color: "blue", glyph: "server", cpu: 0.5, isNew: stepNum === 1 });
+      const imds = renderCube(10, 12, "AWS IMDS", "169.254.169.254", { color: "orange", glyph: "server", tag: { text: "IAM Role Tokens", tone: "amber" }, isNew: stepNum === 1 });
+      const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: "http://169.254...", isAttacker: true, isNew: stepNum === 2 });
+      const firewall = renderShieldWall(6, 4, "IMDSv2 + RFC 1918 Filter", stepNum === 4);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -150 720 380",
+          camCenterX: -20,
+          camCenterY: 30,
+          camRadius: 380,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${webhook.ent} ${fetcher.ent} ${imds.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Public Webhook: 200 OK", { tone: "green" })}
+            </g>
+            ${client.over} ${webhook.over} ${fetcher.over} ${imds.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2 || stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 70,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
+            </circle>
+          `,
+          entsSvg: `${client.ent} ${attacker.ent} ${fetcher.ent} ${imds.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, stepNum === 2 ? "⚠️ Internal Probe: 169.254.169.254" : "⚠️ IAM Role Credentials Dumped", { tone: "red" })}
+            </g>
+            ${client.over} ${attacker.over} ${fetcher.over} ${imds.over}
+          `,
+        };
+      }
+
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 70,
+        camRadius: 470,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+        `,
+        entsSvg: `${client.ent} ${attacker.ent} ${fetcher.ent} ${firewall.ent} ${imds.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "IMDSv2 Session Token Required", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Private IP Egress Blocked (RFC 1918)", { tone: "red" })}
+          </g>
+          ${client.over} ${attacker.over} ${fetcher.over} ${firewall.over} ${imds.over}
+        `,
+      };
+    }
+
+    // ── LESSON 2-4: XSS & STRICT CSP DEFENSE ──────────────────────────────
+    if (lessonId === "lesson-2-4" || lessonId.includes("xss")) {
+      const victim = renderLaptop(0, -12, { label: "victim", urlTag: "https://blog.io/post/42", isNew: stepNum === 1 });
+      const web = renderCube(0, 1, "Web App", "Server", { color: "yellow", glyph: "server", isNew: stepNum === 1 });
+      const db = renderDatabase(10, 12, "Comments DB", stepNum === 1);
+      const attacker = renderLaptop(-13, 5, { label: "attacker", urlTag: "<script>fetch...", isAttacker: true, isNew: stepNum === 2 });
+      const cspGate = renderShieldWall(6, 4, "Strict CSP Nonce Gate", stepNum === 4);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -150 720 380",
+          camCenterX: -20,
+          camCenterY: 30,
+          camRadius: 380,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+          `,
+          entsSvg: `${victim.ent} ${web.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Clean Stored Comment", { tone: "green" })}
+            </g>
+            ${victim.over} ${web.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2 || stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 70,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkClientWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${victim.ent} ${attacker.ent} ${web.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, stepNum === 2 ? "⚠️ Stored Payload: <script>..." : "⚠️ DOM Injection: Session Cookie Stolen", { tone: "red" })}
+            </g>
+            ${victim.over} ${attacker.over} ${web.over} ${db.over}
+          `,
+        };
+      }
+
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 70,
+        camRadius: 470,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+        `,
+        entsSvg: `${victim.ent} ${attacker.ent} ${web.ent} ${cspGate.ent} ${db.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "script-src 'nonce-...'; HttpOnly", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Inline Script Refused (Missing Nonce)", { tone: "red" })}
+          </g>
+          ${victim.over} ${attacker.over} ${web.over} ${cspGate.over} ${db.over}
+        `,
+      };
+    }
+
     // ── CHAPTER 3: AI & LLM AGENT SECURITY ────────────────────────────────
-    if (lessonId.includes("ai") || lessonId.includes("prompt") || lessonId.includes("agent") || lessonId.includes("rag") || lessonId.includes("chapter-3")) {
-      const user = renderLaptop(0, -12, { label: "user", urlTag: "agent://core", isNew: stepNum === 1 });
-      const untrustedSource = renderCube(-15, 1, "Untrusted", "Web Source", { color: "orange", glyph: "globe", isNew: stepNum === 2 });
-      const agentCore = renderCube(10, -1, "AI Agent", "Core", { color: "purple", glyph: "brain", cpu: stepNum >= 4 ? 0.32 : 0.78, isNew: stepNum === 1 });
-      const vectorDb = renderDatabase(10, 12, "Vector DB", stepNum === 1);
+    // ── LESSON 3-1: DIRECT & INDIRECT PROMPT INJECTION ────────────────────
+    if (lessonId === "lesson-3-1" || lessonId.includes("prompt-injection")) {
+      const user = renderLaptop(0, -12, { label: "user", urlTag: "agent://summarize", isNew: stepNum === 1 });
+      const untrustedSource = renderCube(-13, 5, "Untrusted", "Web Source", { color: "orange", glyph: "globe", isNew: stepNum === 2 });
+      const agentCore = renderCube(10, -1, "LLM Agent", "Core", { color: "purple", glyph: "brain", cpu: stepNum >= 4 ? 0.32 : 0.78, isNew: stepNum === 1 });
+      const vectorDb = renderDatabase(10, 12, "Knowledge DB", stepNum === 1);
       const guardrail = renderShieldWall(6, 4, "Dual-LLM Guardrail", stepNum === 4);
 
       if (stepNum === 1) {
@@ -948,7 +1543,7 @@ export function IsometricStage({
 
       if (stepNum === 2 || stepNum === 3) {
         return {
-          viewBox: "-380 -140 820 420",
+          viewBox: "-380 -250 840 500",
           camCenterX: 30,
           camCenterY: 70,
           camRadius: 460,
@@ -967,8 +1562,8 @@ export function IsometricStage({
             <g transform="translate(38, 142)">
               ${renderPill(0, 0, "User Prompt", { tone: "green" })}
             </g>
-            <g transform="translate(-30, -50)">
-              ${renderPill(0, 0, "⚠️ Poisoned Context Injected", { tone: "red" })}
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, stepNum === 2 ? "⚠️ Poisoned Context Injected" : "⚠️ Model Control Plane Hijacked", { tone: "red" })}
             </g>
             ${user.over} ${untrustedSource.over} ${agentCore.over} ${vectorDb.over}
           `,
@@ -976,7 +1571,7 @@ export function IsometricStage({
       }
 
       return {
-        viewBox: "-380 -140 840 420",
+        viewBox: "-380 -250 840 500",
         camCenterX: 40,
         camCenterY: 70,
         camRadius: 470,
@@ -996,42 +1591,297 @@ export function IsometricStage({
           <g transform="translate(38, 142)">
             ${renderPill(0, 0, "Sanitized Prompt Response", { tone: "green" })}
           </g>
-          <g transform="translate(-30, -50)">
-            ${renderPill(0, 0, "Quarantined Injection", { tone: "red" })}
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Quarantined Injection: Data Blocked", { tone: "red" })}
           </g>
           ${user.over} ${untrustedSource.over} ${agentCore.over} ${guardrail.over} ${vectorDb.over}
         `,
       };
     }
 
-    // Default Architecture (Token Auth, SQLi, SSRF, etc.)
-    const clientNode = renderLaptop(0, -12, { label: "client", urlTag: "https://auth.saas.io", isNew: stepNum === 1 });
-    const gatewayNode = renderCube(0, 1, "API", "Gateway", { color: "yellow", glyph: "balancer", tag: { text: "TLS 1.3 / mTLS", tone: "green" }, isNew: stepNum === 2 });
-    const backendNode = renderCube(10, -1, "Resource", "Service", { color: "blue", glyph: "server", cpu: 0.35, isNew: stepNum === 3 });
-    const dbNode = renderDatabase(10, 12, "App Database", stepNum === 4);
+    // ── LESSON 3-2: EXCESSIVE AGENCY & AUTONOMOUS TOOL HIJACKING ───────────
+    if (lessonId === "lesson-3-2" || lessonId.includes("agency")) {
+      const user = renderLaptop(0, -12, { label: "user", urlTag: "agent://inbox", isNew: stepNum === 1 });
+      const emailPayload = renderCube(-13, 5, "Poisoned", "Email Hook", { color: "orange", glyph: "globe", isNew: stepNum === 2 });
+      const agent = renderCube(0, 1, "Agent Core", "Autonomous", { color: "purple", glyph: "brain", cpu: 0.82, isNew: stepNum === 1 });
+      const runner = renderCube(10, -1, "Tool Runner", "Exec Engine", { color: "blue", glyph: "server", isNew: stepNum === 1 });
+      const db = renderDatabase(10, 12, "Accounts DB", stepNum === 1);
+      const gate = renderShieldWall(6, 4, "Human-in-the-Loop Gate", stepNum === 4);
 
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -140 760 380",
+          camCenterX: 20,
+          camCenterY: 50,
+          camRadius: 420,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+          `,
+          entsSvg: `${user.ent} ${agent.ent} ${runner.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Authorized Tool: read_inbox()", { tone: "green" })}
+            </g>
+            ${user.over} ${agent.over} ${runner.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2 || stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 70,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${user.ent} ${emailPayload.ent} ${agent.ent} ${runner.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, stepNum === 2 ? "⚠️ Injected Prompt: delete_account(102)" : "⚠️ Unbounded Destruction Executed", { tone: "red" })}
+            </g>
+            ${user.over} ${emailPayload.over} ${agent.over} ${runner.over} ${db.over}
+          `,
+        };
+      }
+
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 70,
+        camRadius: 470,
+        linksSvg: `
+          <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+          </circle>
+        `,
+        entsSvg: `${user.ent} ${emailPayload.ent} ${agent.ent} ${runner.ent} ${gate.ent} ${db.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "Confirmation Required For Mutation", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Unauthorized Destructive Action Blocked", { tone: "red" })}
+          </g>
+          ${user.over} ${emailPayload.over} ${agent.over} ${runner.over} ${gate.over} ${db.over}
+        `,
+      };
+    }
+
+    // ── LESSON 3-3: CROSS-TENANT RAG RETRIEVAL LEAKS ──────────────────────
+    if (lessonId === "lesson-3-3" || lessonId.includes("rag")) {
+      const acme = renderLaptop(0, -12, { label: "acme (you)", urlTag: "rag://query", isNew: stepNum === 1 });
+      const ingestion = renderCube(0, 1, "Embedding", "Pipeline", { color: "yellow", glyph: "brain", isNew: stepNum === 1 });
+      const vectorDb = renderDatabase(10, -1, "Shared Vector DB", stepNum === 1);
+      const llmSynth = renderCube(10, 12, "LLM Synthesis", "Engine", { color: "purple", glyph: "brain", cpu: 0.65, isNew: stepNum === 1 });
+      const aclFilter = renderShieldWall(6, 4, "Pre-Filter Metadata ACL", stepNum === 4);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -140 760 380",
+          camCenterX: 20,
+          camCenterY: 50,
+          camRadius: 420,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+          `,
+          entsSvg: `${acme.ent} ${ingestion.ent} ${vectorDb.ent} ${llmSynth.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Ingestion: Multi-Tenant Vectors", { tone: "paper" })}
+            </g>
+            ${acme.over} ${ingestion.over} ${vectorDb.over} ${llmSynth.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2 || stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 70,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkWebDb}"/>
+            </circle>
+          `,
+          entsSvg: `${acme.ent} ${ingestion.ent} ${vectorDb.ent} ${llmSynth.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "Query: Enterprise Pricing", { tone: "green" })}
+            </g>
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, "⚠️ Leaked: Globex Competitor Pricing Vectors", { tone: "red" })}
+            </g>
+            ${acme.over} ${ingestion.over} ${vectorDb.over} ${llmSynth.over}
+          `,
+        };
+      }
+
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 70,
+        camRadius: 470,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+        `,
+        entsSvg: `${acme.ent} ${ingestion.ent} ${vectorDb.ent} ${aclFilter.ent} ${llmSynth.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "filter: { tenant_id: 'acme' } Enforced", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Pre-Filtered Before Vector Similarity ANN", { tone: "green" })}
+          </g>
+          ${acme.over} ${ingestion.over} ${vectorDb.over} ${aclFilter.over} ${llmSynth.over}
+        `,
+      };
+    }
+
+    // ── LESSON 3-4: DETERMINISTIC GUARDRAILS & TAINT TRACKING ──────────────
+    if (lessonId === "lesson-3-4" || lessonId.includes("guardrail") || lessonId.includes("taint")) {
+      const user = renderLaptop(0, -12, { label: "user", urlTag: "agent://core", isNew: stepNum === 1 });
+      const adversary = renderLaptop(-13, 5, { label: "adversary", urlTag: "base64 bypass", isAttacker: true, isNew: stepNum === 2 });
+      const judge = renderCube(0, 1, "LLM Judge", "(Probabilistic)", { color: "yellow", glyph: "brain", isNew: stepNum === 1 });
+      const execEngine = renderCube(10, -1, "Exec Engine", "Tool Pipeline", { color: "blue", glyph: "server", cpu: 0.6, isNew: stepNum === 1 });
+      const astGate = renderShieldWall(6, 4, "Deterministic AST Gate", stepNum === 4);
+      const db = renderDatabase(10, 12, "Production Sink", stepNum === 1);
+
+      if (stepNum === 1) {
+        return {
+          viewBox: "-360 -140 760 380",
+          camCenterX: 20,
+          camCenterY: 50,
+          camRadius: 420,
+          linksSvg: `
+            <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+            <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
+            </circle>
+          `,
+          entsSvg: `${user.ent} ${judge.ent} ${execEngine.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(38, 142)">
+              ${renderPill(0, 0, "LLM Judge: 95% Accuracy", { tone: "paper" })}
+            </g>
+            ${user.over} ${judge.over} ${execEngine.over} ${db.over}
+          `,
+        };
+      }
+
+      if (stepNum === 2 || stepNum === 3) {
+        return {
+          viewBox: "-380 -250 840 500",
+          camCenterX: 30,
+          camCenterY: 70,
+          camRadius: 460,
+          linksSvg: `
+            <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+            <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
+          `,
+          packetsSvg: `
+            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+              <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
+            </circle>
+          `,
+          entsSvg: `${user.ent} ${adversary.ent} ${judge.ent} ${execEngine.ent} ${db.ent}`,
+          overSvg: `
+            <g transform="translate(30, -35)">
+              ${renderPill(0, 0, stepNum === 2 ? "⚠️ Base64 + Persona Jailbreak" : "⚠️ Probabilistic Judge Fooled", { tone: "red" })}
+            </g>
+            ${user.over} ${adversary.over} ${judge.over} ${execEngine.over} ${db.over}
+          `,
+        };
+      }
+
+      return {
+        viewBox: "-380 -250 840 500",
+        camCenterX: 40,
+        camCenterY: 70,
+        camRadius: 470,
+        linksSvg: `
+          <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkWebShield}" fill="none" stroke="${INK}" stroke-width="2.2"/>
+          <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
+          <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
+        `,
+        packetsSvg: `
+          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
+          </circle>
+        `,
+        entsSvg: `${user.ent} ${adversary.ent} ${execEngine.ent} ${astGate.ent} ${db.ent}`,
+        overSvg: `
+          <g transform="translate(38, 142)">
+            ${renderPill(0, 0, "Taint Tracking: Invariant Enforced", { tone: "green" })}
+          </g>
+          <g transform="translate(30, -35)">
+            ${renderPill(0, 0, "Deterministic AST Gate: 100% Block", { tone: "green" })}
+          </g>
+          ${user.over} ${adversary.over} ${execEngine.over} ${astGate.over} ${db.over}
+        `,
+      };
+    }
+
+    // Default Fallback
+    const fallbackClient = renderLaptop(0, -12, { label: "client", urlTag: "https://auth.saas.io" });
+    const fallbackServer = renderCube(10, -1, "Resource", "Service", { color: "blue", glyph: "server" });
+    const fallbackDb = renderDatabase(10, 12, "App Database");
     return {
       viewBox: "-380 -140 820 400",
       camCenterX: 30,
       camCenterY: 60,
       camRadius: 460,
-      linksSvg: `
-        <path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
-        <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
-        <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
-      `,
+      linksSvg: `<path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>`,
       packetsSvg: `
         <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
-          <animateMotion dur="${isPaused ? "0s" : "2.4s"}" repeatCount="indefinite" path="${linkFirstHopWeb}"/>
+          <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
         </circle>
       `,
-      entsSvg: `${clientNode.ent} ${gatewayNode.ent} ${backendNode.ent} ${dbNode.ent}`,
-      overSvg: `
-        <g transform="translate(35, 110)">
-          ${renderPill(0, 0, "Authorized Ingress", { tone: "green" })}
-        </g>
-        ${clientNode.over} ${gatewayNode.over} ${backendNode.over} ${dbNode.over}
-      `,
+      entsSvg: `${fallbackClient.ent} ${fallbackServer.ent} ${fallbackDb.ent}`,
+      overSvg: `${fallbackClient.over} ${fallbackServer.over} ${fallbackDb.over}`,
     };
   }, [lesson, step, isPaused]);
 
