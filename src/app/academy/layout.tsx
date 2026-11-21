@@ -15,11 +15,12 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
         backgroundColor: "#f5efe6",
         color: "#26201b",
         colorScheme: "light",
-        minHeight: "100vh",
-        /* Hide the portfolio's global header/footer that come from layout.tsx */
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
         isolation: "isolate",
       }}
-      className="scale-app antialiased selection:bg-[#c5e8b7] selection:text-[#1b4332]"
+      className="antialiased selection:bg-[#c5e8b7] selection:text-[#1b4332]"
     >
       {children}
     </div>
