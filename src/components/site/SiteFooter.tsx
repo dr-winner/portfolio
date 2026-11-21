@@ -3,6 +3,7 @@ import { cvHref, mailto, site } from "@/content/site";
 
 const nav = [
   { href: "/work", label: "Work" },
+  { href: "/academy", label: "Academy" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/security", label: "Security" },

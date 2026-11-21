@@ -9,6 +9,7 @@ import { SiteMenu } from "@/components/site/SiteMenu";
 
 const links = [
   { href: "/work", label: "Work" },
+  { href: "/academy", label: "Academy" },
   { href: "/about", label: "About" },
   { href: "/security", label: "Security" },
   { href: "/contact", label: "Contact" },

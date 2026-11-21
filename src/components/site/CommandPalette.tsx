@@ -181,6 +181,15 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     // Quick Actions Group
     const actions: Row[] = [
       {
+        id: "act-academy",
+        group: "Quick Actions",
+        label: "Explore AppSec & AI Academy",
+        hint: "Curriculum & Waitlist",
+        keywords: "academy mentorship course training cohort syllabus appsec ai llm learning",
+        kind: "action",
+        run: () => go("/academy"),
+      },
+      {
         id: "act-cv",
         group: "Quick Actions",
         label: "Download CV",
@@ -315,6 +324,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     const pages: Row[] = [
       ["/", "Home", "Main landing & simulator"],
       ["/work", "Work", "All case studies and labs"],
+      ["/academy", "Academy", "Application Security & AI/LLM Cohort"],
       ["/about", "About", "Background, skills & toolkit"],
       ["/contact", "Contact", "Availability & communication channels"],
       ["/security", "Security", "Security posture & disclosure policy"],

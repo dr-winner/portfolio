@@ -8,6 +8,7 @@ import { work } from "@/content/work";
 const pages = [
   { href: "/", label: "Home", note: "Start here" },
   { href: "/work", label: "Work", note: "Case studies and labs" },
+  { href: "/academy", label: "Academy", note: "AppSec & AI security cohort" },
   { href: "/about", label: "About", note: "Background and method" },
   { href: "/security", label: "Security", note: "How this site is built" },
   { href: "/contact", label: "Contact", note: "Email and links" },
