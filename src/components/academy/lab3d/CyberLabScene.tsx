@@ -2,51 +2,83 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
+import { InGamePhone } from "./InGamePhone";
 import { TerminalModal } from "./TerminalModal";
 import { DeviceContext, MissionState } from "./terminalEngine";
+import { INITIAL_EMAILS, EmailMessage, CaseFileClue } from "./snowtrailData";
 import { sfx } from "./audio";
 
-const DEVICES: DeviceContext[] = [
-  {
-    id: "workstation",
-    name: "Forensic Station",
-    role: "Payload De-obfuscator & Memory Triage",
-    ip: "192.168.1.45",
-    hostname: "forensics-ws01",
-    status: "warning",
-    zone: "Forensics Lab",
-  },
-  {
-    id: "server",
-    name: "Core Auth Server",
-    role: "Central Syslog & IAM Metadata Gateway",
-    ip: "192.168.1.10",
-    hostname: "server-core01",
-    status: "compromised",
-    zone: "Server Cold Room",
-  },
-  {
-    id: "iot",
-    name: "Rogue IoT Appliance",
-    role: "Smart Office Gateway / Unauthorized Beacon",
-    ip: "192.168.1.185",
-    hostname: "iot-edge-node",
-    status: "compromised",
-    zone: "IoT Edge Lab",
-  },
-  {
-    id: "ai-agent",
-    name: "Agent Execution Node",
-    role: "Generative Tool Calling Orchestrator",
-    ip: "192.168.1.80",
-    hostname: "ai-agent-core",
-    status: "warning",
-    zone: "Command Center",
-  },
-];
+interface InteractiveObject {
+  id: string;
+  name: string;
+  type: "terminal" | "desk-qr" | "iot" | "embedded";
+  position: THREE.Vector3;
+  meshGroup?: THREE.Group;
+  promptText: string;
+  isDisconnected?: boolean;
+}
 
 export function CyberLabScene() {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  // --- GAME STATE ---
+  const [emails, setEmails] = useState<EmailMessage[]>(INITIAL_EMAILS);
+  const [activeEmailId, setActiveEmailId] = useState<string>("email-1");
+  const [phoneOpen, setPhoneOpen] = useState<boolean>(true);
+  const phoneOpenRef = useRef<boolean>(true);
+  phoneOpenRef.current = phoneOpen;
+  const [activePhoneApp, setActivePhoneApp] = useState<"email" | "tasks" | "casefile">("email");
+
+  const [clues, setClues] = useState<Record<string, CaseFileClue>>({
+    surveillance: {
+      id: "surveillance",
+      label: "Intruder Point of Origin",
+      value: null,
+      solved: false,
+      deviceSource: "High-Performance Workstation",
+    },
+    ip: {
+      id: "ip",
+      label: "Attacker External C2 IP",
+      value: null,
+      solved: false,
+      deviceSource: "Server Room Logging Cluster",
+    },
+    alias: {
+      id: "alias",
+      label: "Intruder Handle Alias",
+      value: null,
+      solved: false,
+      deviceSource: "Meeting Room Laptop Profile",
+    },
+    serial: {
+      id: "serial",
+      label: "Physical Desk QR Serial",
+      value: null,
+      solved: false,
+      deviceSource: "McSkidy Desk Case File QR",
+    },
+    perimeter: {
+      id: "perimeter",
+      label: "Office Perimeter Status",
+      value: null,
+      solved: false,
+      deviceSource: "Isolated Wi-Fi IoT Appliances",
+    },
+  });
+
+  const [iotStatus, setIotStatus] = useState({
+    thermostat: { name: "Smart Thermostat", isIoT: true, isDisconnected: false },
+    printer: { name: "Office Network Printer", isIoT: true, isDisconnected: false },
+    speaker: { name: "Smart Voice Assistant", isIoT: true, isDisconnected: false },
+    coffeeMaker: { name: "Standard Coffee Maker", isIoT: false, isDisconnected: false },
+    wallClock: { name: "Digital Wall Clock", isIoT: false, isDisconnected: false },
+  });
+
+  // Terminal pop-up context (when interacting with a computer in first person)
+  const [activeDevice, setActiveDevice] = useState<DeviceContext | null>(null);
+  const activeDeviceRef = useRef<DeviceContext | null>(null);
+  activeDeviceRef.current = activeDevice;
   const [missionState, setMissionState] = useState<MissionState>({
     workstationAnalyzed: false,
     serverFirewalled: false,
@@ -54,60 +86,196 @@ export function CyberLabScene() {
     aiAgentEnforced: false,
   });
 
-  const [activeDevice, setActiveDevice] = useState<DeviceContext | null>(null);
-  const [nearbyDevice, setNearbyDevice] = useState<DeviceContext | null>(null);
-  const [, setDeviceList] = useState<DeviceContext[]>(DEVICES);
+  const [isPointerLocked, setIsPointerLocked] = useState(false);
+  const [lookTarget, setLookTarget] = useState<InteractiveObject | null>(null);
   const [showVictory, setShowVictory] = useState(false);
+  const [feedbackToast, setFeedbackToast] = useState<{ text: string; type: "success" | "warn" | "error" } | null>(null);
 
-  // References for live 3D animation loop
-  const playerPosRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0.75, 4));
+  // References for live 60fps render loop & first-person movement
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const keysRef = useRef<{ [k: string]: boolean }>({});
-  const deviceMeshesRef = useRef<{ [id: string]: THREE.Group }>({});
-  const alertLightsRef = useRef<{ [id: string]: THREE.PointLight }>({});
+  const mouseMoveRef = useRef<{ movementX: number; movementY: number }>({ movementX: 0, movementY: 0 });
+  const eulerRef = useRef<THREE.Euler>(new THREE.Euler(0, 0, 0, "YXZ"));
+  const playerPosRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 1.6, 6)); // Standing eye-height 1.6m
+  const interactiveObjectsRef = useRef<InteractiveObject[]>([]);
 
-  // Sync devices status with mission state
-  useEffect(() => {
-    setDeviceList((prev) =>
-      prev.map((dev) => {
-        if (dev.id === "workstation") {
-          return { ...dev, status: missionState.workstationAnalyzed ? "secure" : "warning" };
-        }
-        if (dev.id === "server") {
-          return { ...dev, status: missionState.serverFirewalled ? "secure" : "compromised" };
-        }
-        if (dev.id === "iot") {
-          return { ...dev, status: missionState.iotIsolated ? "secure" : "compromised" };
-        }
-        if (dev.id === "ai-agent") {
-          return { ...dev, status: missionState.aiAgentEnforced ? "secure" : "warning" };
-        }
-        return dev;
-      })
+  // Trigger brief feedback toast on HUD
+  const triggerToast = (text: string, type: "success" | "warn" | "error" = "success") => {
+    setFeedbackToast({ text, type });
+    setTimeout(() => setFeedbackToast(null), 3800);
+  };
+
+  // Dispatch task from in-game phone
+  const handleDispatchTask = (email: EmailMessage) => {
+    sfx.terminalBeep(920);
+
+    // Mark current email read
+    setEmails((prev) =>
+      prev.map((e) => (e.id === email.id ? { ...e, isRead: true } : e))
     );
 
-    const isAllComplete =
-      missionState.workstationAnalyzed &&
-      missionState.serverFirewalled &&
-      missionState.iotIsolated &&
-      missionState.aiAgentEnforced;
+    if (email.taskType === "workstation") {
+      triggerToast("Job dispatched to Forensics Workstation! Walk over to render frames.", "success");
+    } else if (email.taskType === "server") {
+      triggerToast("Log query pushed to Server Room cluster! Access server terminal to execute.", "success");
+    } else if (email.taskType === "laptop") {
+      triggerToast("Portable Laptop mounted for Meeting Room triage. Check meeting room desk.", "success");
+    } else if (email.taskType === "qr") {
+      triggerToast("Phone camera activated! Look at the QR sticker on McSkidy's desk.", "success");
+    } else if (email.taskType === "iot") {
+      triggerToast("Emergency containment started! Find and click to disconnect rogue IoT devices.", "warn");
+    }
+  };
 
-    if (isAllComplete) {
+  // Interact with targeted object via Left Click or E
+  const handleInteract = useCallback(
+    (target: InteractiveObject) => {
+      sfx.keyClick();
+
+      if (target.id === "workstation") {
+        setActiveDevice({
+          id: "workstation",
+          name: "High-Performance Workstation",
+          role: "Surveillance Image Frame Rendering & Forensic Compute",
+          ip: "192.168.1.45",
+          hostname: "forensics-ws01",
+          status: clues.surveillance.solved ? "secure" : "warning",
+          zone: "Forensics Lab",
+        });
+      } else if (target.id === "server") {
+        setActiveDevice({
+          id: "server",
+          name: "Core Server Cluster",
+          role: "Central Network Connection Syslog",
+          ip: "192.168.1.10",
+          hostname: "server-core01",
+          status: clues.ip.solved ? "secure" : "compromised",
+          zone: "Server Cold Room",
+        });
+      } else if (target.id === "laptop") {
+        // Meeting room laptop triage
+        setClues((prev) => ({
+          ...prev,
+          alias: { ...prev.alias, solved: true, value: "Grinch_H4x0r" },
+        }));
+        setEmails((prev) =>
+          prev.map((e) => (e.id === "email-3" ? { ...e, isCompleted: true } : e))
+        );
+        sfx.successChime();
+        triggerToast("Meeting room browser profile triaged! Attacker alias: Grinch_H4x0r", "success");
+      } else if (target.id === "desk-qr") {
+        // Physical QR code on desk
+        setClues((prev) => ({
+          ...prev,
+          serial: { ...prev.serial, solved: true, value: "SNOW-TRL-9941-X" },
+        }));
+        setEmails((prev) =>
+          prev.map((e) => (e.id === "email-4" ? { ...e, isCompleted: true } : e))
+        );
+        sfx.successChime();
+        triggerToast("QR Code successfully scanned via camera! Serial: SNOW-TRL-9941-X", "success");
+      } else if (target.type === "iot") {
+        // Disconnecting IoT device
+        if (target.id === "thermostat") {
+          setIotStatus((prev) => ({ ...prev, thermostat: { ...prev.thermostat, isDisconnected: true } }));
+          triggerToast("Smart Thermostat disconnected from office Wi-Fi!", "success");
+        } else if (target.id === "printer") {
+          setIotStatus((prev) => ({ ...prev, printer: { ...prev.printer, isDisconnected: true } }));
+          triggerToast("Office Network Printer disconnected from office Wi-Fi!", "success");
+        } else if (target.id === "speaker") {
+          setIotStatus((prev) => ({ ...prev, speaker: { ...prev.speaker, isDisconnected: true } }));
+          triggerToast("Smart Voice Speaker disconnected from office Wi-Fi!", "success");
+        }
+        sfx.alertTone();
+      } else if (target.type === "embedded") {
+        // Trap device! Standalone embedded machines
+        triggerToast("CAUTION: This is a standalone embedded device (no Wi-Fi)! Leave it connected.", "warn");
+        sfx.terminalBeep(420);
+      }
+    },
+    [clues.surveillance.solved, clues.ip.solved]
+  );
+
+  // Sync terminal actions with clue completions
+  const handleMissionStateChange = (newMissionState: MissionState) => {
+    setMissionState(newMissionState);
+
+    if (newMissionState.workstationAnalyzed && !clues.surveillance.solved) {
+      setClues((prev) => ({
+        ...prev,
+        surveillance: { ...prev.surveillance, solved: true, value: "Wareville Northern Substation" },
+      }));
+      setEmails((prev) =>
+        prev.map((e) => (e.id === "email-1" ? { ...e, isCompleted: true } : e))
+      );
+    }
+
+    if (newMissionState.serverFirewalled && !clues.ip.solved) {
+      setClues((prev) => ({
+        ...prev,
+        ip: { ...prev.ip, solved: true, value: "10.10.42.99" },
+      }));
+      setEmails((prev) =>
+        prev.map((e) => (e.id === "email-2" ? { ...e, isCompleted: true } : e))
+      );
+    }
+  };
+
+  // Evaluate victory conditions
+  useEffect(() => {
+    const allIoTDisconnected =
+      iotStatus.thermostat.isDisconnected &&
+      iotStatus.printer.isDisconnected &&
+      iotStatus.speaker.isDisconnected;
+
+    if (allIoTDisconnected && !clues.perimeter.solved) {
+      setClues((prev) => ({
+        ...prev,
+        perimeter: { ...prev.perimeter, solved: true, value: "Network Perimeter Contained" },
+      }));
+      setEmails((prev) =>
+        prev.map((e) => (e.id === "email-5" ? { ...e, isCompleted: true } : e))
+      );
+    }
+
+    const allCluesFound =
+      clues.surveillance.solved &&
+      clues.ip.solved &&
+      clues.alias.solved &&
+      clues.serial.solved &&
+      allIoTDisconnected;
+
+    if (allCluesFound && !showVictory) {
       setShowVictory(true);
       sfx.successChime();
     }
-  }, [missionState]);
+  }, [clues, iotStatus, showVictory]);
 
-  // Open active device modal
-  const handleOpenTerminal = useCallback((device: DeviceContext) => {
-    setActiveDevice(device);
-    sfx.terminalBeep(800);
-  }, []);
-
+  // Keyboard & Pointer Lock Event Handlers
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      keysRef.current[e.key.toLowerCase()] = true;
-      if (e.key.toLowerCase() === "e" && nearbyDevice && !activeDevice) {
-        handleOpenTerminal(nearbyDevice);
+      const key = e.key.toLowerCase();
+      keysRef.current[key] = true;
+
+      // P toggles handheld smartphone
+      if (key === "p") {
+        e.preventDefault();
+        setPhoneOpen((prev) => !prev);
+        sfx.terminalBeep(740);
+      }
+
+      // E interacts with target
+      if (key === "e" && lookTarget && !activeDevice) {
+        handleInteract(lookTarget);
+      }
+
+      // Escape closes terminal or phone
+      if (e.key === "Escape") {
+        if (activeDevice) {
+          setActiveDevice(null);
+        } else if (phoneOpen) {
+          setPhoneOpen(false);
+        }
       }
     };
 
@@ -115,15 +283,52 @@ export function CyberLabScene() {
       keysRef.current[e.key.toLowerCase()] = false;
     };
 
+    const handleContextMenu = (e: MouseEvent) => {
+      // Right Click toggles phone like in TryHackMe Snow Trail
+      e.preventDefault();
+      setPhoneOpen((prev) => !prev);
+      sfx.terminalBeep(740);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (document.pointerLockElement) {
+        mouseMoveRef.current.movementX += e.movementX;
+        mouseMoveRef.current.movementY += e.movementY;
+      }
+    };
+
+    const handlePointerLockChange = () => {
+      setIsPointerLocked(!!document.pointerLockElement);
+    };
+
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("pointerlockchange", handlePointerLockChange);
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("pointerlockchange", handlePointerLockChange);
     };
-  }, [nearbyDevice, activeDevice, handleOpenTerminal]);
+  }, [lookTarget, activeDevice, phoneOpen, handleInteract]);
 
-  // Three.js Setup & Lifecycle
+  // Click canvas to request Pointer Lock
+  const handleCanvasClick = () => {
+    if (activeDevice || phoneOpen) return;
+    const canvas = mountRef.current?.querySelector("canvas");
+    if (canvas && document.pointerLockElement !== canvas) {
+      canvas.requestPointerLock();
+    }
+    if (lookTarget) {
+      handleInteract(lookTarget);
+    }
+  };
+
+  // --- 3D FIRST-PERSON SCENE SETUP ---
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
@@ -131,15 +336,15 @@ export function CyberLabScene() {
     const width = mount.clientWidth || window.innerWidth;
     const height = mount.clientHeight || window.innerHeight;
 
-    // 1. Scene & Camera
+    // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#070b0e");
-    scene.fog = new THREE.FogExp2("#070b0e", 0.024);
+    scene.background = new THREE.Color("#0c151a");
+    scene.fog = new THREE.FogExp2("#0c151a", 0.035);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 16, 22);
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100);
+    camera.position.copy(playerPosRef.current);
+    cameraRef.current = camera;
 
-    // 2. Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -147,352 +352,365 @@ export function CyberLabScene() {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
 
-    // 3. Ambient & Directional Cyber Lighting
-    const ambientLight = new THREE.AmbientLight("#1a2a32", 1.8);
+    // 2. Realistic Office Lighting
+    const ambientLight = new THREE.AmbientLight("#22333b", 1.4);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight("#4ade80", 1.2);
-    dirLight.position.set(10, 24, 15);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
-    dirLight.shadow.camera.near = 0.5;
-    dirLight.shadow.camera.far = 50;
-    dirLight.shadow.camera.left = -20;
-    dirLight.shadow.camera.right = 20;
-    dirLight.shadow.camera.top = 20;
-    dirLight.shadow.camera.bottom = -20;
-    scene.add(dirLight);
+    const sunLight = new THREE.DirectionalLight("#e0f2fe", 1.6);
+    sunLight.position.set(12, 18, 10);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 1024;
+    sunLight.shadow.mapSize.height = 1024;
+    scene.add(sunLight);
 
-    const centerGlow = new THREE.PointLight("#38bdf8", 2, 18);
-    centerGlow.position.set(0, 3, 0);
-    scene.add(centerGlow);
-
-    // 4. Floor Grid & Facility Layout
-    const floorGeo = new THREE.PlaneGeometry(44, 44);
-    const floorMat = new THREE.MeshStandardMaterial({
-      color: "#091013",
-      roughness: 0.35,
-      metalness: 0.8,
-    });
+    // 3. Office Architecture: Floor, Walls, Rooms
+    // Wooden / Carpet Tiles Floor
+    const floorGeo = new THREE.PlaneGeometry(36, 36);
+    const floorMat = new THREE.MeshStandardMaterial({ color: "#162026", roughness: 0.6, metalness: 0.2 });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.receiveShadow = true;
     scene.add(floorMesh);
 
-    // Grid helper on floor
-    const gridHelper = new THREE.GridHelper(44, 44, "#10b981", "#162726");
-    gridHelper.position.y = 0.01;
-    scene.add(gridHelper);
+    // Grid runner
+    const grid = new THREE.GridHelper(36, 36, "#10b981", "#1e293b");
+    grid.position.y = 0.01;
+    scene.add(grid);
 
-    // Facility Wall Perimeter
-    const wallMat = new THREE.MeshStandardMaterial({
-      color: "#111b21",
-      roughness: 0.7,
-      metalness: 0.4,
+    // Outer Perimeter Walls
+    const wallMat = new THREE.MeshStandardMaterial({ color: "#1e293b", roughness: 0.8 });
+    const createWall = (w: number, h: number, d: number, x: number, y: number, z: number) => {
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallMat);
+      wall.position.set(x, y, z);
+      wall.receiveShadow = true;
+      scene.add(wall);
+      return wall;
+    };
+
+    createWall(36, 4, 0.6, 0, 2, -18); // North Wall
+    createWall(36, 4, 0.6, 0, 2, 18);  // South Wall
+    createWall(0.6, 4, 36, -18, 2, 0); // West Wall
+    createWall(0.6, 4, 36, 18, 2, 0);  // East Wall
+
+    // Room Partitions: Server Room (North-East), Meeting Room (North-West), Breakroom (South-West)
+    createWall(14, 4, 0.4, 11, 2, -6); // Server room wall
+    createWall(0.4, 4, 12, 4, 2, -12); // Server room glass door division
+
+    createWall(14, 4, 0.4, -11, 2, -6); // Meeting room wall
+    createWall(0.4, 4, 12, -4, 2, -12); // Meeting room side wall
+
+    // Ceiling lights
+    const officeLights = [
+      { x: 0, z: 4 },
+      { x: 10, z: -12 },
+      { x: -10, z: -12 },
+      { x: -10, z: 8 },
+    ];
+    officeLights.forEach((pos) => {
+      const pl = new THREE.PointLight("#38bdf8", 1.8, 14);
+      pl.position.set(pos.x, 3.5, pos.z);
+      scene.add(pl);
     });
-    const wallGeoH = new THREE.BoxGeometry(44, 3, 0.8);
-    const wallGeoV = new THREE.BoxGeometry(0.8, 3, 44);
 
-    const wallNorth = new THREE.Mesh(wallGeoH, wallMat);
-    wallNorth.position.set(0, 1.5, -22);
-    scene.add(wallNorth);
+    const interactiveList: InteractiveObject[] = [];
 
-    const wallSouth = new THREE.Mesh(wallGeoH, wallMat);
-    wallSouth.position.set(0, 1.5, 22);
-    scene.add(wallSouth);
+    // --- OBJECT 1: McSkidy's Main Desk & Case File QR Sticker (x: 0, z: 4) ---
+    const deskGroup = new THREE.Group();
+    deskGroup.position.set(0, 0, 4);
 
-    const wallWest = new THREE.Mesh(wallGeoV, wallMat);
-    wallWest.position.set(-22, 1.5, 0);
-    scene.add(wallWest);
+    const deskTable = new THREE.Mesh(
+      new THREE.BoxGeometry(2.8, 0.8, 1.6),
+      new THREE.MeshStandardMaterial({ color: "#334155", roughness: 0.4 })
+    );
+    deskTable.position.y = 0.4;
+    deskTable.castShadow = true;
+    deskTable.receiveShadow = true;
+    deskGroup.add(deskTable);
 
-    const wallEast = new THREE.Mesh(wallGeoV, wallMat);
-    wallEast.position.set(22, 1.5, 0);
-    scene.add(wallEast);
+    // Case file folder with physical QR sticker
+    const folderMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 0.04, 0.7),
+      new THREE.MeshStandardMaterial({ color: "#f59e0b" })
+    );
+    folderMesh.position.set(0.6, 0.82, 0.1);
+    deskGroup.add(folderMesh);
 
-    // Room Divider Partitions
-    const dividerMat = new THREE.MeshStandardMaterial({
-      color: "#15242b",
-      roughness: 0.6,
-      metalness: 0.6,
-      transparent: true,
-      opacity: 0.85,
+    // QR sticker
+    const qrMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.24, 0.24),
+      new THREE.MeshBasicMaterial({ color: "#ffffff" })
+    );
+    qrMesh.rotation.x = -Math.PI / 2;
+    qrMesh.position.set(0.6, 0.85, 0.1);
+    deskGroup.add(qrMesh);
+
+    scene.add(deskGroup);
+
+    interactiveList.push({
+      id: "desk-qr",
+      name: "McSkidy's Case File (QR Sticker)",
+      type: "desk-qr",
+      position: new THREE.Vector3(0.6, 0.85, 4.1),
+      promptText: "Left-Click / [E] to Scan QR Code with Phone Camera",
     });
 
-    const div1 = new THREE.Mesh(new THREE.BoxGeometry(14, 2.5, 0.4), dividerMat);
-    div1.position.set(-14, 1.25, 0);
-    scene.add(div1);
-
-    const div2 = new THREE.Mesh(new THREE.BoxGeometry(14, 2.5, 0.4), dividerMat);
-    div2.position.set(14, 1.25, 0);
-    scene.add(div2);
-
-    // Central Holo-Table in Command Center
-    const holoTableGeo = new THREE.CylinderGeometry(2.4, 2.8, 0.8, 16);
-    const holoTableMat = new THREE.MeshStandardMaterial({ color: "#1b2e36", metalness: 0.8, roughness: 0.2 });
-    const holoTable = new THREE.Mesh(holoTableGeo, holoTableMat);
-    holoTable.position.set(0, 0.4, 0);
-    holoTable.receiveShadow = true;
-    holoTable.castShadow = true;
-    scene.add(holoTable);
-
-    // Rotating wireframe globe above holo-table
-    const globeGeo = new THREE.SphereGeometry(1.1, 16, 12);
-    const globeMat = new THREE.MeshBasicMaterial({ color: "#38bdf8", wireframe: true });
-    const globe = new THREE.Mesh(globeGeo, globeMat);
-    globe.position.set(0, 1.8, 0);
-    scene.add(globe);
-
-    // 5. Build 3D Interactive Device Objects
-
-    // DEVICE 1: Forensic Workstation (x: -12, z: -8)
+    // --- OBJECT 2: Forensics High-Performance Workstation (x: 10, z: 6) ---
     const wsGroup = new THREE.Group();
-    wsGroup.position.set(-12, 0, -8);
-    const deskGeo = new THREE.BoxGeometry(3.6, 0.8, 1.8);
-    const deskMat = new THREE.MeshStandardMaterial({ color: "#1a252c", metalness: 0.5, roughness: 0.4 });
-    const deskMesh = new THREE.Mesh(deskGeo, deskMat);
-    deskMesh.position.y = 0.4;
-    deskMesh.castShadow = true;
-    deskMesh.receiveShadow = true;
-    wsGroup.add(deskMesh);
+    wsGroup.position.set(10, 0, 6);
 
-    // Monitors
-    const monGeo = new THREE.BoxGeometry(1.2, 0.8, 0.1);
-    const monMat = new THREE.MeshBasicMaterial({ color: "#10b981" });
-    const mon1 = new THREE.Mesh(monGeo, monMat);
-    mon1.position.set(-0.7, 1.2, 0.2);
-    mon1.rotation.y = 0.2;
-    wsGroup.add(mon1);
+    const wsDesk = new THREE.Mesh(
+      new THREE.BoxGeometry(3.2, 0.8, 1.6),
+      new THREE.MeshStandardMaterial({ color: "#1e293b", roughness: 0.3 })
+    );
+    wsDesk.position.y = 0.4;
+    wsGroup.add(wsDesk);
 
-    const mon2 = new THREE.Mesh(monGeo, monMat);
-    mon2.position.set(0.7, 1.2, 0.2);
-    mon2.rotation.y = -0.2;
-    wsGroup.add(mon2);
+    // Tower Computer Chassis
+    const tower = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 1.1, 0.8),
+      new THREE.MeshStandardMaterial({ color: "#0284c7", metalness: 0.8 })
+    );
+    tower.position.set(1.1, 0.95, -0.2);
+    wsGroup.add(tower);
 
-    const wsAlertLight = new THREE.PointLight("#f59e0b", 1.8, 6);
-    wsAlertLight.position.set(0, 2, 0);
-    wsGroup.add(wsAlertLight);
-    alertLightsRef.current["workstation"] = wsAlertLight;
+    // Dual Monitors
+    const screenGeo = new THREE.BoxGeometry(1.0, 0.65, 0.08);
+    const screenMat = new THREE.MeshBasicMaterial({ color: "#10b981" });
+    const s1 = new THREE.Mesh(screenGeo, screenMat);
+    s1.position.set(-0.6, 1.2, 0);
+    s1.rotation.y = 0.15;
+    wsGroup.add(s1);
+
+    const s2 = new THREE.Mesh(screenGeo, screenMat);
+    s2.position.set(0.5, 1.2, 0);
+    s2.rotation.y = -0.15;
+    wsGroup.add(s2);
 
     scene.add(wsGroup);
-    deviceMeshesRef.current["workstation"] = wsGroup;
 
-    // DEVICE 2: Server Rack Array (x: 12, z: -8)
+    interactiveList.push({
+      id: "workstation",
+      name: "High-Performance Workstation",
+      type: "terminal",
+      position: new THREE.Vector3(10, 1.2, 6),
+      promptText: "Left-Click / [E] to Access Forensic Image Workstation",
+    });
+
+    // --- OBJECT 3: Server Room Cluster & Terminal (x: 10, z: -12) ---
     const serverGroup = new THREE.Group();
-    serverGroup.position.set(12, 0, -8);
+    serverGroup.position.set(10, 0, -12);
 
     for (let i = -1; i <= 1; i++) {
-      const rackGeo = new THREE.BoxGeometry(1.2, 3.8, 1.4);
-      const rackMat = new THREE.MeshStandardMaterial({ color: "#0d161a", roughness: 0.4, metalness: 0.8 });
-      const rack = new THREE.Mesh(rackGeo, rackMat);
-      rack.position.set(i * 1.5, 1.9, 0);
+      const rack = new THREE.Mesh(
+        new THREE.BoxGeometry(1.4, 3.6, 1.4),
+        new THREE.MeshStandardMaterial({ color: "#0f172a", roughness: 0.3, metalness: 0.8 })
+      );
+      rack.position.set(i * 1.8, 1.8, 0);
       rack.castShadow = true;
-      rack.receiveShadow = true;
       serverGroup.add(rack);
 
-      // LED Blinker lines
-      for (let j = 0; j < 6; j++) {
-        const ledGeo = new THREE.BoxGeometry(0.8, 0.1, 0.05);
-        const ledMat = new THREE.MeshBasicMaterial({ color: "#ef4444" });
-        const led = new THREE.Mesh(ledGeo, ledMat);
-        led.position.set(i * 1.5, 0.8 + j * 0.5, 0.72);
+      // Blinking rack LEDs
+      for (let j = 0; j < 5; j++) {
+        const led = new THREE.Mesh(
+          new THREE.BoxGeometry(1.0, 0.08, 0.04),
+          new THREE.MeshBasicMaterial({ color: "#38bdf8" })
+        );
+        led.position.set(i * 1.8, 0.8 + j * 0.5, 0.72);
         serverGroup.add(led);
       }
     }
 
-    const serverAlertLight = new THREE.PointLight("#ef4444", 2.2, 8);
-    serverAlertLight.position.set(0, 2.5, 1);
-    serverGroup.add(serverAlertLight);
-    alertLightsRef.current["server"] = serverAlertLight;
-
     scene.add(serverGroup);
-    deviceMeshesRef.current["server"] = serverGroup;
 
-    // DEVICE 3: Rogue IoT Smart Appliance (x: -12, z: 10)
-    const iotGroup = new THREE.Group();
-    iotGroup.position.set(-12, 0, 10);
+    interactiveList.push({
+      id: "server",
+      name: "Server Room Logging Cluster",
+      type: "terminal",
+      position: new THREE.Vector3(10, 1.8, -12),
+      promptText: "Left-Click / [E] to Query 24/7 Network Logs",
+    });
 
-    const iotPedestal = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.4, 0.9, 16), deskMat);
-    iotPedestal.position.y = 0.45;
-    iotPedestal.castShadow = true;
-    iotGroup.add(iotPedestal);
+    // --- OBJECT 4: Meeting Room Portable Laptop (x: -10, z: -12) ---
+    const meetingGroup = new THREE.Group();
+    meetingGroup.position.set(-10, 0, -12);
 
-    // Glowing printer/thermostat hub
-    const hubMesh = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.6, 0.9), new THREE.MeshStandardMaterial({ color: "#263339", metalness: 0.9 }));
-    hubMesh.position.y = 1.1;
-    hubMesh.castShadow = true;
-    iotGroup.add(hubMesh);
+    const conferenceTable = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.4, 2.4, 0.8, 24),
+      new THREE.MeshStandardMaterial({ color: "#475569", roughness: 0.4 })
+    );
+    conferenceTable.position.y = 0.4;
+    meetingGroup.add(conferenceTable);
 
-    // Pulsing antenna beacon
-    const beaconGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.8);
-    const beaconMesh = new THREE.Mesh(beaconGeo, new THREE.MeshBasicMaterial({ color: "#ef4444" }));
-    beaconMesh.position.set(0.3, 1.6, 0.2);
-    iotGroup.add(beaconMesh);
+    // Battery-powered laptop on conference table
+    const laptopMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.05, 0.5),
+      new THREE.MeshStandardMaterial({ color: "#94a3b8", metalness: 0.7 })
+    );
+    laptopMesh.position.set(0, 0.82, 0);
+    meetingGroup.add(laptopMesh);
 
-    const iotAlertLight = new THREE.PointLight("#ef4444", 2.0, 7);
-    iotAlertLight.position.set(0, 1.8, 0);
-    iotGroup.add(iotAlertLight);
-    alertLightsRef.current["iot"] = iotAlertLight;
+    const laptopScreen = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.45, 0.04),
+      new THREE.MeshBasicMaterial({ color: "#38bdf8" })
+    );
+    laptopScreen.position.set(0, 1.05, -0.25);
+    laptopScreen.rotation.x = -0.2;
+    meetingGroup.add(laptopScreen);
 
-    scene.add(iotGroup);
-    deviceMeshesRef.current["iot"] = iotGroup;
+    scene.add(meetingGroup);
 
-    // DEVICE 4: AI Agent Node (x: 12, z: 10)
-    const aiGroup = new THREE.Group();
-    aiGroup.position.set(12, 0, 10);
+    interactiveList.push({
+      id: "laptop",
+      name: "Meeting Room Offline Laptop",
+      type: "terminal",
+      position: new THREE.Vector3(-10, 0.9, -12),
+      promptText: "Left-Click / [E] to Extract Damaged Browser Profile",
+    });
 
-    const aiPodGeo = new THREE.CylinderGeometry(1.5, 1.7, 0.6, 16);
-    const aiPod = new THREE.Mesh(aiPodGeo, deskMat);
-    aiPod.position.y = 0.3;
-    aiPod.castShadow = true;
-    aiGroup.add(aiPod);
+    // --- OBJECTS 5, 6, 7: IoT Devices (Thermostat, Printer, Voice Speaker) ---
+    // 5A: Smart Thermostat mounted on north wall (x: 4, z: -17.6)
+    const thermo = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.25, 0.25, 0.1, 16),
+      new THREE.MeshStandardMaterial({ color: "#e11d48", emissive: "#881337" })
+    );
+    thermo.rotation.x = Math.PI / 2;
+    thermo.position.set(4, 1.8, -17.6);
+    scene.add(thermo);
 
-    // Floating neural ring
-    const ringGeo = new THREE.TorusGeometry(0.85, 0.12, 12, 32);
-    const ringMat = new THREE.MeshStandardMaterial({ color: "#a855f7", emissive: "#7e22ce", roughness: 0.2 });
-    const neuralRing = new THREE.Mesh(ringGeo, ringMat);
-    neuralRing.position.y = 1.6;
-    neuralRing.rotation.x = Math.PI / 3;
-    aiGroup.add(neuralRing);
+    interactiveList.push({
+      id: "thermostat",
+      name: "Smart Thermostat (Wi-Fi IoT)",
+      type: "iot",
+      position: new THREE.Vector3(4, 1.8, -17.6),
+      promptText: "Left-Click / [E] to Disconnect Rogue Smart Thermostat",
+    });
 
-    const aiAlertLight = new THREE.PointLight("#a855f7", 1.8, 6);
-    aiAlertLight.position.set(0, 1.8, 0);
-    aiGroup.add(aiAlertLight);
-    alertLightsRef.current["ai-agent"] = aiAlertLight;
+    // 5B: Office Network Printer in hallway (x: -6, z: 2)
+    const printerGroup = new THREE.Group();
+    printerGroup.position.set(-6, 0, 2);
+    const pStand = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.7, 1.0), new THREE.MeshStandardMaterial({ color: "#1e293b" }));
+    pStand.position.y = 0.35;
+    printerGroup.add(pStand);
+    const pBody = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.5, 0.8), new THREE.MeshStandardMaterial({ color: "#cbd5e1" }));
+    pBody.position.y = 0.95;
+    printerGroup.add(pBody);
+    scene.add(printerGroup);
 
-    scene.add(aiGroup);
-    deviceMeshesRef.current["ai-agent"] = aiGroup;
+    interactiveList.push({
+      id: "printer",
+      name: "Office Network Printer (Wi-Fi IoT)",
+      type: "iot",
+      position: new THREE.Vector3(-6, 0.95, 2),
+      promptText: "Left-Click / [E] to Disconnect Network Printer",
+    });
 
-    // 6. Tactical Operative (Player Avatar)
-    const playerGroup = new THREE.Group();
-    playerGroup.position.copy(playerPosRef.current);
+    // 5C: Smart Voice Speaker on side table (x: -12, z: 6)
+    const speaker = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.2, 0.2, 0.6, 16),
+      new THREE.MeshStandardMaterial({ color: "#065f46", emissive: "#064e3b" })
+    );
+    speaker.position.set(-12, 0.9, 6);
+    scene.add(speaker);
 
-    // Chassis body
-    const bodyGeo = new THREE.CapsuleGeometry(0.4, 0.7, 8, 16);
-    const bodyMat = new THREE.MeshStandardMaterial({ color: "#059669", metalness: 0.6, roughness: 0.3 });
-    const playerBody = new THREE.Mesh(bodyGeo, bodyMat);
-    playerBody.position.y = 0.65;
-    playerBody.castShadow = true;
-    playerGroup.add(playerBody);
+    interactiveList.push({
+      id: "speaker",
+      name: "Smart Voice Assistant (Wi-Fi IoT)",
+      type: "iot",
+      position: new THREE.Vector3(-12, 0.9, 6),
+      promptText: "Left-Click / [E] to Disconnect Rogue Voice Speaker",
+    });
 
-    // Visor
-    const visorGeo = new THREE.BoxGeometry(0.4, 0.15, 0.2);
-    const visorMat = new THREE.MeshBasicMaterial({ color: "#34d399" });
-    const visor = new THREE.Mesh(visorGeo, visorMat);
-    visor.position.set(0, 0.85, 0.32);
-    playerGroup.add(visor);
+    // --- TRAP OBJECTS: Standalone Embedded Electronics (No Wi-Fi) ---
+    // Coffee Maker in Breakroom (x: -14, z: 12)
+    const coffee = new THREE.Mesh(
+      new THREE.BoxGeometry(0.4, 0.6, 0.4),
+      new THREE.MeshStandardMaterial({ color: "#78350f" })
+    );
+    coffee.position.set(-14, 0.9, 12);
+    scene.add(coffee);
 
-    // Flashlight beam
-    const spotLight = new THREE.SpotLight("#6ee7b7", 2.5, 12, Math.PI / 6, 0.3);
-    spotLight.position.set(0, 0.8, 0.2);
-    spotLight.target.position.set(0, 0, 5);
-    playerGroup.add(spotLight);
-    playerGroup.add(spotLight.target);
+    interactiveList.push({
+      id: "coffeeMaker",
+      name: "Standard Coffee Maker (Standalone Embedded)",
+      type: "embedded",
+      position: new THREE.Vector3(-14, 0.9, 12),
+      promptText: "Inspect Standalone Coffee Maker (No Wi-Fi / Embedded)",
+    });
 
-    scene.add(playerGroup);
+    interactiveObjectsRef.current = interactiveList;
 
-    // 7. Ambient Particle Motes (Data Dust)
-    const moteGeo = new THREE.BufferGeometry();
-    const moteCount = 180;
-    const motePositions = new Float32Array(moteCount * 3);
-    for (let i = 0; i < moteCount * 3; i += 3) {
-      motePositions[i] = (Math.random() - 0.5) * 40;
-      motePositions[i + 1] = Math.random() * 6;
-      motePositions[i + 2] = (Math.random() - 0.5) * 40;
-    }
-    moteGeo.setAttribute("position", new THREE.BufferAttribute(motePositions, 3));
-    const moteMat = new THREE.PointsMaterial({ color: "#10b981", size: 0.08, transparent: true, opacity: 0.55 });
-    const motes = new THREE.Points(moteGeo, moteMat);
-    scene.add(motes);
-
-    // 8. Animation & Movement Loop
+    // --- 4. 60FPS FIRST-PERSON ANIMATION LOOP ---
     let animId: number;
     const clock = new THREE.Clock();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-      const elapsed = clock.getElapsedTime();
+      const delta = Math.min(clock.getDelta(), 0.1);
 
-      // Rotate central holographic globe & AI neural ring
-      globe.rotation.y += delta * 0.45;
-      globe.rotation.x = Math.sin(elapsed * 0.5) * 0.2;
-      neuralRing.rotation.z += delta * 1.2;
-      neuralRing.rotation.y += delta * 0.6;
+      // Handle Mouse Look (Pointer Lock)
+      if (document.pointerLockElement) {
+        const sensitivity = 0.0022;
+        eulerRef.current.y -= mouseMoveRef.current.movementX * sensitivity;
+        eulerRef.current.x -= mouseMoveRef.current.movementY * sensitivity;
 
-      // Pulse alert lights according to status
-      const pulse = 1.0 + Math.sin(elapsed * 5) * 0.45;
-      if (alertLightsRef.current["server"]) {
-        alertLightsRef.current["server"].intensity = missionState.serverFirewalled ? 1.0 : 2.2 * pulse;
-        alertLightsRef.current["server"].color.set(missionState.serverFirewalled ? "#10b981" : "#ef4444");
+        // Clamp vertical pitch (-85 to +85 deg)
+        eulerRef.current.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, eulerRef.current.x));
+        camera.quaternion.setFromEuler(eulerRef.current);
       }
-      if (alertLightsRef.current["iot"]) {
-        alertLightsRef.current["iot"].intensity = missionState.iotIsolated ? 0.6 : 2.0 * pulse;
-        alertLightsRef.current["iot"].color.set(missionState.iotIsolated ? "#10b981" : "#ef4444");
-      }
-      if (alertLightsRef.current["workstation"]) {
-        alertLightsRef.current["workstation"].color.set(missionState.workstationAnalyzed ? "#10b981" : "#f59e0b");
-      }
-      if (alertLightsRef.current["ai-agent"]) {
-        alertLightsRef.current["ai-agent"].color.set(missionState.aiAgentEnforced ? "#10b981" : "#a855f7");
-      }
+      mouseMoveRef.current = { movementX: 0, movementY: 0 };
 
-      // Handle Player Movement (WASD / Arrows)
-      const moveSpeed = 7.0 * delta;
-      let moveX = 0;
-      let moveZ = 0;
+      // Handle WASD First-Person Walking
+      if (!activeDeviceRef.current && !phoneOpenRef.current) {
+        const moveSpeed = 6.5 * delta;
+        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+        forward.y = 0;
+        forward.normalize();
 
-      const keys = keysRef.current;
-      if (keys["w"] || keys["arrowup"]) moveZ -= 1;
-      if (keys["s"] || keys["arrowdown"]) moveZ += 1;
-      if (keys["a"] || keys["arrowleft"]) moveX -= 1;
-      if (keys["d"] || keys["arrowright"]) moveX += 1;
+        const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+        right.y = 0;
+        right.normalize();
 
-      if (moveX !== 0 || moveZ !== 0) {
-        const length = Math.hypot(moveX, moveZ);
-        const dx = (moveX / length) * moveSpeed;
-        const dz = (moveZ / length) * moveSpeed;
+        const moveVec = new THREE.Vector3();
+        const keys = keysRef.current;
+        if (keys["w"] || keys["arrowup"]) moveVec.add(forward);
+        if (keys["s"] || keys["arrowdown"]) moveVec.sub(forward);
+        if (keys["d"] || keys["arrowright"]) moveVec.add(right);
+        if (keys["a"] || keys["arrowleft"]) moveVec.sub(right);
 
-        const nextX = playerGroup.position.x + dx;
-        const nextZ = playerGroup.position.z + dz;
+        if (moveVec.lengthSq() > 0) {
+          moveVec.normalize().multiplyScalar(moveSpeed);
+          playerPosRef.current.add(moveVec);
 
-        // Wall boundary collision clamping (-19.5 to 19.5)
-        if (Math.abs(nextX) < 19.5) playerGroup.position.x = nextX;
-        if (Math.abs(nextZ) < 19.5) playerGroup.position.z = nextZ;
+          // Office wall boundary clamping (-16.5 to 16.5)
+          playerPosRef.current.x = Math.max(-16.5, Math.min(16.5, playerPosRef.current.x));
+          playerPosRef.current.z = Math.max(-16.5, Math.min(16.5, playerPosRef.current.z));
 
-        // Rotate player towards movement direction
-        const targetRot = Math.atan2(dx, dz);
-        playerGroup.rotation.y = THREE.MathUtils.lerp(playerGroup.rotation.y, targetRot, 0.2);
-
-        // Footstep tick sound
-        if (Math.random() < 0.08) sfx.footstep();
+          if (Math.random() < 0.08) sfx.footstep();
+        }
       }
 
-      playerPosRef.current.copy(playerGroup.position);
+      camera.position.copy(playerPosRef.current);
 
-      // Smooth Camera Follow
-      const targetCamX = playerGroup.position.x;
-      const targetCamY = playerGroup.position.y + 13;
-      const targetCamZ = playerGroup.position.z + 15;
+      // Raycast or Proximity Check from Center Reticle to Interactive Nodes
+      const cameraDir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+      let closestObj: InteractiveObject | null = null;
+      let minAngle = 0.45; // ~26 degree viewing cone
 
-      camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.06);
-      camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.06);
-      camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCamZ, 0.06);
-      camera.lookAt(playerGroup.position.x, 0.8, playerGroup.position.z);
-
-      // Check Proximity to Devices (Interactive Trigger Zone)
-      let foundNearby: DeviceContext | null = null;
-      for (const dev of DEVICES) {
-        const mesh = deviceMeshesRef.current[dev.id];
-        if (mesh) {
-          const dist = playerGroup.position.distanceTo(mesh.position);
-          if (dist < 4.2) {
-            foundNearby = dev;
-            break;
+      for (const obj of interactiveObjectsRef.current) {
+        const toObj = new THREE.Vector3().subVectors(obj.position, camera.position);
+        const dist = toObj.length();
+        if (dist < 4.2) {
+          toObj.normalize();
+          const dot = cameraDir.dot(toObj);
+          const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+          if (angle < minAngle) {
+            minAngle = angle;
+            closestObj = obj;
           }
         }
       }
-      setNearbyDevice(foundNearby);
+
+      setLookTarget(closestObj);
 
       renderer.render(scene, camera);
     };
@@ -518,149 +736,156 @@ export function CyberLabScene() {
         mount.removeChild(renderer.domElement);
       }
     };
-  }, [missionState]);
-
-  const completedCount =
-    (missionState.workstationAnalyzed ? 1 : 0) +
-    (missionState.serverFirewalled ? 1 : 0) +
-    (missionState.iotIsolated ? 1 : 0) +
-    (missionState.aiAgentEnforced ? 1 : 0);
-
-  const postureScore = completedCount * 25;
+  }, []);
 
   return (
-    <div className="relative w-full h-[620px] sm:h-[720px] rounded-xl overflow-hidden border border-emerald-950/80 bg-[#070b0e] select-none">
-      {/* 3D WebGL Canvas Mount */}
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
-
-      {/* Top Left: Facility Map & Radar HUD */}
-      <div className="absolute top-3 left-3 z-30 flex flex-col gap-2 pointer-events-none">
-        <div className="px-3 py-2 rounded-lg bg-[#0a1215]/85 border border-emerald-800/40 backdrop-blur-md text-emerald-400 font-mono text-xs shadow-lg">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-bold uppercase tracking-wider text-[11px]">DEFENSE ARENA · 3D FACILITY</span>
-          </div>
-          <div className="text-[10px] text-zinc-400">TBFC Security HQ · Wareville Division</div>
-        </div>
-
-        {/* Tactical Mini-Radar */}
-        <div className="relative w-28 h-28 rounded-lg border border-emerald-900/60 bg-[#070d0f]/90 overflow-hidden shadow-inner p-1.5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.08)_0%,transparent_70%)]" />
-          <div className="relative w-full h-full border border-emerald-950/60 rounded flex items-center justify-center">
-            {/* Center crosshair */}
-            <div className="absolute w-full h-[1px] bg-emerald-950/40" />
-            <div className="absolute h-full w-[1px] bg-emerald-950/40" />
-            {/* Player Blip */}
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-400/80 ring-2 ring-emerald-900/60 animate-ping absolute" />
-            <div className="w-2 h-2 rounded-full bg-emerald-300 absolute" />
-            {/* Device Blips */}
-            <div className={`absolute top-2 left-2 w-2 h-2 rounded-full ${missionState.workstationAnalyzed ? "bg-emerald-500" : "bg-amber-400"}`} title="Forensic Workstation" />
-            <div className={`absolute top-2 right-2 w-2 h-2 rounded-full ${missionState.serverFirewalled ? "bg-emerald-500" : "bg-red-500"}`} title="Server Core" />
-            <div className={`absolute bottom-2 left-2 w-2 h-2 rounded-full ${missionState.iotIsolated ? "bg-emerald-500" : "bg-red-500"}`} title="IoT Hub" />
-            <div className={`absolute bottom-2 right-2 w-2 h-2 rounded-full ${missionState.aiAgentEnforced ? "bg-emerald-500" : "bg-purple-400"}`} title="AI Agent" />
-          </div>
-        </div>
+    <div
+      ref={mountRef}
+      onClick={handleCanvasClick}
+      className="relative w-full h-[640px] sm:h-[740px] rounded-2xl overflow-hidden border border-emerald-950/80 bg-[#070b0e] select-none cursor-crosshair"
+    >
+      {/* Reticle Crosshair (First-Person Center Screen) */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-20">
+        <div
+          className={`w-3.5 h-3.5 border-2 rounded-full transition-all duration-150 ${
+            lookTarget
+              ? "border-emerald-400 bg-emerald-400/40 scale-125"
+              : "border-white/50 bg-transparent"
+          }`}
+        />
       </div>
 
-      {/* Top Right: Mission Objectives Checklist */}
-      <div className="absolute top-3 right-3 z-30 w-72 sm:w-80 flex flex-col gap-2">
-        <div className="p-3 rounded-lg bg-[#0a1215]/90 border border-emerald-800/40 backdrop-blur-md text-xs font-mono text-zinc-300 shadow-xl">
-          <div className="flex items-center justify-between border-b border-emerald-950/80 pb-1.5 mb-2">
-            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wide">
-              Incident Response Checklist
-            </span>
-            <span className="font-bold text-emerald-300 bg-emerald-950/70 border border-emerald-800/60 rounded px-1.5 py-0.5 text-[10px]">
-              {postureScore}% SECURE
-            </span>
-          </div>
-
-          <ul className="space-y-1.5 text-[11px]">
-            <li className={`flex items-start gap-2 ${missionState.workstationAnalyzed ? "text-emerald-400 line-through opacity-80" : "text-zinc-300"}`}>
-              <span>{missionState.workstationAnalyzed ? "✔" : "◻"}</span>
-              <span>1. Triage Workstation & decode base64 reverse shell</span>
-            </li>
-            <li className={`flex items-start gap-2 ${missionState.serverFirewalled ? "text-emerald-400 line-through opacity-80" : "text-zinc-300"}`}>
-              <span>{missionState.serverFirewalled ? "✔" : "◻"}</span>
-              <span>2. Inspect Server syslog & firewall attacker C2 (10.10.42.99)</span>
-            </li>
-            <li className={`flex items-start gap-2 ${missionState.iotIsolated ? "text-emerald-400 line-through opacity-80" : "text-zinc-300"}`}>
-              <span>{missionState.iotIsolated ? "✔" : "◻"}</span>
-              <span>3. Disconnect compromised IoT Wi-Fi beacon</span>
-            </li>
-            <li className={`flex items-start gap-2 ${missionState.aiAgentEnforced ? "text-emerald-400 line-through opacity-80" : "text-zinc-300"}`}>
-              <span>{missionState.aiAgentEnforced ? "✔" : "◻"}</span>
-              <span>4. Enforce deterministic Zod AST schema on AI Agent</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Center Screen: Interactive Proximity Floating Prompt */}
-      {nearbyDevice && !activeDevice && (
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 animate-bounce pointer-events-auto">
-          <button
-            type="button"
-            onClick={() => handleOpenTerminal(nearbyDevice)}
-            className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-black font-bold font-mono text-xs sm:text-sm tracking-wide shadow-lg shadow-emerald-500/30 border border-emerald-300 transition-all cursor-pointer"
-          >
-            <span className="bg-black text-emerald-400 px-1.5 py-0.5 rounded text-xs font-mono font-extrabold">
-              [E]
-            </span>
-            <span>Access {nearbyDevice.name} ({nearbyDevice.hostname})</span>
-          </button>
+      {/* Interactive Object Floating Interaction Banner */}
+      {lookTarget && !activeDevice && !phoneOpen && (
+        <div className="pointer-events-none absolute bottom-24 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2 rounded-full bg-black/85 border border-emerald-500 text-emerald-300 font-mono text-xs sm:text-sm font-bold shadow-xl backdrop-blur-md animate-bounce">
+          <span className="bg-emerald-500 text-black px-1.5 py-0.5 rounded text-xs font-extrabold">
+            [E] / Left-Click
+          </span>
+          <span>{lookTarget.promptText}</span>
         </div>
       )}
 
-      {/* Bottom Left: Controls Help Banner */}
-      <div className="absolute bottom-3 left-3 z-30 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#080d0e]/80 border border-zinc-800/80 font-mono text-[11px] text-zinc-400 pointer-events-none">
-        <span>Controls:</span>
-        <span className="text-emerald-400 font-bold">[W][A][S][D] / Arrows</span>
-        <span>to move ·</span>
-        <span className="text-emerald-400 font-bold">[E]</span>
-        <span>to interact ·</span>
-        <span className="text-emerald-400 font-bold">[ESC]</span>
-        <span>close console</span>
+      {/* Top Left: Room Title & Pointer Lock Status */}
+      <div className="pointer-events-none absolute top-4 left-4 z-20 flex flex-col gap-1 font-mono">
+        <div className="px-3.5 py-2 rounded-xl bg-black/80 border border-emerald-800/40 backdrop-blur-md text-xs text-emerald-400 shadow-xl flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-extrabold uppercase tracking-wider text-[11px]">
+            TBFC WAREVILLE OFFICE · 3D INVESTIGATION
+          </span>
+        </div>
+        <div className="text-[10px] text-zinc-400 bg-black/60 px-2.5 py-1 rounded-md max-w-fit border border-zinc-800">
+          {isPointerLocked ? "🎯 Mouse Lock Active (Press ESC to release)" : "🖱️ Click screen to enable first-person mouse look"}
+        </div>
       </div>
 
-      {/* Interactive In-Browser Terminal Modal */}
+      {/* Top Right: Clues Found Mini Badge & Phone Toggle Button */}
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2 font-mono">
+        <button
+          type="button"
+          onClick={() => {
+            setPhoneOpen((prev) => !prev);
+            sfx.terminalBeep(740);
+          }}
+          className={`px-3.5 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-xl backdrop-blur-md transition-all cursor-pointer ${
+            phoneOpen
+              ? "bg-emerald-500 text-black border-emerald-400"
+              : "bg-black/80 text-emerald-400 border-emerald-800/60 hover:border-emerald-500"
+          }`}
+        >
+          <span>📱 Phone Assistant [P / Right-Click]</span>
+        </button>
+      </div>
+
+      {/* Bottom Center: Controls Reference Bar */}
+      <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 z-20 hidden md:flex items-center gap-3 px-4 py-1.5 rounded-xl bg-black/75 border border-zinc-800 text-[11px] font-mono text-zinc-400 shadow-lg backdrop-blur-md">
+        <span>Move: <strong className="text-emerald-400">[W][A][S][D]</strong></span>
+        <span>·</span>
+        <span>Look: <strong className="text-emerald-400">Mouse</strong></span>
+        <span>·</span>
+        <span>Phone: <strong className="text-emerald-400">[P] / Right-Click</strong></span>
+        <span>·</span>
+        <span>Interact: <strong className="text-emerald-400">[E] / Left-Click</strong></span>
+      </div>
+
+      {/* Feedback Toast Banner */}
+      {feedbackToast && (
+        <div
+          className={`pointer-events-none absolute top-16 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-xl border font-mono text-xs font-bold shadow-2xl backdrop-blur-md animate-in slide-in-from-top-4 duration-200 ${
+            feedbackToast.type === "success"
+              ? "bg-emerald-950/90 border-emerald-500 text-emerald-200"
+              : feedbackToast.type === "warn"
+                ? "bg-amber-950/90 border-amber-500 text-amber-200"
+                : "bg-rose-950/90 border-rose-500 text-rose-200"
+          }`}
+        >
+          {feedbackToast.text}
+        </div>
+      )}
+
+      {/* In-Game Handheld Smartphone UI (TryHackMe Snowtrail 1:1) */}
+      <InGamePhone
+        isOpen={phoneOpen}
+        onClose={() => setPhoneOpen(false)}
+        activeApp={activePhoneApp}
+        onChangeApp={(app) => setActivePhoneApp(app)}
+        emails={emails}
+        activeEmailId={activeEmailId}
+        onSelectEmail={(id) => setActiveEmailId(id)}
+        onDispatchTask={handleDispatchTask}
+        clues={clues}
+        iotStatus={iotStatus}
+      />
+
+      {/* Terminal Console Pop-Up (When accessing a computer terminal in person) */}
       {activeDevice && (
         <TerminalModal
           device={activeDevice}
           missionState={missionState}
-          onMissionStateChange={(newState) => setMissionState(newState)}
+          onMissionStateChange={handleMissionStateChange}
           onClose={() => setActiveDevice(null)}
         />
       )}
 
-      {/* Victory Celebration Modal */}
+      {/* Mission Victory Modal */}
       {showVictory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in zoom-in-95 duration-300">
-          <div className="w-full max-w-lg p-6 rounded-2xl border border-emerald-500 bg-[#0a1416] text-center font-mono shadow-2xl shadow-emerald-500/20">
-            <div className="text-4xl mb-3">🛡️</div>
-            <h2 className="text-2xl font-extrabold text-emerald-400 tracking-wider mb-2 uppercase">
-              Facility Contained!
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md font-mono select-none animate-in zoom-in-95 duration-300">
+          <div className="w-full max-w-lg p-6 rounded-3xl border-2 border-emerald-500 bg-[#0a1418] text-center shadow-2xl shadow-emerald-500/30">
+            <div className="text-5xl mb-3">🎄🏆</div>
+            <h2 className="text-2xl font-black text-emerald-400 tracking-wider uppercase mb-1">
+              Room Complete: Snow Trail Defended!
             </h2>
-            <p className="text-zinc-300 text-xs sm:text-sm mb-4 leading-relaxed">
-              Outstanding work, Incident Commander. All adversarial footholds, rogue IoT beacons, IMDS metadata leaks, and probabilistic prompt injection bypasses have been neutralized.
+            <div className="text-xs text-emerald-600 font-bold mb-4">
+              TBFC Offices in Wareville Fully Contained
+            </div>
+            <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed mb-5">
+              Outstanding detective work, McSkidy. You successfully mapped every digital forensic artifact to its proper computing class, extracted all five critical dossier clues, and isolated the rogue IoT devices to prevent lateral network takeover.
             </p>
 
-            <div className="grid grid-cols-2 gap-2 my-4 text-xs">
-              <div className="p-2 rounded bg-emerald-950/40 border border-emerald-800/50">
-                <span className="block text-zinc-400 text-[10px]">INCIDENT POSTURE</span>
-                <span className="font-bold text-emerald-400 text-base">100% SECURE</span>
+            <div className="grid grid-cols-2 gap-2 text-left text-xs mb-5 p-3 rounded-2xl bg-[#0e1c22] border border-emerald-950">
+              <div>
+                <span className="block text-[10px] text-zinc-400">1. ORIGIN CLUE</span>
+                <span className="font-bold text-white text-[11px]">{clues.surveillance.value}</span>
               </div>
-              <div className="p-2 rounded bg-emerald-950/40 border border-emerald-800/50">
-                <span className="block text-zinc-400 text-[10px]">DEFENSE RATING</span>
-                <span className="font-bold text-emerald-400 text-base">ZERO TRUST A+</span>
+              <div>
+                <span className="block text-[10px] text-zinc-400">2. ATTACKER IP</span>
+                <span className="font-bold text-rose-400 text-[11px]">{clues.ip.value}</span>
+              </div>
+              <div>
+                <span className="block text-[10px] text-zinc-400">3. INTRUDER ALIAS</span>
+                <span className="font-bold text-amber-400 text-[11px]">{clues.alias.value}</span>
+              </div>
+              <div>
+                <span className="block text-[10px] text-zinc-400">4. QR SERIAL</span>
+                <span className="font-bold text-emerald-400 text-[11px]">{clues.serial.value}</span>
               </div>
             </div>
 
             <button
               type="button"
               onClick={() => setShowVictory(false)}
-              className="w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs uppercase tracking-wider transition-colors"
+              className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all"
             >
-              Return to 3D Arena
+              Continue Exploring Wareville Office
             </button>
           </div>
         </div>
