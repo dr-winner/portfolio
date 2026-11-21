@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { academyChapters } from "@/content/academy-lessons";
+import { DtsIcon, DtsFolder } from "./AcademyIcons";
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ export function AcademyCommandPalette({
   onSelectLesson,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -31,6 +34,14 @@ export function AcademyCommandPalette({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setQuery("");
+      setSelectedIndex(0);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [isOpen]);
+
   const allItems = useMemo(() => {
     const items: {
       lessonId: string;
@@ -39,13 +50,16 @@ export function AcademyCommandPalette({
       duration: string;
       difficulty: string;
       stepIdx: number;
-      kind: "lesson" | "step" | "concept";
+      kind: "lesson" | "step";
       subtitle?: string;
+      folderColor: "sand" | "green" | "violet";
     }[] = [];
 
     academyChapters.forEach((ch) => {
+      const color: "sand" | "green" | "violet" =
+        ch.number === "01" ? "sand" : ch.number === "02" ? "green" : "violet";
+
       ch.lessons.forEach((l) => {
-        // Main lesson item
         items.push({
           lessonId: l.id,
           title: l.title,
@@ -55,9 +69,9 @@ export function AcademyCommandPalette({
           stepIdx: 0,
           kind: "lesson",
           subtitle: l.subhead,
+          folderColor: color,
         });
 
-        // Individual steps
         l.steps.forEach((st, idx) => {
           items.push({
             lessonId: l.id,
@@ -68,6 +82,7 @@ export function AcademyCommandPalette({
             stepIdx: idx,
             kind: "step",
             subtitle: st.subtitle,
+            folderColor: color,
           });
         });
       });
@@ -77,7 +92,7 @@ export function AcademyCommandPalette({
   }, []);
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return allItems.slice(0, 8);
+    if (!query.trim()) return allItems.slice(0, 10);
     const q = query.toLowerCase();
     return allItems
       .filter(
@@ -86,89 +101,118 @@ export function AcademyCommandPalette({
           it.chapter.toLowerCase().includes(q) ||
           (it.subtitle && it.subtitle.toLowerCase().includes(q))
       )
-      .slice(0, 10);
+      .slice(0, 12);
   }, [allItems, query]);
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [filtered]);
+
+  const handleKeyDownInList = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev + 1) % Math.max(1, filtered.length));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev - 1 + filtered.length) % Math.max(1, filtered.length));
+    } else if (e.key === "Enter" && filtered[selectedIndex]) {
+      e.preventDefault();
+      const item = filtered[selectedIndex];
+      onSelectLesson(item.lessonId, item.stepIdx);
+      onClose();
+    }
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className="scale-command-backdrop"
-      onClick={onClose}
-    >
-      <div
-        className="scale-command-dialog"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Search Input Bar */}
-        <div className="scale-command-searchbar">
-          <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#26201b]/60 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <circle cx="11" cy="11" r="7" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+    <div className="sx is-open" role="dialog" aria-modal="true" aria-label="Search the course">
+      <div className="sx__backdrop" onClick={onClose} />
+      <div className="sx__dialog" onKeyDown={handleKeyDownInList}>
+        <div className="sx__bar">
+          <DtsIcon name="search" size={19} stroke={2.2} className="sx__glass" />
           <input
+            ref={inputRef}
+            className="sx__input"
             type="text"
-            autoFocus
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="sx-list"
+            aria-autocomplete="list"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search lessons, attacks, or security concepts..."
-            className="flex-1 bg-transparent font-mono text-[13.5px] text-[#26201b] placeholder-[#26201b]/40 outline-none"
+            placeholder="Search lessons, concepts, attacks…"
+            spellCheck={false}
+            autoComplete="off"
           />
-          <kbd className="rounded border border-[#26201b]/30 bg-[#ede5d8] px-1.5 py-0.5 font-mono text-[10px] text-[#26201b]/70 shrink-0">
-            ESC
-          </kbd>
+          {query && (
+            <button
+              className="sx__clear"
+              type="button"
+              aria-label="Clear search"
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+            >
+              Clear
+            </button>
+          )}
+          <button className="sx__esc" type="button" aria-label="Close search" onClick={onClose}>
+            esc
+          </button>
         </div>
 
-        {/* Results List */}
-        <div className="scale-command-results space-y-1">
+        <div className="sx__list" id="sx-list" role="listbox" aria-label="Results">
           {filtered.length === 0 ? (
-            <div className="py-8 text-center font-mono text-[12px] text-[#26201b]/50">
-              No matching lessons or concepts found for &ldquo;{query}&rdquo;
+            <div className="sx__empty">
+              <div className="sx__empty-title">No matching lessons found</div>
+              <p>Try searching for BOLA, SQL injection, SSRF, prompt injection, or JWT</p>
             </div>
           ) : (
-            filtered.map((item, idx) => (
-              <button
-                key={`${item.lessonId}-${item.stepIdx}-${idx}`}
-                type="button"
-                onClick={() => {
-                  onSelectLesson(item.lessonId, item.stepIdx);
-                  onClose();
-                }}
-                className="flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-[#c5e8b7]/40 hover:border-[#26201b] border border-transparent group"
-              >
-                <div className="min-w-0 pr-2">
-                  <div className="flex items-center gap-2 font-mono text-[10.5px] text-[#26201b]/60">
-                    <span className="font-bold text-[#10b981] uppercase">
-                      {item.kind === "step" ? "STEP" : "LESSON"}
-                    </span>
-                    <span>•</span>
-                    <span className="truncate">{item.chapter}</span>
-                  </div>
-                  <p className="mt-0.5 font-mono text-[13px] font-bold text-[#26201b] truncate group-hover:text-[#1b4332]">
-                    {item.title}
-                  </p>
-                  {item.subtitle && (
-                    <p className="text-[11px] text-[#26201b]/70 line-clamp-1 mt-0.5">
-                      {item.subtitle}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1.5 shrink-0 font-mono text-[10px]">
-                  <span className="rounded bg-[#ede5d8] px-1.5 py-0.5 text-[#26201b]/70">
-                    {item.difficulty}
+            filtered.map((item, idx) => {
+              const isSel = idx === selectedIndex;
+              return (
+                <div
+                  key={`${item.lessonId}-${item.stepIdx}-${idx}`}
+                  className={`sx__item ${isSel ? "is-sel" : ""}`}
+                  role="option"
+                  aria-selected={isSel}
+                  onClick={() => {
+                    onSelectLesson(item.lessonId, item.stepIdx);
+                    onClose();
+                  }}
+                  onMouseEnter={() => setSelectedIndex(idx)}
+                >
+                  <span className={`sx__icon ${item.kind === "step" ? "sx__icon--step" : "sx__icon--lesson"}`}>
+                    {item.kind === "step" ? (
+                      item.stepIdx + 1
+                    ) : (
+                      <DtsFolder color={item.folderColor} />
+                    )}
                   </span>
-                  <span className="text-[#26201b]/40">→</span>
+                  <span className="sx__main">
+                    <span className="sx__title">
+                      {item.title}
+                      <span className="sx__meta">{item.chapter}</span>
+                    </span>
+                    {item.subtitle && <span className="sx__text">{item.subtitle}</span>}
+                  </span>
+                  <span className="sx__side">
+                    <span className="sx__chip">{item.difficulty}</span>
+                    <kbd className="sx__enter">↵</kbd>
+                  </span>
                 </div>
-              </button>
-            ))
+              );
+            })
           )}
         </div>
 
-        {/* Footer shortcuts */}
-        <div className="scale-command-footer">
-          <span>Navigate lessons & concepts</span>
-          <span>Press [Esc] to exit</span>
+        <div className="sx__foot">
+          <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+          <span><kbd>↵</kbd> open</span>
+          <span><kbd>esc</kbd> close</span>
+          <span className="sx__count">{filtered.length} results</span>
         </div>
       </div>
     </div>
