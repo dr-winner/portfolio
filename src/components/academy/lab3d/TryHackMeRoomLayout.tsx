@@ -1,97 +1,92 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { CyberLabScene } from "@/components/academy/lab3d/CyberLabScene";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { SnowTrailLabView } from './SnowTrailLabView';
 
 interface QuestionItem {
   id: number;
   question: string;
-  expectedAnswer: string;
+  answer: string;
+  hint: string;
   userAnswer: string;
   isCorrect: boolean;
-  hint: string;
 }
 
 const INITIAL_QUESTIONS: QuestionItem[] = [
   {
     id: 1,
-    question: "Identify the machine that processed the surveillance footage.",
-    expectedAnswer: "Workstation",
-    userAnswer: "",
+    question: 'Identify the machine that processed the surveillance footage.',
+    answer: 'Workstation',
+    hint: 'A machine with dedicated high-performance GPU and multi-core capabilities suited for continuous video de-obfuscation without thermal throttling.',
+    userAnswer: '',
     isCorrect: false,
-    hint: "High-performance compute system built for heavy rendering without thermal throttling.",
   },
   {
     id: 2,
-    question: "Identify the machine that holds the network log.",
-    expectedAnswer: "Server",
-    userAnswer: "",
+    question: 'Identify the machine that holds the network log.',
+    answer: 'Server',
+    hint: 'Runs 24/7 continuously in the cold room to capture and maintain all incoming and outgoing visitor traffic records.',
+    userAnswer: '',
     isCorrect: false,
-    hint: "Runs 24/7 in the server room managing incoming and outgoing connections.",
   },
   {
     id: 3,
-    question: "Identify the machine that holds the recovered browser profile.",
-    expectedAnswer: "Laptop",
-    userAnswer: "",
+    question: 'Identify the machine that holds the recovered browser profile.',
+    answer: 'Laptop',
+    hint: 'A portable battery-powered machine plugged into the damaged open chassis in the meeting room.',
+    userAnswer: '',
     isCorrect: false,
-    hint: "Battery-powered portable computer brought to the meeting room desk.",
   },
   {
     id: 4,
-    question: "Identify the machine that scanned the archive.",
-    expectedAnswer: "Desktop",
-    userAnswer: "",
+    question: 'Identify the machine that scanned the archive.',
+    answer: 'Desktop',
+    hint: 'A general daily office desktop terminal used to decompress and virus-scan incoming archive payloads.',
+    userAnswer: '',
     isCorrect: false,
-    hint: "Standard office desktop workstation used for file analysis.",
   },
   {
     id: 5,
-    question: "Identify the device that received the location SMS.",
-    expectedAnswer: "Smartphone",
-    userAnswer: "",
+    question: 'Identify the device that received the location SMS.',
+    answer: 'Smartphone',
+    hint: 'A handheld mobile device with cellular connectivity, optical camera lens, and SMS push capabilities.',
+    userAnswer: '',
     isCorrect: false,
-    hint: "Handheld mobile device equipped with cellular radio and camera sensors.",
   },
   {
     id: 6,
-    question: "Identify the class of device you had to disable to stop the intrusion.",
-    expectedAnswer: "IoT",
-    userAnswer: "",
+    question: 'Identify the class of device you had to disable to stop the intrusion.',
+    answer: 'IoT',
+    hint: 'Smart appliances connected to the local Wi-Fi (such as smart thermostats and wireless speakers) acting as persistence pivot footholds.',
+    userAnswer: '',
     isCorrect: false,
-    hint: "Smart office devices connected to the Wi-Fi network (thermostat, printer, speaker).",
   },
 ];
 
 export function TryHackMeRoomLayout() {
-  const [splitView, setSplitView] = useState<boolean>(true);
   const [questions, setQuestions] = useState<QuestionItem[]>(INITIAL_QUESTIONS);
-  
   const [hintVisible, setHintVisible] = useState<Record<number, boolean>>({});
+  const [isLabFullscreen, setIsLabFullscreen] = useState(false);
+  const [splitView, setSplitView] = useState(true);
 
-  const solvedCount = questions.filter((q) => q.isCorrect).length;
-  const progressPercent = Math.round((solvedCount / questions.length) * 100);
-
-  const handleAnswerChange = (id: number, val: string) => {
+  const handleAnswerChange = (id: number, value: string) => {
     setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, userAnswer: val } : q))
+      prev.map((q) => (q.id === id ? { ...q, userAnswer: value } : q))
     );
   };
 
   const handleSubmit = (id: number) => {
     setQuestions((prev) =>
       prev.map((q) => {
-        if (q.id === id) {
-          const cleanUser = q.userAnswer.trim().toLowerCase();
-          const cleanExpected = q.expectedAnswer.trim().toLowerCase();
-          const isRight =
-            cleanUser === cleanExpected ||
-            (cleanExpected === "smartphone" && (cleanUser === "phone" || cleanUser === "mobile phone" || cleanUser === "mobile")) ||
-            (cleanExpected === "iot" && cleanUser === "internet of things");
-          return { ...q, isCorrect: isRight };
-        }
-        return q;
+        if (q.id !== id) return q;
+        const normalizedUser = q.userAnswer.trim().toLowerCase();
+        const normalizedTarget = q.answer.toLowerCase();
+        const isMatch =
+          normalizedUser === normalizedTarget ||
+          (id === 5 && normalizedUser === 'phone') ||
+          (id === 6 && (normalizedUser === 'iot devices' || normalizedUser === 'iot device'));
+        return { ...q, isCorrect: isMatch };
       })
     );
   };
@@ -100,92 +95,125 @@ export function TryHackMeRoomLayout() {
     setHintVisible((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const solvedCount = questions.filter((q) => q.isCorrect).length;
+  const progressPercent = Math.round((solvedCount / questions.length) * 100);
+
+  // Auto-fill or mark hint when a clue is found in the 3D room
+  const handleClueFound = (clueIndex: number) => {
+    setQuestions((prev) =>
+      prev.map((q, idx) => {
+        if (idx === clueIndex && !q.isCorrect) {
+          return { ...q, userAnswer: q.answer, isCorrect: true };
+        }
+        return q;
+      })
+    );
+  };
+
+  // If in dedicated fullscreen 3D lab mode
+  if (isLabFullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black flex flex-col">
+        <SnowTrailLabView
+          onExitLab={() => setIsLabFullscreen(false)}
+          onClueFound={handleClueFound}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0b1319] text-[#e2e8f0] font-sans antialiased flex flex-col select-none">
-      {/* ── TOP NAV BAR (Authentic TryHackMe Header) ── */}
-      <header className="h-14 border-b border-[#1b2b34] bg-[#0c161d] px-4 flex items-center justify-between text-xs font-semibold z-40">
+    <div className="min-h-screen bg-[#070e14] text-zinc-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-black">
+      {/* 1. TRYHACKME OFFICIAL BRAND HEADER */}
+      <header className="h-14 border-b border-[#1b2b34] bg-[#0c161d] px-4 sm:px-6 flex items-center justify-between z-30 select-none">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-emerald-400 font-extrabold text-base tracking-wider font-mono">
-              [TRY<span className="text-white">HACK</span>ME]
+          <Link href="/academy" className="flex items-center gap-2 group">
+            <span className="font-mono font-black text-sm text-emerald-400 group-hover:text-emerald-300 transition-colors">
+              [TRYHACKME]
             </span>
-            <span className="text-[10px] text-zinc-500 font-mono hidden sm:inline">| ACADEMY 3D ROOM</span>
+            <span className="text-zinc-600 font-mono text-xs hidden sm:inline">|</span>
+            <span className="text-zinc-300 font-mono text-xs hidden sm:inline">
+              ACADEMY 3D ROOM
+            </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-5 text-zinc-400 text-xs">
-            <Link href="/academy" className="text-zinc-200 hover:text-emerald-400 transition-colors">
+          <nav className="hidden md:flex items-center gap-4 text-xs font-medium text-zinc-400">
+            <span className="text-white border-b-2 border-emerald-400 pb-4 pt-4 font-bold">
               Learn
-            </Link>
-            <span className="text-zinc-400 hover:text-emerald-400 cursor-pointer">Practice</span>
-            <span className="text-zinc-400 hover:text-emerald-400 cursor-pointer">Compete</span>
-            <span className="text-zinc-400 hover:text-emerald-400 cursor-pointer">Certifications</span>
+            </span>
+            <span className="hover:text-white cursor-pointer transition-colors">Practice</span>
+            <span className="hover:text-white cursor-pointer transition-colors">Compete</span>
+            <span className="hover:text-white cursor-pointer transition-colors">Certifications</span>
           </nav>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#101e26] border border-[#1b2b34] text-[11px] text-zinc-300">
+          {/* Progress Pill */}
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-[#1b2b34] bg-[#091217] text-xs font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Room Progress:</span>
-            <span className="text-emerald-400 font-bold">{progressPercent}%</span>
+            <span className="text-zinc-300">Room Progress:</span>
+            <span className="font-bold text-emerald-400">{progressPercent}%</span>
           </div>
 
+          {/* Fullscreen 3D Lab Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsLabFullscreen(true)}
+            className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20"
+          >
+            🎮 Enter Fullscreen 3D Lab
+          </button>
+
+          {/* Split Screen Toggle */}
           <button
             type="button"
             onClick={() => setSplitView((v) => !v)}
-            className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 ${
-              splitView
-                ? "bg-emerald-600 border-emerald-500 text-black shadow-sm"
-                : "bg-[#14232c] border-[#223844] text-zinc-300 hover:border-emerald-500"
-            }`}
+            className="px-3 py-1.5 rounded-lg border border-[#1b2b34] bg-[#0e1c24] hover:bg-[#152732] text-xs font-mono text-zinc-300 hover:text-white transition-colors hidden sm:flex items-center gap-1.5"
           >
-            <span>{splitView ? "◫ Hide Split View" : "◫ Show Split View"}</span>
+            <span>{splitView ? 'Hide Split View' : 'Show Split View'}</span>
           </button>
         </div>
       </header>
 
-      {/* ── ROOM HERO BANNER ── */}
-      <div className="bg-gradient-to-r from-[#0d1a22] via-[#09141b] to-[#070e13] border-b border-[#1b2b34] px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 2. HERO ROOM DETAILS BANNER */}
+      <section className="bg-gradient-to-r from-[#0d1720] via-[#09131a] to-[#070e14] border-b border-[#1b2b34] px-4 sm:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-900 border border-emerald-400/30 flex items-center justify-center text-3xl shadow-lg shadow-emerald-950/60">
+          {/* Snowflake Badge Icon */}
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/30 to-teal-500/10 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl shadow-lg shadow-emerald-950">
             ❄️
           </div>
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 mb-0.5">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
               <span>Learn</span>
               <span>&gt;</span>
-              <span className="text-emerald-400">Advent of Cyber Warmup</span>
+              <span className="text-emerald-400 font-bold">Advent of Cyber Warmup</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Snow Trail
             </h1>
-            <p className="text-xs text-zinc-400 mt-0.5 max-w-2xl">
+            <p className="text-xs text-zinc-400 max-w-2xl mt-0.5 leading-relaxed">
               Join McSkidy as she takes back her deserted office in Wareville and learns which devices are best suited to which forensic and defensive tasks.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
-          <div className="flex items-center gap-1.5">
-            <span>⏱️</span>
-            <span>60 min</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-amber-400">⚡</span>
-            <span>Medium</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span>👥</span>
-            <span>5,825 Users</span>
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 bg-[#0c161d] px-3 py-1.5 rounded-lg border border-[#1b2b34]">
+            <span>⏱ 60 min</span>
+            <span>•</span>
+            <span className="text-amber-400 font-bold">⚡ Medium</span>
+            <span>•</span>
+            <span>👥 5,825 Users</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── MAIN SPLIT-VIEW CONTAINER ── */}
+      {/* 3. MAIN WORKSPACE: SPLIT-VIEW PANELS */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         {/* LEFT PANE: Task 1 Instructions & Questions List */}
         <div
           className={`flex-col overflow-y-auto border-r border-[#1b2b34] bg-[#0c161d] p-6 space-y-6 scrollbar-thin scrollbar-thumb-zinc-700 ${
-            splitView ? "w-full lg:w-[48%] flex" : "w-full flex max-w-5xl mx-auto border-r-0"
+            splitView ? 'w-full lg:w-[48%] flex' : 'w-full flex max-w-5xl mx-auto border-r-0'
           }`}
         >
           {/* Task Accordion Bar */}
@@ -237,8 +265,8 @@ export function TryHackMeRoomLayout() {
                   key={q.id}
                   className={`p-4 rounded-xl border text-xs transition-all ${
                     q.isCorrect
-                      ? "border-emerald-500/60 bg-emerald-950/20"
-                      : "border-[#1b2b34] bg-[#0f1b22]"
+                      ? 'border-emerald-500/60 bg-emerald-950/20'
+                      : 'border-[#1b2b34] bg-[#0f1b22]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3 mb-2.5">
@@ -261,13 +289,13 @@ export function TryHackMeRoomLayout() {
                       value={q.userAnswer}
                       onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && !q.isCorrect) handleSubmit(q.id);
+                        if (e.key === 'Enter' && !q.isCorrect) handleSubmit(q.id);
                       }}
                       placeholder="Type your answer here..."
                       className={`flex-1 px-3 py-2 rounded-lg font-mono text-xs border focus:outline-none transition-all ${
                         q.isCorrect
-                          ? "bg-emerald-950/40 border-emerald-700/60 text-emerald-300 font-bold"
-                          : "bg-[#091217] border-[#1b2b34] text-white focus:border-emerald-500 placeholder-zinc-600"
+                          ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300 font-bold'
+                          : 'bg-[#091217] border-[#1b2b34] text-white focus:border-emerald-500 placeholder-zinc-600'
                       }`}
                     />
                     <button
@@ -276,11 +304,11 @@ export function TryHackMeRoomLayout() {
                       onClick={() => handleSubmit(q.id)}
                       className={`px-4 py-2 rounded-lg font-bold font-mono text-xs uppercase tracking-wider transition-all disabled:opacity-40 ${
                         q.isCorrect
-                          ? "bg-emerald-600 text-black cursor-default"
-                          : "bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-500/20"
+                          ? 'bg-emerald-600 text-black cursor-default'
+                          : 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-500/20'
                       }`}
                     >
-                      {q.isCorrect ? "Correct" : "Submit"}
+                      {q.isCorrect ? 'Correct' : 'Submit'}
                     </button>
                     <button
                       type="button"
@@ -306,7 +334,7 @@ export function TryHackMeRoomLayout() {
 
         {/* RIGHT PANE: Interactive 3D WebGL Canvas */}
         {splitView && (
-          <div className="w-full lg:w-[52%] flex flex-col bg-[#070b0e] relative h-[600px] lg:h-auto">
+          <div className="w-full lg:w-[52%] flex flex-col bg-[#070b0e] relative h-[650px] lg:h-auto">
             {/* Top Control Bar of 3D Frame */}
             <div className="h-9 px-4 bg-[#0a1217] border-b border-[#1b2b34] flex items-center justify-between text-[11px] font-mono text-zinc-400 z-30 select-none">
               <div className="flex items-center gap-2">
@@ -314,14 +342,24 @@ export function TryHackMeRoomLayout() {
                 <span className="font-bold text-zinc-200">INTERACTIVE 3D ROOM: TBFC WAREVILLE</span>
               </div>
               <div className="flex items-center gap-3 text-[10px]">
+                <button
+                  type="button"
+                  onClick={() => setIsLabFullscreen(true)}
+                  className="text-emerald-400 hover:underline font-bold"
+                >
+                  ⛶ Expand Lab
+                </button>
                 <span className="text-zinc-500">Resolution: 100% Desktop</span>
                 <span className="text-emerald-500 font-bold">● Active WebGL Engine</span>
               </div>
             </div>
 
-            {/* Embedded 3D First-Person Canvas Scene */}
+            {/* Embedded 3D Office Environment */}
             <div className="flex-1 w-full relative overflow-hidden">
-              <CyberLabScene />
+              <SnowTrailLabView
+                onExitLab={() => setSplitView(false)}
+                onClueFound={handleClueFound}
+              />
             </div>
           </div>
         )}
