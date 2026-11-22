@@ -102,16 +102,16 @@ export function SnowTrailLabView({ onExitLab, onClueFound }: SnowTrailLabViewPro
 
     // Camera (Player Viewpoint at 1.7m eye height)
     const camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 100);
-    camera.position.set(-6, 1.7, 0.5);
-    camera.rotation.set(0, -Math.PI / 4, 0);
-    cameraRef.current = camera;
+    camera.position.set(-5.5, 1.65, -0.5);
+    camera.rotation.set(0, Math.PI, 0);
+        cameraRef.current = camera;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     container.appendChild(renderer.domElement);
 
     // Build Authentic Office Scene
@@ -142,7 +142,7 @@ export function SnowTrailLabView({ onExitLab, onClueFound }: SnowTrailLabViewPro
     const velocity = new THREE.Vector3();
     const direction = new THREE.Vector3();
     let isLocked = false;
-    const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+    const euler = new THREE.Euler(0, Math.PI, 0, 'YXZ');
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const code = e.key.toLowerCase();
@@ -214,7 +214,7 @@ export function SnowTrailLabView({ onExitLab, onClueFound }: SnowTrailLabViewPro
 
     // Animation Loop
     let animId: number;
-    const clock = new THREE.Clock();
+    const clock = new THREE.Clock(true);
 
     const animate = () => {
       animId = requestAnimationFrame(animate);

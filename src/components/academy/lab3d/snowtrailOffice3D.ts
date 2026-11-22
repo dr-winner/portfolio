@@ -212,7 +212,7 @@ export function buildSnowTrailOfficeScene(scene: THREE.Scene): OfficeObjectTarge
     new THREE.PlaneGeometry(6, 1.5),
     new THREE.MeshBasicMaterial({ map: logoTex })
   );
-  logoSign.position.set(-4, 3.8, -14.75);
+  logoSign.position.set(0, 3.8, -14.75);
   scene.add(logoSign);
 
   // Reindeer & Sleigh Neon Outline on East Wall
