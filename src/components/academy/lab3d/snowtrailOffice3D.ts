@@ -323,6 +323,18 @@ export function buildSnowTrailOfficeScene(scene: THREE.Scene): OfficeObjectTarge
     chair.position.set(0, 0, 0.9);
     deskGroup.add(chair);
 
+    
+    // McSkidy Laptop on Desk
+    const laptopBase = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.04, 0.8), metalMat);
+    laptopBase.position.set(0, 1.43, -0.2);
+    deskGroup.add(laptopBase);
+    const laptopLid = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.75, 0.04), metalMat);
+    laptopLid.position.set(0, 1.78, -0.58);
+    deskGroup.add(laptopLid);
+    const laptopScreen = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.68), screenGlowMat);
+    laptopScreen.position.set(0, 1.78, -0.55);
+    deskGroup.add(laptopScreen);
+
     deskGroup.position.set(x, 0, z);
     deskGroup.rotation.y = rotationY;
     scene.add(deskGroup);
