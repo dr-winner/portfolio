@@ -12,9 +12,8 @@ export default function AcademyLayout({ children }: { children: React.ReactNode 
   return (
     <div
       style={{
-        backgroundColor: "#f5efe6",
-        color: "#26201b",
-        colorScheme: "light",
+        backgroundColor: "var(--paper)",
+        color: "var(--ink)",
         width: "100vw",
         height: "100vh",
         overflow: "hidden",

@@ -6,6 +6,7 @@ import type { AcademyLesson, LessonStep } from "@/content/academy-lessons";
 interface IsometricStageProps {
   step: LessonStep;
   lesson?: AcademyLesson;
+  theme?: "light" | "dark";
   isPaused: boolean;
   onTogglePause: () => void;
   onReplay: () => void;
@@ -13,10 +14,11 @@ interface IsometricStageProps {
   isFullscreen?: boolean;
 }
 
-const INK = "#211e1b";
-const SHADOW_COLOR = "#1c1a17";
+let INK = "#211e1b";
+let SHADOW_COLOR = "#1c1a17";
+let isDarkMode = false;
 
-const COLOR_THEMES: Record<string, { top: [string, string]; side: [string, string] }> = {
+const COLOR_THEMES_LIGHT: Record<string, { top: [string, string]; side: [string, string] }> = {
   orange: { top: ["#fee6cc", "#fcd4ad"], side: ["#f9c697", "#f3b47f"] },
   green: { top: ["#e2f2d7", "#d1e9c2"], side: ["#c3e1b2", "#b3d79f"] },
   blue: { top: ["#dfebf9", "#cde0f5"], side: ["#bcd3ef", "#a9c5e8"] },
@@ -24,6 +26,16 @@ const COLOR_THEMES: Record<string, { top: [string, string]; side: [string, strin
   purple: { top: ["#f2eaf9", "#e6dbf4"], side: ["#d9cbef", "#cbbae6"] },
   slab: { top: ["#f7f0e7", "#f0e7dc"], side: ["#ece2d5", "#e3d7c8"] },
   attacker: { top: ["#3a3330", "#2d2724"], side: ["#221e1c", "#181514"] },
+};
+
+const COLOR_THEMES_DARK: Record<string, { top: [string, string]; side: [string, string] }> = {
+  orange: { top: ["#604b34", "#55412e"], side: ["#4c3a29", "#413123"] },
+  green: { top: ["#466034", "#3d542f"], side: ["#374b2b", "#2f4026"] },
+  blue: { top: ["#374c65", "#32475e"], side: ["#2e4055", "#29394c"] },
+  yellow: { top: ["#645736", "#594c30"], side: ["#4f422a", "#433824"] },
+  purple: { top: ["#533969", "#493562"], side: ["#41315b", "#3b2d50"] },
+  slab: { top: ["#26231e", "#1d1a17"], side: ["#221f1b", "#2f2a24"] },
+  attacker: { top: ["#181514", "#12100f"], side: ["#0d0c0b", "#080707"] },
 };
 
 const round2 = (e: number) => Math.round(e * 100) / 100;
@@ -213,7 +225,8 @@ const isoTopMatrix = (x: number, y: number, z: number) => {
 // SVG Definitions
 function renderDefs(cx: number, cy: number, radius: number) {
   let s = "";
-  for (const [name, colors] of Object.entries(COLOR_THEMES)) {
+  const themes = isDarkMode ? COLOR_THEMES_DARK : COLOR_THEMES_LIGHT;
+  for (const [name, colors] of Object.entries(themes)) {
     s += `
       <linearGradient id="g-${name}-top" x1="0" y1="0" x2="0.35" y2="1">
         <stop offset="0" stop-color="${colors.top[0]}"/>
@@ -291,22 +304,46 @@ function renderPill(
     tone?: "paper" | "amber" | "red" | "green";
   } = {}
 ) {
-  const fg =
-    tone === "amber"
+  const fg = isDarkMode
+    ? tone === "amber"
+      ? "#ebd1ad"
+      : tone === "red"
+        ? "#fca5a5"
+        : tone === "green"
+          ? "#a6d38b"
+          : "#ece2d0"
+    : tone === "amber"
       ? "#6d4a0c"
       : tone === "red"
         ? "#8f2a22"
         : tone === "green"
           ? "#14532d"
           : INK;
-  const bg =
-    tone === "amber"
+
+  const bg = isDarkMode
+    ? tone === "amber"
+      ? "#4a3820"
+      : tone === "red"
+        ? "#4a2220"
+        : tone === "green"
+          ? "#293820"
+          : "#2d2822"
+    : tone === "amber"
       ? "#fbe5bd"
       : tone === "red"
         ? "#f8d5cf"
         : tone === "green"
           ? "#dcfce7"
           : "#fbf6ef";
+
+  const strokeColor = isDarkMode
+    ? tone === "red"
+      ? "#8f2a22"
+      : tone === "green"
+        ? "#3f8f4e"
+        : "#5c5346"
+    : INK;
+
   const charWidth = 7.1;
   const iconPad = icon ? 16 : 0;
   const width = Math.max(52, text.length * charWidth + 24 + iconPad);
@@ -357,7 +394,7 @@ function renderPill(
   return `
     <g class="anim-pop">
       <rect x="${x}" y="${y + 2}" width="${width}" height="${height}" rx="11.5" fill="${SHADOW_COLOR}" />
-      <rect x="${x}" y="${y}" width="${width}" height="${height}" rx="11.5" fill="${bg}" stroke="${INK}" stroke-width="1.4" />
+      <rect x="${x}" y="${y}" width="${width}" height="${height}" rx="11.5" fill="${bg}" stroke="${strokeColor}" stroke-width="1.4" />
       ${iconSvg}
       <text x="${textX}" y="${cy + 4}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="700" fill="${fg}">${text}</text>
     </g>
@@ -572,7 +609,7 @@ function renderCube(
       <g transform="translate(${topX + 58}, ${ty - 22})">
         <g class="anim-pop">
           <rect x="-38" y="-9" width="76" height="21" rx="10.5" fill="${SHADOW_COLOR}" />
-          <rect x="-38" y="-11" width="76" height="21" rx="10.5" fill="#fbf6ef" stroke="${INK}" stroke-width="1.3" />
+          <rect x="-38" y="-11" width="76" height="21" rx="10.5" fill="${isDarkMode ? "#2d2822" : "#fbf6ef"}" stroke="${isDarkMode ? "#5c5346" : INK}" stroke-width="1.3" />
           <circle cx="-25" cy="-0.5" r="4" fill="none" stroke="${INK}" stroke-width="1.4"/>
           <rect x="-16" y="-4" width="26" height="6.5" rx="3.2" fill="#ede5d8" />
           <rect x="-16" y="-4" width="${26 * cpu}" height="6.5" rx="3.2" fill="#10b981" />
@@ -645,8 +682,13 @@ function renderShieldWall(x: number, y: number, label = "Zero-Trust Gate", isNew
 export function IsometricStage({
   step,
   lesson,
+  theme = "light",
   isPaused,
 }: IsometricStageProps) {
+  const isDark = theme === "dark";
+  isDarkMode = isDark;
+  INK = isDark ? "#efe6d6" : "#211e1b";
+  SHADOW_COLOR = isDark ? "#0d0c0a" : "#1c1a17";
   const containerRef = useRef<HTMLDivElement>(null);
   const [replayCount, setReplayCount] = useState(0);
 
@@ -659,6 +701,7 @@ export function IsometricStage({
   }, []);
 
   const scene = useMemo(() => {
+    const strokeColor = isDark ? "#38322c" : "#211e1b";
     const lessonId = lesson?.id ?? "lesson-1-1";
     const stepNum = step.stepNumber;
 
@@ -719,7 +762,7 @@ export function IsometricStage({
           camRadius: 360,
           linksSvg: `<path d="${linkClientFirstHop}" fill="none" stroke="${INK}" stroke-width="2.2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>`,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop} L ${pClient[0]} ${pClient[1]}"/>
             </circle>
           `,
@@ -743,10 +786,10 @@ export function IsometricStage({
             <path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#f97316" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#f97316" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1.1s" repeatCount="indefinite" path="${roundPath([pWeb, [-28, 154], pClient], 14)}"/>
             </circle>
           `,
@@ -773,10 +816,10 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.4s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
-            <circle r="4.3" fill="#06b6d4" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#06b6d4" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.4s"}" repeatCount="indefinite" path="${linkWebDb}"/>
             </circle>
           `,
@@ -804,7 +847,7 @@ export function IsometricStage({
           <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
           </circle>
         `,
@@ -849,10 +892,10 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#8b5cf6" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#8b5cf6" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1s" repeatCount="indefinite" path="${linkFirstHopWeb}"/>
             </circle>
           `,
@@ -881,7 +924,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -909,10 +952,10 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
             </circle>
           `,
@@ -942,7 +985,7 @@ export function IsometricStage({
             <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
           `,
@@ -971,10 +1014,10 @@ export function IsometricStage({
           <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1.1s" repeatCount="indefinite" path="${linkShieldDb}"/>
           </circle>
         `,
@@ -1012,7 +1055,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
           `,
@@ -1041,7 +1084,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -1066,10 +1109,10 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
             </circle>
           `,
@@ -1099,7 +1142,7 @@ export function IsometricStage({
             <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
           `,
@@ -1128,10 +1171,10 @@ export function IsometricStage({
           <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" begin="1.1s" repeatCount="indefinite" path="${linkShieldDb}"/>
           </circle>
         `,
@@ -1168,7 +1211,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
           `,
@@ -1194,7 +1237,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -1223,7 +1266,7 @@ export function IsometricStage({
           <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1259,7 +1302,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
           `,
@@ -1285,10 +1328,10 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
             </circle>
           `,
@@ -1314,7 +1357,7 @@ export function IsometricStage({
           <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1351,7 +1394,7 @@ export function IsometricStage({
             <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
           `,
@@ -1376,10 +1419,10 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" begin="0.9s" repeatCount="indefinite" path="${linkWebDb}"/>
             </circle>
           `,
@@ -1405,7 +1448,7 @@ export function IsometricStage({
           <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1441,7 +1484,7 @@ export function IsometricStage({
             <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
           `,
@@ -1466,7 +1509,7 @@ export function IsometricStage({
             <path d="${linkClientWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -1490,7 +1533,7 @@ export function IsometricStage({
           <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1527,7 +1570,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
             </circle>
           `,
@@ -1553,7 +1596,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -1582,7 +1625,7 @@ export function IsometricStage({
           <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1620,7 +1663,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
           `,
@@ -1645,7 +1688,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -1671,7 +1714,7 @@ export function IsometricStage({
           <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
           </circle>
         `,
@@ -1707,7 +1750,7 @@ export function IsometricStage({
             <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
           `,
@@ -1732,7 +1775,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkWebDb}"/>
             </circle>
           `,
@@ -1760,7 +1803,7 @@ export function IsometricStage({
           <path d="${linkShieldDb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1797,7 +1840,7 @@ export function IsometricStage({
             <path d="${linkFirstHopWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientFirstHop}"/>
             </circle>
           `,
@@ -1822,7 +1865,7 @@ export function IsometricStage({
             <path d="${linkWebDb}" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrow-red)"/>
           `,
           packetsSvg: `
-            <circle r="4.3" fill="#dc2626" stroke="${INK}" stroke-width="1.3">
+            <circle r="4.3" fill="#dc2626" stroke="${strokeColor}" stroke-width="1.3">
               <animateMotion dur="${isPaused ? "0s" : "1.8s"}" repeatCount="indefinite" path="${linkAttackerWeb}"/>
             </circle>
           `,
@@ -1848,7 +1891,7 @@ export function IsometricStage({
           <path d="${linkAttackerWeb}" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrow-red)"/>
         `,
         packetsSvg: `
-          <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+          <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
             <animateMotion dur="${isPaused ? "0s" : "2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
           </circle>
         `,
@@ -1876,19 +1919,22 @@ export function IsometricStage({
       camRadius: 460,
       linksSvg: `<path d="${linkClientWeb}" fill="none" stroke="${INK}" stroke-width="2.2" marker-end="url(#arrow)"/>`,
       packetsSvg: `
-        <circle r="4.3" fill="#10b981" stroke="${INK}" stroke-width="1.3">
+        <circle r="4.3" fill="#10b981" stroke="${strokeColor}" stroke-width="1.3">
           <animateMotion dur="${isPaused ? "0s" : "2.2s"}" repeatCount="indefinite" path="${linkClientWeb}"/>
         </circle>
       `,
       entsSvg: `${fallbackClient.ent} ${fallbackServer.ent} ${fallbackDb.ent}`,
       overSvg: `${fallbackClient.over} ${fallbackServer.over} ${fallbackDb.over}`,
     };
-  }, [lesson, step, isPaused]);
+  }, [lesson, step, isPaused, isDark]);
 
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden bg-[#f5efe6] w-full min-h-[380px] sm:min-h-[460px] flex items-center justify-center select-none"
+      className="relative overflow-hidden w-full min-h-[380px] sm:min-h-[460px] flex items-center justify-center select-none"
+      style={{
+        background: isDark ? "var(--c-faf3e9, #292520)" : "var(--c-faf3e9, #faf3e9)",
+      }}
     >
       <svg
         key={`stage-${lesson?.id ?? "default"}-${replayCount}`}
